@@ -1,0 +1,39 @@
+# main menu navigation
+menu:
+  home: /
+  archives: /archives
+  about: /about
+  rss: /atom.xml
+
+# Miscelaneous
+favicon: /favicon.ico
+
+show_post_category: true
+show_post_tags: true
+
+active_nav: false # show active status on nav menu
+
+sidebar: true # whether to show the sidebar
+widgets:
+  - category
+  - tag
+  - tagcloud
+  - archive
+  - recent_posts
+  - links
+links:
+  - title: "GitHub"
+    url: http://www.github.com/enderjo
+    intro: "enderjo"
+  - title: "微博"
+    url: http://www.weibo.com/enderjo
+    intro: "twitter的本地化版本"
+
+# disqus_shortname: enderjo
+duoshuo_shortname: enderjo
+#site statistic
+google_analytics:  
+# baidu_analytics: 392796d51567e848aebf813b65cb8656
+baidu_analytics: 
+
+
