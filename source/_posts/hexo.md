@@ -126,12 +126,15 @@ active_nav: false
 
 需要修改themes配置文件，在对应的模板目录下，也是`_config.yml`。
 
+#### 修改评论
 这里使用了多说，需要修改配置：
 ``` yml
 duoshuo_shortname: enderjo
 ``` 
 
 需要注册并[创建站点](http://duoshuo.com/create-site/)，`duoshuo_shortname`中填写的就是多说站点的二级域名需要填写的部分。
+
+因为多说停服务，所以这部分内容需要更新，暂时未更新
 
 ### hexo基本操作
 ```
