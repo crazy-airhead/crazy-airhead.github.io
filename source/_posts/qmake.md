@@ -16,7 +16,7 @@ qmake包含额外的功能用于支持QT的开发，自动包含了moc和uic的�
 # 目录
 
 - 概述
-- Getting Started
+- 入门
 - Creating Project Files
 - Building Common 
 - Project Types
@@ -185,6 +185,40 @@ unix {
 
 ## 多条件检测
 
+假设你使用Windows并且希望在命令行中运行程序的时候用qDebug()来看表达示的输出。为了看输出，必须使用合适的控制台设置来编译程序。我们只要简单地将`console`设置到`CONFIG`中可以。现在我们来说说，我们运行在Windows上添加了`CONFIG`并且设置为`debug`的情况，此时需要用到两个域嵌套。首先创建一个域，然后在里面创建另一个。在第二个域中做如下的设置：
+```
+win32 {
+    debug {
+        CONFIG += console
+    }
+}
+```
+
+嵌套域可以冒号来连接，所以最终的项目文件是这样的：
+```
+CONFIG += debug
+HEADERS += hello.h
+SOURCES += hello.cpp
+SOURCES += main.cpp
+
+win32 {
+    SOURCES += hellowin.cpp
+}
+
+unix {
+    SOURCES += hellounix.cpp
+}
+
+!exists(main.cpp) {
+    error("No main.cpp file found")
+}
+
+win32:debug {
+    CONFIG += console
+}
+```
+
+就这些了！你已经完成了qmake的教程，现在开始写你自己项目的项目文件吧。
 
 
 
