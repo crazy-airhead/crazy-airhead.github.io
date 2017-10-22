@@ -1,5 +1,5 @@
 ---
-title: camel简介
+title: 第1章 camel简介
 date: 2017-05-02 20:37:19
 tags:
 ---
@@ -23,4 +23,4 @@ Apache Karaf - 一个基于OSGi的小型运行时可部署应用程序
 Apache MINA - 一个高性能的NIO驱动的网络框架。
 So don't get the hump - try Camel today! (smile)
 
-所以不要麻恼了，今天就来试试Camel！
+所以不要烦恼了，今天就来试试Camel！
