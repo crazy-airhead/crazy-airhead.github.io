@@ -1,13 +1,13 @@
 ---
-title: 第2章 快速入门
+title: [Camel]第2章 快速入门
 date: 2017-08-08 20:04:24
 tags:
 ---
 
-# 快速入门
+## 快速入门
 通过阅读本章的一些简单的例子，你可以快速的开始使用Apache Camel。对于想全面了解的读者来说，可以跳到时第3章。
 
-# 从例子开始
+## 从例子开始
 通过源码我们来看一个例子。
 Camel可以用Spring，或者直接用Java来配置。本例就是用Java的。
 这个例子在Camel的发布包的`examples\camel\example-jms-file`目录下可以找到。
@@ -48,5 +48,5 @@ for(int i = 0; i < 10; i++) {
     template.sendBody("test-jms:queue:test.queue", "Test Message: " + i);
 }
 ```
-# 发生了什么？
+## 发生了什么？
 我们使用生产者模板来发送对象（这里是文本）到CamelContext中，到组件test-jms:queue:test.queue.这些文本对象会被自动转换为JMS的消息并推送到test.queue的消息列中。当我们设置一个路由时，我们指定文件组件来监听test.queue.

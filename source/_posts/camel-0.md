@@ -1,11 +1,11 @@
 ---
-title: 第1章 camel简介
+title: [Camel]第1章 camel简介
 date: 2017-05-02 20:37:19
 tags:
 ---
-# 说明
+## 说明
 因为工作中有用到Camel，发现Camel很强大，但中文的相关资料较少，所以目前的想法，查看Apache Camel的官网文档并实践和记录。
-# Camel是什么？
+## Camel是什么？
 Apache Came ™是基于知名的企业集成模式（EIP）的多功能开源集成框架。
 
 Camel提供多种特定领域语言让你来定义路由和调解规则，包括基于Java的流式API，Spring或Blueprint XML配置文件和Scala DSL。这意味着，无论是Java、Scala还是XML编辑器，你都可以快速的完成路由规则定义。
