@@ -1,7 +1,7 @@
 ---
-title: [Camel]第1章 camel简介
+title: Camel 第1章 camel简介
 date: 2017-05-02 20:37:19
-tags:
+tags: [Camel]
 ---
 ## 说明
 因为工作中有用到Camel，发现Camel很强大，但中文的相关资料较少，所以目前的想法，查看Apache Camel的官网文档并实践和记录。

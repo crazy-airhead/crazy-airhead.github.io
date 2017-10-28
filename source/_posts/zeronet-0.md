@@ -1,7 +1,7 @@
 ---
-title: [ZeroNet]ZeroNet介绍
+title: ZeroNet介绍
 date: 2017-10-22 15:33:19
-tags:
+tags: [ZeroNet]
 ---
 
 ## ZeroNet是什么?
@@ -46,12 +46,6 @@ ZeroNet自带内置数据库，这使得重内容的站点的开发更容易。�
 - 你会托管理每一个你访问过的网站。
 - 每个网站都有一个列表文件，存储了网站所有文件的SHA512哈希值和网站所有者的私钥生成的签名。
 - 如果站点的所有者 (拥有私钥的那个人) 修改了站点, 并且他/她签名了新的列表文件，然后推送给其他节点， 那么所有节点将会在验证列表的真实性(使用签名)后, 下载修改后的文件并推送给其他节点。
-
-## 截图
-
-![Screenshot](http://zeronet.readthedocs.io/en/latest/img/zerohello.png)
-
-![ZeroTalk](http://zeronet.readthedocs.io/en/latest/img/zerotalk.png)
 
 ## 限制
 
