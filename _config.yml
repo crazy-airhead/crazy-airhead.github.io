@@ -8,7 +8,7 @@ subtitle: 疯狂的傻瓜，傻瓜也疯狂————傻方能执著，疯狂�
 description: 记录点滴，注重积累。
 author: L4qiang
 email: L4qiang@gmail.com
-language: zh-CN
+language: zh-Hans
 timezone: 
 
 # URL
@@ -64,7 +64,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: gstyle
+theme: next
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
