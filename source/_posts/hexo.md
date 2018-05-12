@@ -181,6 +181,10 @@ $ hexo deploy --generate
 $ hexo g -d
 $ hexo d -g
 ```
+生成发布时可能会出现找不到用户名的问题，可以修改git配置
+```
+git config --global credential.helper wincred
+```
 
 ### 图床
 使用了七牛的空间，使用`qrsbox`进行同步。
