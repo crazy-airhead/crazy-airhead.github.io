@@ -331,7 +331,6 @@ P(send | r ) = 1 − ( 1/  ( 1 + exp(6 − 3r) ) )
 
 As you can see in Figure 1, this function drops off quickly as the nodes’ debt ratio surpasses twice the established credit.
 正如图1所见，当节点的债务比率超过已建立的信用的两倍时，这个函数就会迅速下降。
-![图1: 发送的概率随r的增加而增加]()
 ```
 r
 P ( send j r )
@@ -726,8 +725,8 @@ IPFS中的commit对象代表任何对象在版本历史记录中的一个快照�
     ]
 }
 ```
-![Figure 2: Sample Object Graph]()
-![Figure 3: Sample Objects]()
+![Figure 2: Sample Object Graph](https://gguoss.github.io/img/ipfs_figure2.png)
+![Figure 3: Sample Objects](https://gguoss.github.io/img/ipfs_figure3.png)
 
 ```shell
 > ipfs file-cat <ccc111-hash> --json
