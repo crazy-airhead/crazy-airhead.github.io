@@ -22,10 +22,10 @@ Pitfalls,” will teach you to recognize and avoid the most common errors in thi
 
 本书有三大章节。第一章节是“背景”，它将帮你理解个性，批判性思考，真相，知识，观点，论据和论点等重要概念，并帮你克服阻碍批判性思考的态度和想法。第二章节是“陷阱”，将教你识别和避免思考时最常见的错误。第三章节是“策略”，将帮你获得解决问题和困难的各种技能。这一章节包括关于识别和克服你个人智力弱点的技巧，以及更善于观察、澄清问题、进行调查、评估证据、分析他人观点和做出正确判断的技巧。
 
-At the end of each chapter, you will find a number of applications to
-challenge your critical thinking and help you exercise your skills. Theseapplications cover problems and issues both timely and timeless. The
-final application in each of the first thirteen chapters invites you to examine an especially important issue about which informed opinion is
-divided.
+At the end of each chapter, you will find a number of applications to challenge your critical thinking and help you exercise your skills. Theseapplications cover problems and issues both timely and timeless. The
+final application in each of the first thirteen chapters invites you to examine an especially important issue about which informed opinion is divided.
+
+
 Students sometimes get the idea that a textbook must be read page by
 page and that reading ahead violates some unwritten rule. This notion is
 mistaken. Students’ background knowledge varies widely; what one student knows very well, another knows only vaguely and a third is totally

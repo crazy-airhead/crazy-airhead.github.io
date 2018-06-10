@@ -1,5 +1,5 @@
 ---
-title: Camel 第2章 快速入门
+title: Camel-第2章 快速入门
 date: 2017-08-08 20:04:24
 tags: [Camel]
 ---
