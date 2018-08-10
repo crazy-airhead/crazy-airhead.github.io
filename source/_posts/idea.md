@@ -10,7 +10,7 @@ IntelliJ IDEA出了新版本(2018.2)，之前使用网上找的LicenseServer地�
 
 因为评论内容，评论多了可能不好找，摘录下来，另外自己在配置时一些地方没有搞懂，还是记录下来的好。
 
-之前听说javaagent很强大，现在看来确实是的。
+之前听说[javaagent](https://zeroturnaround.com/rebellabs/how-to-inspect-classes-in-your-jvm/)很强大，现在看来确实是的。
 
 ## 方法
 > Rover updated his crack for Jetbrains 2018.2 releases. Download it here: [http://bit.ly/jetbrainscrack210](http://bit.ly/jetbrainscrack210)
