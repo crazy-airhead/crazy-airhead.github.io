@@ -171,6 +171,16 @@ or you can check the docs: http://hexo.io/docs/
 ```bash
 $ hexo new [layout] <title>
 ```
+#### 测试
+```bash
+$ hexo server
+$ hexo s
+```
+如果运行时浏览器无法打开，可能是默认端口（4000）被占用了，换个端口试试。
+```bash
+$ hexo s -p 5000
+```
+
 #### 生成与发布
 ```bash
 $ hexo generate --deploy
