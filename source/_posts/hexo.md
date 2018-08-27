@@ -180,6 +180,7 @@ $ hexo s
 ```bash
 $ hexo s -p 5000
 ```
+可以通过`netstat -ano`来查看占用端口的进程。本机是被Foxit Service给占用了，禁用该进程。
 
 #### 生成与发布
 ```bash
