@@ -28,6 +28,8 @@ Published GitHub Pages sites may be no larger than 1 GB.
 因为本身有使用过Github，所以直接从创建仓库开始，如果是完全的新手建议看这篇[如何搭建一个独立博客——简明Github Pages与Hexo教程](http://www.jianshu.com/p/05289a4bc8b2)，我也基本上是参考这篇来搭建的。创建以`<username>.github.io`为名的仓库，对于我来说是*enderjo.github.io*。一开始看博文是没看懂，以为是用户名的仓库。后面也多搜了几篇，多看了几遍才明白，也可以直接看[Configuring a publishing source for GitHub Pages](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/)
 除了仓库名，也就没有什么特别的注意点了，从推荐的几个模板中选择一个模板。要不了几分钟，就可以使用[https://enderjo.github.io](https://enderjo.github.io)来访问页面了。
 
+**注意**如果用户名包含大小写时，需要按用户名的全部小写来创建仓库名。
+
 ## 绑定域名
 对于Github来说，绑定域名是非常简单的。创建一个`CNAME`的文件，写上域名上传就可以了。
 

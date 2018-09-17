@@ -70,7 +70,7 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/enderjo/enderjo.github.io.git
+  repo: gh-enderjo:enderjo/enderjo.github.io.git
   branch: master
 
 # add caption for iamges
