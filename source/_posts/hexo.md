@@ -31,18 +31,24 @@ Published GitHub Pages sites may be no larger than 1 GB.
 **注意**如果用户名包含大小写时，需要按用户名的全部小写来创建仓库名。
 
 ## 绑定域名
-对于Github来说，绑定域名是非常简单的。创建一个`CNAME`的文件，写上域名上传就可以了。
+对于Github来说，绑定域名是非常简单的。创建一个`CNAME`的文件，写上域名，上传就可以了。可以在`blog`的`source`放置该文件，生成发布时会被生成到`pubic`目录下，避免因`hexo clean`重新生成文件时引起域名不可解析问题。
 
 ``` bash
 l4qiang.me
 ```
 
+### 域名解析
 对我来说，还有些没有触过的东西就是域名解析配置。上阿里云买了`l4qiang.me`的域名，这个没有什么特别好说的。
 
-### 域名解析
 注册DNSpod，添加域名，在没有配置CNAME之前可以之接填写*enderjo.github.io*的域名，会自动解析。
 可以看到一条A记录和两条NS记录，记录下NS记录，修改DNS时会用到。
 
+#### 开启HTTPS
+参考[这里](https://blog.github.com/2018-05-01-github-pages-custom-domains-https/)，[这里](https://help.github.com/articles/setting-up-an-apex-domain/)开启HTTPS。简要的说，就是自定义域名解析增加如下A记录中的一个就自动开启了。
+- 185.199.108.153
+- 185.199.109.153
+- 185.199.110.153
+- 185.199.111.153
 
 如博客不能登录，有可能是github更改了空间服务的ip地址，需要及时更新。
 
@@ -58,7 +64,7 @@ l4qiang.me
 以上已经能通过域名正常访问博客了。
 
 ## 使用Hexo
-Github推荐使用的是Jekyll做为静态网站生成器，但是因为用的是Ruby，没怎么接触，就找到了Hexo做为替代。
+Github推荐使用的是Jekyll做为静态网站生成器，但是因为用的是Ruby，没怎么接触，就找到了[Hexo](https://hexo.io/zh-cn/)做为替代。
 
 ### 安装Nodejs
 下载[Nodejs 6.7](https://nodejs.org/dist/v6.7.0/node-v6.7.0-x64.msi)，默认安装就可以了。
@@ -136,7 +142,7 @@ duoshuo_shortname: enderjo
 
 需要注册并[创建站点](http://duoshuo.com/create-site/)，`duoshuo_shortname`中填写的就是多说站点的二级域名需要填写的部分。
 
-因为多说停服务，所以这部分内容需要更新，暂时未更新
+因为多说停服务，所以这部分内容需要更新，暂时未更新。
 
 ### hexo基本操作
 ```
@@ -200,10 +206,10 @@ git config --global credential.helper wincred
 ```
 
 ### 图床
-使用了七牛的空间，使用`qrsbox`进行同步。
+使用了[七牛](https://www.qiniu.com/)的空间，使用`qrsbox`进行同步。
 
 ### 源码托管
-使用了git@osc，这样将整个Hexo的站点版本管理起来。
+使用了[Gitee](https://gitee.com/)的私有库，Gitee个人开发者可免费创建 1000 个项目（不限公有、私有），提供最多5G的免费代码存储空间。这样将整个博客的源码按版本管理起来。
 
 ## 总结
 对于使用Github Pages和Hexo搭建个人博客，整体配置下来是难度不会大，主要是因为有些东西没有接触过会多花一些时间来理解。另外就是一些博文不一定会有及时的更新，一些操作也是会不一样的，所有对自己来说，能找到原始出处的就尽量用原始内容。
