@@ -7,7 +7,7 @@ tags: [Github Pages, hexo, Git, ssh]
 ## 起因
 之前通过GithubPages和Hexo搭建了个人博客，在[这里](https://l4qiang.me/2016/10/05/hexo/)可看到搭建的方法。现在呢，希望用另一个帐号，管理一个不同内容的[博客](http://goldyear.info)。有了之前的经验，整个搭建的过程还是比较顺利，主要碰到的问题就是代码发布。之前github帐号，是通过Windows的[凭证管理](https://www.howto-connect.com/how-to-use-credential-manager-windows-10/)来实现的，按理说Github配置了多个帐号也是可以管理的。如图：
 
-![crdential.png](git-1/crdential.png)
+![crdential.png](crdential.png)
 
 但是两套博客在发布代码的时候都出现了问题。
 ## 初步方案
@@ -85,7 +85,9 @@ Resolving deltas: 100% (1686/1686), done.
 ```
 测试正常，修改Hexo的_config.yml也能正常发布代码了。
 ## 小结
-虽然一直Git，但对于Git和ssh还是有很多不了解的地方。另外对于不了解的内容，自己也没办法找到关键字来搜索，还是需要多交流才好。
+利用ssh的config功能可以很好的管理Git的多帐号问题，但需要注意修改Git仓库的获取地址。
+
+虽然一直Git，但对于Git和ssh还是有很多不了解的地方。
 
 ## 参考链接
 [Error: Permission denied (publickey)](https://help.github.com/articles/error-permission-denied-publickey/)

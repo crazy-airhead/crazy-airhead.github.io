@@ -117,8 +117,7 @@ deploy:
 
 需要修改Hexo`_config.yml`的内容有:
 
-``` yml
-
+```
 # add caption for iamges
 image_caption:
   enable: true
@@ -129,14 +128,14 @@ prism_plugin:
   theme: 'default'
 
 active_nav: false
-
 ```
 
 需要修改themes配置文件，在对应的模板目录下，也是`_config.yml`。
 
 #### 修改评论
-这里使用了多说，需要修改配置：
-``` yml
+这里使用了多说，需要修改配置
+
+```
 duoshuo_shortname: enderjo
 ``` 
 
@@ -145,6 +144,7 @@ duoshuo_shortname: enderjo
 因为多说停服务，所以这部分内容需要更新，暂时未更新。
 
 ### hexo基本操作
+
 ```
 hexo help
 Usage: hexo <command>
@@ -175,6 +175,7 @@ Global Options:
 For more help, you can use 'hexo help [command]' for the detailed information
 or you can check the docs: http://hexo.io/docs/
 ```
+
 #### 写作
 ```bash
 $ hexo new [layout] <title>
@@ -191,16 +192,21 @@ $ hexo s -p 5000
 可以通过`netstat -ano`来查看占用端口的进程。本机是被Foxit Service给占用了，禁用该进程。
 
 #### 生成与发布
+
 ```bash
 $ hexo generate --deploy
 $ hexo deploy --generate
 ```
+
 简写
+
 ```bash
 $ hexo g -d
 $ hexo d -g
 ```
+
 生成发布时可能会出现找不到用户名的问题，可以修改git配置
+
 ```
 git config --global credential.helper wincred
 ```

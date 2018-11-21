@@ -29,6 +29,8 @@ We will always be thankful to John Resig and the jQuery contributors for creatin
 ## 近年来的Web标准（Web standards in the later years）
 Over the years, GitHub grew into a company with hundreds of engineers and a dedicated team gradually formed to take responsibility for the size and quality of JavaScript code that we serve to web browsers. One of the things that we’re constantly on the lookout for is technical debt, and sometimes technical debt grows around dependenices that once provided value, but whose value dropped over time.
 
+这些年来，Github成长为一家拥有数百名工程师的公司，并逐渐形成了一只专门负责我们运行在Web浏览器上的JavaScript代码的大小和质量的团队。其中一件我们一直在做的事情就是找出技术债务，有时技术债务会随着曾经提供价值的附属物而增长，但其价值会随着时间的推移而下降。
+
 When it came to jQuery, we compared it against the rapid evolution of supported web standard in modern browsers and realized:
 
 The $(selector) pattern can easily be replaced with querySelectorAll();
