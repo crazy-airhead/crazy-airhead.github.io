@@ -3,7 +3,7 @@ title: 使用Github Pages和Hexo搭建个人博客
 toc: true
 date: 2016-10-05 22:36
 categories:
-- git
+- misc
 tags: [Github Pages, hexo]
 ---
 

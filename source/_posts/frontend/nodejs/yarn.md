@@ -7,7 +7,7 @@ categories:
 tags: [nodejs, yarn]
 ---
 ## 说明
-用Hexo来做博客而用到了npm。但npm生成的`node-modules`导次过深，时常打开文件夹时会很慢。
+用Hexo来做博客而用到了npm。但npm生成的`node-modules`层次过深，时常打开文件夹时会很慢。
 后面发现其实yarn也挺好用的，为了不要每次搜索命令，自己做个备份。
 ## 命令
 - 安装
