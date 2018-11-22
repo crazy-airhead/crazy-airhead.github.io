@@ -1,6 +1,8 @@
 ---
 title: ZeroNet安装
 date: 2017-10-26 08:23:47
+categories:
+- zeronet
 tags: [ZeroNet]
 ---
 ## 安装ZeroNet

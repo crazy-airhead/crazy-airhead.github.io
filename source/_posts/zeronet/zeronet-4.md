@@ -1,6 +1,8 @@
 ---
 title: 创建ZeroNet站点
 date: 2017-12-11 20:56:22
+categories:
+- zeronet
 tags: [ZeroNet]
 ---
 

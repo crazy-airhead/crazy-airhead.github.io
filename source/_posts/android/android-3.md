@@ -1,6 +1,8 @@
 ---
 title: 个推透传消息打开指定页面
 date: 2018-08-24 06:40:18
+categories:
+- Android
 tags: [Android, 个推, 透传消息]
 ---
 ## 背景

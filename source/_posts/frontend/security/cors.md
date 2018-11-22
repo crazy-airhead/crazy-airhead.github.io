@@ -1,6 +1,9 @@
 ---
 title: CORS 跨域资源共享
 date: 2018-05-12 11:09:50
+categories:
+- frentend
+- security
 tags: [CORS]
 ---
 

@@ -1,6 +1,9 @@
 ---
 title: (翻译)GitHub.com前端移除jQuery库
 date: 2018-09-08 06:42:30
+categories:
+- frentend
+- news
 tags: [Github, jQuery]
 ---
 > 因本人能力有限，理解不到位，翻译内容可能存在偏差。如果可能，请尽量读[原文](https://githubengineering.com/removing-jquery-from-github-frontend/?utm_source=wanqu.co&utm_campaign=Wanqu+Daily&utm_medium=website)。

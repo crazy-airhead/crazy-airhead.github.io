@@ -1,6 +1,8 @@
 ---
 title: ZeroNet介绍
 date: 2017-10-22 15:33:19
+categories:
+- zeronet
 tags: [ZeroNet]
 ---
 

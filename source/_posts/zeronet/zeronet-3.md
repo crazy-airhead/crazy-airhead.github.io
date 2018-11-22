@@ -1,6 +1,8 @@
 ---
 title: 简易ZeroNet站点
 date: 2017-12-11 20:36:57
+categories:
+- zeronet
 tags: [ZeroNet]
 ---
 ## ZeroHello

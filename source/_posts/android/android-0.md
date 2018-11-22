@@ -1,6 +1,8 @@
 ---
 title: Android开发环境配置
 date: 2018-08-09 21:25:26
+categories:
+- Android
 tags: [Android]
 ---
 Android Studio是Google基于IntelliJ IDEA Community版本开发的定制版本，下载Android Studio需要翻墙，下载后基本按默认方式安装基本可以完成Android的开发环境配置。

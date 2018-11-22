@@ -1,6 +1,8 @@
 ---
 title: Hbuilder 5+SDKAndroid原生工程
 date: 2018-08-09 21:32:12
+categories:
+- Android
 tags: [android, hbuilder]
 ---
 ## 准备

@@ -1,6 +1,8 @@
 ---
 title: Hbuilder Android平台第三方插件开发指导
 date: 2018-08-10 11:25:05
+categories:
+- Android
 tags: [android, hbuilder, plugin]
 ---
 ## 准备

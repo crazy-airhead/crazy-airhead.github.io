@@ -1,6 +1,8 @@
 ---
 title: Camel-第1章 camel简介
 date: 2017-05-02 20:37:19
+categories:
+- Camel
 tags: [Camel]
 ---
 ## 说明

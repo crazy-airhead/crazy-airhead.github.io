@@ -1,6 +1,8 @@
 ---
 title: IPFS私有网络
 date: 2018-08-09 22:53:13
+categories:
+- ipfs
 tags: [ipfs, private network]
 ---
 本文来源[Private Networks](https://github.com/ipfs/go-ipfs/blob/master/docs/experimental-features.md#private-networks)

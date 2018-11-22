@@ -1,6 +1,8 @@
 ---
 title: 站点开发入门
 date: 2017-12-26 20:55:53
+categories:
+- zeronet
 tags: [ZeroNet]
 ---
 

@@ -1,6 +1,8 @@
 ---
 title: IntelliJ IDEA授权
 date: 2018-08-03 20:57:00
+categories:
+- idea
 tags: [idea,java]
 ---
 > 建议购买Jetbrains正版授权。

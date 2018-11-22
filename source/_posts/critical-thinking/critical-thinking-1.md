@@ -1,6 +1,8 @@
 ---
 title: 批判性思考读书笔记1
 date: 2018-01-30 21:56:14
+categories:
+- Critical Thinking
 tags: [Critical Thinking]
 ---
 ## Introduction

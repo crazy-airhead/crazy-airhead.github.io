@@ -1,6 +1,9 @@
 ---
 title: 基于ElasticSearch的OLAP框架思路
 date: 2018-09-28 11:22:43
+categories:
+- ElasticSearch
+- OLAP
 tags: [ElasticSearch, OLAP]
 ---
 # OLAP基本概念

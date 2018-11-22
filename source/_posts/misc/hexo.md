@@ -2,6 +2,8 @@
 title: 使用Github Pages和Hexo搭建个人博客
 toc: true
 date: 2016-10-05 22:36
+categories:
+- git
 tags: [Github Pages, hexo]
 ---
 
@@ -179,6 +181,26 @@ or you can check the docs: http://hexo.io/docs/
 #### 写作
 ```bash
 $ hexo new [layout] <title>
+```
+如果需要更好的进行写作的管理可以使用-p参数
+```bash
+$ hexo new -p zeronet/zernet-1 zeronet-1
+```
+
+#### 分类
+```bash
+$ hexo new page categroies
+```
+在生成的index.md文件下增加type: categroies
+
+#### 标签
+```bash
+$ hexo new page tags
+```
+在生成的index.md文件下增加
+```
+type: tags
+comments: false
 ```
 #### 测试
 ```bash

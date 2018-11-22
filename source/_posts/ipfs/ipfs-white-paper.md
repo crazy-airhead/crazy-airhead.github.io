@@ -1,6 +1,8 @@
 ---
 title: IPFS——内容寻址，版本化，对等的文件系统
 date: 2018-06-03 09:15:54
+categories:
+- ipfs
 tags: [ipfs]
 ---
 本文基于《IPFS - Content Addressed, Versioned, P2P File System(DRAFT 3)》进行翻译，翻译过程中主要参考[IPFS白皮书](https://gguoss.github.io/2017/05/28/ipfs/)，根据自己的理解来做调整。
