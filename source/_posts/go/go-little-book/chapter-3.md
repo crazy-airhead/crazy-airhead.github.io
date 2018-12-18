@@ -1,5 +1,5 @@
 ---
-title: 第三章 - 字典 ，数组和切片
+title: Go Little Book - 第三章 - 字典 ，数组和切片
 toc: true
 p: go/go-little-book/chapter-3
 date: 2018-11-22 10:45:04

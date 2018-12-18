@@ -1,5 +1,5 @@
 ---
-title: 第一章 - 基础
+title: Go Little Book - 第一章 - 基础
 toc: true
 p: go/go-little-book/chapter-1
 date: 2018-11-22 10:03:33

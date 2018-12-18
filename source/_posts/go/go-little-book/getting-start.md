@@ -1,5 +1,5 @@
 ---
-title: 入门
+title: Go Little Book - 入门
 toc: true
 p: go/go-little-book/getting-start
 date: 2018-11-22 10:02:33

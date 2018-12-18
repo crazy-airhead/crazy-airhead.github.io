@@ -1,5 +1,5 @@
 ---
-title: 第二章 - 结构体
+title: Go Little Book - 第二章 - 结构体
 toc: true
 p: go/go-little-book/chapter-2
 date: 2018-11-22 10:26:07

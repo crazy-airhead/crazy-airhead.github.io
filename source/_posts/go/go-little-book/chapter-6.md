@@ -1,5 +1,5 @@
 ---
-title: 第六章 - 并发
+title: Go Little Book - 第六章 - 并发
 toc: true
 p: go/go-little-book/chapter-6
 date: 2018-11-22 10:45:44

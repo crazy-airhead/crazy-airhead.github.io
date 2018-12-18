@@ -1,5 +1,5 @@
 ---
-title: 第四章 - 代码组织和接口
+title: Go Little Book - 第四章 - 代码组织和接口
 toc: true
 p: go/go-little-book/chapter-4
 date: 2018-11-22 10:45:23

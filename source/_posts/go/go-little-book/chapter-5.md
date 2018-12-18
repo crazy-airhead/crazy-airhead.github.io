@@ -1,5 +1,5 @@
 ---
-title: 第五章 - 特点
+title: Go Little Book - 第五章 - 特点
 toc: true
 p: go/go-little-book/chapter-5
 date: 2018-11-22 10:45:32

@@ -1,5 +1,5 @@
 ---
-title: 关于本书
+title: Go Little Book - 关于本书
 toc: true
 p: go/go-little-book/about
 date: 2018-11-22 10:00:00
