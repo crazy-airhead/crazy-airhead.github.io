@@ -72,3 +72,34 @@ IntelliJ IDEA出了新版本(2018.2)，之前使用网上找的LicenseServer地�
 1. 在安装目录找到对应版本的vm配置文件(IDE_HOME\bin\<product>[bits][.exe].vmoptions) 
 2. 将文件拷贝到配置目录(<SYSTEM DRIVE>\Users\<USER ACCOUNT NAME>\.<PRODUCT><VERSION>)的config目录下。如果未生成该目录，运行Idea进行初始配置就可生成。
 3. 增加-javaagent。
+4. 修改配置，随便填位置，可以填自己的需要的内容。
+```json
+{"licenseId":"ThisCrackLicenseId",
+"licenseeName":"随便填",
+"assigneeName":"随便填",
+"assigneeEmail":"邮箱，随便填",
+"licenseRestriction":"描述信息，随便填",
+"checkConcurrentUse":false,
+"products":[
+{"code":"II","paidUpTo":"2099-12-31"},
+{"code":"DM","paidUpTo":"2099-12-31"},
+{"code":"AC","paidUpTo":"2099-12-31"},
+{"code":"RS0","paidUpTo":"2099-12-31"},
+{"code":"WS","paidUpTo":"2099-12-31"},
+{"code":"DPN","paidUpTo":"2099-12-31"},
+{"code":"RC","paidUpTo":"2099-12-31"},
+{"code":"PS","paidUpTo":"2099-12-31"},
+{"code":"DC","paidUpTo":"2099-12-31"},
+{"code":"RM","paidUpTo":"2099-12-31"},
+{"code":"CL","paidUpTo":"2099-12-31"},
+{"code":"PC","paidUpTo":"2099-12-31"},
+{"code":"DB","paidUpTo":"2099-12-31"},
+{"code":"GO","paidUpTo":"2099-12-31"},
+{"code":"RD","paidUpTo":"2099-12-31"}
+],
+"hash":"2911276/0",
+"gracePeriodDays":7,
+"autoProlongated":false}
+```
+## 参考链接
+[https://www.52pojie.cn/thread-832601-1-1.html](https://www.52pojie.cn/thread-832601-1-1.html)

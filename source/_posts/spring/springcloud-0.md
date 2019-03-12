@@ -5,15 +5,19 @@ tags:
 ---
 基于对微服务架构的理解，整理出来以下几下微服务相关的基础概念。
 - 授权认证服务
-- 配置服务
 - 服务注册和发现
+- 配置服务
 - 服务网关
-- 负载均衡
-- 服务调用方式规范
-- 断路器
-- 分布式消息传递
-- 链路跟踪
-- 接口文档自动化与安全
+- 调用链监控
+- 限流熔断
+- 指标监控
+- 健康检查与告警
+- 日志监控
+- 其他
 
-# 授权认证服务
-SpringBoot提供了对OAuth2的一个很好的支持，通过一些简单的扩展就可实现基础的OAuth2的认证。
+# 参考
+(一个可供中小团队参考的微服务架构技术栈)[https://www.infoq.cn/article/china-microservice-technique]
+(微服务基础架构的 5 个关键问题)[https://www.infoq.cn/article/btx6geZA_qwmyr07LbOb]
+
+# 推荐
+(JSkillCloud)[http://jskillcloud.com/]
