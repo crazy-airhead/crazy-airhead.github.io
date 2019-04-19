@@ -1,5 +1,5 @@
 ---
-title: SpringBoot自动配置
+title: SpringBoot-自动配置
 toc: true
 p: spring/springboot-1
 date: 2019-03-12 10:02:21

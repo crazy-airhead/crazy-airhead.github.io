@@ -1,7 +1,11 @@
 ---
-title: SpringCloud基础概念
+title: SpringCloud-基础概念
 date: 2017-12-12 21:06:10
+categories:
+- SpringCloud
 tags:
+- SpringCloud
+- 微服务
 ---
 基于对微服务架构的理解，整理出来以下几下微服务相关的基础概念。
 - 授权认证服务
