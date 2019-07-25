@@ -4,7 +4,9 @@ toc: true
 p: frontend/vue/vue-error-2
 date: 2019-05-13 15:42:18
 categories:
+- vue
 tags:
+- vue
 ---
 ## 背景
 上一篇说到使用vue-element-admin来做后端管理，经同事的介绍可以使用Muse-ui来做前端应用。查看了Muse的官网后，准备踩坑下。

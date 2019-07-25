@@ -210,10 +210,10 @@ DNS1="8.8.8.8"       # DNS服务器
 2019-05-30 09:21:43,252+08 ERROR [org.ovirt.engine.ui.frontend.server.gwt.OvirtRemoteLoggingService] (default task-20) [] Uncaught exception: com.google.gwt.core.client.JavaScriptException: (TypeError) : 对象不支持“addEventListener”属性或方法
 ```
 
-## 遗留问题
+## 清理
 
-1. 无法使用noVNC。
-2. 宿主机无法正常关机，电源灯一直亮。
+1. engine-cleanup
+2. yum remove ovirt-engine
 
 ## 小结
 

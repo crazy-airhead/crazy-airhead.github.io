@@ -4,7 +4,9 @@ toc: true
 p: /frontend/vue/vue-error-1
 date: 2019-05-09 13:36:47
 categories:
+- vue
 tags:
+- vue
 ---
 ## 背景
 

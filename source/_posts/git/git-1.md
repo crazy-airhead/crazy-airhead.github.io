@@ -29,6 +29,7 @@ Host github:enderjo
 ```
 Window中在用户目录`%USERPROFILE%`下。之后使用ssh测试也是通的。
 如下：
+
 ```shell
 $ ssh -T github.com:enderjo
 Hi enderjo! You've successfully authenticated, but GitHub does not provide shell access.
@@ -86,6 +87,24 @@ Receiving objects: 100% (4822/4822), 5.20 MiB | 215.00 KiB/s, done.
 Resolving deltas: 100% (1686/1686), done.
 ```
 测试正常，修改Hexo的_config.yml也能正常发布代码了。
+
+## 增加Mac的配置
+因为之前配置过了Windows，这里我需要把Windows中的ssh配轩先拷贝到Mac上（~./ssh）。
+测试，此时会提示。
+```
+Permissions 0755 for '/Users/airhead/.ssh/github-enderjo/id_rsa' are too open.
+It is required that your private key files are NOT accessible by others.
+This private key will be ignored.
+Load key "/Users/airhead/.ssh/github-enderjo/id_rsa": bad permissions
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+```
+需要修改权限为400（600也可以），注意修改路径
+```
+chmod 400 /Users/airhead/.ssh/github-enderjo/id_rsa
+```
 ## 小结
 利用ssh的config功能可以很好的管理Git的多帐号问题，但需要注意修改Git仓库的获取地址。
 
