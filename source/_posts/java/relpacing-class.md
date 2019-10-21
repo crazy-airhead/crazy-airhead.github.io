@@ -1,5 +1,5 @@
 ---
-title: Jar包类替换
+title: 替换jar包类实现
 toc: true
 p: java/relpacing-class
 date: 2019-09-30 15:33:22
