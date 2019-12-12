@@ -42,7 +42,7 @@ const service = axios.create({
 })
 ```
 
-其实呢这个值应该设置在`.env`中，设轩VUE_APP_BASE_API
+其实呢这个值应该设置在`.env`中，设置VUE_APP_BASE_API
 
 ```properties
 VUE_APP_BASE_API=http://172.26.0.252:8881

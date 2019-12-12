@@ -1,5 +1,5 @@
 ---
-title: 基于Docker部署Nginx并进行反向代理
+title: 基于Docker部署Nginx并配置反向代理
 toc: true
 p: nginx/docker-deploy
 date: 2019-10-21 10:21:48
