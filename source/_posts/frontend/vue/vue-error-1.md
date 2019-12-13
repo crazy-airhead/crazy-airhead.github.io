@@ -69,7 +69,7 @@ Error: error with code: undefined
 
 之后查看了[[vuex-module-decorators](https://championswimmer.in/vuex-module-decorators/)](<https://championswimmer.in/vuex-module-decorators/pages/installation.html>)的基本文档。
 
-回头重新看[issues](<https://github.com/championswimmer/vuex-module-decorators/issues>)，搜索`ERR_ACTION_ACCESS_UNDEFINED`，记录还是不少的，一条条的看。终于看到rawError如何设置。
+回头重新看[issues](<https://github.com/championswimmer/vuex-module-decorators/issues>)，搜索`ERR_ACTION_ACCESS_UNDEFINED`，记录还是不少的，一条条的看，终于看到rawError如何设置。
 
 ```typescript
 @Action({ rawError: true })
@@ -137,7 +137,7 @@ service.interceptors.response.use(
 
 ## 小结
 
-实操才会碰到问题，才能解决问题，看文档时你是不会之后有多少坑的。
+实操才会碰到问题，才能解决问题，看文档时你是不会之后有多少坑的，你以为你会了实际上你还不会。
 
 
 
