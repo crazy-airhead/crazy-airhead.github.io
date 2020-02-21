@@ -57,7 +57,7 @@ module.exports = {
 }
 ```
 
-## 后端修改
+### 后端修改
 
 参考`FakeStaticHandler`(com.jfinal.ext.handler)，实现`FakeIndexHandler`并增加配置。
 
@@ -104,7 +104,7 @@ public class DemoConfig extends JFinalConfig {
 
 ## 小结
 
-Jfinal-undertow可以轻松应对HTML5 History的不同模式，如果是hash模式，可以说是原生直持，如果是History模式，也相对简单。但对于初次使用者来说，可能还是会碰上问题。对于我来说写`FackIndexHandler`时，就忘记处理静态资源和设置`isHandled[0]=true`。
+Jfinal-undertow可以轻松应对HTML5 History的不同模式，如果是hash模式，可以说是原生支持，如果是History模式，也相对简单。但对于初次使用者来说，可能还是会碰上问题。对于我来说写`FackIndexHandler`时，就忘记处理静态资源和设置`isHandled[0]=true`。
 
 希望本文对你有帮助，本文首发[https://l4qiang.me/2020/02/18/java/frontend/](https://l4qiang.me/2020/02/18/java/frontend/)。
 
