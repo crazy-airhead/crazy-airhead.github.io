@@ -15,7 +15,7 @@ tags:
 
 我们采用开发直接上线署的方式来快速开发，但因客户已经开始正式使用我司开发的小程序了，为了减少对客户的影响，现在需要额外部署一套开发环境。这个时候首先想到的就是通过Nginx来进行反向代理，开发环境使用二级域名，（如https://dev.zai500.com），方便开发小程序时候使用。因为中间有一些部署前没有碰过的问题，记录下来，以便后期项目时注意。
 
-##  证书转换
+## 证书转换
 
 公司项目是从SpringBoot转换到jfinal的，所以之前使用的是JKS格式的证书，需要进行转换，当然如果可以重新申请也能获得不同格式的证书。
 
@@ -42,11 +42,11 @@ keytool -importkeystore -srckeystore server.keystore -destkeystore server.p12 -s
 keytool -list -keystore server.jks
 ```
 
-##  创建Nginx容器
+## 创建Nginx容器
 
 因为我们的应用是使用Docker部署的，我们很自然的，使用Docker来部署Nginx。
 
-###  拷贝配置
+### 拷贝配置
 
 ```sh
 docker run -p 80:80 -p 443:443 --name nginx -it nginx:stable
@@ -67,7 +67,7 @@ docker run -p 80:80 -p 443:443 --name nginx -v /data/nginx/conf:/etc/nginx -it n
 
 注意这里不使用文件的直接映射，因为需要配置证书。
 
-###  修改配置
+### 修改配置
 
 #### 将证书文件放置在`conf`目录下
 
@@ -114,6 +114,7 @@ server {
     }
 }
 ```
+
 **注意事项**
 
 - 为减少对外暴露的端口，proxy_pass使用宿主机IP，可能通过`ip addr show docker0` 来查看，其中`inet 172.17.0.1/16`部分可获取。
