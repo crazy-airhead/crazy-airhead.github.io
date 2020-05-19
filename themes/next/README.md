@@ -1,74 +1,76 @@
-<div align="right">Language: :us:
-<a title="Chinese" href="docs/zh-CN/README.md">:cn:</a>
-<a title="Russian" href="docs/ru/README.md">:ru:</a></div>
+<div align="right">
+  Language:
+  🇺🇸
+  <a title="Chinese" href="docs/zh-CN/README.md">🇨🇳</a>
+  <a title="Russian" href="docs/ru/README.md">🇷🇺</a>
+</div>
 
-# <div align="center"><a title="Go to homepage" href="https://theme-next.org"><img align="center" width="56" height="56" src="https://raw.githubusercontent.com/theme-next/hexo-theme-next/master/source/images/logo.svg?sanitize=true"></a> e x T</div>
-
-<p align="center">«NexT» is a high quality elegant <a href="http://hexo.io">Hexo</a> theme. It is crafted from scratch, with love.</p>
+# <div align="center"><a title="NexT website repository" href="https://github.com/next-theme/theme-next-docs"><img align="center" width="56" height="56" src="https://raw.githubusercontent.com/next-theme/hexo-theme-next/master/source/images/logo.svg?sanitize=true"></a> e x T</div>
 
 <p align="center">
-  <a href="https://www.codacy.com/app/theme-next/hexo-theme-next?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=theme-next/hexo-theme-next&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/72f7fe7609c2438a92069f448e5a341a" title="Project Grade"></a>
-  <a href="https://travis-ci.org/theme-next/hexo-theme-next?branch=master"><img src="https://travis-ci.org/theme-next/hexo-theme-next.svg?branch=master" title="Travis CI [Linux]"></a>
-  <a href="https://crwd.in/theme-next"><img src="https://d322cqt584bo4o.cloudfront.net/theme-next/localized.svg" title="Add or improve translation in few seconds!"></a>
-  <a href="https://github.com/theme-next/hexo-theme-next/releases"><img src="https://badge.fury.io/gh/theme-next%2Fhexo-theme-next.svg"></a>
-  <a href="http://hexo.io"><img src="https://img.shields.io/badge/hexo-%3E%3D%203.5.0-blue.svg"></a>
-  <a href="https://github.com/theme-next/hexo-theme-next/blob/master/LICENSE.md"><img src="https://img.shields.io/badge/license-%20AGPL-blue.svg"></a>
+  «NexT» is a high quality elegant <a href="https://hexo.io">Hexo</a> theme. It is crafted from scratch with love.
+<br>
+<br>
+  <a href="https://www.npmjs.com/package/hexo-theme-next"><img src="https://img.shields.io/npm/v/hexo-theme-next?style=flat-square"></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E=10.9.0-green?style=flat-square"></a>
+  <a href="https://hexo.io"><img src="https://img.shields.io/badge/hexo-%3E=4.0.0-blue?style=flat-square&logo=hexo"></a>
+  <a href="https://github.com/next-theme/hexo-theme-next/blob/master/LICENSE.md"><img src="https://img.shields.io/badge/license-%20AGPL-orange?style=flat-square&logo=gnu"></a>
+  <img src="https://img.shields.io/github/workflow/status/next-theme/hexo-theme-next/Linter?style=flat-square">
+<br>
+  <img src="https://user-images.githubusercontent.com/16272760/63487983-da41b080-c4df-11e9-951c-64883a8a5e9b.png">
 </p>
 
 ## Live Preview
 
-* :heart_decoration: Muse scheme: [LEAFERx](https://leaferx.online) | [XiaMo](https://notes.wanghao.work) | [OAwan](https://oawan.me)
-* :six_pointed_star: Mist scheme: [Jeff](https://blog.zzbd.org) | [uchuhimo](http://uchuhimo.me) | [xirong](http://www.ixirong.com)
-* :pisces: Pisces scheme: [Vi](http://notes.iissnan.com) | [Acris](https://acris.me) | [Rainy](https://rainylog.com)
-* :gemini: Gemini scheme: [Ivan.Nginx](https://almostover.ru) | [Raincal](https://raincal.com) | [Dandy](https://dandyxu.me)
-
-More «NexT» examples [here](https://github.com/iissnan/hexo-theme-next/issues/119).
+<p align="center">
+  💟 <a href="https://theme-next.js.org/muse/">Muse</a> | 🔯 <a href="https://theme-next.js.org/mist/">Mist</a> | ♓️ <a href="https://theme-next.js.org/pisces/">Pisces</a> | ♊️ <a href="https://theme-next.js.org">Gemini</a>
+<br>
+<br>
+  More «NexT» examples <a href="https://github.com/next-theme/awesome-next#live-preview">here</a>.
+</p>
 
 ## Installation
 
-Simplest way to install is by cloning whole repository:
+The simplest way to install is to clone the entire repository:
 
-   ```sh
-   $ cd hexo
-   $ git clone https://github.com/theme-next/hexo-theme-next themes/next
-   ```
+```sh
+$ cd hexo
+$ git clone https://github.com/next-theme/hexo-theme-next themes/next
+```
 
 Or you can see [detailed installation instructions][docs-installation-url] if you want any other variant.
 
 ## Plugins
 
-In NexT config now you can find dependencies on each module which was moved to external repositories which can be found by [main organization link](https://github.com/theme-next).
+NexT supports a large number of third-party plugins, which can be easily configured.
 
-For example, you want to use `fancybox` in your site. Go to NexT config and see:
+For example, if you want to enable `pjax` on your site, just set `pjax` to `true` in NexT config file:
 
 ```yml
-# Fancybox
-# Dependencies: https://github.com/theme-next/theme-next-fancybox
-fancybox: false
+# Easily enable fast Ajax navigation on your website.
+# Dependencies: https://github.com/next-theme/pjax
+pjax: true
 ```
 
-Then turn on `fancybox` and go to «Dependencies» link with installation instructions of this module.
+Then visit the «Dependencies» link to get the installation instructions of this module.
 
-### Exceptions
+### Configure CDN
 
-If you use cdn for any plugins, you need to replace your cdn link.
+If you want to specify a CDN link for any plugins, you need to set / update the CDN link.
 
-For example, you want to use `fancybox` and you configured a cdn link. Go to NexT config and see:
+For example, if you want to use `mediumzoom` and load the plugin via CDN, go to NexT config and see:
 
 ```yml
 vendors:
   # ...
   # Some contents...
   # ...
-  fancybox: # Set or update fancybox cdn url.
-  fancybox_css: # Set or update fancybox cdn url.
+  mediumzoom: # Set or update mediumzoom CDN URL.
 ```
-
-Instead of defining [main organization link](https://github.com/theme-next) for updates.
 
 ## Update
 
-You can update to latest master branch by the following command:
+NexT releases new versions every month. You can update to latest master branch by the following command:
 
 ```sh
 $ cd themes/next
@@ -76,57 +78,62 @@ $ git pull
 ```
 
 And if you see any error message during update (something like **«Commit your changes or stash them before you can merge»**), recommended to learn [Hexo data files][docs-data-files-url] feature.\
-Howbeit, you can bypass update errors by `Commit`, `Stash` or `Discard` local changes. See [here](https://stackoverflow.com/a/15745424/5861495) how to do it.
+However, you can bypass update errors by using the `Commit`, `Stash` or `Reset` commands for local changes. See [here](https://stackoverflow.com/a/15745424/5861495) how to do it.
 
-**If you want to update from v5.1.x to v6.0.x, read [here][docs-update-5-1-x-url].**
-
-## Known Bugs
-
-For those who also encounter **«[Error: Cannot find module 'hexo-util'](https://github.com/iissnan/hexo-theme-next/issues/1490)»**, please check your NPM version.
-
-* `> 3`: Still not work? Please remove `node_modules` directory and reinstall using `npm install`.
-* `< 3`: Please add `hexo-util` explicitly via `npm install --save-dev hexo-util` to you site package deps.
-
-## Contributing
-
-Contribution is welcome, feel free to open an issue and fork. Waiting for your pull request.
+**If you want to update from v5.1.x to the latest version, read [this][docs-update-5-1-x-url].**
 
 ## Feedback
 
-* Ask a question on [Stack Overflow][stack-url].
-* Request a new feature on [GitHub][contributing-url].
+* Visit the [Awesome NexT][awesome-next-url] list to share plugins and tutorials with other users.
+* Join our [Gitter][gitter-url] chats.
+* [Add or improve translation][i18n-url] in few seconds.
+* Report a bug in [GitHub Issues][issues-bug-url].
+* Request a new feature on [GitHub][issues-feat-url].
 * Vote for [popular feature requests][feat-req-vote-url].
-* Report a bug in [GitHub Issues][issues-url].
-* Join to our [Gitter][gitter-url] / [Riot][riot-url] / [Telegram][t-chat-url] chats.
-* Follow us with [Telegram Channel][t-news-url] for latest news.
 
-## Third party applications
+## Contributing
 
-* :triangular_flag_on_post: <a title="Hexo Markdown Editor" href="https://github.com/zhuzhuyule/HexoEditor" target="_blank">HexoEditor</a>
+We welcome you to join the development of NexT. Please see [contributing document][contributing-document-url]. 🤗
 
-[browser-image]: https://img.shields.io/badge/browser-%20chrome%20%7C%20firefox%20%7C%20opera%20%7C%20safari%20%7C%20ie%20%3E%3D%209-lightgrey.svg
-[browser-url]: https://www.browserstack.com
+Also, we welcome Issue or PR to our [official-plugins][official-plugins-url].
 
-[stack-url]: https://stackoverflow.com/questions/tagged/theme-next
-[contributing-url]: https://github.com/theme-next/hexo-theme-next/blob/master/.github/CONTRIBUTING.md
-[feat-req-vote-url]: https://github.com/theme-next/hexo-theme-next/issues?q=is%3Aopen+is%3Aissue+label%3Afeature-request+sort%3Areactions-%2B1-desc
-[issues-url]: https://github.com/theme-next/hexo-theme-next/issues
+## Contributors
 
-[gitter-url]: https://gitter.im/theme-next
-[riot-url]: https://riot.im/app/#/room/#NexT:matrix.org
-[t-chat-url]: https://t.me/theme_next
-[t-news-url]: https://t.me/theme_next_news
+- [iissnan/hexo-theme-next](https://github.com/iissnan/hexo-theme-next/graphs/contributors)
+- [theme-next/hexo-theme-next](https://github.com/theme-next/hexo-theme-next/graphs/contributors)
+- [next-theme/hexo-theme-next](https://github.com/next-theme/hexo-theme-next/graphs/contributors)
 
-<!--[rel-image]: https://img.shields.io/github/release/theme-next/hexo-theme-next.svg-->
-<!--[rel-image]: https://badge.fury.io/gh/theme-next%2Fhexo-theme-next.svg-->
-<!--[mnt-image]: https://img.shields.io/maintenance/yes/2018.svg-->
+## Thanks
 
-[download-latest-url]: https://github.com/theme-next/hexo-theme-next/archive/master.zip
-[releases-latest-url]: https://github.com/theme-next/hexo-theme-next/releases/latest
-<!--[releases-url]: https://github.com/theme-next/hexo-theme-next/releases-->
-[tags-url]: https://github.com/theme-next/hexo-theme-next/tags
-[commits-url]: https://github.com/theme-next/hexo-theme-next/commits/master
+<p align="center">
+  «NexT» send special thanks to these great services that sponsor our core infrastructure:
+<br>
+<br>
+  <a href="https://github.com"><img align="center" width="100" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png"></a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://www.netlify.com"><img align="center" width="150" src="https://cdn.netlify.com/15ecf59b59c9d04b88097c6b5d2c7e8a7d1302d0/1b6d6/img/press/logos/full-logo-light.svg"></a>
+<br>
+<br>
+  <sub>GitHub allows us to host the Git repository, Netlify allows us to distribute the documentation.</sub>
+<br>
+<br>
+  <a href="https://crowdin.com"><img align="center" width="180" src="https://support.crowdin.com/assets/logos/crowdin-logo1-small.png"></a>
+<br>
+<br>
+  <sub>Crowdin allows us to translate conveniently the documentation.</sub>
+</p>
 
-[docs-installation-url]: https://github.com/theme-next/hexo-theme-next/blob/master/docs/INSTALLATION.md
-[docs-data-files-url]: https://github.com/theme-next/hexo-theme-next/blob/master/docs/DATA-FILES.md
-[docs-update-5-1-x-url]: https://github.com/theme-next/hexo-theme-next/blob/master/docs/UPDATE-FROM-5.1.X.md
+[docs-installation-url]: https://theme-next.js.org/docs/getting-started/installation.html
+[docs-data-files-url]: https://theme-next.js.org/docs/getting-started/configuration.html
+[docs-update-5-1-x-url]: https://theme-next.js.org/docs/getting-started/update-from-v5.html
+
+[gitter-url]: https://gitter.im/hexo-next
+[i18n-url]: https://i18n.theme-next.org
+
+[awesome-next-url]: https://github.com/next-theme/awesome-next
+[issues-bug-url]: https://github.com/next-theme/hexo-theme-next/issues/new?assignees=&labels=Bug&template=bug-report.md
+[issues-feat-url]: https://github.com/next-theme/hexo-theme-next/issues/new?assignees=&labels=Feature+Request&template=feature-request.md
+[feat-req-vote-url]: https://github.com/next-theme/hexo-theme-next/issues?q=is%3Aopen+is%3Aissue+label%3A%22Feature+Request%22
+
+[contributing-document-url]: https://github.com/next-theme/hexo-theme-next/blob/master/.github/CONTRIBUTING.md
+[official-plugins-url]: https://github.com/next-theme
