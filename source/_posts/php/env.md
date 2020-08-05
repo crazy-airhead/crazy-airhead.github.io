@@ -1,5 +1,5 @@
 ---
-title: 使用VSCode+Docker搭建PHP远程开发环境搭建
+title: 使用VSCode+Docker搭建PHP远程开发环境
 toc: true
 p: php/env
 date: 2020-05-19 14:03:51
@@ -18,7 +18,7 @@ tags:
 - 随时随地办公问题(具体参看[code-server](https://github.com/cdr/code-server))。
 - 减少本地环境污染，PHP与Node版本可能冲突(dyld: Library not loaded: /usr/local/opt/icu4c/lib/libicui18n.64.dylib)。
 - 减少硬盘使用。
-
+<!-- more -->
 ## 基础环境
 
 ### 本地
@@ -52,7 +52,7 @@ tags:
 - 测试
 
 以上为使用VSCode+Docker搭建PHP远程开发环境搭建的主要过程。
-<!-- more -->
+
 ## 配置SSH远程登录
 
 在本机上生成密钥对，然后把公钥放到服务器相应用户的`~/.ssh`目录，开启服务器SSH配置。
@@ -234,7 +234,7 @@ docker run -p 80:80 --name nginx -v /data/nginx/conf:/etc/nginx -d nginx:stable
 ```json
 {
     "docker.host": "ssh://root@ip",
-    "terminal.integrated.shellArgs.osx": ["-s", "ssh-add ~./ssh/goldsyear-aliyun"]
+    "terminal.integrated.shellArgs.osx": ["-s", "ssh-add ~/.ssh/goldsyear-aliyun/id_rsa"]
 }
 ```
 
@@ -269,8 +269,8 @@ wget http://php.goldsyear.com/index.php -O index.html
 
 - [管理多个Github帐号](https://l4qiang.me/2018/09/19/git/git-1/)
 
-- [Developing inside a Container]([https://code.visualstudio.com/docs/remote/containers](https://code.visualstudio.com/docs/remote/containers)
+- [Developing inside a Container](https://code.visualstudio.com/docs/remote/containers)
 
-- [避坑！用 Docker 搞定 PHP 开发环境搭建]([https://www.php.cn/php-weizijiaocheng-427163.html](https://www.php.cn/php-weizijiaocheng-427163.html)
+- [避坑！用 Docker 搞定 PHP 开发环境搭建](https://www.php.cn/php-weizijiaocheng-427163.html)
 
 
