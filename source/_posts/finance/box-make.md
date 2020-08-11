@@ -10,7 +10,8 @@ tags:
 
 ## 说明
 
-最少必要知识（MAKE：Minimal Actionable Knowledge and Experience）
+- 最少必要知识（MAKE：Minimal Actionable Knowledge and Experience）
+- 入群后可以按如下顺序进行课程的学习
 
 ### 第一梯度(一本书+26篇) 
 

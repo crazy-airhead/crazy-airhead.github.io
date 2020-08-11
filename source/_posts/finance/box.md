@@ -40,7 +40,7 @@ tags:
 
 - 启动Mixin客户端
 
-  ![img](https://xuexi-courses-guide.firesbox.com/res/app-launch.png)
+  ![shadow-img](https://xuexi-courses-guide.firesbox.com/res/app-launch.png)
 
 - 点击右上角搜索按钮，输入群号：7000102069
 

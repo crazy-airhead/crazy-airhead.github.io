@@ -11,11 +11,11 @@ tags:
 - docker
 ---
 
-# 背景
+## 背景
 
 因为需要部署一台新的测试机，之前知道apline比较小巧，于是选用了java:jdk8-apline的基础镜像。但我们在部署Jfinal项目(采用undertow文件夹方式部署，通过start.sh启动并后台运行)的过程碰到一些问题。小巧注定很多组件需要自己安装。
 
-# 问题
+## 问题
 
 - 编写好Dockerfile后，无法启动容器
 
@@ -47,7 +47,16 @@ tags:
   > apk add font-adobe-100dpi ttf-dejavu fontconfig
   > ```
 
-# 镜像
+- 下载源速度慢
+
+  > 使用阿里云镜像加速
+  >
+  > ```shell
+  > echo http://mirrors.aliyun.com/alpine/v3.7/main/ >> /etc/apk/repositories
+  > apk update
+  > ```
+
+## 镜像
 
 最后的Dockerfile，需要增加的处理如下：
 
@@ -55,6 +64,7 @@ tags:
 FROM daocloud.io/library/java:8-jdk-alpine
 LABEL maintainer="L4qiang@gmail.com"
 
+RUN echo http://mirrors.aliyun.com/alpine/v3.7/main/ >> /etc/apk/repositories
 RUN apk update
 RUN apk add bash tzdata font-adobe-100dpi ttf-dejavu fontconfig
 RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime

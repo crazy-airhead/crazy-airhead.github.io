@@ -17,13 +17,13 @@ Maven用得好好的，为什么要换Gradle呢？因为Maven不够灵活，就�
 - SpringBoot： 2.3.1.RELEASE
 ## 转换
 其实转换的过程是非常简单的：一条命令搞定，之后使用IDEA打开build.gradle打开就可以了。
-```
+```shell
 gradle init --type pom
 ```
 但是，我们打开项目之后发现，Maven的parent pom，没有起作用，各个功能模块的版本是独立管理的。
 
 ## 解决
-基于SpringBoot开发，有什么不懂就看SpringBoot他是如何做的就好。我们会发现其实SpringBoot提供了`io.spring.dependency-management`插件，让我们可以像在Maven中的方式统一管理第三方包。官网说明在[这里](https://docs.spring.io/dependency-management-plugin/docs/current-SNAPSHOT/reference/html/)。
+基于SpringBoot开发，有什么不懂就看SpringBoot他是如何做的就好。我们发现其实SpringBoot提供了`io.spring.dependency-management`插件，让我们可以像在Maven中的方式统一管理第三方包。官网说明在[这里](https://docs.spring.io/dependency-management-plugin/docs/current-SNAPSHOT/reference/html/)。
 
 主要的思路是
 - 维护统一的parent pom，依然使用maven管理。
@@ -31,7 +31,7 @@ gradle init --type pom
 - 子项目就不需要编写增加版本号了。
 以下为部分Gradle代码
 ### 父级build.gradle的配置
-```
+```groovy
 buildscript {
 #变量定义
     ext {
@@ -76,7 +76,7 @@ subprojects {
 }
 ```
 ### 子项目build.gradle的配置
-```
+```groovy
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
@@ -99,7 +99,7 @@ Gradle读取setting文件的顺序是：USER_HOME/.m2 >M2_HOME/config > USER_HOM
 
 ### SpringBoot项目打包
 SpringBoot项目需要使用`org.springframework.boot`插件进行打包，否则可能找不到主类。
-```
+```groovy
 jar.enabled = true
 apply plugin: 'org.springframework.boot'
 ```
