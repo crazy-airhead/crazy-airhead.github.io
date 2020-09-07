@@ -54,7 +54,8 @@ tags:
 
   ![img](https://xuexi-courses-guide.firesbox.com/res/auth.png)
 
-- “BOX定投践行群”是一个私有群组，请使用如下邀请码加入6DYMBFP061
+- “BOX定投践行群”是一个私有群组，请使用如下邀请码加入
+6DYMBFP061
 
 - 成功加入后，你会看到群主页，并且收到欢迎消息
 

@@ -89,7 +89,7 @@ Resolving deltas: 100% (1686/1686), done.
 测试正常，修改Hexo的_config.yml也能正常发布代码了。
 
 ## 增加Mac的配置
-因为之前配置过了Windows，这里我需要把Windows中的ssh配置先拷贝到Mac上（~./ssh）。
+因为之前配置过了Windows，这里我需要把Windows中的ssh配置先拷贝到Mac上（~/.ssh）。
 测试，此时会提示。
 ```
 Permissions 0755 for '/Users/airhead/.ssh/github-enderjo/id_rsa' are too open.

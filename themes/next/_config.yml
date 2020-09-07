@@ -384,7 +384,7 @@ bookmark:
 # `Follow me on GitHub` banner in the top-right corner.
 github_banner:
   enable: true
-  permalink: https://github.com/enderjo
+  permalink: https://github.com/crazy-airhead
   title: Follow me on GitHub
 
 
@@ -631,11 +631,11 @@ livere_uid: # <your_uid>
 # For more information: https://gitalk.github.io, https://github.com/gitalk/gitalk
 gitalk:
   enable: true
-  github_id: enderjo
-  repo: enderjo.github.io
+  github_id: crazy-airhead
+  repo: crazy-airhead.github.io
   client_id: 2932e376382d4c4a1dba
   client_secret: 01d2eef214d2f8f9e5c65a19790794d3734775a6
-  admin_user: enderjo
+  admin_user: crazy-airhead
   distraction_free_mode: false # Facebook-like distraction free mode
   # Gitalk's display language depends on user's browser or system environment
   # If you want everyone visiting your site to see a uniform language, you can set a force language value

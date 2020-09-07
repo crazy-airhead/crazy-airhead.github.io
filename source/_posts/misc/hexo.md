@@ -33,6 +33,7 @@ Published GitHub Pages sites may be no larger than 1 GB.
 **注意**如果用户名包含大小写时，需要按用户名的全部小写来创建仓库名。
 
 ## 绑定域名
+在没有配置CNAME之前可以之接填写*enderjo.github.io*的域名，会自动解析。
 对于Github来说，绑定域名是非常简单的。创建一个`CNAME`的文件，写上域名，上传就可以了。可以在`blog`的`source`放置该文件，生成发布时会被生成到`pubic`目录下，避免因`hexo clean`重新生成文件时引起域名不可解析问题。
 
 ``` bash
@@ -40,28 +41,15 @@ l4qiang.me
 ```
 
 ### 域名解析
-对我来说，还有些没有触过的东西就是域名解析配置。上阿里云买了`l4qiang.me`的域名，这个没有什么特别好说的。
-
-注册DNSpod，添加域名，在没有配置CNAME之前可以之接填写*enderjo.github.io*的域名，会自动解析。
-可以看到一条A记录和两条NS记录，记录下NS记录，修改DNS时会用到。
-
-#### 开启HTTPS
-参考[这里](https://blog.github.com/2018-05-01-github-pages-custom-domains-https/)，[这里](https://help.github.com/articles/setting-up-an-apex-domain/)开启HTTPS。简要的说，就是自定义域名解析增加如下A记录中的一个就自动开启了。
+我是在阿里云买的`l4qiang.me`域名，也就可以使用阿里云的域名解析服务。
+简要的说，就是自定义域名解析增加如下4条A记录中的一个就自动开启了。参考文档[Managing a custom domain for your GitHub Pages site](https://docs.github.com/en/github/working-with-github-pages/managing-a-custom-domain-for-your-github-pages-site)
 - 185.199.108.153
 - 185.199.109.153
 - 185.199.110.153
 - 185.199.111.153
 
-如博客不能登录，有可能是github更改了空间服务的ip地址，需要及时更新。
-
-### DNS设置
-个人感觉，阿里云的管理页太杂了，好几次都找不到配置页面。
-
-登录后，进控制台，选产品与服务中的域名。可以看到自己已经购买的域名，点击管理，在DNS服务器选项中，修改DNS。
-设置为：
-
-	* f1g1ns1.dnspod.net
-	* f1g1ns2.dnspod.net
+### 开启HTTPS
+参考[这里](https://blog.github.com/2018-05-01-github-pages-custom-domains-https/)，[Securing your GitHub Pages site with HTTPS](https://docs.github.com/en/github/working-with-github-pages/securing-your-github-pages-site-with-https开启HTTPS。
 
 以上已经能通过域名正常访问博客了。
 
