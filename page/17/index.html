@@ -171,6 +171,224 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/04/16/es/sniff/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/04/16/es/sniff/" class="post-title-link" itemprop="url">client.transport.sniff配置引起的问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-04-16 11:38:18 / 修改时间：14:27:30" itemprop="dateCreated datePublished" datetime="2019-04-16T11:38:18+08:00">2019-04-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>之前基于Docker搭建了ES环境，也能正常使用，这周突然程序能正常启动，但实际发生ES调用时出错，错误如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">org.elasticsearch.client.transport.NoNodeAvailableException: None of the configured nodes are available: [&#123;#transport#-1&#125;&#123;zYhliWDFSRGpbaB371OV-g&#125;&#123;172.26.0.251&#125;&#123;172.26.0.251:9300&#125;]</span><br><span class="line">	at org.elasticsearch.client.transport.TransportClientNodesService.ensureNodesAreAvailable(TransportClientNodesService.java:<span class="number">349</span>)</span><br><span class="line">	at org.elasticsearch.client.transport.TransportClientNodesService.execute(TransportClientNodesService.java:<span class="number">247</span>)</span><br><span class="line">	at org.elasticsearch.client.transport.TransportProxyClient.execute(TransportProxyClient.java:<span class="number">60</span>)</span><br><span class="line">	at org.elasticsearch.client.transport.TransportClient.doExecute(TransportClient.java:<span class="number">381</span>)</span><br><span class="line">	at org.elasticsearch.client.support.AbstractClient.execute(AbstractClient.java:<span class="number">407</span>)</span><br><span class="line">	at org.elasticsearch.client.support.AbstractClient.execute(AbstractClient.java:<span class="number">396</span>)</span><br><span class="line">	at org.elasticsearch.action.ActionRequestBuilder.execute(ActionRequestBuilder.java:<span class="number">46</span>)</span><br><span class="line">	at org.elasticsearch.action.ActionRequestBuilder.get(ActionRequestBuilder.java:<span class="number">53</span>)</span><br><span class="line">	...</span><br></pre></td></tr></table></figure>
+<p>现在将问题做下记录，主要是<code>client.transport.sniff</code>的使用问题。</p>
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>基于Docker的ES，<a href="https://www.elastic.co/guide/en/elasticsearch/reference/5.1/docker.html#docker-cli-run-prod-mode?tdsourcetag=s_pctim_aiomsg" target="_blank" rel="noopener">官网</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name elasticsearch -p 9200:9200 -p 9300:9300 -e &quot;discovery.type&#x3D;single-node&quot; elasticsearch:6.5.4</span><br></pre></td></tr></table></figure>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>客户端代码基本参照了ES<a href="https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/transport-client.html" target="_blank" rel="noopener">官网</a>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span>(destroyMethod = <span class="string">"close"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> TransportClient <span class="title">client</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">	TransportClient client = <span class="keyword">new</span> PreBuiltTransportClient(settings());</span><br><span class="line"></span><br><span class="line">	String clusterNodes = elasticsearchProperties.getClusterNodes();</span><br><span class="line">	Assert.hasText(clusterNodes, <span class="string">"[Assertion failed] clusterNodes settings missing."</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (String clusterNode : split(clusterNodes, ElasticsearchProperties.COMMA)) &#123;</span><br><span class="line">		String hostName = substringBeforeLast(clusterNode, ElasticsearchProperties.COLON);</span><br><span class="line">		String port = substringAfterLast(clusterNode, ElasticsearchProperties.COLON);</span><br><span class="line">		Assert.hasText(hostName, <span class="string">"[Assertion failed] missing host name in 'clusterNodes'"</span>);</span><br><span class="line">		Assert.hasText(port, <span class="string">"[Assertion failed] missing port in 'clusterNodes'"</span>);</span><br><span class="line">		logger.info(<span class="string">"adding transport node : "</span> + clusterNode);</span><br><span class="line">		client.addTransportAddress(<span class="keyword">new</span> TransportAddress(InetAddress.getByName</span><br><span class="line">				(hostName), Integer.valueOf(port)));</span><br><span class="line">	&#125;</span><br><span class="line">	client.connectedNodes();</span><br><span class="line">	<span class="keyword">return</span> client;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> Settings <span class="title">settings</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> Settings.builder()</span><br><span class="line">			.put(<span class="string">"cluster.name"</span>, elasticsearchProperties.getClusterName())</span><br><span class="line">			.put(<span class="string">"client.transport.sniff"</span>, elasticsearchProperties.getClientTransportSniff())</span><br><span class="line">			.put(<span class="string">"client.transport.ignore_cluster_name"</span>, elasticsearchProperties</span><br><span class="line">					.getClientIgnoreClusterName())</span><br><span class="line">			.put(<span class="string">"client.transport.ping_timeout"</span>, elasticsearchProperties</span><br><span class="line">					.getClientPingTimeout())</span><br><span class="line">			.put(<span class="string">"client.transport.nodes_sampler_interval"</span>, elasticsearchProperties</span><br><span class="line">					.getClientNodesSamplerInterval())</span><br><span class="line">			.build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="问题处理"><a href="#问题处理" class="headerlink" title="问题处理"></a>问题处理</h2><p>因为之前可以访问，例常的检查了cluster.name和配置的服务器和端口，一切正常。</p>
+<p>经过一些搜索后发现这篇文章，<a href="https://discuss.elastic.co/t/transport-client-nonodeavailableexception-none-of-the-configured-nodes-are-available/92000/2" target="_blank" rel="noopener">NoNodeAvailableException</a>，其中提到了配置了<code>client.transport.sniff</code>为<code>true</code>。</p>
+<p>检查代码，自己默认配置也是<code>true</code>。调整<code>client.transport.sniff</code>为<code>false</code>，一切正常了。</p>
+<h2 id="分析及处理"><a href="#分析及处理" class="headerlink" title="分析及处理"></a>分析及处理</h2><p><code>client.transport.sniff</code>的作用是：使客户端去嗅探整个集群的状态，把集群中其它机器的ip地址加到客户端中。这样做的好处是，一般你不用手动设置集群里所有集群的ip到连接客户端，它会自动帮你添加，并且自动发现新加入集群的机器。</p>
+<p>但使用该参数时有个注意事项。当ES服务器监听（publish_address ）使用内网服务器IP，而访问（bound_addresses ）使用外网IP时，不要设置client.transport.sniff为true。不设置client.transport.sniff时，默认为false(关闭客户端去嗅探整个集群的状态)。因为在自动发现时会使用内网IP进行通信，导致无法连接到ES服务器。因此此时需要直接使用addTransportAddress方法把集群中其它机器的ip地址加到客户端中。<br>然后检查了下Docker的启动日志：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[2019-04-16T05:45:56,427][INFO ][o.e.n.Node               ] [ehrCloud] starting ...</span><br><span class="line">[2019-04-16T05:45:56,648][INFO ][o.e.t.TransportService   ] [ehrCloud] publish_address &#123;172.17.0.3:9300&#125;, bound_addresses &#123;0.0.0.0:9300&#125;</span><br><span class="line">[2019-04-16T05:45:56,796][INFO ][o.e.x.s.t.n.SecurityNetty4HttpServerTransport] [ehrCloud] publish_address &#123;172.17.0.3:9200&#125;, bound_addresses &#123;0.0.0.0:9200&#125;</span><br><span class="line">[2019-04-16T05:45:56,797][INFO ][o.e.n.Node               ] [ehrCloud] started</span><br></pre></td></tr></table></figure>
+<p>之后做了如下尝试，修改配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">network.public_host: 172.26.0.251</span><br></pre></td></tr></table></figure>
+<p>重新运行程序，此时无论<code>client.transport.sniff</code>的配置为何，都可正常使用。</p>
+<p>不过为什么之前可以，现在不行这个问题还是不清楚。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://wenchao.ren/2019/01/org-elasticsearch-client-transport-NoNodeAvailableException-None-of-the-configured-nodes-are-available/" target="_blank" rel="noopener">ES版本问题</a></p>
+<p><a href="https://blog.csdn.net/J_bean/article/details/79507559?tdsourcetag=s_pctim_aiomsg" target="_blank" rel="noopener">elasticsearch中client.transport.sniff的使用方法和注意事项</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/03/12/spring/springboot-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/03/12/spring/springboot-2/" class="post-title-link" itemprop="url">SpringBoot与Jfinal合体</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-03-12 14:54:27 / 修改时间：21:13:36" itemprop="dateCreated datePublished" datetime="2019-03-12T14:54:27+08:00">2019-03-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringBoot/" itemprop="url" rel="index"><span itemprop="name">SpringBoot</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringBoot/Jfinal/" itemprop="url" rel="index"><span itemprop="name">Jfinal</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringBoot/Jfinal/Kotlin/" itemprop="url" rel="index"><span itemprop="name">Kotlin</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>刚接触Jfinal时就对ActiveRecord印象深刻，但公司整体使用SpringBoot框架，使用不多，但一直保持着关注。当Jfinal推出Model生成器，SQL管理和动态生成之后，拿了个项目来练手，找到了淋漓尽致的感觉，惊呼顺畅。如果你使用过Spring Data JPA，只要一对比，你会发现过多的封装就是在挖坑。哦对，就是那个KISS(Keep it Simple and Stupid)原则，异或奥卡姆剃刀原理（如无必要，勿增实体），概念越多，越复杂，越手足无措。回归本质你会得到更多，是的Less Is More。而此时公司项目正在进行一次代码重构，在SpringBoot框架不变的前提下（体系相对完善，有积累），如果能集成Jfinal的ActiveRecord快速搞定增删改查，开发就会变得更简单。是的，我们还在开始使用Kotlin，也是遵循简单，快速原则。</p>
+<p>我把整个的集成过程称为SpringBoot和Jfinal的合体，主要分为3部分1.集成ActiveRecord，2.实现代码生成。3.使用方式。</p>
+<h2 id="集成ActiveRecord"><a href="#集成ActiveRecord" class="headerlink" title="集成ActiveRecord"></a>集成ActiveRecord</h2><p>参考Jfinal的官方文档<a href="https://www.jfinal.com/doc/5-15" target="_blank" rel="noopener">独立使用ActiveRecord</a>。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ActiveRecordTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    DruidPlugin dp = <span class="keyword">new</span> DruidPlugin(<span class="string">"localhost"</span>, <span class="string">"userName"</span>, <span class="string">"password"</span>);</span><br><span class="line">    ActiveRecordPlugin arp = <span class="keyword">new</span> ActiveRecordPlugin(dp);</span><br><span class="line">    arp.addMapping(<span class="string">"blog"</span>, Blog<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 与 jfinal web 环境唯一的不同是要手动调用一次相关插件的start()方法</span></span><br><span class="line">    dp.start();</span><br><span class="line">    arp.start();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 通过上面简单的几行代码，即可立即开始使用</span></span><br><span class="line">    <span class="keyword">new</span> Blog().set(<span class="string">"title"</span>, <span class="string">"title"</span>).set(<span class="string">"content"</span>, <span class="string">"cxt text"</span>).save();</span><br><span class="line">    Blog.dao.findById(<span class="number">123</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到，基本上是可以直接使用，在SpringBoot的中，我们只要把ActiveRecordPlugin用一个Bean对象的方式来创建就可以了。<br>于是，有如下代码（当然还有一些配套工作，这里省略了）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function">Public ActiveRecordPlugin <span class="title">activeRecordPlugin</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        DruidPlugindruidPlugin = druidPlugin();</span><br><span class="line">        druidPlugin.start();</span><br><span class="line">        </span><br><span class="line">        ActiveRecordPluginarp = <span class="keyword">new</span> ActiveRecordPlugin(druidPlugin);</span><br><span class="line">        arp.setTransactionLevel(Connection.TRANSACTION_READ_COMMITTED);</span><br><span class="line">        arp.setShowSql(<span class="keyword">false</span>);</span><br><span class="line">        </span><br><span class="line">        arp.getEngine().setSourceFactory(newClassPathSourceFactory());</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> arp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="实现代码生成"><a href="#实现代码生成" class="headerlink" title="实现代码生成"></a>实现代码生成</h2><p>IDEA可以为JPA后成Entity实体类代码，如果了解Groovy，还可对生成的代码进行一些调整。而Jfinal在框架上就提供了Model的自动生成，对于表更新比较频繁时非常好用。然后查看了下Jfinal的代码生成逻辑，发现了更多的可玩性，于是就不满足于只生成Model了，我们可以通过Jfinal的Enjoy模板引擎，生成基于整个数据库的整个Module（这里指MVC，而非整个工程，工程可通过IDEA的SpringBoot向导来创建），同时为单表提供基本的增删改查（单个查询和分页查询）等基础接口。“有表就有服务”，就是这样简单，之后我们可以更专注于复杂业务逻辑的开发。<br>代码生成逻辑主要分为代码目录结构设计，代码生成逻辑和代码模板修改。</p>
+<h3 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h3><p>SpringBoot的一个原则，是约定大于配置，而微服务架构也强调统一原则，所以必要的目录结构设计或者规范是需要的。</p>
+<ol>
+<li>所有Model统一放在common/model下。</li>
+<li>按业务名优先原则，也就是”业务名/controller”，”业务名/serivce”的方式。</li>
+<li>以ModelNameEndpoint，ModelNameService方式来命名。</li>
+</ol>
+<h3 id="代码逻辑"><a href="#代码逻辑" class="headerlink" title="代码逻辑"></a>代码逻辑</h3><p>生成代码的逻辑，主要过程生成Model（同时建构业务分组表信息），生成通用SQL模板，根据不同业务生成Controller和Serivce。我的做法是把Jfinal里面的BaseModelGenerator拷贝出来，做为自己的基类，为不同的模块生成不同的子类，做简单的目录规划和生成模板的调整就可以了，这部分逻辑不复杂。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*生成MVC</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function">Public <span class="keyword">void</span> <span class="title">generate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        generateModel();</span><br><span class="line">        genSql();</span><br><span class="line"></span><br><span class="line">        groupTables.forEach((groupName, dbTables) -&gt; &#123;</span><br><span class="line">                genEndpoint(groupName,phrMetaBuilder);</span><br><span class="line">                genService(groupName,phrMetaBuilder);</span><br><span class="line">        &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="业务分组信息"><a href="#业务分组信息" class="headerlink" title="业务分组信息"></a>业务分组信息</h3><p>我这里讲下业务分组信息的提取，继承MetaBuilder重写buildTableNames方法，除了供本生的Model生成，就是提取出来分组表信息，供Controller和Sevice生成器使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function">Protected <span class="keyword">void</span> <span class="title">buildTableNames</span><span class="params">(List&lt;TableMeta&gt; ret)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(groupTables == <span class="keyword">null</span> || groupTables.size() == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">super</span>.buildTableNames(ret);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        ResultSet rs = getTablesResultSet();</span><br><span class="line">        Kv kv = Kv.create();</span><br><span class="line">        While (rs.next()) &#123;</span><br><span class="line">                StringtableName=rs.getString(<span class="string">"TABLE_NAME"</span>);</span><br><span class="line">                Stringremarks=rs.getString(<span class="string">"REMARKS"</span>);</span><br><span class="line">                kv.set(tableName,remarks);</span><br><span class="line">        &#125;</span><br><span class="line">        rs.close();</span><br><span class="line">        </span><br><span class="line">        groupTables.forEach((group, tables) -&gt; &#123;</span><br><span class="line">                ArrayList&lt;TableMeta&gt; tableMetas = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                String[] tableList = tables.split(<span class="string">","</span>);</span><br><span class="line">                <span class="keyword">for</span> (Stringtable Name : tableList) &#123;</span><br><span class="line">                        TableMetatableMeta = <span class="keyword">new</span> TableMeta();</span><br><span class="line">                        tableMeta.name = tableName;</span><br><span class="line">                        tableMeta.remarks = kv.getStr(tableName);</span><br><span class="line">                        tableMeta.modelName = buildModelName(tableName);</span><br><span class="line">                        tableMeta.baseModelName = buildBaseModelName(tableMeta.modelName);</span><br><span class="line">                        tableMetas.add(tableMeta);</span><br><span class="line">                &#125;</span><br><span class="line">        </span><br><span class="line">                ret.addAll(tableMetas);</span><br><span class="line">                groupTableMeta.put(group,tableMetas);</span><br><span class="line">        &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="代码模板"><a href="#代码模板" class="headerlink" title="代码模板"></a>代码模板</h3><p>代码模板基本的实现方式就是通过一个工程，书写出来实际可用的代码，之后改成.jf。放到模板路径下。同时根据表信息，调整模板内容。其间不断的生成加修改就好。这里只截取部分代码。</p>
+<h2 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h2><h3 id="创建工程"><a href="#创建工程" class="headerlink" title="创建工程"></a>创建工程</h3><p>使用IDEA向导创建SpringBoot工程，注意使用Maven（Gradle的父POM配置方式还没搞定），调整POM文件（如引入父POM，增加依赖等）。</p>
+<h3 id="生成代码"><a href="#生成代码" class="headerlink" title="生成代码"></a>生成代码</h3><p>在生成的Test目录，增加如下代码，运行生成代码。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(<span class="string">SpringRunner:</span>:<span class="class"><span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">SpringBootTest</span></span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">SvrPhrApplicationTests</span> &#123;</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> val <span class="string">phrModuleGenerator:</span> PhrModuleGenerator? = null</span><br><span class="line"></span><br><span class="line">    @Test</span><br><span class="line">    fun contextLoads() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Test</span><br><span class="line">    fun genModule() &#123;</span><br><span class="line">        phrModuleGenerator?.setBasePackageName("com.jkzl.phr.phr")</span><br><span class="line">                ?.addGroupTables("adapter",</span><br><span class="line">                        "adapter_data_element," +</span><br><span class="line">                                "adapter_dataset")</span><br><span class="line">                ?.addGroupTables("standard",</span><br><span class="line">                        "std_dataset," +</span><br><span class="line">                                "std_data_element")</span><br><span class="line">                ?.setKotlin(true)</span><br><span class="line">                ?.generate()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="启用ActiveRecord"><a href="#启用ActiveRecord" class="headerlink" title="启用ActiveRecord"></a>启用ActiveRecord</h3><p>通过实现CommanLineRunner接口，在ActiveRecordPlugin Bean对象创建，设置SQL模板，关联Model并启动。代码如下：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line">class SvrPhrApplication : CommandLineRunner &#123;</span><br><span class="line">        Override fun run(vararg <span class="string">args:</span> String?) &#123;</span><br><span class="line">                if(arp != null) &#123;</span><br><span class="line">                        //代码生成后增加</span><br><span class="line">                        arp.addSqlTemplate("/sql/all.sql")</span><br><span class="line">                        _MappingKit.mapping(arp)</span><br><span class="line">                        </span><br><span class="line">                        arp.start()</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                        throw NullPointerException("arpisnull")</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        @Autowired</span><br><span class="line">        Private val arp : ActiveRecordPlugin? = null</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>启动项目，我们就可以通过Swagger来查看微服务提供的基础服务了。<br><img src="swagger.png" alt="swagger"></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>虽然生成代码模板还在改进之处，多次生成代码覆盖问题没有解决，但重要的是，我们已经起步了，同时通过集成Jfinal的ActiveRecord，吸收Jfinal的Model代码生成，让Springboot开发更简单，而使用Kotlin又简化了一些Java的复杂性。之后你会感叹，居然开发可以如此简单。借Jfinal的口号“为您节约更多时间，去陪恋人、家人和朋友 :)”来结束本文。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>[1]<a href="https://www.jfinal.com/" target="_blank" rel="noopener">Jfinal官网</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/03/12/spring/springboot-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1026,213 +1244,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/20/misc/chopsticks/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/12/20/misc/chopsticks/" class="post-title-link" itemprop="url">你真的会用筷子么？</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2018-12-20 12:54:24 / 修改时间：11:26:51" itemprop="dateCreated datePublished" datetime="2018-12-20T12:54:24+08:00">2018-12-20</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AD%B7%E5%AD%90/" itemprop="url" rel="index"><span itemprop="name">筷子</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近在微博中看了这个视频。刚好呢，自己练习左手使用筷子三个来月了，对于正确使用筷子算是有一些体验可以分享一下。<br><video id="video" controls="" preload="none"><br>    <source id="mp4" src="http://storage.goldsyear.com/ChopSticks.mp4" type="video/mp4"><br></video></p>
-<p>在李笑来老师的得到专栏《通往财富自由之路》里中一篇讲关于“学习能力”这个概念的文章，文章中拿了使用筷子做例子，我也是使用这种方式来练习左手用筷子的，所以先引用下该文章内容：</p>
-<blockquote>
-<p>“学会如何正确使用筷子”，其实还真的是个好例子值得反复审视。</p>
-<p>现在有两种情况：</p>
-<blockquote>
-<ul>
-<li>你自己知道自己确实不会用筷子；</li>
-<li>你自己知道自己能正确用筷子……</li>
-</ul>
-</blockquote>
-<p>若你自己不会用筷子，接下来你要看看自己有没有能力达到学习能力进阶的第二个阶段：通过读书、读教程，学会一项技能；如果你自己确定自己能够正确地使用筷子，那你现在可以尝试再进阶半步：看看自己有没有能力教会别人正确地使用筷子……</p>
-<p>我在网上翻了翻，写得最好的教程，居然（其实也很自然）是老外写的，在WikiHow上：</p>
-<blockquote>
-<p><a href="https://www.wikihow.com/Eat-with-Chopsticks" target="_blank" rel="noopener">https://www.wikihow.com/Eat-with-Chopsticks</a></p>
-</blockquote>
-<p>有文字讲解，也有视频示范。先去看看，看看你自己能不能学会？或者想象一下，若是你教别人（比如自己的孩子用筷子），你应该如何教？最重要的关键在哪里？为什么看起来这么简单的事儿能难住2/3以上的人群？</p>
-<p>我们总说：屁股决定脑袋。</p>
-<p>你所在的位置会决定你看问题的角度，以及应对的方式。对于同一个问题，改变了位置之后，可能看法会截然不同，甚至能够找到更优质的解决方法。</p>
-<p>面对“学习”这件事的时候，这句话同样适用。</p>
-<p>如果你总是以一个“学生”去要求自己，其实无意间降低了自己的标准。因为你的目标只是学会，或者看似学会。但实际上检验一个人是否真正掌握了一项技能的最好方法，就是让他把这个技能教给别人。</p>
-<p>所以如果大家在学习的过程中，脑子里始终想着未来要把它教给其他人，那么对于自己的要求自然会提高，同时我们的学习效率和效果自然也会更好。</p>
-<p>这么多年来，我经常拿这事儿当例子，用来证明：</p>
-<blockquote>
-<p>有很多事情，即便是非常简单，都有可能难住一些人一辈子；</p>
-</blockquote>
-<p>这件事儿还能证明：</p>
-<blockquote>
-<p>这么简单的事儿，绝大多数人竟然不会教，甚至连自己的孩子都教不会……只顾着最后在那里发脾气，而后无可奈何……<br>如果能够仔细观察、最终找到重点的话，基本上是教的人两分种就讲明白，而后学的人五分钟之内就能搞定，随后摆脱一辈子的尴尬的事情。</p>
-</blockquote>
-<p><img src="http://storage.goldsyear.com/chopsticks.png" alt="正确使用筷子"></p>
-<p>关键之处其实有以下这么两点：</p>
-<blockquote>
-<ul>
-<li>两根筷子中，下面那根一直是处于静止状态的；</li>
-<li>张开、夹上的动作，其实来自于上面那一根；<br>最为关键的是，如何令下面那根处于稳定状态呢？</li>
-<li>下面那根筷子，跟手一共有三个接触点：两端作为支点；</li>
-<li>大姆指的根部在中间压住筷子，无名指其实是“反向用力顶住”……</li>
-<li>大多数人败在无名指的用力方向上，这个方向搞对了，下面那根筷子就稳定了；</li>
-<li>接下来就是练习几分种如何用大姆指和食指控制上面那根筷子并夹住东西……</li>
-<li>反复练习，从笨拙到熟练的过程，本质上来看是大脑在建立沟回的过程。</li>
-</ul>
-</blockquote>
-<p>那些之前就会用筷子的人，不妨对比一下，你教的方法、路径、重点，和我的一样吗？不一样的话，比我的更有效吗？如果比我的更有效不妨教教我，我也想有机会提高效率。许多年来，我在教别人如何学习的过程中，顺带帮助很多很多成年人“突然之间开始能够正确熟练地使用筷子这个神奇的东西……”。</p>
-</blockquote>
-<p>当时也不太以为意，只是明确的知道自己的方式是不一样的，表现为下面的那个筷子是用无名指顶住的，而不是中指，上面的筷子是用中指和食指及大姆指夹住的（有点像抓笔），其他方面基本就一样了。效率上是否有优势就不得而知了。另外呢，这篇文章的评论里不少人说改正了自己多年的不正确的方式，或者学会了左手（或右手）用筷子，总之觉得是有用的。</p>
-<p>直到这学期署假，儿子幼儿园要求开始教小孩使用筷子时，我才重视起来。儿子是左利手，用匙子和笔都是用左手，用筷子自然也是左手。教小孩呢，我觉得最好的方式是就示范，但我用右手，在示范时儿子还是不太懂。然后呢，我就开始在中午吃饭的时候练习起了左手用筷子，用的就是上面教的方法。这篇文章是2017年6月发布的，而自己真正开始实践已经是一年多过去了，想想真是刚需决定行动力。</p>
-<p>下面说说自己的体验。</p>
-<p>刚开始呢，确实很容易就能掌握手抓筷子的方式，比如很容易你就能夹起黄豆或者花生之类的东西。</p>
-<p>接下来发现夹米饭时，上面的筷子很容易和下面的筷子错开，而不能夹稳，此时右手就会想去帮忙，或者说右手的食指就感觉在动一样。你或许听说过，为了帮助左手受伤的人恢复需要把右手绑起来，所以自己逐步通过固定手在桌子上或者揣在口袋里来克服。</p>
-<p>食物总是多种多样，左手用筷子时发现碰到一些比较大的食物（比如红烧肉）时，就张不开，夹不起来。一开始比较粗暴一点，直接用一只筷子插进去。大致练习左手两个月之后，又点了一次红烧肉，突然想能不能用自己右手的方式呢，因为自己右手用了三个手指控制能张得比较开。可是发现居然不能很快的换一种方式，就像左手只记住了上面的方法，用另一种方式就很难，或者总是想换到之前的那种。我是大学时因为和同学一起玩夹花生米的游戏对自己的夹法有所改进的，之前是什么模样，竟然没有多少印象了。之后换了回来，发现无名指往上用力的体会也会深一些，确实能减少上下筷子错开。</p>
-<p>左手用了一段时间了，中指顶住筷子的地方还是会疼，是的，你可曾想起刚开始学自行车时会紧紧的抓住车把，就想把他拽下来一样。</p>
-<p>应该是还需要时间，还需要练习，反复练习，从笨拙到熟练的过程，本质上来看是大脑在建立沟回的过程。之前评论中回复学会正确使用筷子的人有多少是真正在使用并从中获益呢，或许只有他们自己知道了。但对于我自己来说，要教会儿子正确使用筷子我是绝对有信心了。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/17/solr/writelock/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/12/17/solr/writelock/" class="post-title-link" itemprop="url">writelock</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2018-12-17 16:20:20 / 修改时间：16:20:30" itemprop="dateCreated datePublished" datetime="2018-12-17T16:20:20+08:00">2018-12-17</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>94</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><a href="https://community.hortonworks.com/questions/69141/solr-cloud-hdfs-problems-with-writelock.html" target="_blank" rel="noopener">https://community.hortonworks.com/questions/69141/solr-cloud-hdfs-problems-with-writelock.html</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1302,7 +1313,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">211</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1359,12 +1370,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">407k</span>
+    <span title="站点总字数">409k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:10</span>
+    <span title="站点阅读时长">6:12</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
