@@ -171,6 +171,265 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/30/virtualizaition/ovirt/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/30/virtualizaition/ovirt/" class="post-title-link" itemprop="url">CentOS安装oVirt4.3</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-30 14:08:31" itemprop="dateCreated datePublished" datetime="2019-05-30T14:08:31+08:00">2019-05-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-07-01 21:56:32" itemprop="dateModified" datetime="2019-07-01T21:56:32+08:00">2019-07-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CentOS/" itemprop="url" rel="index"><span itemprop="name">CentOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CentOS/oVirt/" itemprop="url" rel="index"><span itemprop="name">oVirt</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>本文描述最新版本CentOS(CentOS-7-x86_64-DVD-1810)单机安装oVirt及创建虚拟机的过程。<br>本文主要为自己做记录，以便下次重装时有参考。<br>本文主要参考oVirt官网的<a href="https://www.ovirt.org/documentation/install-guide/chap-Installing_oVirt.html" target="_blank" rel="noopener">安装指南</a></p>
+</blockquote>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><h3 id="系统"><a href="#系统" class="headerlink" title="系统"></a>系统</h3><p>采用最小安装方式安装好CentOS7。</p>
+<h3 id="基础工具包"><a href="#基础工具包" class="headerlink" title="基础工具包"></a>基础工具包</h3><p>此步骤非必需，只是为方便后面的一些操作。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># yum install epel-release net-tools vim unzip zip wget ftp -y</span></span><br></pre></td></tr></table></figure>
+<h3 id="设置静态IP"><a href="#设置静态IP" class="headerlink" title="设置静态IP"></a>设置静态IP</h3><p>CentOS7的网络IP地址配置文件在<code>/etc/sysconfig/network-scripts</code>文件夹下。</p>
+<p>可能过ifconfig查看网卡情况，之后通过网卡信息打开对应的配置文件，如<code>vim /etc/sysconfig/network-scripts/ifcfg-ens0</code></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">TYPE</span>=<span class="string">"Ethernet"</span></span><br><span class="line"><span class="attr">PROXY_METHOD</span>=<span class="string">"none"</span></span><br><span class="line"><span class="attr">BROWSER_ONLY</span>=<span class="string">"no"</span></span><br><span class="line"><span class="attr">DEFROUTE</span>=<span class="string">"yes"</span></span><br><span class="line"><span class="attr">IPV4_FAILURE_FATAL</span>=<span class="string">"no"</span></span><br><span class="line"><span class="attr">IPV6INIT</span>=<span class="string">"yes"</span></span><br><span class="line"><span class="attr">IPV6_AUTOCONF</span>=<span class="string">"yes"</span></span><br><span class="line"><span class="attr">IPV6_DEFROUTE</span>=<span class="string">"yes"</span></span><br><span class="line"><span class="attr">IPV6_FAILURE_FATAL</span>=<span class="string">"no"</span></span><br><span class="line"><span class="attr">IPV6_ADDR_GEN_MODE</span>=<span class="string">"stable-privacy"</span></span><br><span class="line"><span class="attr">NAME</span>=<span class="string">"ens0"</span></span><br><span class="line"><span class="attr">UUID</span>=<span class="string">"95b614cd-79b0-4755-b08d-99f1cca8888b"</span></span><br><span class="line"><span class="attr">DEVICE</span>=<span class="string">"ens0"</span></span><br><span class="line"><span class="attr">ONBOOT</span>=<span class="string">"yes"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">BOOTPROTO</span>=<span class="string">"static"         # 使用静态IP地址，默认为dhcp</span></span><br><span class="line"><span class="attr">IPADDR</span>=<span class="string">"192.168.131.199"   # 设置的静态IP地址</span></span><br><span class="line"><span class="attr">NETMASK</span>=<span class="string">"255.255.255.0"    # 子网掩码</span></span><br><span class="line"><span class="attr">GATEWAY</span>=<span class="string">"192.168.131.254"    # 网关地址</span></span><br><span class="line"><span class="attr">DNS1</span>=<span class="string">"8.8.8.8"       # DNS服务器</span></span><br></pre></td></tr></table></figure>
+
+<p>之后通过<code>service network restart</code>使配置生效。</p>
+<h3 id="修改HostName"><a href="#修改HostName" class="headerlink" title="修改HostName"></a>修改HostName</h3><p><code>vim /etc/hostname</code>，增加<code>ovirt.goldsyear.com</code>，保存退出，或使用如下命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># hostnamectl set-hostname ovirt.goldsyear.com</span></span><br></pre></td></tr></table></figure>
+
+<p><code>vim /etc/hosts</code>，增加</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 192.168.131.199 ovirt.goldsyear.com</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># systemctl disable firewalld</span></span><br><span class="line"><span class="comment"># systemctl disable NetworkManager</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="关闭SELinux"><a href="#关闭SELinux" class="headerlink" title="关闭SELinux"></a>关闭SELinux</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config</span></span><br><span class="line"><span class="comment"># setenforce 0</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="清理iptables"><a href="#清理iptables" class="headerlink" title="清理iptables"></a>清理iptables</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># iptables -L -n</span></span><br><span class="line"><span class="comment"># iptables -F</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="安装oVirt包"><a href="#安装oVirt包" class="headerlink" title="安装oVirt包"></a>安装oVirt包</h2><ol>
+<li>添加oVirt官方源</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># yum install http://resources.ovirt.org/pub/yum-repo/ovirt-release43.rpm</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>更新源</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># yum update</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>安装<code>ovirt-engine</code>包及依赖</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># yum install ovirt-engine</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置oVirt-Engine"><a href="#配置oVirt-Engine" class="headerlink" title="配置oVirt Engine"></a>配置oVirt Engine</h2><p>运行<code>engine-setup</code>，根据提醒进行安装相关配置，除防火墙选配选<code>no</code>,因为上一步已关闭，其它都可直接回车接受默认选项，此处内容可直接参看官册指南。其间需要输入密码，后面登录管理端需要用到该密码。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># engine-setup</span></span><br></pre></td></tr></table></figure>
+
+<p>配置完成后可通过<code>https://ovirt.goldsyear.com/ovirt-engine</code>进行访问，该地址会在配置完成后信息中提示出来。</p>
+<h2 id="管理oVirt"><a href="#管理oVirt" class="headerlink" title="管理oVirt"></a>管理oVirt</h2><p>我自己没有截图用了<a href="https://www.jianshu.com/p/9d699c05c17b" target="_blank" rel="noopener">CentOS7 安装并使用Ovirt 4.2</a>的图。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/4042820-47375fef5b48d070?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="img"></p>
+<p>登录ovirt UI，用户名 admin，密码是安装过程中设置的密码。已经提供了默认的数据中心，集群和网络，因为是单机使用，可以在默认配置的基础上进行相关的管理。</p>
+<h3 id="添加主机"><a href="#添加主机" class="headerlink" title="添加主机"></a>添加主机</h3><p>装宿主机的信息填上，等待安装（可在事年查看安装情况）。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/4042820-29be69fe16987392?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="img"></p>
+<p>完成后需要确认添加。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/4042820-b60ea815280e954b?imageMogr2/auto-orient/" alt="img"></p>
+<h3 id="添加存储"><a href="#添加存储" class="headerlink" title="添加存储"></a>添加存储</h3><h4 id="宿主机配置nfs"><a href="#宿主机配置nfs" class="headerlink" title="宿主机配置nfs"></a>宿主机配置nfs</h4><p>正常情况，安装好ovirt-engine时<code>nfs-utils</code>已经存在，若不存在使用如下方式安装：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># yum install -y nfs-utils</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="创建目录及设置权限"><a href="#创建目录及设置权限" class="headerlink" title="创建目录及设置权限"></a>创建目录及设置权限</h5><p>其中ssd用于存储虚拟机，iso用于存储安装（iso）文件。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mkdir /data/ssd </span></span><br><span class="line"><span class="comment"># chown 36:36 /data/ssd</span></span><br><span class="line"><span class="comment"># chmod 755 /data/ssd</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># mkdir /data/iso</span></span><br><span class="line"><span class="comment"># chown 36:36 /data/iso</span></span><br><span class="line"><span class="comment"># chmod 755 /data/iso</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="导出"><a href="#导出" class="headerlink" title="导出"></a>导出</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># vim /etc/exports   </span></span><br><span class="line">	/data/ssd 0.0.0.0/0.0.0.0(rw,sync)</span><br><span class="line">	/data/iso 0.0.0.0/0.0.0.0(rw,sync,no_root_squash)</span><br></pre></td></tr></table></figure>
+
+<h5 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># exportfs -a				</span></span><br><span class="line"><span class="comment"># systemctl start rpcbind      </span></span><br><span class="line"><span class="comment"># systemctl start nfs-server start    </span></span><br><span class="line"><span class="comment"># systemctl enable rpcbind nfs-server</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="添加NFS存储域"><a href="#添加NFS存储域" class="headerlink" title="添加NFS存储域"></a>添加NFS存储域</h4><p><img src="https://upload-images.jianshu.io/upload_images/4042820-6f1b030a333fa690?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="img"></p>
+<h4 id="添加ISO存储域"><a href="#添加ISO存储域" class="headerlink" title="添加ISO存储域"></a>添加ISO存储域</h4><p><img src="https://upload-images.jianshu.io/upload_images/4042820-8cbf0d888fd7b900?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="img"></p>
+<p>添加成功后可以查看宿主机目录，如<code>/data/iso/5d56c384-5e1c-46ee-a2aa-d4bedda4b6a2/images/11111111-1111-1111-1111-111111111111</code>，实际目录可能略有不同，上传iso文件。</p>
+<h3 id="创建虚拟机"><a href="#创建虚拟机" class="headerlink" title="创建虚拟机"></a>创建虚拟机</h3><p>创建虚拟机，添加实例镜像和nic（用默认的ovirtmgmt网络）。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/4042820-2f5bf6fa419aa9e3?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="img"></p>
+<p>点击“运行”下拉选“只运行一次”，附加CD，以暂停模式启动，调整引导序列为CD-ROM。</p>
+<p>点击“控制台”下拉选“控制台选项”，可在确定按钮边的控制台资源下载客户端。</p>
+<p>本来想用noVNC,但提示错误无法进入，暂时也不知道是什么原因。</p>
+<p><img src="https://img-blog.csdn.net/20180420192509414?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xwd21t/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
+<p>日志中有如下错误：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2019-05-30 09:21:43,252+08 ERROR [org.ovirt.engine.ui.frontend.server.gwt.OvirtRemoteLoggingService] (default task-20) [] Uncaught exception: com.google.gwt.core.client.JavaScriptException: (TypeError) : 对象不支持“addEventListener”属性或方法</span><br></pre></td></tr></table></figure>
+
+<h2 id="清理"><a href="#清理" class="headerlink" title="清理"></a>清理</h2><ol>
+<li>engine-cleanup</li>
+<li>yum remove ovirt-engine</li>
+</ol>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>以上就是oVirt的单机安装和配置使用过程，更多的内容需要不断的使用才会发现。之前对于CentOS和oVirt都不是太了解参考网上资料能基本完成，另感谢同事王的帮助，加深我对CentOS分区和oVirt的域等概念的理解。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://www.ovirt.org/documentation/install-guide/chap-Installing_oVirt.html" target="_blank" rel="noopener">https://www.ovirt.org/documentation/install-guide/chap-Installing_oVirt.html</a></p>
+<p><a href="https://blog.csdn.net/lpwmm/article/category/7607937" target="_blank" rel="noopener">https://blog.csdn.net/lpwmm/article/category/7607937</a></p>
+<p><a href="https://www.jianshu.com/p/9d699c05c17b" target="_blank" rel="noopener">https://www.jianshu.com/p/9d699c05c17b</a></p>
+<p><a href="https://www.jianshu.com/p/83e0f25d2700" target="_blank" rel="noopener">https://www.jianshu.com/p/83e0f25d2700</a></p>
+<p><a href="https://linuxhint.com/install_ovirt_centos7/" target="_blank" rel="noopener">https://linuxhint.com/install_ovirt_centos7/</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/30/misc/navicat/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/30/misc/navicat/" class="post-title-link" itemprop="url">解决Navicat打开连接并闲置一段时间后卡顿问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-05-30 09:54:53 / 修改时间：10:06:26" itemprop="dateCreated datePublished" datetime="2019-05-30T09:54:53+08:00">2019-05-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/navicat/" itemprop="url" rel="index"><span itemprop="name">navicat</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>180</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>使用Navicat打开Mysql连接并闲置一段时间后卡顿（旧版本可能直接无响应或异常退出）。</p>
+<p>出现这种情况，可通过如下两种方式来调整：</p>
+<ul>
+<li>修改Mysql的Wait_timeout属性（默认设置下，当一个连接的空闲时间超过8小时后，MySQL 就会断开该连接）。</li>
+<li>设置Navicat连接属性中的高级选项，勾选保持连接间隔，并设置为30（小于wait_timeout即可）。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/21/finance/innovate/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1002,229 +1261,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/04/16/hbase/hbase-indexer/metrics/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/16/hbase/hbase-indexer/metrics/" class="post-title-link" itemprop="url">metrics - 指标</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2019-04-16 15:41:00 / 修改时间：16:17:43" itemprop="dateCreated datePublished" datetime="2019-04-16T15:41:00+08:00">2019-04-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>The HBase Indexer publishes a number of metrics for each of its indexer processes. These metrics can be useful for getting an idea of how much data is being indexed, keeping track of the health of indexing processes, and troubleshooting problems.</p>
-<p>Hbase Indexer发布了一些索引生成时的指标数据。些指标可用于了解索引了多少数据、跟踪索引进程的运行状况和故障排除问题。</p>
-<p>By default, all metrics are published via <a href="http://www.oracle.com/technetwork/java/javase/tech/javamanagement-140525.html" target="_blank" rel="noopener">JMX</a>. The indexer can also be configured to publish metrics to <a href="http://ganglia.sourceforge.net/" target="_blank" rel="noopener">Ganglia</a> (see below).</p>
-<p>默认情况下，所有的指标是通过JMX发布的。也可以通过配置将指标发布到Ganglia中（配置看下文）。</p>
-<p>Besides these metrics, you can monitor the replication status using the <a href="https://github.com/NGDATA/hbase-indexer/tree/master/hbase-sep/hbase-sep-tools" target="_blank" rel="noopener">SEP tools</a>.</p>
-<p>除了这些指标，还可以通过SEP tools来监控复制集的状态。</p>
-<h2 id="可用指标一览（Overview-of-available-metrics）"><a href="#可用指标一览（Overview-of-available-metrics）" class="headerlink" title="可用指标一览（Overview of available metrics）"></a>可用指标一览（Overview of available metrics）</h2><h3 id="HBase-to-Solr-mapping"><a href="#HBase-to-Solr-mapping" class="headerlink" title="HBase to Solr mapping"></a>HBase to Solr mapping</h3><p>Each indexer has a metric under <code>hbaseindexer/DefaultResultToSolrMapper/&lt;indexer_name&gt;/HBase Result to Solr Mapping time</code>.</p>
-<p>每个索引在<code>hbaseindexer/DefaultResultToSolrMapper/&lt;indexer_name&gt;/HBase Result to Solr Mapping time</code>下用一个指标。</p>
-<p>This metric lists information about the amount of time taken (in milliseconds) for converting an HBase update event into a Solr document, as well as a rate (in documents/second) for the general throughput of the process.</p>
-<p>这个指标列出了将Hbase转换成Solr文档的总耗费时间（毫秒），以及文档吐吞率（文档数/秒）。</p>
-<h3 id="Incoming-and-applicable-Events"><a href="#Incoming-and-applicable-Events" class="headerlink" title="Incoming and applicable Events"></a>Incoming and applicable Events</h3><p>Under <code>hbaseindexer/(Row|Column)BasedIndexer/&lt;indexer_name&gt;</code>, there are a pair of metrics about incoming events and applicable events. These metrics list the rate of incoming HBase update events, as well as the rate of incoming HBase events that are considered applicable for indexing.</p>
-<p>在<code>hbaseindexer/(Row|Column)BasedIndexer/&lt;indexer_name&gt;</code>下， 是一对关于输入事件和可用事件的指标。这些指标列出了输入HBASE更新事件的速率，以及被认为可用索引的输入HBASE事件的速率。</p>
-<h3 id="Solr-writing"><a href="#Solr-writing" class="headerlink" title="Solr writing"></a>Solr writing</h3><p>Under <code>hbaseindexer/SolrWriter/&lt;indexer_name&gt;</code>, there are a number of metrics around the rate of adds and delete to Solr.</p>
-<p>在<code>hbaseindexer/SolrWriter/&lt;indexer_name&gt;</code>下，是一些关于数据添加和删除到Solr速率的指标。</p>
-<p>There are also metrics about “document add/delete errors” and “Solr add/delete errors”. Document-based errors are errors that have occurred where the problem has been determined to be in the Solr document itself. Solr-based errors are errors that have occurred within Solr.</p>
-<p>也包含了“文档添加/删除错误”和“Solr添加/删除错误”。基于文档发错误是指发生在Solr文档本身中的错误。基于Solr的错误是在Solr中发生的错误。</p>
-<h2 id="Ganglia配置（Ganglia）"><a href="#Ganglia配置（Ganglia）" class="headerlink" title="Ganglia配置（Ganglia）"></a>Ganglia配置（Ganglia）</h2><p>Reporting of metrics to Ganglia can be configured in the <code>hbase-indexer-site.xml</code> file (in the conf directory).</p>
-<p>通过配置<code>hbase-indexer-site.xml</code>文件（在conf目录下）可以把指标生成到Ganglia中。</p>
-<p>In order to configure reporting in Ganglia, the following three configuration keys must be supplied:</p>
-<ul>
-<li>hbaseindexer.metrics.ganglia.server - Ganglia server to report to</li>
-<li>hbaseindexer.metrics.ganglia.port - port on the Ganglia server</li>
-<li>hbaseindexer.metrics.ganglia.interval - interval for reporting, in seconds</li>
-</ul>
-<p>为了配置Ganglia，下面三个配置需要被指定：</p>
-<ul>
-<li>hbaseindexer.metrics.ganglia.server - Ganglia服务器地址</li>
-<li>hbaseindexer.metrics.ganglia.port - Ganglia服务器端口</li>
-<li>hbaseindexer.metrics.ganglia.interval - 生成报告时间间隔</li>
-</ul>
-<p>An example Ganglia reporting configuration would look like this<br>以下是一个生成Ganglia报告的配置：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbaseindexer.metrics.ganglia.server<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>mygangliaserver<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbaseindexer.metrics.ganglia.port<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>8649<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbaseindexer.metrics.ganglia.interval<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>60<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/04/16/hbase/hbase-indexer/cli-tool/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/16/hbase/hbase-indexer/cli-tool/" class="post-title-link" itemprop="url">cli-tool - 命令行工具</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2019-04-16 15:00:00 / 修改时间：16:26:31" itemprop="dateCreated datePublished" datetime="2019-04-16T15:00:00+08:00">2019-04-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.9k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>The HBase Indexer includes a number of command line tools for adding, updating, listing, and deleting indexers. All of these tools are executed by supplying a command name to the hbase-indexer tool. For example, to use the list-indexers command, you would enter the following:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;bin&#x2F;hbase-indexer list-indexers</span><br></pre></td></tr></table></figure>
-<p>Running any of the commands below with the –help parameter will show a listing of possible command parameters.</p>
-<h2 id="add-indexer"><a href="#add-indexer" class="headerlink" title="add-indexer"></a>add-indexer</h2><p>The “add-indexer” command is used for configuring a new indexer.</p>
-<p>When adding an indexer, you need to supply at least the following:</p>
-<ul>
-<li>the name of the indexer</li>
-<li>the indexer’s definition (in the form of an xml file)</li>
-<li>connection information to the ZooKeeper used by Solr</li>
-</ul>
-<p>In order to add a basic indexer named “myindexer” whose definition is saved in a file called myindexer.xml, with ZooKeeper running on a server named myzkhost:2181/solr and a Solr collection named mycollection, you would execute the following:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;bin&#x2F;hbase-indexer add-indexer \</span><br><span class="line">                      --name myindexer \</span><br><span class="line">                      --indexer-conf myindexer.xml \</span><br><span class="line">                      --cp solr.zk&#x3D;myzkhost:2181&#x2F;solr \</span><br><span class="line">                      --cp solr.collection&#x3D;mycollection</span><br></pre></td></tr></table></figure>
-<h2 id="update-indexer"><a href="#update-indexer" class="headerlink" title="update-indexer"></a>update-indexer</h2><p>The update-indexer command is used for updating the definition or the state of an indexer.</p>
-<p>This command is most typically used for updating the definition of an indexer – for example, changing the list of fields to be indexed.</p>
-<p>The parameters to the update-indexer tool are generally the same as those for the add-indexer tool, but none of them are mandatory except for the name field.</p>
-<p>To update the definition of the indexer that was created in the example for add-indexer, you would run the following:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;bin&#x2F;hbase-indexer update-indexer --name myindexer --indexer-conf myupdatedindexer.xml</span><br></pre></td></tr></table></figure>
-<p>Any parameters (other than the name parameter) that you supply to the update-indexer command will overwrite existing parameters for the indexer.</p>
-<h2 id="list-indexers"><a href="#list-indexers" class="headerlink" title="list-indexers"></a>list-indexers</h2><p>The list-indexer command lists all currently configured indexers, including various status information about them.</p>
-<p>This command can be run without any additional parameters.</p>
-<h2 id="delete-indexer"><a href="#delete-indexer" class="headerlink" title="delete-indexer"></a>delete-indexer</h2><p>The delete-indexer command removes an indexer and stops all indexing processes for that indexer.</p>
-<p>The –name parameter is mandatory for this command.</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1294,7 +1330,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">213</span>
+          <span class="site-state-item-count">215</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1351,12 +1387,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">411k</span>
+    <span title="站点总字数">412k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:13</span>
+    <span title="站点阅读时长">6:15</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
