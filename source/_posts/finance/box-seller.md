@@ -50,4 +50,12 @@ tags:
 
 
 ## 联系我
+微信号 ：Crazy_Airhead
 
+Mixin ID :  1091586
+
+李笑来BOX定投践行群邀请码：6DYMBFP061
+
+李笑来写作课邀请码：38MDGFYZK8
+
+水龙头邀请码：FDJQHJ
