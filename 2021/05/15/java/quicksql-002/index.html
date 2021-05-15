@@ -22,16 +22,16 @@
     var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="环境Windows 10 IDEA Comunity 2021.1 JAVA 1.8.0_281 问题及处理 编译时无法下载依赖   配置阿里云仓库，需要在Maven的settgins.xml中指定  123456789101112131415&lt;mirrors&gt;    &lt;mirror&gt;        &lt;id&gt;aliyunmaven&lt;&#x2F;id&gt;">
+  <meta name="description" content="环境Windows 10 IDEA Comunity 2021.1 JAVA 1.8.0_281">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Windows编译QuickSQL问题记录">
 <meta property="og:url" content="http://l4qiang.me/2021/05/15/java/quicksql-002/index.html">
 <meta property="og:site_name" content="CrazyAirhead">
-<meta property="og:description" content="环境Windows 10 IDEA Comunity 2021.1 JAVA 1.8.0_281 问题及处理 编译时无法下载依赖   配置阿里云仓库，需要在Maven的settgins.xml中指定  123456789101112131415&lt;mirrors&gt;    &lt;mirror&gt;        &lt;id&gt;aliyunmaven&lt;&#x2F;id&gt;">
+<meta property="og:description" content="环境Windows 10 IDEA Comunity 2021.1 JAVA 1.8.0_281">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=OTJkYjBkZDFkMGQ3ZmVkYjEwNjZiZmU5MTNjNjIzZWVfMWM2bHc2SnZWSTlXS05paTF6SGx6STRJaHVWaDBveTRfVG9rZW46Ym94Y25YTE15Z3VUT1BWN25USWw0MUwwOTdLXzE2MjEwNTcwMjM6MTYyMTA2MDYyM19WNA">
 <meta property="article:published_time" content="2021-05-15T05:34:24.000Z">
-<meta property="article:modified_time" content="2021-05-15T05:37:16.702Z">
+<meta property="article:modified_time" content="2021-05-15T05:45:59.547Z">
 <meta property="article:author" content="L4qiang">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="QuickSQL">
@@ -202,7 +202,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-05-15 13:34:24 / 修改时间：13:37:16" itemprop="dateCreated datePublished" datetime="2021-05-15T13:34:24+08:00">2021-05-15</time>
+              <time title="创建时间：2021-05-15 13:34:24 / 修改时间：13:45:59" itemprop="dateCreated datePublished" datetime="2021-05-15T13:34:24+08:00">2021-05-15</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -224,7 +224,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4k</span>
+              <span>4.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -246,6 +246,8 @@
         <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>Windows 10</p>
 <p>IDEA Comunity 2021.1</p>
 <p>JAVA 1.8.0_281</p>
+<a id="more"></a>
+
 <h2 id="问题及处理"><a href="#问题及处理" class="headerlink" title="问题及处理"></a>问题及处理</h2><ol>
 <li>编译时无法下载依赖</li>
 </ol>
@@ -351,6 +353,15 @@
 <p>与spark引用的org.antlr:antlr4-runtime引起的，排除相关依赖。</p>
 </blockquote>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line"></span><br><span class="line">    &lt;groupId&gt;org.codelibs.elasticsearch.module&lt;&#x2F;groupId&gt;</span><br><span class="line"></span><br><span class="line">    &lt;artifactId&gt;lang-painless&lt;&#x2F;artifactId&gt;</span><br><span class="line"></span><br><span class="line">    &lt;version&gt;$&#123;elasticsearch.version&#125;&lt;&#x2F;version&gt;</span><br><span class="line"></span><br><span class="line">    &lt;exclusions&gt;</span><br><span class="line"></span><br><span class="line">        &lt;exclusion&gt;</span><br><span class="line"></span><br><span class="line">            &lt;artifactId&gt;antlr4-runtime&lt;&#x2F;artifactId&gt;</span><br><span class="line"></span><br><span class="line">            &lt;groupId&gt;org.antlr&lt;&#x2F;groupId&gt;</span><br><span class="line"></span><br><span class="line">        &lt;&#x2F;exclusion&gt;</span><br><span class="line"></span><br><span class="line">    &lt;&#x2F;exclusions&gt;</span><br><span class="line"></span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>欢迎联系我</p>
+<p>微信号 ：Crazy_Airhead</p>
+<p>Mixin ID :  1091586</p>
+<p>李笑来BOX定投践行群邀请码：6DYMBFP061</p>
+<p>李笑来写作课邀请码：38MDGFYZK8</p>
+<p>水龙头邀请码：FDJQHJ</p>
+
     </div>
 
     
@@ -537,12 +548,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">429k</span>
+    <span title="站点总字数">430k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:30</span>
+    <span title="站点阅读时长">6:31</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

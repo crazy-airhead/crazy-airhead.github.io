@@ -196,7 +196,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-05-15 13:34:24 / 修改时间：13:37:16" itemprop="dateCreated datePublished" datetime="2021-05-15T13:34:24+08:00">2021-05-15</time>
+              <time title="创建时间：2021-05-15 13:34:24 / 修改时间：13:45:59" itemprop="dateCreated datePublished" datetime="2021-05-15T13:34:24+08:00">2021-05-15</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -218,7 +218,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4k</span>
+              <span>4.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -240,111 +240,14 @@
           <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>Windows 10</p>
 <p>IDEA Comunity 2021.1</p>
 <p>JAVA 1.8.0_281</p>
-<h2 id="问题及处理"><a href="#问题及处理" class="headerlink" title="问题及处理"></a>问题及处理</h2><ol>
-<li>编译时无法下载依赖</li>
-</ol>
-<blockquote>
-<p>配置阿里云仓库，需要在Maven的settgins.xml中指定</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;mirrors&gt;</span><br><span class="line"></span><br><span class="line">    &lt;mirror&gt;</span><br><span class="line"></span><br><span class="line">        &lt;id&gt;aliyunmaven&lt;&#x2F;id&gt;</span><br><span class="line"></span><br><span class="line">        &lt;mirrorOf&gt;*&lt;&#x2F;mirrorOf&gt;</span><br><span class="line"></span><br><span class="line">        &lt;name&gt;阿里云公共仓库&lt;&#x2F;name&gt;</span><br><span class="line"></span><br><span class="line">        &lt;url&gt;https:&#x2F;&#x2F;maven.aliyun.com&#x2F;repository&#x2F;public&lt;&#x2F;url&gt;</span><br><span class="line"></span><br><span class="line">    &lt;&#x2F;mirror&gt;</span><br><span class="line"></span><br><span class="line">&lt;&#x2F;mirrors&gt;</span><br></pre></td></tr></table></figure>
-
-<p>打开QuickSQL项目，直接编译即可。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn -DskipTests clean package</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li>配置Spark和Hadoop环境</li>
-</ol>
-<blockquote>
-<p>QuickSQL对要求的Spark版本是2.3+，我这里使用了2.4.7版本，</p>
-</blockquote>
-<blockquote>
-<p><a href="https://www.apache.org/dyn/closer.lua/spark/spark-2.4.7/spark-2.4.7-bin-hadoop2.7.tgz" target="_blank" rel="noopener">https://www.apache.org/dyn/closer.lua/spark/spark-2.4.7/spark-2.4.7-bin-hadoop2.7.tgz</a></p>
-</blockquote>
-<blockquote>
-<p>同时依赖的hadoop版本2.7，我选择的是为hadoop2.7.5</p>
-</blockquote>
-<blockquote>
-<p><a href="http://archive.apache.org/dist/hadoop/core/hadoop-2.7.5/hadoop-2.7.5.tar.gz" target="_blank" rel="noopener">http://archive.apache.org/dist/hadoop/core/hadoop-2.7.5/hadoop-2.7.5.tar.gz</a></p>
-</blockquote>
-<blockquote>
-<p>整体的配置过程参考《<a href="https://blog.csdn.net/sugar_HIT/article/details/102807103" target="_blank" rel="noopener">解决报错：Failed to locate the winutils binary in the hadoop binary path</a>》</p>
-</blockquote>
-<ol>
-<li>运行CsvScanExample报错，主要提示</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error while running command to get file permissions : ExitCodeException exitCode&#x3D;-1073741515</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>winutils.exe需要VS2010的dll依赖，需要安装<a href="https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe" target="_blank" rel="noopener">VCRedist_x64.exe</a>。</p>
-</blockquote>
-<blockquote>
-<p>参考链接</p>
-</blockquote>
-<blockquote>
-<p><a href="https://stackoverflow.com/questions/53341528/java-lang-runtimeexception-error-while-running-command-to-get-file-permissions" target="_blank" rel="noopener">hadoop - java.lang.RuntimeException: Error while running command to get file permissions : ExitCodeException exitCode=-1073741515 - Stack Overflow</a></p>
-</blockquote>
-<blockquote>
-<p>但文章给出的链接以及失效，从如下链接找到可以的地址，</p>
-</blockquote>
-<blockquote>
-<p><a href="https://www.mydigitallife.net/visual-c-2010-runtime-redistributable-package-x86-x64-ia64-free-download/?__cf_chl_jschl_tk__=a24fd359c8fbe4c6a7788c3ce9d57ffdbab3fe1f-1620712374-0-AZYJc0Ntpg0hidcMK1EFZdFw61J_ha4pnuzPFyEDAdTek2OLmcaOnq0bbXzgMYZdTp4V9CZBJnoeJ-DZP5wWrkXTxxxevlTYt_JZwwAOy6jswqH3mkMujtCaB3ej-pIKskHufltqkKBbZeoNQtq3ZW-tyaytAzodAyXMCMcibpz7nlVgDX9ebaHBpi2FJWMIbRSXfFXsrL99__agN_COXxLfqyJCOLY6BHBYNfngd3xekZKSBkRjcz7nYRm7c5AVDyVGxxoFYu6LzqwzBoMf7VTXRriHnxH-ytG7R70R5af52jzGrOycW4l1CxUDdTkarMrmeLsKiJJ6QytnoEfILdCevo_8AWOdrEKM35XQExwBIc4MjoRBUtpItoqlC24yc7bn9ByuyBcmuoEawssi6jkcGxuyCKv0irzrYMaifzYKNF_LTxfUJAtGoSu4fJrDtkq3gexBuQEDjeb9FjvkEPY9qhxtSA8HbmDOcbf1aLg5" target="_blank" rel="noopener">Visual C++ 2010 Runtime Redistributable Package (x86, x64, ia64) Free Download</a></p>
-</blockquote>
-<blockquote>
-<p><a href="https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe" target="_blank" rel="noopener">点击下载，VCRedist_x64.exe</a>。</p>
-</blockquote>
-<ol>
-<li>运行CsvScanExample报错，主要提示</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">java.lang.RuntimeException: java.lang.UnsupportedOperationException </span><br><span class="line"></span><br><span class="line">        at jdk.compiler&#x2F;com.sun.tools.javac.api.JavacTaskImpl.handleExceptions(JavacTaskImpl.java:163) </span><br><span class="line"></span><br><span class="line">        at jdk.compiler&#x2F;com.sun.tools.javac.api.JavacTaskImpl.doCall(JavacTaskImpl.java:100) </span><br><span class="line"></span><br><span class="line">        at jdk.compiler&#x2F;com.sun.tools.javac.api.JavacTaskImpl.call(JavacTaskImpl.java:94) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.codegen.ClassBodyWrapper$WithClassPathInMemoryCompiler.compile(ClassBodyWrapper.java:156) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.codegen.ClassBodyWrapper$WithClassPathInMemoryCompiler.singleCompile(ClassBodyWrapper.java:123) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.codegen.ClassBodyWrapper.compileSourceAndLoadClass(ClassBodyWrapper.java:64) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.codegen.ClassBodyWrapper.compile(ClassBodyWrapper.java:101) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.exec.AbstractPipeline.compileRequirement(AbstractPipeline.java:51) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.exec.spark.SparkPipeline.show(SparkPipeline.java:105) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.CsvJoinWithEsExample.main(CsvJoinWithEsExample.java:29)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>检查IDEA的Project Struct，找到Project SDK，可能默认选中了JDK11，需要选择JDK8，包括Project language level，也需要选择8。</p>
-</blockquote>
-<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=OTJkYjBkZDFkMGQ3ZmVkYjEwNjZiZmU5MTNjNjIzZWVfMWM2bHc2SnZWSTlXS05paTF6SGx6STRJaHVWaDBveTRfVG9rZW46Ym94Y25YTE15Z3VUT1BWN25USWw0MUwwOTdLXzE2MjEwNTcwMjM6MTYyMTA2MDYyM19WNA" alt="img"></p>
-<ol>
-<li>运行CsvScanExample报错，主要提示</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The root scratch dir: &#x2F;tmp&#x2F;hive on HDFS should be writable. Current permissions are: ---------;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>进入%HADOOP_HOME%/bin目录，执行如下命令：</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">winutils.exe chmod 777 D:\tmp\hive</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>/tmp/hive目录是否在D盘需要自行确认。</p>
-</blockquote>
-<blockquote>
-<p>参考链接</p>
-</blockquote>
-<blockquote>
-<p><a href="https://stackoverflow.com/questions/34196302/the-root-scratch-dir-tmp-hive-on-hdfs-should-be-writable-current-permissions" target="_blank" rel="noopener">The root scratch dir: /tmp/hive on HDFS should be writable. Current permissions are: rw-rw-rw- (on Windows) - Stack Overflow</a></p>
-</blockquote>
-<ol>
-<li>运行CsvScanExample报错，主要提示</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.lang.NoSuchMethodError: net.jpountz.lz4.LZ4BlockInputStream.&lt;init&gt;(Ljava&#x2F;io&#x2F;InputStream;Z)V</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>此时为spark引用的net.jpountz.lz4:lz4的引起的，排除qsql-core的net.jpountz.lz4依赖</p>
-</blockquote>
-<blockquote>
-<p>参考链接</p>
-</blockquote>
-<blockquote>
-<p><a href="https://blog.csdn.net/qq_42164977/article/details/108324203" target="_blank" rel="noopener">java.lang.NoSuchMethodError: net.jpountz.lz4.LZ4BlockInputStream.＜init＞(Ljava/io/InputStream；Z)V</a></p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line"></span><br><span class="line">    &lt;groupId&gt;com.qihoo.qsql&lt;&#x2F;groupId&gt;</span><br><span class="line"></span><br><span class="line">    &lt;artifactId&gt;qsql-core&lt;&#x2F;artifactId&gt;</span><br><span class="line"></span><br><span class="line">    &lt;version&gt;$&#123;project.parent.version&#125;&lt;&#x2F;version&gt;</span><br><span class="line"></span><br><span class="line">    &lt;exclusions&gt;</span><br><span class="line"></span><br><span class="line">        &lt;exclusion&gt;</span><br><span class="line"></span><br><span class="line">            &lt;groupId&gt;net.jpountz.lz4&lt;&#x2F;groupId&gt;</span><br><span class="line"></span><br><span class="line">            &lt;artifactId&gt;lz4&lt;&#x2F;artifactId&gt;</span><br><span class="line"></span><br><span class="line">        &lt;&#x2F;exclusion&gt;</span><br><span class="line"></span><br><span class="line">    &lt;&#x2F;exclusions&gt;</span><br><span class="line"></span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li>运行CsvScanExample报错，主要提示</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ANTLR Tool version 4.7 used for code generation does not match the current runtime version 4.5.3ANTLR Runtime version 4.7 used for parser compilation does not match the current runtime version 4.5.3Exception in thread &quot;main&quot; java.lang.ExceptionInInitializerError</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>与spark引用的org.antlr:antlr4-runtime引起的，排除相关依赖。</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line"></span><br><span class="line">    &lt;groupId&gt;org.codelibs.elasticsearch.module&lt;&#x2F;groupId&gt;</span><br><span class="line"></span><br><span class="line">    &lt;artifactId&gt;lang-painless&lt;&#x2F;artifactId&gt;</span><br><span class="line"></span><br><span class="line">    &lt;version&gt;$&#123;elasticsearch.version&#125;&lt;&#x2F;version&gt;</span><br><span class="line"></span><br><span class="line">    &lt;exclusions&gt;</span><br><span class="line"></span><br><span class="line">        &lt;exclusion&gt;</span><br><span class="line"></span><br><span class="line">            &lt;artifactId&gt;antlr4-runtime&lt;&#x2F;artifactId&gt;</span><br><span class="line"></span><br><span class="line">            &lt;groupId&gt;org.antlr&lt;&#x2F;groupId&gt;</span><br><span class="line"></span><br><span class="line">        &lt;&#x2F;exclusion&gt;</span><br><span class="line"></span><br><span class="line">    &lt;&#x2F;exclusions&gt;</span><br><span class="line"></span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/05/15/java/quicksql-002/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -388,7 +291,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-05-15 13:34:12 / 修改时间：13:36:09" itemprop="dateCreated datePublished" datetime="2021-05-15T13:34:12+08:00">2021-05-15</time>
+              <time title="创建时间：2021-05-15 13:34:12 / 修改时间：13:45:50" itemprop="dateCreated datePublished" datetime="2021-05-15T13:34:12+08:00">2021-05-15</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -410,7 +313,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5.8k</span>
+              <span>5.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -440,63 +343,14 @@
 <ul>
 <li><a href="https://github.com/Qihoo360/Quicksql/releases，当前版本为0.7.0" target="_blank" rel="noopener">https://github.com/Qihoo360/Quicksql/releases，当前版本为0.7.0</a></li>
 </ul>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>解压quicksql.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xzvf quicksql-0.7.0.tar.gz -C &#x2F;usr&#x2F;local</span><br></pre></td></tr></table></figure>
-
-<p>进入qsql-0.7.0目录</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;usr&#x2F;local&#x2F;qsql-0.7.0</span><br></pre></td></tr></table></figure>
-
-<p>配置quicksql-env.sh，开启SPARK_HOME和JAVA_HOME，并设置正确的值。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> vi .&#x2F;conf&#x2F;quicksql-env.sh #Set Your Basic Environment.</span><br><span class="line">export SPARK_HOME&#x3D;&#x2F;usr&#x2F;local&#x2F;spark-2.4.7-bin-hadoop2.7  # [Required] - SPARK_HOME, to set spark home for quicksql running. quicksql needs spark 2.0 or above. </span><br><span class="line"></span><br><span class="line">export JAVA_HOME&#x3D;&#x2F;usr&#x2F;java&#x2F;jdk1.8.0_261-amd64   # [Required] - JAVA_HOME, to set java home for quicksql running. quicksql needs java 1.8 or above.</span><br></pre></td></tr></table></figure>
-
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>可执行quicksql-example进行测试</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;bin&#x2F;quicksql-example.sh --class com.qihoo.qsql.CsvJoinWithEsExample --runner spark</span><br></pre></td></tr></table></figure>
-
-<p>如果能够显示以下表格，说明环境构建完毕，可以尝试新的操作。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+------+-------+----------+--------+------+-------+------+ </span><br><span class="line"></span><br><span class="line">|deptno|   name|      city|province|digest|   type|stu_id| </span><br><span class="line"></span><br><span class="line">+------+-------+----------+--------+------+-------+------+ </span><br><span class="line"></span><br><span class="line">|    45| Master|   CONCORD|      NH| 34035| Master|  null| </span><br><span class="line"></span><br><span class="line">|    40|Scholar|  BROCKTON|      MA| 59498|Scholar|  null| </span><br><span class="line"></span><br><span class="line">|    40|Scholar|FRAMINGHAM|      MA| 65046|Scholar|  null| </span><br><span class="line"></span><br><span class="line">+------+-------+----------+--------+------+-------+------+</span><br></pre></td></tr></table></figure>
-
-<h2 id="替换Mysql驱动"><a href="#替换Mysql驱动" class="headerlink" title="替换Mysql驱动"></a>替换Mysql驱动</h2><p>只要替换lib中的mysql驱动就可以了，其他驱动类似，部分驱动不支持更高版本。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd lib</span><br><span class="line"></span><br><span class="line">rm -f mysql-connector-java-5.1.20.jar</span><br><span class="line"></span><br><span class="line">cp mysql-connector-java-8.0.20.jar .&#x2F;</span><br></pre></td></tr></table></figure>
-
-<p>如果使用了spark引擎，在lib/spark目录下也有个mysql-connector-java-5.1.20.jar需要一起替换。</p>
-<h2 id="采集元数据"><a href="#采集元数据" class="headerlink" title="采集元数据"></a>采集元数据</h2><p>在Quicksql上运行查询前需要将连接信息以及表、字段信息采集入库。默认元数据库使用Derby（官网说明是Sqlite）。</p>
-<p>Quicksql提供了众多标准数据源的采集脚本，通过脚本批量拉取元数据。</p>
-<p>目前支持通过脚本录入元数据的数据源有<strong>Hive, MySQL, Kylin, Elasticsearch, Oracle,Postgresql,Gbase-8s, MongoDB</strong>。也就是-d参数<DATA-SOURCE>，测试发现对数据源的大小写无要求。</p>
-<p>执行方式如下（注意：-r 参数可以使用LIKE语法，[‘%’: 全部匹配，’_’: 占位匹配，’?’: 可选匹配]）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ .&#x2F;metadata-extract.sh -p &quot;&lt;SCHEMA-JSON&gt;&quot; -d &quot;&lt;DATA-SOURCE&gt;&quot; -r &quot;&lt;TABLE-NAME-REGEX&gt;&quot;</span><br></pre></td></tr></table></figure>
-
-<p><strong>注意，采集数据元时需要进入到bin目录。</strong></p>
-<h3 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h3><ul>
-<li>从<strong>MySQL</strong>数据库中采集元数据</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;metadata-extract.sh -p &quot;&#123;\&quot;jdbcDriver\&quot;: \&quot;com.mysql.jdbc.Driver\&quot;, \&quot;jdbcUrl\&quot;: \&quot;jdbc:mysql:&#x2F;&#x2F;$&#123;IP&#125;:$&#123;PORT&#125;&#x2F;$&#123;DATABASE&#125;\&quot;, \&quot;jdbcUser\&quot;: \&quot;$&#123;USERNAME&#125;\&quot;,\&quot;jdbcPassword\&quot;: \&quot;$&#123;PASSWORD&#125;\&quot;&#125;&quot; -d &quot;mysql&quot; -r &quot;$&#123;TABLE_NAME&#125;&quot;</span><br></pre></td></tr></table></figure>
-
-<p>替换${}内容为实际值就可以了。</p>
-<h2 id="命令行执行"><a href="#命令行执行" class="headerlink" title="命令行执行"></a>命令行执行</h2><p>从命令行查询是Quicksql提供的最基本的查询方式之一。</p>
-<p>像Hive和MySQL一样，使用quicksql.sh -e “YOUR SQL”就可以完成查询，结果集将打印在终端上。</p>
-<h3 id="使用示例-1"><a href="#使用示例-1" class="headerlink" title="使用示例"></a><strong>使用示例</strong></h3><ol>
-<li>一个简单的查询，将在Quicksql内核中被执行；</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ .&#x2F;bin&#x2F;quicksql.sh -e &quot;SELECT 1&quot;</span><br></pre></td></tr></table></figure>
-
-<h2 id="从应用提交查询"><a href="#从应用提交查询" class="headerlink" title="从应用提交查询"></a><strong>从应用提交查询</strong></h2><p>Quicksql支持使用Client/Server模式的JDBC连接进行查询，用户的应用可以通过引入Driver包与Server建立连接进行联邦查询。</p>
-<h3 id="Server端"><a href="#Server端" class="headerlink" title="Server端"></a><strong>Server端</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ .&#x2F;bin&#x2F;quicksql-server.sh start -p 5888 -R spark -m yarn-client</span><br></pre></td></tr></table></figure>
-
-<p>启动参数包括start|stop|restart|status，-p/-r/-m为可选项，分别对应端口号，执行引擎和任务调度方式，</p>
-<p>-p：指定server端口号，默认为5888</p>
-<p>-r：指定执行引擎，支持spark/flink</p>
-<p>-m：指定spark任务资源调度方式，yarn-client或yarn-cluster等，默认为local[1]</p>
-<h3 id="Client端"><a href="#Client端" class="headerlink" title="Client端"></a><strong>Client端</strong></h3><p>项目手动加入Quicksql driver包 qsql-client-0.7.1.jar，下载地址：<a href="https://github.com/Qihoo360/Quicksql/releases；" target="_blank" rel="noopener">https://github.com/Qihoo360/Quicksql/releases；</a></p>
-<p>Java代码示例：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"> public static void main(String[] args) throws SQLException, ClassNotFoundException &#123;</span><br><span class="line"></span><br><span class="line">        Class.forName(&quot;com.qihoo.qsql.client.Driver&quot;); &#x2F;&#x2F;注入Drvier</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        Properties properties &#x3D; new Properties();</span><br><span class="line"></span><br><span class="line">        properties.setProperty(&quot;runner&quot;,&quot;jdbc&quot;);</span><br><span class="line"></span><br><span class="line">        String url &#x3D; &quot;jdbc:quicksql:url&#x3D;http:&#x2F;&#x2F;localhost:5888&quot;;</span><br><span class="line"></span><br><span class="line">        Connection connection &#x3D; DriverManager.getConnection(url,properties);</span><br><span class="line"></span><br><span class="line">        Statement pS &#x3D; connection.createStatement();</span><br><span class="line"></span><br><span class="line">        String sql &#x3D; &quot;select * from (values (&#39;a&#39;, 1), (&#39;b&#39;, 2))&quot;;</span><br><span class="line"></span><br><span class="line">        ResultSet rs &#x3D;  pS.executeQuery(sql);</span><br><span class="line"></span><br><span class="line">        while (rs.next()) &#123;</span><br><span class="line"></span><br><span class="line">            System.out.println(rs.getString(1));</span><br><span class="line"></span><br><span class="line">            System.out.println(rs.getString(2));</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        rs.close();</span><br><span class="line"></span><br><span class="line">        pS.close();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>因为替换了驱动8.0.20，查询导入的表会报错，但使用quicksql.sh时却是正常的。判断应该时程序BUG。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">java.lang.RuntimeException: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.exec.JdbcPipeline.createSpecificConnection(JdbcPipeline.java:132) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.exec.JdbcPipeline.getConnection(JdbcPipeline.java:389) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.exec.JdbcPipeline.establishStatement(JdbcPipeline.java:336) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.exec.JdbcPipeline.collect(JdbcPipeline.java:266) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.server.QuicksqlServerMeta.getJDBCResultSet(QuicksqlServerMeta.java:807) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.server.QuicksqlServerMeta.getExecuteResultSet(QuicksqlServerMeta.java:768) </span><br><span class="line"></span><br><span class="line">        at com.qihoo.qsql.server.QuicksqlServerMeta.prepareAndExecute(QuicksqlServerMeta.java:747) </span><br><span class="line"></span><br><span class="line">        at org.apache.calcite.avatica.remote.LocalService.apply(LocalService.java:206) </span><br><span class="line"></span><br><span class="line">        at org.apache.calcite.avatica.remote.Service$PrepareAndExecuteRequest.accept(Service.java:927) </span><br><span class="line"></span><br><span class="line">        at org.apache.calcite.avatica.remote.Service$PrepareAndExecuteRequest.accept(Service.java:879) </span><br><span class="line"></span><br><span class="line">        at org.apache.calcite.avatica.remote.AbstractHandler.apply(AbstractHandler.java:94) </span><br><span class="line"></span><br><span class="line">        at org.apache.calcite.avatica.remote.JsonHandler.apply(JsonHandler.java:52) </span><br><span class="line"></span><br><span class="line">        at org.apache.calcite.avatica.server.AvaticaJsonHandler.handle(AvaticaJsonHandler.java:130) </span><br><span class="line"></span><br><span class="line">        at org.eclipse.jetty.server.handler.HandlerList.handle(HandlerList.java:52) </span><br><span class="line"></span><br><span class="line">        at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97) </span><br><span class="line"></span><br><span class="line">        at org.eclipse.jetty.server.Server.handle(Server.java:499) </span><br><span class="line"></span><br><span class="line">        at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:311) </span><br><span class="line"></span><br><span class="line">        at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257) </span><br><span class="line"></span><br><span class="line">        at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:544) </span><br><span class="line"></span><br><span class="line">        at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635) </span><br><span class="line"></span><br><span class="line">        at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555) </span><br><span class="line"></span><br><span class="line">        at java.lang.Thread.run(Thread.java:748)</span><br></pre></td></tr></table></figure>
-
-<p>尝试升级Pom文件的mysql版本，似乎没有作用。需要更进一步学习尝试修改。</p>
-<p>使用MySQL5的驱动，测试连接5版本的数据库，正常。但连接8版本数据库提示的时密码策略不支持。当然可以通过修改Mysql8连接用的的密码策略来调整，但不是一个好主意。</p>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://quicksql.readthedocs.io/en/latest/reference/getting-started/" target="_blank" rel="noopener">Getting Started - Quick SQL</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/05/15/java/quicksql-001/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -540,7 +394,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-05-15 13:12:08 / 修改时间：13:33:35" itemprop="dateCreated datePublished" datetime="2021-05-15T13:12:08+08:00">2021-05-15</time>
+              <time title="创建时间：2021-05-15 13:12:08 / 修改时间：13:45:39" itemprop="dateCreated datePublished" datetime="2021-05-15T13:12:08+08:00">2021-05-15</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -558,7 +412,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.1k</span>
+              <span>1.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -578,29 +432,14 @@
 
       
           <h2 id="什么BOM"><a href="#什么BOM" class="headerlink" title="什么BOM"></a>什么BOM</h2><p>BOM (The Bill of Materials in Maven) 是Maven中的概念，是一个 pom.xml 文件，主要用来管理项目的依赖版本、插件等构建配置信息。其它项目可以在使用 BOM 时，无需定义已在 BOM 中定义依赖的版本号，即可获取版本号，可理解为统一依赖版本的用途。</p>
-<h2 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h2><p>Gradle被认为是更好的Maven替代，但在BOM的支持上不是太友好，管理多模块项目就会使用难度。实际上，Gradle 6开始可以通过<a href="https://docs.gradle.org/current/userguide/java_platform_plugin.html" target="_blank" rel="noopener">java-platform</a>插件定义和发布BOM文件。这样完全可以只通过Gradle就靠可以管理多模块项目。</p>
-<h2 id="要点说明"><a href="#要点说明" class="headerlink" title="要点说明"></a>要点说明</h2><p>以下的操作都是在项目的<code>build.gradle</code>进行。</p>
-<h3 id="引入插件"><a href="#引入插件" class="headerlink" title="引入插件"></a>引入插件</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">'java-platform'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>注意</strong> java-platform不能与java插件一起使用。</p>
-<h3 id="申明api或runtime约束"><a href="#申明api或runtime约束" class="headerlink" title="申明api或runtime约束"></a>申明api或runtime约束</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    constraints &#123;</span><br><span class="line">        api <span class="string">'commons-httpclient:commons-httpclient:3.1'</span></span><br><span class="line">        runtime <span class="string">'org.postgresql:postgresql:42.2.5'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>###将约束转为依赖</p>
-<p>默认情况下，constraions只是申明了版本关系，并不是依赖关系，如果需要引入为依赖关系，需要做如下的指定：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">javaPlatform &#123;</span><br><span class="line">    allowDependencies()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="使用第三方BOM"><a href="#使用第三方BOM" class="headerlink" title="使用第三方BOM"></a>使用第三方BOM</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    api platform(&#39;com.fasterxml.jackson:jackson-bom:2.9.8&#39;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">publishing &#123;</span><br><span class="line">    publications &#123;</span><br><span class="line">        myPlatform(MavenPublication) &#123;</span><br><span class="line">            from components.javaPlatform</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="引入BOM"><a href="#引入BOM" class="headerlink" title="引入BOM"></a>引入BOM</h3><p>在其他项目中通过<code>api flatform</code>的方式引入BOM，具体引入某个依赖包时就可以不指定版本号。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    &#x2F;&#x2F; get recommended versions from the platform project</span><br><span class="line">    api platform(project(&#39;:platform&#39;))</span><br><span class="line">    &#x2F;&#x2F; no version required</span><br><span class="line">    api &#39;commons-httpclient:commons-httpclient&#39;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<pre><code></code></pre>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/05/15/java/gradle-002/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -644,7 +483,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-05-15 13:07:27 / 修改时间：13:15:28" itemprop="dateCreated datePublished" datetime="2021-05-15T13:07:27+08:00">2021-05-15</time>
+              <time title="创建时间：2021-05-15 13:07:27 / 修改时间：13:44:47" itemprop="dateCreated datePublished" datetime="2021-05-15T13:07:27+08:00">2021-05-15</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -662,7 +501,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.5k</span>
+              <span>2.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1509,12 +1348,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">429k</span>
+    <span title="站点总字数">430k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:30</span>
+    <span title="站点阅读时长">6:31</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
