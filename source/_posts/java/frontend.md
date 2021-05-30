@@ -17,6 +17,8 @@ tags:
 
 本文主要针对vue-router采用不同的[HTML5 History 模式](https://router.vuejs.org/zh/guide/essentials/history-mode.html#后端配置例子)时的不同处理方法。此处假定你已按undertow方式正常运行后台项目。
 
+<!-- more -->
+
 ## hash模式
 
 `vue-router` 默认 hash 模式 —— 使用 URL 的 hash 来模拟一个完整的 URL，于是当 URL 改变时，页面不会重新加载。

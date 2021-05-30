@@ -1,11 +1,11 @@
 ---
-title: BOX定投践行群最少必要课程清单
+title: 定投课堂最少必要课程清单
 toc: true
 date: 2020-08-04 21:57:17
 categories:
-- BOX
+- 定投课堂
 tags:
-- BOX
+- 定投课堂
 ---
 
 ## 说明
