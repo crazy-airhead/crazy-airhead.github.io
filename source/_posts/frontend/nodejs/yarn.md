@@ -37,7 +37,10 @@ yarn config get registry
 若想提高yarn安装的速度，可将包安装源修改为cnpm的安装源，执行以下命令即可
 
 ```shell
-yarn config set registry 'https://registry.npm.taobao.org' 
+
+yarn config set registry https://registry.npm.taobao.org --global 
+yarn config set disturl https://npm.taobao.org/dist --global
+
 ```
 
 ## 操作及对比

@@ -27,7 +27,7 @@ tags: [http tunnel, natapp]
 - 解压就可以了，进入目录。
 - 执行如下命令，以https证书参考资料证书地址为例。
 ```
-tunneld -tlsCrt /etc/letsencrypt/archive/newyingyong.cn/fullchain.pem -tlsKey /etc/letsencrypt/archive/newyingyong.cn/privkey.pem
+tunneld -tlsCrt /etc/letsencrypt/archive/goldsyear.com/fullchain.pem -tlsKey /etc/letsencrypt/archive/goldsyear.com/privkey.pem
 ```
 
 ## http tunnel客户端
@@ -43,7 +43,7 @@ tunnels:
         proto: http
         addr: localhost:8080
         auth: user:password
-        host: webui.my-tunnel-host.com
+        host: goldsyear.com
 ```
 其中,`server_addr`为服务器地址，`tunnels`为开启的遂道列表，`webui`为实际的遂道名，正常可去掉`auth`配置，`host`中的域名与遂道名无直接关系。更多配置信息参看[官网](https://github.com/mmatczuk/go-http-tunnel)。
 - 启动`tunnel start-all`。
