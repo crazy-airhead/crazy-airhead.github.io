@@ -1,5 +1,5 @@
 /**
- * center-quote.js | https://theme-next.js.org/docs/tag-plugins/
+ * center-quote.js | https://theme-next.org/docs/tag-plugins/
  */
 
 /* global hexo */
@@ -8,9 +8,7 @@
 
 function centerQuote(args, content) {
   return `<blockquote class="blockquote-center">
-            <i class="fa fa-quote-left"></i>
-            ${hexo.render.renderSync({ text: content, engine: 'markdown' })}
-            <i class="fa fa-quote-right"></i>
+            ${hexo.render.renderSync({text: content, engine: 'markdown'})}
           </blockquote>`;
 }
 

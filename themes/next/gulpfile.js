@@ -1,15 +1,18 @@
 const fs = require('fs');
 const path = require('path');
 const gulp = require('gulp');
+const eslint = require('gulp-eslint');
 const shell = require('gulp-shell');
 const yaml = require('js-yaml');
 
-gulp.task('lint', shell.task([
-  'npm run eslint'
-]));
+gulp.task('lint', () => gulp.src([
+  './source/js/**/*.js',
+  './scripts/**/*.js'
+]).pipe(eslint())
+  .pipe(eslint.format()));
 
 gulp.task('lint:stylus', shell.task([
-  'npm run stylint'
+  'npx stylint ./source/css/'
 ]));
 
 gulp.task('validate:config', cb => {

@@ -18,7 +18,7 @@ hexo.extend.filter.register('theme_inject', injects => {
   </div>
   `, {}, {cache: true});
 
-  injects.bodyEnd.file('disqus', path.join(hexo.theme_dir, 'layout/_third-party/comments/disqus.njk'));
+  injects.bodyEnd.file('disqus', path.join(hexo.theme_dir, 'layout/_third-party/comments/disqus.swig'));
 
 });
 
@@ -30,7 +30,7 @@ hexo.extend.filter.register('theme_inject', injects => {
   injects.postMeta.raw('disqus', `
   {% if post.comments %}
   <span class="post-meta-item">
-    ${iconText('far fa-comment', 'disqus')}
+    ${iconText('comment-o', 'disqus')}
     <a title="disqus" href="{{ url_for(post.path) }}#disqus_thread" itemprop="discussionUrl">
       <span class="post-comments-count disqus-comment-count" data-disqus-identifier="{{ post.path }}" itemprop="commentCount"></span>
     </a>
