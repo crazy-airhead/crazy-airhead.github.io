@@ -14,6 +14,8 @@ tags:
 
 对公司的一个项目进行多租户改造，当前系统采用Springboot（2.1.1.RELESE）+MybatisPlus（3.4.2）的微服务架构结构体系，因此在此基础上找多租户的解决方案，看到Mybtis-Plus已经支持[多租户](https://baomidou.com/guide/interceptor-tenant-line.html)。这个方案采用的是共享服务，共享数据的方式，当前公司应用面向企业用户，整理数据量也不会太大，使用这种方式实现多租户是可行的。
 
+<!-- more -->
+
 ## 方法
 
 通过过滤器获取Token信息，并设置ThreadLocal，实现租户信息的统一传递，SQL语法是交由MybaitsPlus的TenantLineInnerInterceptor进行拦截增加租户信息。
@@ -128,7 +130,19 @@ public class MybatisPlusConfig {
 
  
 
+------
 
+欢迎联系我
+
+微信号 ：Crazy_Airhead
+
+Mixin ID :  1091586
+
+定投课堂邀请码：6DYMBFP061
+
+李笑来写作课邀请码：38MDGFYZK8
+
+水龙头邀请码：FDJQHJ
 
 ### 
 

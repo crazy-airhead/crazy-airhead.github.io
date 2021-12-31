@@ -16,7 +16,7 @@ BOM (The Bill of Materials in Maven) 是Maven中的概念，是一个 pom.xml �
 
 ## Gradle
 
-Gradle被认为是更好的Maven替代，但在BOM的支持上不是太友好，管理多模块项目就会使用难度。实际上，Gradle 6开始可以通过[java-platform](https://docs.gradle.org/current/userguide/java_platform_plugin.html)插件定义和发布BOM文件。这样完全可以只通过Gradle就靠可以管理多模块项目。
+Gradle被认为是更好的Maven替代，但在BOM的支持上不是太友好，管理多模块项目就会使用难度。我自己就在这个多模块管理被耽误的。实际上，Gradle 6开始可以通过[java-platform](https://docs.gradle.org/current/userguide/java_platform_plugin.html)插件定义和发布BOM文件。这样完全可以只通过Gradle就靠可以管理多模块项目。
 
 ## 要点说明
 

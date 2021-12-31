@@ -72,11 +72,19 @@ yarn 的全局安装并不是加 -g 或者 --global 这样的参数，它使用 
 
 对于一些带 CLI 的模块，通过 yarn global add 可能会出问题，yarn global bin查看目录，并把该目录添加到Path中。
 
+
+
+### 指定registry但没有效果
+
+1. yarn.lock中包含的registry信息与设置的registry不同，删除yarn.lock重新生成即可。
+
 ## 参考
 
 [yarn —— Nodejs包新管理工具](https://segmentfault.com/a/1190000007189426)
 
 [使用 yarn global 代替 npm -g](https://segmentfault.com/a/1190000008489881)
+
+["yarn config set registry" is not work · Issue #4862 · yarnpkg/yarn (github.com)](https://github.com/yarnpkg/yarn/issues/4862)
 
 
 
