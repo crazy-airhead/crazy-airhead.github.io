@@ -14,6 +14,7 @@ tags:
 ## NVM是什么？
 
 nvm(node version manager)是一个nodejs版本的管理工具。通过nvm可以方便的安装和切换不同版本的nodejs。
+<!-- more -->
 
 ## 安装前准备
 
