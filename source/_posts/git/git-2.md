@@ -14,7 +14,11 @@ tags:
 
 # 说明
 
+本文算是对「[管理多个Github帐号](http://l4qiang.me/2018/09/19/git/git-1/)」的重新整理，在查看该文档重新配置GitHub免密登录时，发现不是很顺畅，于是按步骤的方式进行重新整理。而「管理多个Github账号」是对配置多个GitHub不成的问题分析。
+
 本文基于macOS Monterey（v12.0.1）环境，不同版本可能会有所差异。
+
+<!-- more -->
 
 # 步骤
 
@@ -74,6 +78,8 @@ Host airhead-github
  PreferredAuthentications publickey
  IdentityFile ~/.ssh/airhead-github/id_rsa
 ```
+
+如果管理多个GitHub账号时，需要对应增加Host节点配置。
 
 ## 测试
 
