@@ -3,7 +3,12 @@ title: 管理多个Github帐号
 date: 2018-09-19 08:15:40
 categories:
 - git
-tags: [Github Pages, hexo, Git, ssh]
+- GitHub
+- ssh
+tags:
+- git
+- GitHub
+- ssh
 ---
 
 ## 起因
