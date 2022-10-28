@@ -14,6 +14,7 @@ tags:
 ## NVM是什么？
 
 nvm(node version manager)是一个nodejs版本的管理工具。通过nvm可以方便的安装和切换不同版本的nodejs。
+
 <!-- more -->
 
 ## 安装前准备
@@ -28,15 +29,15 @@ brew uninstall node
 
 ```shell
 sudo npm uninstall npm -g
- 
+
 sudo rm -rf /usr/local/lib/node /usr/local/lib/node_modules /var/db/receipts/org.nodejs.*
- 
+
 sudo rm -rf /usr/local/include/node /Users/$USER/.npm
- 
+
 sudo rm /usr/local/bin/node
- 
+
 sudo rm /usr/local/share/man/man1/node.1
- 
+
 sudo rm /usr/local/lib/dtrace/node.d
 ```
 
@@ -63,43 +64,43 @@ source ~/.zshrc
 ## 基础命令
 
 - 查看版本
-
+  
   ```shell
   nvm ls-remote
   ```
 
 - 安装
-
+  
   ```shell
   nvm install <version>
   ```
 
 - 切换版本
-
+  
   ```shell
   nvm use <version>
   ```
 
 - 指定默认版本
-
+  
   ```shell
   nvm alias default <version>
   ```
 
 - 查看已安装版本
-
+  
   ```
   nvm ls
   ```
 
 - 查看当前使用版本
-
+  
   ```shell
   mvn current
   ```
 
 - 卸载
-
-  ``` shell
+  
+  ```shell
   nvm uninstall <version>
   ```
