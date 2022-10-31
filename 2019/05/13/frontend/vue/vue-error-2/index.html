@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景上一篇说到使用vue-element-admin来做后端管理，经同事的介绍可以使用Muse-ui来做前端应用。查看了Muse的官网后，准备踩坑下。 快速入门在Github上看到MuseUI的模板nuxt-template。 1234vue init museui&#x2F;nuxt-tempalte myprojectcd my-projectyarn instllyarn run dev 一切看起来很">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VUE踩坑记-02">
+<meta property="og:url" content="http://l4qiang.me/2019/05/13/frontend/vue/vue-error-2/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="背景上一篇说到使用vue-element-admin来做后端管理，经同事的介绍可以使用Muse-ui来做前端应用。查看了Muse的官网后，准备踩坑下。 快速入门在Github上看到MuseUI的模板nuxt-template。 1234vue init museui&#x2F;nuxt-tempalte myprojectcd my-projectyarn instllyarn run dev 一切看起来很">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-05-13T07:42:18.000Z">
+<meta property="article:modified_time" content="2022-10-30T13:23:05.322Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="vue">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://l4qiang.me/2019/05/13/frontend/vue/vue-error-2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>VUE踩坑记-02 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c3ed9d534576a67e94ff8be03a704994";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/13/frontend/vue/vue-error-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          VUE踩坑记-02
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-13 15:42:18" itemprop="dateCreated datePublished" datetime="2019-05-13T15:42:18+08:00">2019-05-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>上一篇说到使用vue-element-admin来做后端管理，经同事的介绍可以使用Muse-ui来做前端应用。查看了Muse的官网后，准备踩坑下。</p>
+<h2 id="快速入门"><a href="#快速入门" class="headerlink" title="快速入门"></a>快速入门</h2><p>在Github上看到MuseUI的模板<a target="_blank" rel="noopener" href="https://github.com/museui/nuxt-template">nuxt-template</a>。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vue init museui/nuxt-tempalte myproject</span><br><span class="line"><span class="built_in">cd</span> my-project</span><br><span class="line">yarn instll</span><br><span class="line">yarn run dev</span><br></pre></td></tr></table></figure>
+<p>一切看起来很美好，<a href="http://localhost:3000可直接看页面了。">http://localhost:3000可直接看页面了。</a></p>
+<h2 id="Nuxt-js"><a href="#Nuxt-js" class="headerlink" title="Nuxt.js"></a>Nuxt.js</h2><p>一看源码，连App.vue都没有，刚有点基础的我慌了。赶紧查查是什么？</p>
+<p>简单点说<a target="_blank" rel="noopener" href="https://github.com/nuxt/nuxt.js">Nuxt.js</a>是一个基于Vue.js的通用应用框架，重点关注应用的UI渲染（支持客户端和服务端渲染），另外它像Maven一样规定了项目的目录结构，对于初学者来说，看懂文档，还是相对容易创建一个新的项目的。这里有它的<a target="_blank" rel="noopener" href="https://zh.nuxtjs.org/">文档</a>，可以自行了解。</p>
+<h2 id="将项目转成TypeScript"><a href="#将项目转成TypeScript" class="headerlink" title="将项目转成TypeScript"></a>将项目转成TypeScript</h2><p>之前说过，ts更接近java，为了统一，我准备将项目转换成ts的，顺便多熟悉下Nuxt。</p>
+<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir myproject2</span><br></pre></td></tr></table></figure>
+<p>用VSCode打开空目录，<code>myproject2</code></p>
+<h3 id="新建package-json文件"><a href="#新建package-json文件" class="headerlink" title="新建package.json文件"></a>新建package.json文件</h3><p>package.json 文件用来设定如何运行 nuxt：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;myproject2&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;dev&quot;</span>: <span class="string">&quot;nuxt&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装Nux"><a href="#安装Nux" class="headerlink" title="安装Nux"></a>安装Nux</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add nuxt</span><br></pre></td></tr></table></figure>
+
+<h3 id="pages目录"><a href="#pages目录" class="headerlink" title="pages目录"></a>pages目录</h3><p>Nuxt.js 会依据 <code>pages</code> 目录中的所有 <code>*.vue</code> 文件生成应用的路由配置。</p>
+<p>创建 <code>pages</code> 目录：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir pages</span><br></pre></td></tr></table></figure>
+
+<p>创建我们的第一个页面 <code>pages/index.vue</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;h1&gt;Hello world!&lt;/h1&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn run dev</span><br></pre></td></tr></table></figure>
+
+<p>此时我们的应用运行在 <a target="_blank" rel="noopener" href="http://localhost:3000/">http://localhost:3000</a> 上运行。</p>
+<h3 id="支持TypeScript"><a href="#支持TypeScript" class="headerlink" title="支持TypeScript"></a>支持TypeScript</h3><p>为了能够在项目中使用TypeScript，您需要将<code>@nuxt/typescript</code>和<code>ts-node</code>作为开发依赖项安装：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yarn add -D @nuxt/typescript</span><br><span class="line">yarn add ts-node</span><br></pre></td></tr></table></figure>
+
+<p>需要创建一个空的<code>tsconfig.json</code>文件，<code>tsconfig.json</code>文件将在您第一次运行<code>nuxt</code>命令时使用默认值自动更新。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">touch tsconfig.json</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>为了能够在配置文件中使用TypeScript，您只需要将<code>nuxt.config.js</code>重命名为<code>nuxt.config.ts</code>。</p>
+<h3 id="使用ESLint"><a href="#使用ESLint" class="headerlink" title="使用ESLint"></a>使用ESLint</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add -D @typescript-eslint/eslint-plugin</span><br></pre></td></tr></table></figure>
+
+<p>然后，通过添加<code>@typescript-eslint</code>插件并使<code>@typescript-eslint/parser</code>作为默认解析器来编辑ESLint配置(<code>.eslintrc.js</code>)。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [<span class="string">&#x27;@typescript-eslint&#x27;</span>],</span><br><span class="line">  <span class="attr">parserOptions</span>: &#123;</span><br><span class="line">    <span class="attr">parser</span>: <span class="string">&#x27;@typescript-eslint/parser&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">extends</span>: [</span><br><span class="line">    <span class="string">&#x27;@nuxtjs&#x27;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">rules</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;@typescript-eslint/no-unused-vars&#x27;</span>: <span class="string">&#x27;error&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后，添加或编辑<code>package.json</code>的<code>lint</code>脚本：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;lint&quot;</span>: <span class="string">&quot;eslint --ext .ts,.js,.vue --ignore-path .gitignore .&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用MuseUI"><a href="#使用MuseUI" class="headerlink" title="使用MuseUI"></a>使用MuseUI</h3><h4 id="拷贝pages文件"><a href="#拷贝pages文件" class="headerlink" title="拷贝pages文件"></a>拷贝pages文件</h4><p>将myproject下的about.vue和index.vue拷到pages下</p>
+<h4 id="拷贝plugins文件"><a href="#拷贝plugins文件" class="headerlink" title="拷贝plugins文件"></a>拷贝plugins文件</h4><p>将myproject下的muse-ui.js拷贝过来并重命名为muse-ui.ts</p>
+<h4 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h4><p>将<code>nuxt.config.js</code>拷贝过来重命名为<code>nuxt.config.ts</code>。其中去掉eslint的相关配置。修改vendor为</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vendor: [</span><br><span class="line">  <span class="string">&#x27;~/plugins/muse-ui&#x27;</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><p>此时通过<code>yarn run dev</code>已经可正常编译，但运行时会页面会提示错误。大致错误</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SyntaxError</span><br><span class="line">Invalid or unexpected token</span><br><span class="line"></span><br><span class="line">vm.js</span><br><span class="line">Missing stack framesJS </span><br><span class="line">new Script@80:7</span><br></pre></td></tr></table></figure>
+
+<p>查官网<a target="_blank" rel="noopener" href="https://github.com/museui/muse-ui/issues/1347">issues</a>，说是还不支持ssr，调整plugins配置就可以了。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">plugins: [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">src</span>: <span class="string">&#x27;~plugins/muse-ui&#x27;</span>,</span><br><span class="line">    <span class="attr">ssr</span>: <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>最终的<code>nuxt.config.ts</code>文件</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  ** Headers of the page</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="attr">head</span>: &#123;</span><br><span class="line">    <span class="attr">title</span>: <span class="string">&#x27;myproject2&#x27;</span>,</span><br><span class="line">    <span class="attr">meta</span>: [</span><br><span class="line">      &#123; <span class="attr">charset</span>: <span class="string">&#x27;utf-8&#x27;</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">name</span>: <span class="string">&#x27;viewport&#x27;</span>, <span class="attr">content</span>: <span class="string">&#x27;width=device-width, initial-scale=1&#x27;</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">hid</span>: <span class="string">&#x27;description&#x27;</span>, <span class="attr">name</span>: <span class="string">&#x27;description&#x27;</span>, <span class="attr">content</span>: <span class="string">&#x27;Nuxt.js Muse-UI project&#x27;</span> &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">link</span>: [</span><br><span class="line">      &#123; <span class="attr">rel</span>: <span class="string">&#x27;icon&#x27;</span>, <span class="attr">type</span>: <span class="string">&#x27;image/x-icon&#x27;</span>, <span class="attr">href</span>: <span class="string">&#x27;/favicon.ico&#x27;</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">rel</span>: <span class="string">&#x27;stylesheet&#x27;</span>, <span class="attr">href</span>: <span class="string">&#x27;https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons&#x27;</span> &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  ** Customize the progress bar color</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="attr">loading</span>: &#123; <span class="attr">color</span>: <span class="string">&#x27;#3B8070&#x27;</span> &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">src</span>: <span class="string">&#x27;~plugins/muse-ui&#x27;</span>,</span><br><span class="line">      <span class="attr">ssr</span>: <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  ** Build configuration</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="attr">build</span>: &#123;</span><br><span class="line">    <span class="attr">babel</span>: &#123;</span><br><span class="line">      <span class="attr">plugins</span>: [</span><br><span class="line">        [<span class="string">&#x27;import&#x27;</span>, &#123;</span><br><span class="line">          <span class="attr">libraryName</span>: <span class="string">&#x27;muse-ui&#x27;</span>,</span><br><span class="line">          <span class="attr">libraryDirectory</span>: <span class="string">&#x27;lib&#x27;</span>,</span><br><span class="line">          <span class="attr">camel2DashComponentName</span>: <span class="literal">false</span></span><br><span class="line">        &#125;]</span><br><span class="line">      ]</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">vendor</span>: [</span><br><span class="line">      <span class="string">&#x27;~/plugins/muse-ui&#x27;</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">extractCSS</span>: <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>经过以上的修改已经可以通过nuxt来管理vue项目，并能过ts来写代码了。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/vue/" rel="tag"><i class="fa fa-tag"></i> vue</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/05/09/frontend/vue/vue-error-1/" rel="prev" title="VUE踩坑记-01">
+      <i class="fa fa-chevron-left"></i> VUE踩坑记-01
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/05/14/spring/springboot-4/" rel="next" title="代码自动生成的注意事项">
+      代码自动生成的注意事项 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8"><span class="nav-number">2.</span> <span class="nav-text">快速入门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nuxt-js"><span class="nav-number">3.</span> <span class="nav-text">Nuxt.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E9%A1%B9%E7%9B%AE%E8%BD%AC%E6%88%90TypeScript"><span class="nav-number">4.</span> <span class="nav-text">将项目转成TypeScript</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA"><span class="nav-number">4.1.</span> <span class="nav-text">创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B0%E5%BB%BApackage-json%E6%96%87%E4%BB%B6"><span class="nav-number">4.2.</span> <span class="nav-text">新建package.json文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85Nux"><span class="nav-number">4.3.</span> <span class="nav-text">安装Nux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pages%E7%9B%AE%E5%BD%95"><span class="nav-number">4.4.</span> <span class="nav-text">pages目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8"><span class="nav-number">4.5.</span> <span class="nav-text">启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E6%8C%81TypeScript"><span class="nav-number">4.6.</span> <span class="nav-text">支持TypeScript</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">4.7.</span> <span class="nav-text">配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8ESLint"><span class="nav-number">4.8.</span> <span class="nav-text">使用ESLint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8MuseUI"><span class="nav-number">4.9.</span> <span class="nav-text">使用MuseUI</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%B7%E8%B4%9Dpages%E6%96%87%E4%BB%B6"><span class="nav-number">4.9.1.</span> <span class="nav-text">拷贝pages文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%B7%E8%B4%9Dplugins%E6%96%87%E4%BB%B6"><span class="nav-number">4.9.2.</span> <span class="nav-text">拷贝plugins文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">4.9.3.</span> <span class="nav-text">修改配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">4.9.4.</span> <span class="nav-text">问题</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">88</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">459k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:57</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '7242f4918c2841290d16755c4933d936',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

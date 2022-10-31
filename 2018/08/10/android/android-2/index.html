@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="准备官方文档为兼容各个版本，看起来比较杂乱，不容易读懂。自己根据实际的开发情况，整理了本文。本文参考官方文档Android平台第三方插件开发指导， 对官方文档有理解不到位之处未能说明清楚，请参看官方文档。 下载最新版本5+SDK,下载地址， 将SDK解压到任意目录，目录结构如下，以下统称为5+SDK目录。  术语字典JS Plugin BridgeH5+ Plugin Bridge层JS部分API">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hbuilder Android平台第三方插件开发指导">
+<meta property="og:url" content="http://l4qiang.me/2018/08/10/android/android-2/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="准备官方文档为兼容各个版本，看起来比较杂乱，不容易读懂。自己根据实际的开发情况，整理了本文。本文参考官方文档Android平台第三方插件开发指导， 对官方文档有理解不到位之处未能说明清楚，请参看官方文档。 下载最新版本5+SDK,下载地址， 将SDK解压到任意目录，目录结构如下，以下统称为5+SDK目录。  术语字典JS Plugin BridgeH5+ Plugin Bridge层JS部分API">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://of73u2ed9.bkt.clouddn.com/hbuilder12.png">
+<meta property="og:image" content="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/6e2bd27ff777bed57750a5b3b6143a0f.png">
+<meta property="og:image" content="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/095b9c2bdb95d1d9ef68ddeeb610b883.png">
+<meta property="og:image" content="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/e7b481bc1dc1caf69cda678f92587cd9.png">
+<meta property="article:published_time" content="2018-08-10T03:25:05.000Z">
+<meta property="article:modified_time" content="2022-10-30T13:23:05.306Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="android">
+<meta property="article:tag" content="hbuilder">
+<meta property="article:tag" content="plugin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://of73u2ed9.bkt.clouddn.com/hbuilder12.png">
+
+<link rel="canonical" href="http://l4qiang.me/2018/08/10/android/android-2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Hbuilder Android平台第三方插件开发指导 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c3ed9d534576a67e94ff8be03a704994";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/10/android/android-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hbuilder Android平台第三方插件开发指导
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-10 11:25:05" itemprop="dateCreated datePublished" datetime="2018-08-10T11:25:05+08:00">2018-08-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>官方文档为兼容各个版本，看起来比较杂乱，不容易读懂。自己根据实际的开发情况，整理了本文。本文参考官方文档<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/66">Android平台第三方插件开发指导</a>， 对官方文档有理解不到位之处未能说明清楚，请参看官方文档。</p>
+<p>下载最新版本5+SDK,<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/103">下载地址</a>， 将SDK解压到任意目录，目录结构如下，以下统称为5+SDK目录。</p>
+<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder12.png"></p>
+<h2 id="术语字典"><a href="#术语字典" class="headerlink" title="术语字典"></a>术语字典</h2><h3 id="JS-Plugin-Bridge"><a href="#JS-Plugin-Bridge" class="headerlink" title="JS Plugin Bridge"></a>JS Plugin Bridge</h3><p>H5+ Plugin Bridge层JS部分API，插件调用者通过调用API，触发Native层扩展插件相应方法的调用。</p>
+<h3 id="Native-Plugin-Bridge"><a href="#Native-Plugin-Bridge" class="headerlink" title="Native Plugin Bridge"></a>Native Plugin Bridge</h3><p>H5+ Plugin Bridge层Native部分API，插件开发者通过实现接口类方法，实现扩展插件业务逻辑。插件开发者调用API，实现Native扩展方法运行结果的返回。</p>
+<h3 id="Native层扩展插件"><a href="#Native层扩展插件" class="headerlink" title="Native层扩展插件"></a>Native层扩展插件</h3><p>开发者使用原生语言实现的5+扩展插件，可被JS层通知调用。</p>
+<h3 id="插件类别名（插件别名）"><a href="#插件类别名（插件别名）" class="headerlink" title="插件类别名（插件别名）"></a>插件类别名（插件别名）</h3><p>读时需要按插件类|别名的方式来断句。JS层字符串，用来声明JS层和Native层插件的对应关系。</p>
+<h2 id="技术架构"><a href="#技术架构" class="headerlink" title="技术架构"></a>技术架构</h2><p>HTML5+ 基座扩展采用三层结构，JS层、PluginBridge层和Native层。 三层功能分别是： </p>
+<ul>
+<li>JS层： 在Webview页面调用，触发Native层代码，获取执行结果。 </li>
+<li>PluginBridge层： 将JS层请求进行处理，触发Native层扩展插件代码。 </li>
+<li>Native层： 插件扩展的平台原生代码，负责执行业务逻辑并执行结果返回到请求页面。</li>
+<li><img src="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/6e2bd27ff777bed57750a5b3b6143a0f.png"></li>
+</ul>
+<p>插件开发者在开发扩展插件时需要为扩展插件编写对应的JS API，JS API将在HTML页面中触发调用对应Native扩展方法的请求，并负责接收运行结果。</p>
+<p>插件调用者（也可能为插件调用者）通过调用Javascript Plugin Bridge的API用来完成对Native层代码的调用和运行结果的返回。</p>
+<p>在实际应用中，插件开发者可以根据扩展方法的实际需求不同，提供同步或者异步JS API，插件调用者根据JS API将设置为同步执行或异步执行。</p>
+<h2 id="扩展插件工作流程"><a href="#扩展插件工作流程" class="headerlink" title="扩展插件工作流程"></a>扩展插件工作流程</h2><h3 id="同步执行"><a href="#同步执行" class="headerlink" title="同步执行"></a>同步执行</h3><p>同步执行的扩展方法会阻塞当前JS代码的执行，直到Native层插件扩展方法执行完毕。<br><img src="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/095b9c2bdb95d1d9ef68ddeeb610b883.png"></p>
+<h3 id="异步执行"><a href="#异步执行" class="headerlink" title="异步执行"></a>异步执行</h3><p>异步扩展方法不会阻塞当前JS代码的执行，插件调用者需要设置回调方法接收Native层返回的执行结果。插件开发者需要在插件中调用 Native plugin brigde的方法将执行结果返回到请求页面。<br><img src="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/e7b481bc1dc1caf69cda678f92587cd9.png"></p>
+<p>工程示例请参考SDK内包含的HBuilder-Integrate-AS工程，工程里已经整合了插件开发和集成方式的示例。</p>
+<h2 id="插件实现方式"><a href="#插件实现方式" class="headerlink" title="插件实现方式"></a>插件实现方式</h2><h3 id="创建插件类"><a href="#创建插件类" class="headerlink" title="创建插件类"></a>创建插件类</h3><p>创建一个继承自StandardFeature的类，实现第三方插件扩展。</p>
+<p>创建插件类需要引入的包 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">importio.dcloud.common.DHInterface.IWebview;</span><br><span class="line">importio.dcloud.common.DHInterface.StandardFeature;</span><br><span class="line">importio.dcloud.common.util.JSUtil;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现扩展方法"><a href="#实现扩展方法" class="headerlink" title="实现扩展方法"></a>实现扩展方法</h3><h4 id="插件初始化"><a href="#插件初始化" class="headerlink" title="插件初始化"></a>插件初始化</h4><p>重写onStart方法，需要设置dcloud_properties.xml的Service节点，该方法才会被调用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStart</span><span class="params">(Contextcontext,Bundlebundle,String[]strings)</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="扩展插件方法声明"><a href="#扩展插件方法声明" class="headerlink" title="扩展插件方法声明"></a>扩展插件方法声明</h4><p>Native层扩展插件的方法声明如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">methodName</span><span class="params">(IWebview webView, JSONArray array)</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h4><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>webView</td>
+<td>IWebview</td>
+<td>发起请求的webview</td>
+</tr>
+<tr>
+<td>array</td>
+<td>JSONArray</td>
+<td>JS请求传入的参数</td>
+</tr>
+</tbody></table>
+<p>只有符合以上函数声明的方法，才可被JS层调用。</p>
+<h3 id="决定执行方法"><a href="#决定执行方法" class="headerlink" title="决定执行方法"></a>决定执行方法</h3><p>插件开发者对返回值的不同调用方式决定了JS API的执行方法。不同的执行方法对入参array(JSONArray)的要求也会有所有不同。</p>
+<h4 id="同步执行方法"><a href="#同步执行方法" class="headerlink" title="同步执行方法"></a>同步执行方法</h4><p>插件开发者通过JSUtil.wrapJsVar返回时为同步执行。同步执行方法在返回结果时可以直接将结果以return的形式返回给js层。</p>
+<h5 id="方法声明"><a href="#方法声明" class="headerlink" title="方法声明"></a>方法声明</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">wrapJsVar</span><span class="params">(String value)</span></span>;</span><br></pre></td></tr></table></figure>
+<h5 id="参数说明-1"><a href="#参数说明-1" class="headerlink" title="参数说明"></a>参数说明</h5><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>value</td>
+<td>String</td>
+<td>要返回到JS层的值</td>
+</tr>
+</tbody></table>
+<p>查看io.dclod.util.JSUtil了解更多的返回值类型的处理(boolean,Number, String, JSONArray, JSONObject)。</p>
+<h5 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSUtil.wrapJsVar(<span class="string">&quot;Html5 Plus Plugin Hello1!&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="异步执行方法"><a href="#异步执行方法" class="headerlink" title="异步执行方法"></a>异步执行方法</h4><p>插件开发者调用JSUtil.execCallback返回时为异步执行。通过CallbackId实现回调函数的关联处理，对于CallbackId的传入由插件开发者具体约定入参array(JSONArray)中的位置，通常使用第一个。</p>
+<h5 id="方法声明-1"><a href="#方法声明-1" class="headerlink" title="方法声明"></a>方法声明</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">execCallback</span><span class="params">(IWebview pWebView, String pCallbackId, String pMessage, <span class="keyword">int</span> pStatus, <span class="keyword">boolean</span> isJson, <span class="keyword">boolean</span> pKeepCallback)</span></span>;</span><br></pre></td></tr></table></figure>
+<h5 id="参数说明-2"><a href="#参数说明-2" class="headerlink" title="参数说明"></a>参数说明</h5><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pWebView</td>
+<td>IWebview</td>
+<td>扩展插件方法运行的窗口</td>
+</tr>
+<tr>
+<td>pCallbackId</td>
+<td>String</td>
+<td>回调函数的唯一标识</td>
+</tr>
+<tr>
+<td>pMessage</td>
+<td>String</td>
+<td>回调函数的参数，即返回结果</td>
+</tr>
+<tr>
+<td>pStatus</td>
+<td>int</td>
+<td>操作是否成功，成功则使用JSUtil.OK，否则使用错误代码</td>
+</tr>
+<tr>
+<td>isJson</td>
+<td>boolean</td>
+<td>回调函数参数是否为JSON数据</td>
+</tr>
+<tr>
+<td>pKeepCallback</td>
+<td>boolean</td>
+<td>是否可多次触发回调函数</td>
+</tr>
+</tbody></table>
+<h5 id="示例代码-1"><a href="#示例代码-1" class="headerlink" title="示例代码"></a>示例代码</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSUtil.execCallback(pWebview, cbId, (which==AlertDialog.BUTTON_POSITIVE)?<span class="string">&quot;ok&quot;</span>:<span class="string">&quot;cancel&quot;</span>, JSUtil.OK, <span class="keyword">false</span>, <span class="keyword">false</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="完整代码示例"><a href="#完整代码示例" class="headerlink" title="完整代码示例"></a>完整代码示例</h4><p>该示例只展示同步或异步方法，完整内容参考官网或者SDK中示例工程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.H5PlusPlugin;</span><br><span class="line"><span class="keyword">import</span> io.dcloud.common.DHInterface.IWebview;</span><br><span class="line"><span class="keyword">import</span> io.dcloud.common.DHInterface.StandardFeature;</span><br><span class="line"><span class="keyword">import</span> io.dcloud.common.util.JSUtil;</span><br><span class="line"><span class="keyword">import</span> org.json.JSONArray;</span><br><span class="line"><span class="keyword">import</span> org.json.JSONException;</span><br><span class="line"><span class="keyword">import</span> org.json.JSONObject;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PGPlugintest</span> <span class="keyword">extends</span> <span class="title">StandardFeature</span></span></span><br><span class="line"><span class="class"></span>&#123;   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">PluginTestFunction</span><span class="params">(IWebview pWebview, JSONArray array)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        String CallBackID = array.optString(<span class="number">0</span>);</span><br><span class="line">        JSONArray newArray = <span class="keyword">new</span> JSONArray();</span><br><span class="line">        newArray.put(array.optString(<span class="number">1</span>));</span><br><span class="line">        newArray.put(array.optString(<span class="number">2</span>));</span><br><span class="line">        newArray.put(array.optString(<span class="number">3</span>));</span><br><span class="line">        newArray.put(array.optString(<span class="number">4</span>));</span><br><span class="line">        JSUtil.execCallback(pWebview, CallBackID, newArray, JSUtil.OK, <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">PluginTestFunctionSync</span><span class="params">(IWebview pWebview, JSONArray array)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        String inValue1 = array.optString(<span class="number">0</span>);</span><br><span class="line">        String inValue2 = array.optString(<span class="number">1</span>);</span><br><span class="line">        String inValue3 = array.optString(<span class="number">2</span>);</span><br><span class="line">        String inValue4 = array.optString(<span class="number">3</span>);</span><br><span class="line">        String ReturnValue = inValue1 + <span class="string">&quot;-&quot;</span> + inValue2 + <span class="string">&quot;-&quot;</span> + inValue3 + <span class="string">&quot;-&quot;</span> + inValue4;</span><br><span class="line">        <span class="keyword">return</span> JSUtil.wrapJsVar(ReturnValue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="插件调用方法"><a href="#插件调用方法" class="headerlink" title="插件调用方法"></a>插件调用方法</h2><h3 id="设置插件类别名"><a href="#设置插件类别名" class="headerlink" title="设置插件类别名"></a>设置插件类别名</h3><p>插件调用者在实现JS API时首先要定义一个插件类别名，在Android工程的assets\data\dcloud_properties.xml文件中声明插件类别名和Native层扩展插件类的对应关系。feature节点下声明的插件将会在调用时创建相应的对象。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">features</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">feature</span> <span class="attr">name</span>=<span class="string">&quot;plugintest&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.example.H5PlusPlugin.PGPlugintest&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">feature</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">features</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如果开发的插件有应用启动时初始化的需求，需要同时配置service节点。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">services</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">service</span> <span class="attr">name</span>=<span class="string">&quot;plugintest&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.example.H5PlusPlugin.PGPlugintest&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">service</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">services</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="调用方式实现"><a href="#调用方式实现" class="headerlink" title="调用方式实现"></a>调用方式实现</h3><h4 id="同步调用"><a href="#同步调用" class="headerlink" title="同步调用"></a>同步调用</h4><p>插件调用者需要调用JS Plugin Bridge的window.plus.bridge.execSync()方法，该方法可同步获取Native插件返回的运行结果。</p>
+<h5 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> plus.bridge.execSync( <span class="built_in">String</span> service, <span class="built_in">String</span> action, <span class="built_in">Array</span>&lt;<span class="built_in">String</span>&gt; args );</span><br></pre></td></tr></table></figure>
+<h5 id="参数说明-3"><a href="#参数说明-3" class="headerlink" title="参数说明"></a>参数说明</h5><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>service</td>
+<td>String</td>
+<td>插件类别名</td>
+</tr>
+<tr>
+<td>action</td>
+<td>String</td>
+<td>调用Native层插件方法名称</td>
+</tr>
+<tr>
+<td>args</td>
+<td>Array<String></td>
+<td>参数列表</td>
+</tr>
+</tbody></table>
+<h4 id="异步调用"><a href="#异步调用" class="headerlink" title="异步调用"></a>异步调用</h4><p>插件调用者需要调用JS Plugin Bridge的plus.bridge.exec()方法，该方法会通知Native层插件执行指定方法，运行结果会通过回调的方式通知JS层。</p>
+<h5 id="函数声明-1"><a href="#函数声明-1" class="headerlink" title="函数声明"></a>函数声明</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> plus.bridge.exec( <span class="built_in">String</span> service, <span class="built_in">String</span> action, <span class="built_in">Array</span>&lt;<span class="built_in">String</span>&gt; args );</span><br></pre></td></tr></table></figure>
+<h5 id="参数说明-4"><a href="#参数说明-4" class="headerlink" title="参数说明"></a>参数说明</h5><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>service</td>
+<td>String</td>
+<td>插件类别名</td>
+</tr>
+<tr>
+<td>action</td>
+<td>String</td>
+<td>调用Native层插件方法名称</td>
+</tr>
+<tr>
+<td>args</td>
+<td>Array<String></td>
+<td>参数列表</td>
+</tr>
+<tr>
+<td>为了接收和处理结果，插件调用者需要调用window.plus.bridge.callbackId（）生成callbackId，并通过args（ Array<String> ）传入。对JS不是很了解，个人认为应该类似一个Map（回调函数表），提供回调函数注册。</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="实际使用及示例代码"><a href="#实际使用及示例代码" class="headerlink" title="实际使用及示例代码"></a>实际使用及示例代码</h2><p>根据业务的需要和使用的方便，可以在JS层进行插件调用的封装使用。</p>
+<h3 id="封装示例"><a href="#封装示例" class="headerlink" title="封装示例"></a>封装示例</h3><p>该示例只展示同步或异步方法，完整内容参考官网或者SDK中示例工程。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.addEventListener( <span class="string">&quot;plusready&quot;</span>,  <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="comment">// 声明的JS“扩展插件别名”</span></span><br><span class="line">    <span class="keyword">var</span> _BARCODE = <span class="string">&#x27;plugintest&#x27;</span>,</span><br><span class="line">        B = <span class="built_in">window</span>.plus.bridge;</span><br><span class="line">    <span class="keyword">var</span> plugintest = </span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 声明异步返回方法</span></span><br><span class="line">        <span class="attr">PluginTestFunction</span> : <span class="function"><span class="keyword">function</span> (<span class="params">Argus1, Argus2, Argus3, Argus4, successCallback, errorCallback </span>) </span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="keyword">var</span> success = <span class="keyword">typeof</span> successCallback !== <span class="string">&#x27;function&#x27;</span> ? <span class="literal">null</span> : <span class="function"><span class="keyword">function</span>(<span class="params">args</span>) </span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                successCallback(args);</span><br><span class="line">            &#125;,</span><br><span class="line">            fail = <span class="keyword">typeof</span> errorCallback !== <span class="string">&#x27;function&#x27;</span> ? <span class="literal">null</span> : <span class="function"><span class="keyword">function</span>(<span class="params">code</span>) </span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                errorCallback(code);</span><br><span class="line">            &#125;;</span><br><span class="line">            callbackID = B.callbackId(success, fail);</span><br><span class="line"><span class="comment">// 通知Native层plugintest扩展插件运行”PluginTestFunction”方法</span></span><br><span class="line">            <span class="keyword">return</span> B.exec(_BARCODE, <span class="string">&quot;PluginTestFunction&quot;</span>, [callbackID, Argus1, Argus2, Argus3, Argus4]);</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="comment">// 声明同步返回方法</span></span><br><span class="line">        <span class="attr">PluginTestFunctionSync</span> : <span class="function"><span class="keyword">function</span> (<span class="params">Argus1, Argus2, Argus3, Argus4</span>) </span></span><br><span class="line"><span class="function">        </span>&#123;            </span><br><span class="line">            <span class="comment">// 通知Native层plugintest扩展插件运行“PluginTestFunctionSync”方法并同步返回结果                       </span></span><br><span class="line">            <span class="keyword">return</span> B.execSync(_BARCODE, <span class="string">&quot;PluginTestFunctionSync&quot;</span>, [Argus1, Argus2, Argus3, Argus4]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">window</span>.plus.plugintest = plugintest;</span><br><span class="line">&#125;, <span class="literal">true</span> );</span><br></pre></td></tr></table></figure>
+<h3 id="HTML使用示例"><a href="#HTML使用示例" class="headerlink" title="HTML使用示例"></a>HTML使用示例</h3><p>该示例只展示同步或异步方法，完整内容参考官网或者SDK中示例工程。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">HTML</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;HandheldFriendly&quot;</span> <span class="attr">content</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;MobileOptimized&quot;</span> <span class="attr">content</span>=<span class="string">&quot;320&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>H5Plugin<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;./js/common.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;./js/test.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">pluginShow</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            plus.plugintest.PluginTestFunction(<span class="string">&quot;Html5&quot;</span>,<span class="string">&quot;Plus&quot;</span>,<span class="string">&quot;AsyncFunction&quot;</span>,<span class="string">&quot;MultiArgument!&quot;</span>, <span class="function"><span class="keyword">function</span>(<span class="params"> result </span>) </span>&#123;alert( result[<span class="number">0</span>]  + <span class="string">&quot;_&quot;</span> + result[<span class="number">1</span>]  + <span class="string">&quot;_&quot;</span> + result[<span class="number">2</span>]  + <span class="string">&quot;_&quot;</span> + result[<span class="number">3</span>] );&#125;,<span class="function"><span class="keyword">function</span>(<span class="params">result</span>)</span>&#123;alert(result)&#125;);</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">pluginGetString</span>(<span class="params"></span>)</span></span></span><br><span class="line"><span class="function"><span class="javascript">        </span>&#123;</span></span><br><span class="line"><span class="javascript">            alert(plus.plugintest.PluginTestFunctionSync(<span class="string">&quot;Html5&quot;</span>,<span class="string">&quot;Plus&quot;</span>,<span class="string">&quot;SyncFunction&quot;</span>,<span class="string">&quot;MultiArgument!&quot;</span>));</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;./css/common.css&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text/css&quot;</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">header</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;nvbt&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;back();&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;iback&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;nvtt&quot;</span>&gt;</span>PluginTest<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">header</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;dcontent&quot;</span> <span class="attr">class</span>=<span class="string">&quot;dcontent&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span>/&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;button&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;pluginShow()&quot;</span>&gt;</span>PluginTestFunction()<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;button&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;pluginGetString()&quot;</span>&gt;</span>PluginTestFunctionSync()<span class="tag">&lt;/<span class="name">div</span>&gt;</span>   </span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/66">Android平台第三方插件开发指导</a><br><a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/80">Android平台以WebView方式集成HTML5+SDK方法</a></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"><i class="fa fa-tag"></i> android</a>
+              <a href="/tags/hbuilder/" rel="tag"><i class="fa fa-tag"></i> hbuilder</a>
+              <a href="/tags/plugin/" rel="tag"><i class="fa fa-tag"></i> plugin</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/09/ipfs/ipfs-1/" rel="prev" title="IPFS私有网络">
+      <i class="fa fa-chevron-left"></i> IPFS私有网络
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/24/android/android-3/" rel="next" title="个推透传消息打开指定页面">
+      个推透传消息打开指定页面 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87"><span class="nav-number">1.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AF%E8%AF%AD%E5%AD%97%E5%85%B8"><span class="nav-number">2.</span> <span class="nav-text">术语字典</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JS-Plugin-Bridge"><span class="nav-number">2.1.</span> <span class="nav-text">JS Plugin Bridge</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Native-Plugin-Bridge"><span class="nav-number">2.2.</span> <span class="nav-text">Native Plugin Bridge</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Native%E5%B1%82%E6%89%A9%E5%B1%95%E6%8F%92%E4%BB%B6"><span class="nav-number">2.3.</span> <span class="nav-text">Native层扩展插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E4%BB%B6%E7%B1%BB%E5%88%AB%E5%90%8D%EF%BC%88%E6%8F%92%E4%BB%B6%E5%88%AB%E5%90%8D%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">插件类别名（插件别名）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">技术架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E6%8F%92%E4%BB%B6%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">扩展插件工作流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E6%89%A7%E8%A1%8C"><span class="nav-number">4.1.</span> <span class="nav-text">同步执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C"><span class="nav-number">4.2.</span> <span class="nav-text">异步执行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%92%E4%BB%B6%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">插件实现方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%8F%92%E4%BB%B6%E7%B1%BB"><span class="nav-number">5.1.</span> <span class="nav-text">创建插件类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%89%A9%E5%B1%95%E6%96%B9%E6%B3%95"><span class="nav-number">5.2.</span> <span class="nav-text">实现扩展方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%92%E4%BB%B6%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">5.2.1.</span> <span class="nav-text">插件初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E6%8F%92%E4%BB%B6%E6%96%B9%E6%B3%95%E5%A3%B0%E6%98%8E"><span class="nav-number">5.2.2.</span> <span class="nav-text">扩展插件方法声明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="nav-number">5.2.3.</span> <span class="nav-text">参数说明</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%B3%E5%AE%9A%E6%89%A7%E8%A1%8C%E6%96%B9%E6%B3%95"><span class="nav-number">5.3.</span> <span class="nav-text">决定执行方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E6%89%A7%E8%A1%8C%E6%96%B9%E6%B3%95"><span class="nav-number">5.3.1.</span> <span class="nav-text">同步执行方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%A3%B0%E6%98%8E"><span class="nav-number">5.3.1.1.</span> <span class="nav-text">方法声明</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E-1"><span class="nav-number">5.3.1.2.</span> <span class="nav-text">参数说明</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="nav-number">5.3.1.3.</span> <span class="nav-text">示例代码</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C%E6%96%B9%E6%B3%95"><span class="nav-number">5.3.2.</span> <span class="nav-text">异步执行方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%A3%B0%E6%98%8E-1"><span class="nav-number">5.3.2.1.</span> <span class="nav-text">方法声明</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E-2"><span class="nav-number">5.3.2.2.</span> <span class="nav-text">参数说明</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81-1"><span class="nav-number">5.3.2.3.</span> <span class="nav-text">示例代码</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="nav-number">5.3.3.</span> <span class="nav-text">完整代码示例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%92%E4%BB%B6%E8%B0%83%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">6.</span> <span class="nav-text">插件调用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E6%8F%92%E4%BB%B6%E7%B1%BB%E5%88%AB%E5%90%8D"><span class="nav-number">6.1.</span> <span class="nav-text">设置插件类别名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0"><span class="nav-number">6.2.</span> <span class="nav-text">调用方式实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E8%B0%83%E7%94%A8"><span class="nav-number">6.2.1.</span> <span class="nav-text">同步调用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E"><span class="nav-number">6.2.1.1.</span> <span class="nav-text">函数声明</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E-3"><span class="nav-number">6.2.1.2.</span> <span class="nav-text">参数说明</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8"><span class="nav-number">6.2.2.</span> <span class="nav-text">异步调用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E-1"><span class="nav-number">6.2.2.1.</span> <span class="nav-text">函数声明</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E-4"><span class="nav-number">6.2.2.2.</span> <span class="nav-text">参数说明</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E4%BD%BF%E7%94%A8%E5%8F%8A%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="nav-number">7.</span> <span class="nav-text">实际使用及示例代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E8%A3%85%E7%A4%BA%E4%BE%8B"><span class="nav-number">7.1.</span> <span class="nav-text">封装示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTML%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="nav-number">7.2.</span> <span class="nav-text">HTML使用示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-number">8.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">88</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">459k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:57</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '7a02146fc83ac24b877a7c4e5b955276',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

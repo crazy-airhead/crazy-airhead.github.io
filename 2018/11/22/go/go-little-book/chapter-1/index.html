@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="第一章 - 基础（Chapter 1 - The Basics）Go is a compiled, statically typed language with a C-like syntax and garbage collection. What does that mean? Go是一门静态类型、编译型语言，有类C风格的语法和垃圾回收机制。这意味着什么呢？ 编译（Compilation）Co">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go Little Book - 第一章 - 基础">
+<meta property="og:url" content="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-1/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="第一章 - 基础（Chapter 1 - The Basics）Go is a compiled, statically typed language with a C-like syntax and garbage collection. What does that mean? Go是一门静态类型、编译型语言，有类C风格的语法和垃圾回收机制。这意味着什么呢？ 编译（Compilation）Co">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-11-22T02:03:33.000Z">
+<meta property="article:modified_time" content="2022-10-30T13:23:05.324Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="go little book">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Go Little Book - 第一章 - 基础 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c3ed9d534576a67e94ff8be03a704994";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Go Little Book - 第一章 - 基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-22 10:03:33" itemprop="dateCreated datePublished" datetime="2018-11-22T10:03:33+08:00">2018-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>16k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>14 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第一章-基础（Chapter-1-The-Basics）"><a href="#第一章-基础（Chapter-1-The-Basics）" class="headerlink" title="第一章 - 基础（Chapter 1 - The Basics）"></a>第一章 - 基础（Chapter 1 - The Basics）</h1><p>Go is a compiled, statically typed language with a C-like syntax and garbage collection. What does that mean?</p>
+<p>Go是一门静态类型、编译型语言，有类C风格的语法和垃圾回收机制。这意味着什么呢？</p>
+<h2 id="编译（Compilation）"><a href="#编译（Compilation）" class="headerlink" title="编译（Compilation）"></a>编译（Compilation）</h2><p>Compilation is the process of translating the source code that you write into a lower level language – either assembly (as is the case with Go), or some other intermediary language (as with Java and C#).</p>
+<p>编译将你写的源代码转换成一种更低级的语言————可能是汇编（如Go就是这样），或者其他中间语言（如Java和C#）的过程。</p>
+<p>Compiled languages can be unpleasant to work with because compilation can be slow. It’s hard to iterate quickly if you have to spend minutes or hours waiting for code to compile. Compilation speed is one of the major design goals of Go. This is good news for people working on large projects as well as those of us used to a quick feedback cycle offered by interpreted languages.</p>
+<p>因为编译可能很慢，使用编译型语言可能不是个令人愉快的事情。很难实现快速迭代因为你不得不花几分钟甚至几个小时的时间来等待编绎完成。编译速度是Go设计时的一个主要目标。这对于大项目的开发人员来说是个好消息，就像我们可以使用解释语言提供的快速反馈周期。</p>
+<p>Compiled languages tend to run faster and the executable can be run without additional dependencies (at least, that’s true for languages like C, C++ and Go which compile directly to assembly).</p>
+<p>编译型语言往往运行得更快，不需要额外的依赖也可以正常运行（至少，像C、C++和Go这样直接编译成汇编的语言来说，就是如此。）</p>
+<h2 id="静态类型（Static-Typing）"><a href="#静态类型（Static-Typing）" class="headerlink" title="静态类型（Static Typing）"></a>静态类型（Static Typing）</h2><p>Being statically typed means that variables must be of a specific type (int, string, bool, []byte, etc.). This is either achieved by specifying the type when the variable is declared or, in many cases, letting the compiler infer the type (we’ll look at examples shortly).</p>
+<p>静态类型是指变量必须指定一个类型（整型、字符串、布尔、字节数组等等）。可以在申明变量的时候指定数据类型，也可以,大多数情况是让编译器来推断类型（我们将会在接下来的例子中看到）。</p>
+<p>There’s a lot more that can be said about static typing, but I believe it’s something better understood by looking at code. If you’re used to dynamically typed languages, you might find this cumbersome. You’re not wrong, but there are advantages, especially when you pair static typing with compilation. The two are often conflated. It’s true that when you have one, you normally have the other but it isn’t a hard rule. With a rigid type system, a compiler is able to detect problems beyond mere syntactical mistakes as well as make further optimizations.</p>
+<p>关于静态类型还有很多可以介绍，但我相信理解它更好的方式是阅读代码。如果你习惯于动态语言，你可能觉得这比较麻烦。没错，不过静态类型也有优势，尤其是和编译相结合的时候。静态类型和编译这两者经常被混为一谈。虽然这不是硬性的规定，但通常情况下，有其一就必有其二。在严格类型系统中，编译器除了能够检测出单纯的语法错误问题还能做出进一步的优化。</p>
+<h2 id="类C语法（C-Like-Syntax）"><a href="#类C语法（C-Like-Syntax）" class="headerlink" title="类C语法（C-Like Syntax）"></a>类C语法（C-Like Syntax）</h2><p>Saying that a language has a C-like syntax means that if you’re used to any other C-like languages such as C, C++, Java, JavaScript and C#, then you’re going to find Go familiar – superficially, at least. For example, it means <code>&amp;&amp;</code> is used as a boolean AND, <code>==</code> is used to compare equality, <code>&#123;</code> and <code>&#125;</code> start and end a scope, and array indexes start at 0.</p>
+<p>说一门语言有一个类C的语法意味着，如果你使用的任何其他类似C语言，如C，C ++，Java，JavaScript以及C＃，那么你会发现Go的相似之处————至少从表面上看。比如，<code>&amp;&amp;</code>表示逻辑与,<code>==</code>表示相等判断，<code>&#123;&#125;</code>和<code>&#125;</code>是作用域的开始和结束，以及数组从0开始索引。</p>
+<p>C-like syntax also tends to mean semi-colon terminated lines and parentheses around conditions. Go does away with both of these, though parentheses are still used to control precedence. For example, an <code>if</code> statement looks like this:</p>
+<p>类C语法也往往使用分号结束行和条件表达式用括号括起来。Go没用使用这两种方式，尽管依然使用括号来控制优先权。比如，一个<code>if</code>表达式看起来像这样：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> name == <span class="string">&quot;Leto&quot;</span> &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&quot;the spice must flow&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>And in more complicated cases, parentheses are still useful:</p>
+<p>在更复杂的情况下，括号依然有用：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (name == <span class="string">&quot;Goku&quot;</span> &amp;&amp; power &gt; <span class="number">9000</span>) || (name == <span class="string">&quot;gohan&quot;</span> &amp;&amp; power &lt; <span class="number">4000</span>)  &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&quot;super Saiyan&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Beyond this, Go is much closer to C than C# or Java - not only in terms of syntax, but in terms of purpose. That’s reflected in the terseness and simplicity of the language which will hopefully start to become obvious as you learn it.</p>
+<p>除此之外，Go比C#或者Java更接近C，不仅在语法方面，还在用途方面。这体现在语言风格的简洁和简单，随着不断深入学习，你会越来越明显的体会到这种特性。</p>
+<h2 id="垃圾回收机制（Garbage-Collected）"><a href="#垃圾回收机制（Garbage-Collected）" class="headerlink" title="垃圾回收机制（Garbage Collected）"></a>垃圾回收机制（Garbage Collected）</h2><p>Some variables, when created, have an easy-to-define life. A variable local to a function, for example, disappears when the function exits. In other cases, it isn’t so obvious – at least to a compiler. For example, the lifetime of a variable returned by a function or referenced by other variables and objects can be tricky to determine. Without garbage collection, it’s up to developers to free the memory associated with such variables at a point where the developer knows the variable isn’t needed. How? In C, you’d literally <code>free(str);</code> the variable.</p>
+<p>一些变量，在创建时就有明确的生命周期。如函数内的局部变量，当函数结束时就消失了。在另一些情况下，就没有这么明显了，起码对编译器来说是这样。比如函数中返回的变量，变量的引用和对象的引用的生命周期就很难判断了。没有垃圾回收机制的情况下，这依赖于开发人员在不需要这些变量时进行内存的释放。怎么实现？例如在c中，你需要正确的去释放一个变量的内存<code>free(str);</code>。</p>
+<p>Languages with garbage collectors (e.g., Ruby, Python, Java, JavaScript, C#, Go) are able to keep track of these and free them when they’re no longer used. Garbage collection adds overhead, but it also eliminates a number of devastating bugs.</p>
+<p>有垃圾回收机制的语言（如Ruby、Python、Java、JavaScript、C#、Go）能记录变量并在不使用时进行释放。垃圾回收机制增加了开销，但也杜绝了一些破坏性的bug。</p>
+<h2 id="运行Go代码（Running-Go-Code）"><a href="#运行Go代码（Running-Go-Code）" class="headerlink" title="运行Go代码（Running Go Code）"></a>运行Go代码（Running Go Code）</h2><p>Let’s start our journey by creating a simple program and learning how to compile and execute it. Open your favorite text editor and write the following code:</p>
+<p>让我们创建一个简单的例子来学习如何编译和运行它，来开始我们的Go学习之旅。打开你最喜欢的文本编辑器，输入如下的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="built_in">println</span>(<span class="string">&quot;it&#x27;s over 9000!&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Save the file as <code>main.go</code>. For now, you can save it anywhere you want; we don’t need to live inside Go’s workspace for trivial examples.</p>
+<p>将文件保存为<code>main.go</code>。开始，你可以将它保存在任何你想要的地方；作为简单的例子，我们还不需要深入理解Go的工作区。</p>
+<p>Next, open a shell/command prompt and change the directory to where you saved the file. For me, that means typing <code>cd ~/code</code>.</p>
+<p>接下来，打开一个shell/命令行，然后将目录切换到你保存文件的位置。对我来，输入<code>cd ~/code</code>就可以了。</p>
+<p>Finally, run the program by entering:</p>
+<p>最后，能过输入如下命令来运行程序：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go run main.go</span><br></pre></td></tr></table></figure>
+
+<p>If everything worked, you should see <em>it’s over 9000!</em>.</p>
+<p>如果一切正常，你会看到 *it’s over 9000!*。</p>
+<p>But wait, what about the compilation step? <code>go run</code> is a handy command that compiles <em>and</em> runs your code. It uses a temporary directory to build the program, executes it and then cleans itself up. You can see the location of the temporary file by running:</p>
+<p>等等，那编译过程呢？<code>go run</code>是一个方便的编译和执行代码的命令。它使用临时目录来生成程序和运行，然后清理。通过下面的代码你可以查看临时文件所在位置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go run --work main.go</span><br></pre></td></tr></table></figure>
+
+<p>To explicitly compile code, use <code>go build</code>:</p>
+<p>要显示的编译代码，使用<code>go build</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go build main.go</span><br></pre></td></tr></table></figure>
+
+<p>This will generate an executable <code>main</code> which you can run. On Linux / OSX, don’t forget that you need to prefix the executable with dot-slash, so you need to type <code>./main</code>.</p>
+<p>这会生成一个可执行的<code>main</code>程序。在Linux/OSX中，不要忘记在可执行文件前面加上点和反斜杠，所有你需要输入<code>./main</code>。</p>
+<p>While developing, you can use either <code>go run</code> or <code>go build</code>. When you deploy your code however, you’ll want to deploy a binary via <code>go build</code> and execute that.</p>
+<p>在开发的时候，你可以使用<code>go run</code>或者<code>go build</code>。但当你发布的时候，你需要使用<code>go build</code>来生成可执行文件并运行它。</p>
+<h3 id="主函数（Main）"><a href="#主函数（Main）" class="headerlink" title="主函数（Main）"></a>主函数（Main）</h3><p>Hopefully, the code that we just executed is understandable. We’ve created a function and printed out a string with the built-in <code>println</code> function. Did <code>go run</code> know what to execute because there was only a single choice? No. In Go, the entry point to a program has to be a function called <code>main</code> within a package <code>main</code>.</p>
+<p>但愿，我们刚刚的执行的代码是可以理解的。我们创建了一个函数，它调用内置的<code>println</code>函数打印一个字符串。难道是因为只有一个选择，所以<code>go run</code>才知道要执行什么吗？不是的，在Go语言中，程序的入口是<code>main</code>包中的<code>main</code>函数。</p>
+<p>We’ll talk more about packages in a later chapter. For now, while we focus on understanding the basics of Go, we’ll always write our code within the <code>main</code> package.</p>
+<p>后续章节我们会介绍更多包的内容。现在，为了我们着重理解Go的基础知识，我们只在<code>main</code>包中写代码。</p>
+<p>If you want, you can alter the code and change the package name. Run the code via <code>go run</code> and you should get an error. Then, change the name back to <code>main</code> but use a different function name. You should see a different error message. Try making those same changes but use <code>go build</code> instead. Notice that the code compiles, there’s just no entry point to run it. This is perfectly normal when you are, for example, building a library.</p>
+<p>如果你愿意，你也可以修改代码并改变包名89。并使用<code>go run</code>去执行，你会得到一个错误信息。然后，将包名改成<code>main</code>，但是函数名不叫<code>main</code>，再次运行代码，你会得到一个不同的错误信息。使用<code>go build</code>进行相同的操作，注意编译代码时，这里没有运行代码的入口点。这是很正常的，例如当你编译一个库时。</p>
+<h2 id="包导入（Imports）"><a href="#包导入（Imports）" class="headerlink" title="包导入（Imports）"></a>包导入（Imports）</h2><p>Go has a number of built-in functions, such as <code>println</code>, which can be used without reference. We can’t get very far though, without making use of Go’s standard library and eventually using third-party libraries. In Go, the <code>import</code> keyword is used to declare the packages that are used by the code in the file.</p>
+<p>Go有一些内建函数是不需要引入就可以直接使用，如<code>println</code>。不利用Go标准库和第三方类库的话，我们不能走得很远。在Go中，使用<code>import</code>关键字来申明代码中使用的包。</p>
+<p>Let’s change our program:<br>让我们来修改下程序：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">if</span> <span class="built_in">len</span>(os.Args) != <span class="number">2</span> &#123;</span><br><span class="line">    os.Exit(<span class="number">1</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  fmt.Println(<span class="string">&quot;It&#x27;s over &quot;</span>, os.Args[<span class="number">1</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Which you can run via:</p>
+<p>通过下面的命令来运行它：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go run main.go 9000</span><br></pre></td></tr></table></figure>
+
+<p>We’re now using two of Go’s standard packages: <code>fmt</code> and <code>os</code>. We’ve also introduced another built-in function <code>len</code>. <code>len</code> returns the size of a string, or the number of values in a dictionary, or, as we see here, the number of elements in an array. If you’re wondering why we expect 2 arguments, it’s because the first argument – at index 0 – is always the path of the currently running executable. (Change the program to print it out and see for yourself.)</p>
+<p>我们用了两个Go的标准包：<code>fmt</code>和<code>os</code>。我们引入了另一个内建函数<code>len</code>。<code>len</code>返加字符串的长度，或者字典的个数，再或者，如这个例子，数组元素的个数。如果你想知道为什么我们期望是两个参数，这是因为索引为0的第一个参数是当前可执程序的路径（你可以自己修改代码将它打印出来看看）。</p>
+<p>You’ve probably noticed we prefix the function name with the package, e.g., <code>fmt.Println</code>. This is different from many other languages. We’ll learn more about packages in later chapters. For now, knowing how to import and use a package is a good start.</p>
+<p>你可能已经注意到了函数名之前的包名了，比如：<code>fmt.Println</code>，这和其他很多语言不同。后续章节我们会学习更多包的内容。现在，知道如何导入和使用包就好了。</p>
+<p>Go is strict about importing packages. It will not compile if you import a package but don’t use it. Try to run the following:</p>
+<p>Go对包导入很严格。如果导入了包，但没有使用是不能通过编译的。试试运行下面的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You should get two errors about <code>fmt</code> and <code>os</code> being imported and not used. Can this get annoying? Absolutely. Over time, you’ll get used to it (it’ll still be annoying though). Go is strict about this because unused imports can slow compilation; admittedly a problem most of us don’t have to this degree.</p>
+<p>你会看到两个错误信息，显示<code>fmt</code>和<code>os</code>包被导入但是没有被使用。这会让人烦吗？绝对的。随着时间的推移，你会习惯（虽然还是烦人）。Go之所以在这点上这么严格是因为导入未使用的包会影响编译速度。不可否认的是，我们大多数人都没有这个深度。</p>
+<p>Another thing to note is that Go’s standard library is well documented. You can head over to <a target="_blank" rel="noopener" href="http://golang.org/pkg/fmt/#Println">http://golang.org/pkg/fmt/#Println</a> to learn more about the <code>Println</code> function that we used. You can click on that section header and see the source code. Also, scroll to the top to learn more about Go’s formatting capabilities.</p>
+<p>令一个值得注意的地方就是Go的标准包的文档很完善。你可以通过<a target="_blank" rel="noopener" href="http://golang.org/pkg/fmt/#Println">http://golang.org/pkg/fmt/#Println</a> 来学习更多我们用到过的<code>Println</code>的内容。你可以点击章节标题来查看源码。也可以滚动到顶部来查看更多关于Go格式化的功能。</p>
+<p>If you’re ever stuck without internet access, you can get the documentation running locally via:<br>如果你不能访问网络，你可以通过下面的方面运行本地的文档：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">godoc -http=:6060</span><br></pre></td></tr></table></figure>
+
+<p>and pointing your browser to <code>http://localhost:6060</code></p>
+<p>然后通过<code>http://localhost:6060</code>来浏览。</p>
+<h2 id="变量和声明（Variables-and-Declarations）"><a href="#变量和声明（Variables-and-Declarations）" class="headerlink" title="变量和声明（Variables and Declarations）"></a>变量和声明（Variables and Declarations）</h2><p>It’d be nice to begin and end our look at variables by saying <em>you declare and assign to a variable by doing x = 4.</em> Unfortunately, things are more complicated in Go. We’ll begin our conversation by looking at simple examples. Then, in the next chapter, we’ll expand this when we look at creating and using structures. Still, it’ll probably take some time before you truly feel comfortable with it.</p>
+<p><em>通过x = 4就能声明和赋值变量</em> ，对你来说可能是一个好的开始和结束。不幸的是，Go中要复杂一些。我们将通过简单的例子来开始我们的话题。然后，我们会在下一章节中，在讲解分创建的使用结构体的时候，我们会展开来讲解。但是，你可以需要花一些时间来适应它。</p>
+<p>You might be thinking <em>Woah! What can be so complicated about this?</em> Let’s start looking at some examples.</p>
+<p>你可能会觉得 *哇！为什么这么复杂?*让我们来看些例子吧。</p>
+<p>The most explicit way to deal with variable declaration and assignment in Go is also the most verbose:</p>
+<p>在Go中最直接也是最繁索的变量声明和赋值方式是：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">var</span> power <span class="keyword">int</span></span><br><span class="line">  power = <span class="number">9000</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;It&#x27;s over %d\n&quot;</span>, power)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here, we declare a variable <code>power</code> of type <code>int</code>. By default, Go assigns a zero value to variables. Integers are assigned <code>0</code>, booleans <code>false</code>, strings <code>&quot;&quot;</code> and so on. Next, we assign <code>9000</code> to our <code>power</code> variable. We can merge the first two lines:</p>
+<p>这里，我们声明了一个<code>int</code>类型的变量<code>power</code>。默认情况下，Go给变量赋为0值。整型赋为<code>0</code>，布尔型赋为<code>false</code>，字符串赋为<code>&quot;&quot;</code>等等。接着，我们给变量<code>power</code>赋值为<code>9000</code>。我们可以合并开始的这两行：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> power <span class="keyword">int</span> = <span class="number">9000</span></span><br></pre></td></tr></table></figure>
+
+<p>Still, that’s a lot of typing. Go has a handy short variable declaration operator, <code>:=</code>, which can infer the type:</p>
+<p>依然，还是需要很多的输入。Go有更方便的变量声明操作符，<code>:=</code>，它可以推断类型。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">power := <span class="number">9000</span></span><br></pre></td></tr></table></figure>
+
+<p>This is handy, and it works just as well with functions:</p>
+<p>这很方便，对函数也同样适用：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  power := getPower()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getPower</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">9001</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>It’s important that you remember that <code>:=</code> is used to declare the variable as well as assign a value to it. Why? Because a variable can’t be declared twice (not in the same scope anyway). If you try to run the following, you’ll get an error.</p>
+<p>记住<code>:=</code>用于声明和赋值变量这点很重要。为什么呢？因为一个变量不能被声明两次（在同一个作用域中）。如果你尝试运行下面的代码，你会看到一个错误信息。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  power := <span class="number">9000</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;It&#x27;s over %d\n&quot;</span>, power)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// COMPILER ERROR:</span></span><br><span class="line">  <span class="comment">// no new variables on left side of :=</span></span><br><span class="line">  power := <span class="number">9001</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;It&#x27;s also over %d\n&quot;</span>, power)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The compiler will complain with <em>no new variables on left side of :=</em>. This means that when we first declare a variable, we use <code>:=</code> but on subsequent assignment, we use the assignment operator <code>=</code>. This makes a lot of sense, but it can be tricky for your muscle memory to remember when to switch between the two.</p>
+<p>编译器会抱错提示 <em>:=左边不是新的变量</em>。这就是说我们一开始用<code>:=</code>来声明一个变量，接下来我们需要用<code>=</code>来给变量赋值。这很用意义，但是对你的记忆力来说是一个负担，因为你要记住这两者之间切换的时机。</p>
+<p>If you read the error message closely, you’ll notice that <em>variables</em> is plural. That’s because Go lets you assign multiple variables (using either <code>=</code> or <code>:=</code>):</p>
+<p>如果你仔细看错误信息，你会发现 <em>变量</em>用了复数形式。因为Go支持多个变量同时赋值（使用<code>=</code>或者<code>:=</code>）:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  name, power := <span class="string">&quot;Goku&quot;</span>, <span class="number">9000</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;%s&#x27;s power is over %d\n&quot;</span>, name, power)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>As long as one of the variables is new, <code>:=</code> can be used. Consider:</p>
+<p>只要有一个变量是新的就可以使用<code>:=</code> 操作符。例如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  power := <span class="number">1000</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;default power is %d\n&quot;</span>, power)</span><br><span class="line"></span><br><span class="line">  name, power := <span class="string">&quot;Goku&quot;</span>, <span class="number">9000</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;%s&#x27;s power is over %d\n&quot;</span>, name, power)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Although <code>power</code> is being used twice with <code>:=</code>, the compiler won’t complain the second time we use it, it’ll see that the other variable, <code>name</code>, is a new variable and allow <code>:=</code>. However, you can’t change the type of <code>power</code>. It was declared (implicitly) as an integer and thus, can only be assigned integers.</p>
+<p>虽然变量<code>power</code>使用了<code>:=</code>，但是编译器不会在第2次使用<code>:=</code>时报错，因为这里有一个新变量<code>name</code>，允许使用<code>:=</code>。但你不能改变<code>power</code>的类型。它已经被声明（隐式的）为整型，所以只能用整数来赋值。</p>
+<p>For now, the last thing to know is that, like imports, Go won’t let you have unused variables. For example,</p>
+<p>最后，和包导入一样，Go不允许未使用的变量。例如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  name, power := <span class="string">&quot;Goku&quot;</span>, <span class="number">1000</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;default power is %d\n&quot;</span>, power)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>won’t compile because <code>name</code> is declared but not used. Like unused imports it’ll cause some frustration, but overall I think it helps with code cleanliness and readability.</p>
+<p>不会被编译因为变量<code>name</code>声明了但没有使用。和包导入一样会带来一些挫败感，但总的来说，这是为了代码的简洁和可读性。</p>
+<p>There’s more to learn about declaration and assignments. For now, remember that you’ll use <code>var NAME TYPE</code> when declaring a variable to its zero value, <code>NAME := VALUE</code> when declaring and assigning a value, and <code>NAME = VALUE</code> when assigning to a previously declared variable.</p>
+<p>声明和赋值还有内容需要学习。现在，只要记住，用<code>var NAME TYPE</code>来声明变量并赋0值，用<code>NAME := VALUE</code>声明变量并赋值，和用<code>NAME = VALUE</code>给已声明的变量赋值。</p>
+<h2 id="函数声明（Function-Declarations）"><a href="#函数声明（Function-Declarations）" class="headerlink" title="函数声明（Function Declarations）"></a>函数声明（Function Declarations）</h2><p>This is a good time to point out that functions can return multiple values. Let’s look at three functions: one with no return value, one with one return value, and one with two return values.</p>
+<p>现在是一个好的时机来指出函数是可以有多返回值的。让我们来看3个函数：一个没有返回值，一个有一个返回值，另一个有两个返回值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(message <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(a <span class="keyword">int</span>, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">power</span><span class="params">(name <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">int</span>, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>We’d use the last one like so:<br>我们像这样来使用最后一个函数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">value, exists := power(<span class="string">&quot;goku&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> exists == <span class="literal">false</span> &#123;</span><br><span class="line">  <span class="comment">// handle this error case</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Sometimes, you only care about one of the return values. In these cases, you assign the other values to <code>_</code>:</p>
+<p>有时，你可能只关心其中一个返回值。在这种情况下，你可以把其他值赋为<code>_</code>:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">_, exists := power(<span class="string">&quot;goku&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> exists == <span class="literal">false</span> &#123;</span><br><span class="line">  <span class="comment">// handle this error case</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This is more than a convention. <code>_</code>, the blank identifier, is special in that the return value isn’t actually assigned. This lets you use <code>_</code> over and over again regardless of the returned type.</p>
+<p>这不仅仅是一个约定。<code>_</code>，空白标识符，尤其在用在返回值时它没有真正的赋值。无论返回值是什么类型你都可以使用<code>_</code>。</p>
+<p>Finally, there’s something else that you’re likely to run into with function declarations. If parameters share the same type, we can use a shorter syntax:</p>
+<p>最后，你可能遇到一些不同的函数声明方式。如果函数的参数类型都相同，那么可以用以下更简洁的方式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Being able to return multiple values is something you’ll use often. You’ll also frequently use <code>_</code> to discard a value. Named return values and the slightly less verbose parameter declaration aren’t that common. Still, you’ll run into all of these sooner than later so it’s important to know about them.</p>
+<p>你会常常用到函数多返回值这个特性。你也会经常使用<code>_</code>去舍弃一个返回值。具名返回值和无名参数声明并不常见。但是迟早你都会遇到，最好对他们都有所了解。</p>
+<h2 id="继续之前（Before-You-Continue）"><a href="#继续之前（Before-You-Continue）" class="headerlink" title="继续之前（Before You Continue）"></a>继续之前（Before You Continue）</h2><p>We looked at a number of small individual pieces and it probably feels disjointed at this point. We’ll slowly build larger examples and hopefully, the pieces will start to come together.</p>
+<p>现在我们已经学习了许多的小知识点，你可能会觉得有点脱节。我们会逐步构建一个更大的例子，有望将这些小知识点串联起来。</p>
+<p>If you’re coming from a dynamic language, the complexity around types and declarations might seem like a step backwards. I don’t disagree with you. For some systems, dynamic languages are categorically more productive.</p>
+<p>如果你是来自动态类型语言的开发人员，你可能会觉得Go的变量类型和声明的复杂是一种倒退。我同意你的看法。对于一些系统，动态类型的语言绝对更有效率。</p>
+<p>If you’re coming from a statically typed language, you’re probably feeling comfortable with Go. Inferred types and multiple return values are nice (though certainly not exclusive to Go). Hopefully as we learn more, you’ll appreciate the clean and terse syntax.</p>
+<p>如果你是来自静态类型语言的开发人员，你可能会习惯使用Go。类型推断和多返回值是如此的美好（尽管这不是Go独有的）。希望随着我们不断深入的学习，你会喜欢上Go干净和简洁的语法。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/go/" rel="tag"><i class="fa fa-tag"></i> go</a>
+              <a href="/tags/go-little-book/" rel="tag"><i class="fa fa-tag"></i> go little book</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/22/go/go-little-book/getting-start/" rel="prev" title="Go Little Book - 入门">
+      <i class="fa fa-chevron-left"></i> Go Little Book - 入门
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/22/go/go-little-book/chapter-2/" rel="next" title="Go Little Book - 第二章 - 结构体">
+      Go Little Book - 第二章 - 结构体 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%9F%BA%E7%A1%80%EF%BC%88Chapter-1-The-Basics%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">第一章 - 基础（Chapter 1 - The Basics）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%EF%BC%88Compilation%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">编译（Compilation）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E7%B1%BB%E5%9E%8B%EF%BC%88Static-Typing%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">静态类型（Static Typing）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BBC%E8%AF%AD%E6%B3%95%EF%BC%88C-Like-Syntax%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">类C语法（C-Like Syntax）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%EF%BC%88Garbage-Collected%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">垃圾回收机制（Garbage Collected）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8CGo%E4%BB%A3%E7%A0%81%EF%BC%88Running-Go-Code%EF%BC%89"><span class="nav-number">1.5.</span> <span class="nav-text">运行Go代码（Running Go Code）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E5%87%BD%E6%95%B0%EF%BC%88Main%EF%BC%89"><span class="nav-number">1.5.1.</span> <span class="nav-text">主函数（Main）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%85%E5%AF%BC%E5%85%A5%EF%BC%88Imports%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">包导入（Imports）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E5%92%8C%E5%A3%B0%E6%98%8E%EF%BC%88Variables-and-Declarations%EF%BC%89"><span class="nav-number">1.7.</span> <span class="nav-text">变量和声明（Variables and Declarations）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E%EF%BC%88Function-Declarations%EF%BC%89"><span class="nav-number">1.8.</span> <span class="nav-text">函数声明（Function Declarations）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%A7%E7%BB%AD%E4%B9%8B%E5%89%8D%EF%BC%88Before-You-Continue%EF%BC%89"><span class="nav-number">1.9.</span> <span class="nav-text">继续之前（Before You Continue）</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">88</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">459k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:57</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : 'c988769783840fcc83763577ffff5158',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

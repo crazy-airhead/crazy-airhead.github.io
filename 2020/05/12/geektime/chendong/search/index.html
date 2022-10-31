@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="现在的脑科学认为，人脑关于记忆主要分为两种功能：存储功能和提取功能。在《如何学习：成就你的终身学习力》中有一段话是这么写的：  记忆是不会“丢失”的，不会像我们以为的那样越变越淡，直至踪迹全无。准确地说，“丢失”——其实只是我们一时无法提取出来记忆而已，它的提取能力在当下很低，低到几乎为零。  作者还举了一个在老式图书馆搜集材料，因为霉味而勾起自己在1982在图书馆工作一段回忆的例子。如果换成触景">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记忆与检索技术">
+<meta property="og:url" content="http://l4qiang.me/2020/05/12/geektime/chendong/search/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="现在的脑科学认为，人脑关于记忆主要分为两种功能：存储功能和提取功能。在《如何学习：成就你的终身学习力》中有一段话是这么写的：  记忆是不会“丢失”的，不会像我们以为的那样越变越淡，直至踪迹全无。准确地说，“丢失”——其实只是我们一时无法提取出来记忆而已，它的提取能力在当下很低，低到几乎为零。  作者还举了一个在老式图书馆搜集材料，因为霉味而勾起自己在1982在图书馆工作一段回忆的例子。如果换成触景">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://l4qiang.me/images/geek-time-ads/%E6%A3%80%E7%B4%A2%E6%8A%80%E6%9C%AF%E6%A0%B8%E5%BF%8320%E8%AE%B2.jpeg">
+<meta property="article:published_time" content="2020-05-12T15:00:37.000Z">
+<meta property="article:modified_time" content="2022-10-30T13:23:05.322Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="极客时间">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://l4qiang.me/images/geek-time-ads/%E6%A3%80%E7%B4%A2%E6%8A%80%E6%9C%AF%E6%A0%B8%E5%BF%8320%E8%AE%B2.jpeg">
+
+<link rel="canonical" href="http://l4qiang.me/2020/05/12/geektime/chendong/search/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>记忆与检索技术 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c3ed9d534576a67e94ff8be03a704994";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/05/12/geektime/chendong/search/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记忆与检索技术
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-12 23:00:37" itemprop="dateCreated datePublished" datetime="2020-05-12T23:00:37+08:00">2020-05-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%A3%80%E7%B4%A2%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">检索技术</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>现在的脑科学认为，人脑关于记忆主要分为两种功能：存储功能和提取功能。在《如何学习：成就你的终身学习力》中有一段话是这么写的：</p>
+<blockquote>
+<p>记忆是不会“丢失”的，不会像我们以为的那样越变越淡，直至踪迹全无。准确地说，“丢失”——其实只是我们一时无法提取出来记忆而已，它的提取能力在当下很低，低到几乎为零。</p>
+</blockquote>
+<p>作者还举了一个在老式图书馆搜集材料，因为霉味而勾起自己在1982在图书馆工作一段回忆的例子。如果换成触景生情的说法，想来也是有碰到过的。</p>
+<p>有些记忆大师公开说过，会在记忆的过程中会将要记忆的内容，配合图像（或故事）一起编码来加速和巩固记忆。</p>
+<span id="more"></span>
+
+<p>那么计算机又会如何处理呢？看看《检索技术核心20讲》的开篇词，或许你能找到答案。</p>
+<blockquote>
+<p>你好，我是陈东，本硕都毕业于北京大学，目前是奇虎 360 商业产品事业部资深总监。</p>
+<p>提起检索，我真有挺多话要说，因为这是我从学生时代到职场一路走来，一直都在学习和从事的事情。</p>
+<p>我在研究生时期就加入了北大网络实验室。这个实验室当时最有名的一个产品，就是 1997 年发布的北大天网，它是国内第一个基于网页索引的中文搜索引擎。在这里，我接触到了搜索引擎的原理，并开始研究海量数据的存储和检索。</p>
+<p>后来，我又参加了 IBM“天才孵化计划”，参与了一个基于地理位置的图片社交创新项目。在这里，我遇到了一个特别棘手的挑战，就是要基于每个用户的位置和他们发过的图片进行好友推荐。在这个过程中，我要不断地解决各种检索问题，包括地理位置检索、图片检索、相似用户检索等等。</p>
+<p>幸运的是，这些问题都围绕着一个核心问题，也就是如何高效检索。所以，我还是在短时间内很好地完成了这个任务。解决棘手的问题，给我带来了成就感。同时，这也让我产生了一个想法，我想要深入去研究“如何在不同的应用中做好检索”。</p>
+<p>于是，毕业后，我先后加入了微软广告技术团队、创业公司聚效广告和奇虎 360。尽管这些都属于互联网广告行业，但它们的背后都离不开检索知识和技术的支持。而这么多年打造高性能广告引擎的工作经历，让我对于如何做好检索，以及如何使用检索技术支持业务，有了深入的思考和理解。</p>
+<h4 id="为什么要学习检索技术？"><a href="#为什么要学习检索技术？" class="headerlink" title="为什么要学习检索技术？"></a>为什么要学习检索技术？</h4><p>说到这，我想问你一个问题：你理解的检索技术是什么？说实话，在专栏刚开始筹备的时候，我就问过很多人这个问题，不少人的第一反应就是：检索就是搜索引擎或者数据库吧。实际上，检索技术的覆盖范围远不止这些。</p>
+<p>不管是在数据库和搜索引擎里，还是在新闻推荐平台、电商平台、生活服务平台中，如果我们把这些业务场景抽象出来，它们的本质其实都是在海量的信息中，快速筛选出我们需要的内容或服务，而这都和检索技术紧密相关。也就是说，即便业务形态不同，但是在这些平台的架构设计中，也都有着相似的检索模块实现。</p>
+<p>那检索技术到底是什么呢？我们可以用一句话来概括检索技术：<strong>它是更底层的通用技术，它研究的是如何将我们所需的数据高效地取出来</strong>。而如何打造高性能的检索引擎，是这些业务都需要面对的核心问题。甚至我们可以说，提供“更快”“更好”的检索服务，其实就是这些公司的核心竞争力之一。</p>
+<p>除了解决业务场景，在我们的实际工作中，“如何快速检索数据”也是最常见的需求。</p>
+<p>比如说，无论你是从事底层架构开发，还是业务开发，我相信你都有可能会面对“为啥我的程序运行得这么慢”的问题。比如说，我们打开一些网站或应用的时候，常常会看到“loading”或“数据加载中”的提示，这很大可能是因为，程序从数据库中检索相关数据比较缓慢。如果我们能合理地使用数据库的索引功能，往往能提升好几倍的加载速度，从而大大减少用户的等待时间。</p>
+<p>再比如说，在具体写代码的时候，我们会用到一些系统提供的容器，比如 ArrayList、LinkedList。尽管这些容器都提供了“查询是否包含某个元素”的功能，但是它们的性能相差甚远，如果不了解这些容器的检索原理，我们就有可能因为使用不当而导致程序运行缓慢。因此，<strong>了解和使用合适的检索技术，往往能有效提升整个程序的执行效率</strong>。</p>
+<p>刚才举的例子都很具体，那我们再从更高的视角，来看看当下我们所处的这个时代。随着 5G 等新技术的普及，我们收集和存储的数据会越来越多。毫无疑问，在这样一个信息爆炸甚至过剩的时代，如何对信息进行高效检索，也将是这个时代必不可少的技能之一。再说回到我们自己的 IT 行业，技术变化之快，我就不必多说了。我相信，掌握好检索技术，能帮助你在行业的快速变化和发展中找到新的机会，让你有更多的机会进入更好的平台，施展自己的才华。</p>
+<h4 id="为什么检索技术难学？"><a href="#为什么检索技术难学？" class="headerlink" title="为什么检索技术难学？"></a>为什么检索技术难学？</h4><p>说了这么多检索的好处，那说到底，我们怎么才能学好检索技术呢？我曾经想过整理一些材料，给我自己团队的成员进行培训，帮助他们更好地完成工作，但我发现很难找到理想的教材。</p>
+<p>我认真了解并且分析之后发现，这主要有两方面原因。</p>
+<p>一方面，经典教材大都太过理论化，和实际工作结合不紧密，学习难度太大。比如，《现代信息检索》和《信息检索导论》就是两本非常经典的书籍，但是大部分人都反馈读起它们来比较吃力，书中的内容组织和例子都和我们的实际工作有比较大的差距。</p>
+<p>另一方面，和实际工作结合的教材，往往都是从某一行业的视角出发，全面介绍这个行业方方面面的所有技术，而不是专注于某一个基础技术。比如说，数据库方面的教材，一般会介绍关系模型、SQL 语句、事务处理等内容；搜索引擎方面的教材会介绍爬虫系统、文本挖掘、自然语言处理、网页链接分析等内容，真正涉及检索技术的篇幅并不多。如果以这些书籍为教材，我们根本无法聚焦到检索技术的学习上，难以快速、系统地掌握这门实用的知识。</p>
+<p>总结来说，不管是经典教材，还是和实际结合的教材，对读者的知识储备要求都比较高，那无形之中就建立了一个“高门槛”，很多想学习检索技术的人都是被这样的“高门槛”拦在门外的。</p>
+<p>于是，我就开始想，那我是不是可以结合我这么多年对检索技术的理解，将我自己多年从事相关工作的经验总结出来呢？于是，经过近半年的精心准备，《检索技术核心 20 讲》这个专栏就诞生了。</p>
+<h4 id="专栏是如何设计的？"><a href="#专栏是如何设计的？" class="headerlink" title="专栏是如何设计的？"></a>专栏是如何设计的？</h4><p>如果用一句话来概括一下这个专栏的交付目标，那就是，<strong>我想通过这个专栏系统地梳理检索技术的知识，去除冗杂的知识旁支，聚焦于最通用、最核心的检索技术，帮助更多有学习热情、有工作需求的工程师找到学习检索的方法，快速入门、积累经验，解决实际工作中的检索问题</strong>。</p>
+<p>所以，对于这个专栏的内容设计，我给自己定了这么几个目标：</p>
+<ol>
+<li><strong>聚焦核心知识，帮你全面了解检索技术</strong>。我会将我了解的不同行业、不同系统的检索技术进行提炼，帮助你掌握检索技术的核心知识。我也会将不同行业的检索相关的知识进行体系化的梳理，帮助你更好地将各种检索技术进行横向比较，融会贯通，从而构建起自己的检索知识体系。</li>
+<li><strong>注重实用性，帮你解决实际工作中的问题</strong>。我会通过工业界中的实际案例，来详细讲解不同行业会用到的检索技术。这些案例覆盖了多个应用场景和环节，能够解决现阶段你工作中遇到的大部分检索问题，让你能够学以致用。并且，我也不会单纯地讲案例，我更多的会引导你通过这个案例进行更深入的思考，让你在之后的学习和工作中能做到举一反三，解决更多实际问题。</li>
+<li><strong>破除“高门槛”，帮你提高学习效率</strong>。首先，学习这个专栏对你基础知识的要求不多，只要你熟悉数组和链表，知道怎么评估时间代价，你就可以学习这个专栏。并且，为了避免枯燥的原理分析，我会少用甚至是不用公式，更多地使用具体的例子以及大量的配图，来帮助你理解检索相关的知识。除此之外，对于每一讲的知识点，我都做了合理的分配和设计。虽然知识的深度在逐步增加，但是跟着我的节奏，相信你依然可以很容易理解和吸收它们。</li>
+</ol>
+<p>基于这几个目标，我把整个专栏的核心内容分成三大部分：基础技术篇、进阶实战篇和系统案例篇。</p>
+<p>在基础技术篇，我会以常见但是核心的数据结构和检索算法作为入门，开启整个专栏的讲解。如果你经验尚浅，那这部分内容可以帮助你打好扎实的基础；如果你有一些实战经验，那这部分内容能让你站在检索技术的角度，重新审视之前熟悉的数据结构和算法，帮助你构建自己的检索知识体系。</p>
+<p>在进阶实战篇，我会结合工业界的实际应用场景，更深入地介绍一些高级检索技术，总结一些架构设计的思想，让你能学习到许多工业界的实用且有技术深度的解决方案。如果能深入理解并掌握这部分内容，我相信你会成为各种行业的优秀工程师。</p>
+<p>在系统案例篇，我会对当前热门的各个方向进行系统分析，比如，存储系统、搜索引擎、广告系统、推荐系统等。从中，你不仅能学到这些行业中是如何应用检索技术的，还可以了解不同行业中检索技术的共同点和不同点。这会帮助你更好地扩展自己的知识面，让你能站在架构师、甚至更高的角度去思考问题和解决问题。</p>
+<p>通过学习这个专栏，你不仅能知道这些基础的数据结构在代码级别提升效率的方法，还能够知道在存储系统、搜索引擎、广告系统和推荐系统这些热门架构中，高效率的设计思想以及某些独特环节的技术处理方式，让你对检索技术的理解和使用都能够更上一层楼，从知道“检索技术是什么”，到学会“利用检索技术解决实际问题”，并且更深入理解“为什么这么用”。</p>
+<p>专栏马上要开始更新了，这里我还想多说几句。</p>
+<p>如果你是一个对检索完全不懂的“新人”，没关系，遇到不懂、不理解的问题，你可以随时给我留言，我会尽我所能给你解答，帮你快速成长；如果你是一个有着多年经验的高级工程师，欢迎你和我分享你工作中遇到的难题，我们共同探讨、一起成长！</p>
+<p>最后，我想听你聊一聊，你是怎样理解检索技术的？对于这个专栏你有什么样的期待？欢迎在留言区畅所欲言，我会第一时间给你反馈！</p>
+</blockquote>
+<p>看过开篇词，如果对检索技术有兴趣，可扫码购买。</p>
+<p><img src="/images/geek-time-ads/%E6%A3%80%E7%B4%A2%E6%8A%80%E6%9C%AF%E6%A0%B8%E5%BF%8320%E8%AE%B2.jpeg"></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/" rel="tag"><i class="fa fa-tag"></i> 极客时间</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/03/07/java/ehcache/" rel="prev" title="一次Jfinal使用ehcache的错误记录">
+      <i class="fa fa-chevron-left"></i> 一次Jfinal使用ehcache的错误记录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/17/java/gradle/" rel="next" title="Maven项目升级为Gradle项目">
+      Maven项目升级为Gradle项目 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%AD%A6%E4%B9%A0%E6%A3%80%E7%B4%A2%E6%8A%80%E6%9C%AF%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">为什么要学习检索技术？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%A3%80%E7%B4%A2%E6%8A%80%E6%9C%AF%E9%9A%BE%E5%AD%A6%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">为什么检索技术难学？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%93%E6%A0%8F%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">专栏是如何设计的？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">88</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">459k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:57</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '3b0613230fc254f050ba90d31165daf5',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

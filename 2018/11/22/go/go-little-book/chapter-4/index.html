@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="第四章 - 代码组织和接口（Chapter 4 - Code Organization and Interfaces）It’s now time to look at how to organize our code. 现在是时候来看看我们是怎么组织代码了。 包（Packages）To keep more complicated libraries and systems organized, w">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go Little Book - 第四章 - 代码组织和接口">
+<meta property="og:url" content="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-4/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="第四章 - 代码组织和接口（Chapter 4 - Code Organization and Interfaces）It’s now time to look at how to organize our code. 现在是时候来看看我们是怎么组织代码了。 包（Packages）To keep more complicated libraries and systems organized, w">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-11-22T02:45:23.000Z">
+<meta property="article:modified_time" content="2022-10-30T13:23:05.325Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="go little book">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Go Little Book - 第四章 - 代码组织和接口 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c3ed9d534576a67e94ff8be03a704994";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Go Little Book - 第四章 - 代码组织和接口
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-22 10:45:23" itemprop="dateCreated datePublished" datetime="2018-11-22T10:45:23+08:00">2018-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第四章-代码组织和接口（Chapter-4-Code-Organization-and-Interfaces）"><a href="#第四章-代码组织和接口（Chapter-4-Code-Organization-and-Interfaces）" class="headerlink" title="第四章 - 代码组织和接口（Chapter 4 - Code Organization and Interfaces）"></a>第四章 - 代码组织和接口（Chapter 4 - Code Organization and Interfaces）</h1><p>It’s now time to look at how to organize our code.</p>
+<p>现在是时候来看看我们是怎么组织代码了。</p>
+<h2 id="包（Packages）"><a href="#包（Packages）" class="headerlink" title="包（Packages）"></a>包（Packages）</h2><p>To keep more complicated libraries and systems organized, we need to learn about packages. In Go, package names follow the directory structure of your Go workspace. If we were building a shopping system, we’d probably start with a package name “shopping” and put our source files in <code>$GOPATH/src/shopping/</code>.</p>
+<p>为了组织更复杂的类库和系统，我们需要了解包。在Go中，包名紧跟在工作目录结构之下。如果我们构建一个电商系统，我们可能以”shopping”命名包和把源文件存在<code>$GOPATH/src/shopping/</code>下。</p>
+<p>We don’t want to put everything inside this folder though. For example, maybe we want to isolate some database logic inside its own folder. To achieve this, we create a subfolder at <code>$GOPATH/src/shopping/db</code>. The package name of the files within this subfolder is simply <code>db</code>, but to access it from another package, including the <code>shopping</code> package, we need to import <code>shopping/db</code>.</p>
+<p>显然我们不想反所有的东西都放在这个目录。例如，我们希望在数据库目录下关联一些数据库的逻辑。要达到这个目的，我们创建了一个子目录<code>$GOPATH/src/shopping/db</code>。这个目录下的包名可以是简单的<code>db</code>，但是其他包需要访问这个包时，就需要包含<code>shopping</code>，我们需要这样导入<code>shopping/db</code>。</p>
+<p>In other words, when you name a package, via the <code>package</code> keyword, you provide a single value, not a complete hierarchy (e.g., “shopping” or “db”). When you import a package, you specify the complete path.</p>
+<p>换名话来说，当你命名一个包时，可以通过<code>package</code>关键字，你提供一个单一的值，不是完整的层级（比如，”shopping”或者”db”）。当你导入包时，你需要指定完整的路径。</p>
+<p>Let’s try it. Inside your Go workspace’s <code>src</code> folder (which we set up in Getting Started of the Introduction), create a new folder called <code>shopping</code> and a subfolder within it called <code>db</code>.</p>
+<p>让我们来试一试，在我们的Go的工作目录下的<code>src</code>文件夹中（我们在入门介绍中设置的），创建一个<code>shopping</code>的文件夹并创建一个<code>db</code>的子文件夹。</p>
+<p>Inside of <code>shopping/db</code>, create a file called <code>db.go</code> and add the following code:</p>
+<p>在<code>shopping/db</code>目录下，创建一个名为<code>db.go</code>的文件并添加如下代码： </p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> db</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</span><br><span class="line">  Price <span class="keyword">float64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LoadItem</span><span class="params">(id <span class="keyword">int</span>)</span> *<span class="title">Item</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;Item&#123;</span><br><span class="line">    Price: <span class="number">9.001</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Notice that the name of the package is the same as the name of the folder. Also, obviously, we aren’t actually accessing the database. We’re just using this as an example to show how to organize code.</p>
+<p>注意下包名和文件夹的名字是一样的。显然，我们也没有真下的访问数据库。我们只是用这个例子来演示如何组织代码。</p>
+<p>Now, create a file called <code>pricecheck.go</code> inside of the main <code>shopping</code> folder. Its content is:</p>
+<p>现在，在主目录<code>shopping</code>下创建一个名为<code>pricecheck.go</code>的文件。它的代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> shopping</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping/db&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PriceCheck</span><span class="params">(itemId <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">float64</span>, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">  item := db.LoadItem(itemId)</span><br><span class="line">  <span class="keyword">if</span> item == <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>, <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> item.Price, <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>It’s tempting to think that importing <code>shopping/db</code> is somehow special because we’re inside the <code>shopping</code> package/folder already. In reality, you’re importing <code>$GOPATH/src/shopping/db</code>, which means you could just as easily import <code>test/db</code> so long as you had a package named <code>db</code> inside of your workspace’s <code>src/test</code> folder.</p>
+<p>这很容易理解，导入<code>shopping/ db</code>有些特殊，因为我们是<code>shopping</code>包/文件夹中了。实际上，要导入<code>$ GOPATH/src/shopping/db</code>，这意味着你可以很容易地导入<code>test/db</code>，只要工作空间下的<code>src/test/db</code>的文件夹有一个<code>db</code>的包。</p>
+<p>If you’re building a package, you don’t need anything more than what we’ve seen. To build an executable, you still need a <code>main</code>. The way I prefer to do this is to create a subfolder called <code>main</code> inside of <code>shopping</code> with a file called <code>main.go</code> and the following content:</p>
+<p>如果你想建一个包，只需要我们看到的这些内容就可以了。要创建一个可执行程序，我们还需要一个<code>main</code>函数。我喜欢在<code>shopping</code>文件夹下建一个<code>main</code>文件夹并新增一个<code>main.go</code>的文件。它的内容如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping&quot;</span></span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(shopping.PriceCheck(<span class="number">4343</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You can now run your code by going into your <code>shopping</code> project and typing:</p>
+<p>进入<code>shopping</code>目录输入如下内容可以运行代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go run main/main.go</span><br></pre></td></tr></table></figure>
+
+<h3 id="循环导入（Cyclical-Imports）"><a href="#循环导入（Cyclical-Imports）" class="headerlink" title="循环导入（Cyclical Imports）"></a>循环导入（Cyclical Imports）</h3><p>As you start writing more complex systems, you’re bound to run into cyclical imports. This happens when package A imports package B but package B imports package A (either directly or indirectly through another package). This is something the compiler won’t allow.</p>
+<p>当你开始写一些更复杂的系统时，你不免会碰到循环导入的问题。当包A的导入了包B但是包B又导入了包A（无论是直接还是间接通过其他包导入）循环导入就发生了。这是编译器不允许的。</p>
+<p>Let’s change our shopping structure to cause the error.</p>
+<p>让我们来修改一下<code>shopping</code>的结构来引发这个错误。</p>
+<p>Move the <code>Item</code> definition from <code>shopping/db/db.go</code> into <code>shopping/pricecheck.go</code>. Your <code>pricecheck.go</code> file should now look like:</p>
+<p>把<code>Item</code>的定义从<code>shopping/db/db.go</code>移到<code>shopping/pricecheck.go</code>中。你的<code>pricecheck.go</code>应该看起来像这样：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> shopping</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping/db&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</span><br><span class="line">  Price <span class="keyword">float64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PriceCheck</span><span class="params">(itemId <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">float64</span>, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">  item := db.LoadItem(itemId)</span><br><span class="line">  <span class="keyword">if</span> item == <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>, <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> item.Price, <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>If you try to run the code, you’ll get a couple of errors from <code>db/db.go</code> about <code>Item</code> being undefined. This makes sense. <code>Item</code> no longer exists in the <code>db</code> package; it’s been moved to the shopping package. We need to change <code>shopping/db/db.go</code> to:</p>
+<p>如果你尝试运行代码，你会从<code>db/db.go</code>中收到一些错误信息说<code>Item</code>未定义。这好理解。<code>Item</code>已经不在<code>db</code>包下了；这被移到了<code>shopping</code>包。我们需要修改<code>shopping/db/db.go</code>的代码为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> db</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LoadItem</span><span class="params">(id <span class="keyword">int</span>)</span> *<span class="title">shopping</span>.<span class="title">Item</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;shopping.Item&#123;</span><br><span class="line">    Price: <span class="number">9.001</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Now when you try to run the code, you’ll get a dreaded <em>import cycle not allowed</em> error. We solve this by introducing another package which contains shared structures. Your directory structure should look like:</p>
+<p>现在当你尝试运行代码时，你会收到一个令人害怕的错误<em>import cycle not allowed</em>。我们通过引入一个包含共享结构的另一个包来解决这个问题。你的目录结构看起来像这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$GOPATH/src</span><br><span class="line">  - shopping</span><br><span class="line">    pricecheck.go</span><br><span class="line">    - db</span><br><span class="line">      db.go</span><br><span class="line">    - models</span><br><span class="line">      item.go</span><br><span class="line">    - main</span><br><span class="line">      main.go</span><br></pre></td></tr></table></figure>
+
+<p><code>pricecheck.go</code> will still import <code>shopping/db</code>, but <code>db.go</code> will now import <code>shopping/models</code> instead of <code>shopping</code>, thus breaking the cycle. Since we moved the shared <code>Item</code> structure to <code>shopping/models/item.go</code>, we need to change <code>shopping/db/db.go</code> to reference the <code>Item</code> structure from <code>models</code> package:</p>
+<p><code>pricecheck.go</code>一样是导入<code>shopping/db</code>，但是<code>db.go</code>现在要导入<code>shopping/models</code>来替换<code>shopping</code>，这样打破了循环。因为将共享结构体<code>Item</code>移到了<code>shopping/models/item.go</code>，我们需要修改<code>shopping/db/db.go</code>从<code>model</code>包中引用结构体<code>Item</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> db</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping/models&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LoadItem</span><span class="params">(id <span class="keyword">int</span>)</span> *<span class="title">models</span>.<span class="title">Item</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;models.Item&#123;</span><br><span class="line">    Price: <span class="number">9.001</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You’ll often need to share more than just <code>models</code>, so you might have other similar folder named <code>utilities</code> and such. The important rule about these shared packages is that they shouldn’t import anything from the <code>shopping</code> package or any sub-packages. In a few sections, we’ll look at interfaces which can help us untangle these types of dependencies.</p>
+<p>你常常需要的共享结构不仅仅是<code>models</code>，所以你可能还有一些类似<code>utilities</code>这样的文件夹。最重要的原则是这些共享对象，不能导入<code>shopping</code>包或者它的子包。要不了几个章节，我们会看到接口是如何解开这些依赖的。</p>
+<h3 id="可见性（Visibility）"><a href="#可见性（Visibility）" class="headerlink" title="可见性（Visibility）"></a>可见性（Visibility）</h3><p>Go uses a simple rule to define what types and functions are visible outside of a package. If the name of the type or function starts with an uppercase letter, it’s visible. If it starts with a lowercase letter, it isn’t.</p>
+<p>Go用一个非常简单的原则来决定一个包的类型和函数是否在包外可见。如果类型或者函数是以大写字母开头，就是可见的，如果是小写字母开头，就是不可见的。</p>
+<p>This also applies to structure fields. If a structure field name starts with a lowercase letter, only code within the same package will be able to access them.</p>
+<p>这对结构体的字段也是一样适用的。如果一个结构体的字段名是以小写字母开头，只有在同一个包里的代码可以访问它们。</p>
+<p>For example, if our <code>items.go</code> file had a function that looked like:</p>
+<p>例如：在我们的<code>items.go</code>文件中有这样的一个函数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewItem</span><span class="params">()</span> *<span class="title">Item</span></span> &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>it could be called via <code>models.NewItem()</code>. But if the function was named <code>newItem</code>, we wouldn’t be able to access it from a different package.</p>
+<p>可以通过<code>models.NewItem()</code>来调用。但是如果这个函数被命名为<code>newItem</code>，我们就不能在其他包里面来调用它了。</p>
+<p>Go ahead and change the name of the various functions, types and fields from the <code>shopping</code> code. For example, if you rename the <code>Item&#39;s</code> <code>Price</code> field to <code>price</code>, you should get an error.</p>
+<p>继续修改在<code>shopping</code>中修改函数，类型和字段的名字。例如，如果你修改<code>Item</code>的<code>Price</code>为<code>price</code>,你会收到一个编译错误。</p>
+<h3 id="包管理（Package-Management）"><a href="#包管理（Package-Management）" class="headerlink" title="包管理（Package Management）"></a>包管理（Package Management）</h3><p>The <code>go</code> command we’ve been using to <code>run</code> and <code>build</code> has a <code>get</code> subcommand which is used to fetch third-party libraries. <code>go get</code> supports various protocols but for this example, we’ll be getting a library from Github, meaning, you’ll need <code>git</code> installed on your computer.</p>
+<p>我们用来<code>run</code>和<code>build</code>的<code>go</code>命令，它还一个<code>get</code>的子命令用来获取第三方的类库。<code>go get</code>支持多种协议，但是这里，我们将从Github上获取一个类库。这是说，你要在你的电脑上安装好<code>git</code>。</p>
+<p>Assuming you already have git installed, from a shell/command prompt, enter:</p>
+<p>假设你已经安装好了git，打开一个shell/命令提示符，输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/mattn/go-sqlite3</span><br></pre></td></tr></table></figure>
+
+<p><code>go get</code> fetches the remote files and stores them in your workspace. Go ahead and check your <code>$GOPATH/src</code>. In addition to the <code>shopping</code> project that we created, you’ll now see a <code>github.com</code> folder. Within, you’ll see a <code>mattn</code> folder which contains a <code>go-sqlite3</code> folder.</p>
+<p><code>go get</code>获取远程文件并把它们存在你的工作目录中。到<code>$GOPATH/src</code>目录中检查一下。除了我们自己创建的<code>shopping</code>项目外，还会看到一个<code>github.com</code>文件夹。里面你会看到一个包含<code>go-sqlite3</code>文件夹的<code>mattn</code>文件夹。</p>
+<p>We just talked about how to import packages that live in our workspace. To use our newly gotten <code>go-sqlite3</code> package, we’d import it like so:</p>
+<p>我们刚介绍了在工作区中如何导入包。要用我们刚刚获取到的<code>go-sqlite3</code>包，我们需要像这样来导入它：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;github.com/mattn/go-sqlite3&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>I know this looks like a URL but in reality, it’ll simply import the <code>go-sqlite3</code> package which it expects to find in <code>$GOPATH/src/github.com/mattn/go-sqlite3</code>.</p>
+<p>我知道这看起来像是一个URL，但实际上，如果知道是在<code>$GOPATH/src/github.com/mattn/go-sqlite3</code>目录，导入<code>go-sqlite3</code>包是很简单的。</p>
+<h3 id="依赖管理（Dependency-Management）"><a href="#依赖管理（Dependency-Management）" class="headerlink" title="依赖管理（Dependency Management）"></a>依赖管理（Dependency Management）</h3><p><code>go get</code> has a couple of other tricks up its sleeve. If we <code>go get</code> within a project, it’ll scan all the files, looking for <code>imports</code> to third-party libraries and will download them. In a way, our own source code becomes a <code>Gemfile</code> or <code>package.json</code>.</p>
+<p><code>go get</code>有一些其他的戏法。如果我们在一个项目中执行<code>go get</code>，它会扫描所有文件并查找所有导入的第三方库，然后下载这些第三方库。某种程度上说，我们自己的源代码变成一个<code>Gemfile</code>或者<code>package.json</code>。</p>
+<p>If you call <code>go get -u</code> it’ll update the packages (or you can update a specific package via <code>go get -u FULL_PACKAGE_NAME</code>).</p>
+<p>执行<code>go get -u</code>将更新你的包（或者你可以通过<code>go get -u FULL_PACKAGE_NAME</code>更新指定的包）</p>
+<p>Eventually, you might find <code>go get</code> inadequate. For one thing, there’s no way to specify a revision, it always points to the master/head/trunk/default. This is an even larger problem if you have two projects needing different versions of the same library.</p>
+<p>最后，你可能发现了<code>go get</code>的一些不足。首先，它不能指定一个修订，它会一直指向<code>master/head/trunk/default</code>。这是一个严重的问题，尤其当你有2个项目需要同一个库的不同版本时。</p>
+<p>To solve this, you can use a third-party dependency management tool. They are still young, but two promising ones are <a target="_blank" rel="noopener" href="https://github.com/nitrous-io/goop">goop</a> and <a target="_blank" rel="noopener" href="https://github.com/tools/godep">godep</a>. A more complete list is available at the <a target="_blank" rel="noopener" href="https://code.google.com/p/go-wiki/wiki/PackageManagementTools">go-wiki</a>.</p>
+<p>为了解决这个问题，你可以使用一个第三方的依赖管理工具。虽然还不太成熟，但是有2个依赖管理工具比较有前景，即<a target="_blank" rel="noopener" href="https://github.com/nitrous-io/goop">goop</a>和<a target="_blank" rel="noopener" href="https://github.com/tools/godep">godep</a>。更完整的列表可以参考<a target="_blank" rel="noopener" href="https://github.com/golang/go/wiki/PackageManagementTools">go-wiki</a>。</p>
+<h2 id="接口（Interfaces）"><a href="#接口（Interfaces）" class="headerlink" title="接口（Interfaces）"></a>接口（Interfaces）</h2><p>Interfaces are types that define a contract but not an implementation. Here’s an example:</p>
+<p>接中是一种定义了协议但没有实现的类型。这是一个例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Logger <span class="keyword">interface</span> &#123;</span><br><span class="line">  Log(message <span class="keyword">string</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You might be wondering what purpose this could possibly serve. Interfaces help decouple your code from specific implementations. For example, we might have various types of loggers:</p>
+<p>你可能会想知道这么做有什么目的。接口可以帮的的代码从特定的实现中解藕出来。例如,我们可能有多种类型的日志：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SqlLogger <span class="keyword">struct</span> &#123; ... &#125;</span><br><span class="line"><span class="keyword">type</span> ConsoleLogger <span class="keyword">struct</span> &#123; ... &#125;</span><br><span class="line"><span class="keyword">type</span> FileLogger <span class="keyword">struct</span> &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Yet by programming against the interface, rather than these concrete implementations, we can easily change (and test) which we use without any impact to our code.</p>
+<p>是的，能过接口而不是这些具体的实现来编程，我们可以很容易的在不影响我们的代码的基础上修改（和测试）。</p>
+<p>How would you use one? Just like any other type, it could be a structure’s field:</p>
+<p>你要如何来使用？就像其他类型一样，它可以是一个结构体的字段：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Server <span class="keyword">struct</span> &#123;</span><br><span class="line">  logger Logger</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>or a function parameter (or return value):</p>
+<p>或者是一个函数的参数（或者访回值）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(logger Logger)</span></span> &#123;</span><br><span class="line">  logger.Log(<span class="string">&quot;hello!&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In a language like C# or Java, we have to be explicit when a class implements an interface:</p>
+<p>在像C#或者Java的语言中，我们必须显示的申请明一个类实现了一个接口：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class ConsoleLogger : Logger &#123;</span><br><span class="line">  public void Logger(message <span class="keyword">string</span>) &#123;</span><br><span class="line">    Console.WriteLine(message)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In Go, this happens implicitly. If your structure has a function name <code>Log</code> with a <code>string</code> parameter and no return value, then it can be used as a <code>Logger</code>. This cuts down on the verboseness of using interfaces:</p>
+<p>在Go中，这是隐式的。如果的结构体有一个名为<code>Log</code>的函数，有一个<code>string</code>的参数和没有返回值，那么它就可以当作<code>Logger</code>来使用。这减少了使用接口时的繁索：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ConsoleLogger <span class="keyword">struct</span> &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l ConsoleLogger)</span> <span class="title">Log</span><span class="params">(message <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">  fmt.Println(message)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>It also tends to promote small and focused interfaces. The standard library is full of interfaces. The <code>io</code> package has a handful of popular ones such as <code>io.Reader</code>, <code>io.Writer</code>, and <code>io.Closer</code>. If you write a function that expects a parameter that you’ll only be calling <code>Close()</code> on, you absolutely should accept an <code>io.Closer</code> rather than whatever concrete type you’re using.</p>
+<p>这也会倾向于促进接口的小巧和单一。标准库中到处都是接口。在<code>io</code>包中有一些流行的接口，如<code>io.Reader</code>, <code>io.Writer</code>, 和<code>io.Closer</code>。如果你要写一个函数需要一个参数但只调用它的<code>Close()</code>方法，你绝对可以使用<code>io.Closer</code>接口需不是任何具体的类型。</p>
+<p>Interfaces can also participate in composition. And, interfaces themselves can be composed of other interfaces. For example, <code>io.ReadCloser</code> is an interface composed of the <code>io.Reader</code> interface as well as the <code>io.Closer</code> interface.</p>
+<p>接口也可以组合。也就是说接口可以有其他接口组成。例如，<code>io.ReadCloser</code>就是由接口<code>io.Reader</code>和<code>io.Closer</code>接口组成。</p>
+<p>Finally, interfaces are commonly used to avoid cyclical imports. Since they don’t have implementations, they’ll have limited dependencies.</p>
+<p>最后，接口常用于避免循环导入。由于接口没有实现，他们的依赖关系有限。</p>
+<h2 id="继续之前（Before-You-Continue）"><a href="#继续之前（Before-You-Continue）" class="headerlink" title="继续之前（Before You Continue）"></a>继续之前（Before You Continue）</h2><p>Ultimately, how you structure your code around Go’s workspace is something that you’ll only feel comfortable with after you’ve written a couple of non-trivial projects. What’s most important for you to remember is the tight relationship between package names and your directory structure (not just within a project, but within the entire workspace).</p>
+<p>最后，当你试着用go写一些简单的项目之后，你会习惯在go语言的工作区中组织代码的方式。最重要是的记住go语言中的包名和你的目录结构有密切关系（不仅仅在一个项目中，在整个工作空间都如此）。</p>
+<p>The way Go handles visibility of types is straightforward and effective. It’s also consistent. There are a few things we haven’t looked at, such as constants and global variables but rest assured, their visibility is determined by the same naming rule.</p>
+<p>go语言处理类型的可见性方法是简单有效的。也是一致的。还有一些内容我们没有介绍，例如常量和全局变量，但是不用担心，它们的可见性也是遵循同样的规则。</p>
+<p>Finally, if you’re new to interfaces, it might take some time before you get a feel for them. However, the first time you see a function that expects something like <code>io.Reader</code>, you’ll find yourself thanking the author for not demanding more than he or she needed.</p>
+<p>最后，如果你不熟悉go语言中的接口，你可能需要花一些时间去感受它们。无论如何，当你首次看见一个函数需要例如<code>io.Reader</code>之类的参数时，你会发现你自己感激作者的要求不是太苛刻。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/go/" rel="tag"><i class="fa fa-tag"></i> go</a>
+              <a href="/tags/go-little-book/" rel="tag"><i class="fa fa-tag"></i> go little book</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/22/go/go-little-book/chapter-3/" rel="prev" title="Go Little Book - 第三章 - 字典 ，数组和切片">
+      <i class="fa fa-chevron-left"></i> Go Little Book - 第三章 - 字典 ，数组和切片
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/22/go/go-little-book/chapter-5/" rel="next" title="Go Little Book - 第五章 - 特点">
+      Go Little Book - 第五章 - 特点 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E4%BB%A3%E7%A0%81%E7%BB%84%E7%BB%87%E5%92%8C%E6%8E%A5%E5%8F%A3%EF%BC%88Chapter-4-Code-Organization-and-Interfaces%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">第四章 - 代码组织和接口（Chapter 4 - Code Organization and Interfaces）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%85%EF%BC%88Packages%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">包（Packages）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E5%AF%BC%E5%85%A5%EF%BC%88Cyclical-Imports%EF%BC%89"><span class="nav-number">1.1.1.</span> <span class="nav-text">循环导入（Cyclical Imports）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E8%A7%81%E6%80%A7%EF%BC%88Visibility%EF%BC%89"><span class="nav-number">1.1.2.</span> <span class="nav-text">可见性（Visibility）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%85%E7%AE%A1%E7%90%86%EF%BC%88Package-Management%EF%BC%89"><span class="nav-number">1.1.3.</span> <span class="nav-text">包管理（Package Management）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%EF%BC%88Dependency-Management%EF%BC%89"><span class="nav-number">1.1.4.</span> <span class="nav-text">依赖管理（Dependency Management）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%EF%BC%88Interfaces%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">接口（Interfaces）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%A7%E7%BB%AD%E4%B9%8B%E5%89%8D%EF%BC%88Before-You-Continue%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">继续之前（Before You Continue）</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">88</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">459k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:57</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '5d7aee6114bad7cad192776b6a2ff028',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="目的这篇介绍基于Docker快速实现持续交付系统。持续交付主要涉及代码管理，集成打包与自动部署几个环节。我们使用GitLab CE解决代码管理，使用Jenkins解决集成打包，使用Ansible解决自动部署，同时使用Portainer来管理Docker。这次先把需要的环境搭建起来，后续还会继续写一篇关于验证和调整的部分。 本文使用CentOS 7.8。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何基于Docker快速实现持续交付系统-环境搭建">
+<meta property="og:url" content="http://l4qiang.me/2020/09/07/course100/002/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="目的这篇介绍基于Docker快速实现持续交付系统。持续交付主要涉及代码管理，集成打包与自动部署几个环节。我们使用GitLab CE解决代码管理，使用Jenkins解决集成打包，使用Ansible解决自动部署，同时使用Portainer来管理Docker。这次先把需要的环境搭建起来，后续还会继续写一篇关于验证和调整的部分。 本文使用CentOS 7.8。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-07T07:56:24.000Z">
+<meta property="article:modified_time" content="2022-10-30T13:23:05.314Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="教程100">
+<meta property="article:tag" content="写作">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://l4qiang.me/2020/09/07/course100/002/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>如何基于Docker快速实现持续交付系统-环境搭建 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c3ed9d534576a67e94ff8be03a704994";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/09/07/course100/002/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          如何基于Docker快速实现持续交付系统-环境搭建
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-07 15:56:24" itemprop="dateCreated datePublished" datetime="2020-09-07T15:56:24+08:00">2020-09-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h2><p>这篇介绍基于Docker快速实现持续交付系统。持续交付主要涉及代码管理，集成打包与自动部署几个环节。我们使用GitLab CE解决代码管理，使用Jenkins解决集成打包，使用Ansible解决自动部署，同时使用Portainer来管理Docker。这次先把需要的环境搭建起来，后续还会继续写一篇关于验证和调整的部分。</p>
+<p>本文使用CentOS 7.8。</p>
+<span id="more"></span>
+
+<h2 id="软件简单介绍"><a href="#软件简单介绍" class="headerlink" title="软件简单介绍"></a>软件简单介绍</h2><h3 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h3><p>Docker 是一个开源的应用容器引擎，基于 Go 语言 并遵从Apache2.0协议开源。Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。容器是完全使用沙箱机制，比虚拟机更加强大，体积小，运行速度快，Docker 容器可以打包为镜像文件(类似VM虚拟机的那些快照文件)，迁移的时候我们只需要在新服务器上安装Docker,就能把之前打包好的镜像文件导入到 Docker 里面，运行容器，就能实现访问，不需要重新配置环境。</p>
+<h3 id="Portainer"><a href="#Portainer" class="headerlink" title="Portainer"></a>Portainer</h3><p><code>Portainer</code>是<code>Docker</code>的图形化管理工具，提供状态显示面板、应用模板快速部署、容器镜像网络数据卷的基本操作（包括上传下载镜像，创建容器等操作）、事件日志显示、容器控制台操作、<code>Swarm</code>集群和服务等集中管理和操作、登录用户管理和控制等功能。功能十分全面，基本能满足中小型单位对容器管理的全部需求。</p>
+<h3 id="Gitlab"><a href="#Gitlab" class="headerlink" title="Gitlab"></a>Gitlab</h3><p>GitLab 是一个用于仓库管理系统的开源项目，使用 Git 作为代码管理工具，并在此基础上搭建起来的web服务。<strong>GitLab</strong>是由 GitLabInc. 开发，使用 MIT 许可证的基于网络的 Git 仓库管理工具，且具有 wiki 和 issue 跟踪功能。使用 Git 作为代码管理工具，并在此基础上搭建起来的 web 服务。</p>
+<h3 id="Jenkins"><a href="#Jenkins" class="headerlink" title="Jenkins"></a>Jenkins</h3><p>Jenkins 是一个开源软件项目，是基于 Java 开发的一种持续集成工具，用于监控持续重复的工作，旨在提供一个开放易用的软件平台，使软件的持续集成变成可能。</p>
+<h3 id="Ansible"><a href="#Ansible" class="headerlink" title="Ansible"></a>Ansible</h3><p>ansible 是新出现的自动化运维工具，基于 Python 开发，集合了众多运维工具（puppet、cfengine、chef、func、fabric）的优点，实现了批量系统配置、批量程序部署、批量运行命令等功能。ansible 是基于模块工作的，本身没有批量部署的能力。真正具有批量部署的是ansible 所运行的模块，ansible 只是提供一种框架。</p>
+<h2 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h2><ul>
+<li>设置仓库</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y yum-utils</span><br><span class="line">sudo yum-config-manager \</span><br><span class="line">    --add-repo \</span><br><span class="line">    https://download.docker.com/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装Docker Engine</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>启动Docker</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>开机启动</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> docker</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>下载Docker Compose</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo curl -L <span class="string">&quot;https://github.com/docker/compose/releases/download/1.26.2/docker-compose-<span class="subst">$(uname -s)</span>-<span class="subst">$(uname -m)</span>&quot;</span> -o /usr/<span class="built_in">local</span>/bin/docker-compose</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>设置权限</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chmod +x /usr/<span class="built_in">local</span>/bin/docker-compose</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装Portainer"><a href="#安装Portainer" class="headerlink" title="安装Portainer"></a>安装Portainer</h2><ul>
+<li>单机版运行</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9000:9000 \</span><br><span class="line">    --restart=always \</span><br><span class="line">    -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">    --name prtainer \</span><br><span class="line">    portainer/portainer</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通过<a href="http://ip:9000，进行访问。首次访问需要设置用户名密码(admin/portainer)，并连接本地Docker。">http://ip:9000，进行访问。首次访问需要设置用户名密码(admin/portainer)，并连接本地Docker。</a></li>
+</ul>
+<h2 id="安装Gitlab-CE"><a href="#安装Gitlab-CE" class="headerlink" title="安装Gitlab CE"></a>安装Gitlab CE</h2><ul>
+<li>通过Portainer的GitlabCE的模板创建容器，设置容器名，及高级选项，注意为端口和卷的映射。</li>
+<li>通过<a target="_blank" rel="noopener" href="http://ip进行访问,登录时会提示需要输入root用户的密码(gitlabce)./">http://ip进行访问，登录时会提示需要输入root用户的密码(gitlabce)。</a></li>
+</ul>
+<h2 id="安装Jenkins"><a href="#安装Jenkins" class="headerlink" title="安装Jenkins"></a>安装Jenkins</h2><ul>
+<li>通过Portainer的GitlabCE的模板创建容器，设置容器名，及高级选项，注意为端口和卷的映射，这里</li>
+<li>连接到容器里，/var/jenkins_home/secrets/initialAdminPassword，取出初始密码。</li>
+<li>安装推荐插件</li>
+<li>创建管理员用户(root/jenkins)</li>
+</ul>
+<h2 id="安装Ansible"><a href="#安装Ansible" class="headerlink" title="安装Ansible"></a>安装Ansible</h2><ul>
+<li>更新源</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y epel-release</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y ansible</span><br></pre></td></tr></table></figure>
+
+<p>这里暂时没有使用Docker来安装，而是直接安装在宿主机上。这样可以通过Jenkins启动宿主机脚本，从而执行Ansible脚本，创建容器。</p>
+<p>还有一个思路是在Jenkins的Docker中同时安装Ansible，这样Jenkins编写部署脚本会更容易些。后面把流程跑通后进一步尝试。</p>
+<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><p>下一篇会继续介绍，整体持续交付系统的验证过程。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p>这次其实网上查看了不少文档，但自己时间拖得比较长，不少文章链接可能没记上。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/centos/">Install Docker Engine on CentOS</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/hanzheng260561728/article/details/105138225">https://blog.csdn.net/hanzheng260561728/article/details/105138225</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/A632189007/article/details/78779920">https://blog.csdn.net/A632189007/article/details/78779920</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/leozhanggg/p/12040338.html">https://www.cnblogs.com/leozhanggg/p/12040338.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/14e356cf8bb4">https://www.jianshu.com/p/14e356cf8bb4</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/news/370703">https://cloud.tencent.com/developer/news/370703</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4923348ef3da">https://www.jianshu.com/p/4923348ef3da</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bigben0123/p/7886092.html">https://www.cnblogs.com/bigben0123/p/7886092.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/eb3cbb34be97">https://www.jianshu.com/p/eb3cbb34be97</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/080a962c35b6">https://www.jianshu.com/p/080a962c35b6</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/anqixiang/article/details/104968469">https://blog.csdn.net/anqixiang/article/details/104968469</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/eeb15a408d88">https://www.jianshu.com/p/eeb15a408d88</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.w3cschool.cn/automate_with_ansible/automate_with_ansible-1khc27p1.html">https://www.w3cschool.cn/automate_with_ansible/automate_with_ansible-1khc27p1.html</a></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%95%99%E7%A8%8B100/" rel="tag"><i class="fa fa-tag"></i> 教程100</a>
+              <a href="/tags/%E5%86%99%E4%BD%9C/" rel="tag"><i class="fa fa-tag"></i> 写作</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/homework/049/" rel="prev" title="写作课作业-049">
+      <i class="fa fa-chevron-left"></i> 写作课作业-049
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/07/homework/050/" rel="next" title="写作课作业-050">
+      写作课作业-050 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">软件简单介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker"><span class="nav-number">2.1.</span> <span class="nav-text">Docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Portainer"><span class="nav-number">2.2.</span> <span class="nav-text">Portainer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gitlab"><span class="nav-number">2.3.</span> <span class="nav-text">Gitlab</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Jenkins"><span class="nav-number">2.4.</span> <span class="nav-text">Jenkins</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ansible"><span class="nav-number">2.5.</span> <span class="nav-text">Ansible</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85Docker"><span class="nav-number">3.</span> <span class="nav-text">安装Docker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85Portainer"><span class="nav-number">4.</span> <span class="nav-text">安装Portainer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85Gitlab-CE"><span class="nav-number">5.</span> <span class="nav-text">安装Gitlab CE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85Jenkins"><span class="nav-number">6.</span> <span class="nav-text">安装Jenkins</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85Ansible"><span class="nav-number">7.</span> <span class="nav-text">安装Ansible</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AA%E5%AE%8C%E5%BE%85%E7%BB%AD"><span class="nav-number">8.</span> <span class="nav-text">未完待续</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-number">9.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">88</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">459k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:57</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '5d6ddc98c5a040954e353638313c2336',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
