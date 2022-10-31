@@ -18,6 +18,8 @@ tags:
 
 系统一直运行相对比较平稳，直到产品对日志增加了事件分组的要求，即当日志事件产生时，需要根据一定的规则判断是否当前日志与前一条日志是否未同一组事件。因为需要实时的判断事件的分组，在数据入库ES时，增加了大量的聚合运算。此时ES开始占用大量内存，整体响应慢，造成日志数据入库延时，和分析查询业务无法正常返回数据。
 
+<!-- more -->
+
 # 方案
 
 分析业务的特点：
@@ -197,7 +199,6 @@ taos
 
 # 创建数据数据库，只保留1天的数据，允许局部更新数据
 CREATE DATABASE IF NOT EXISTS agent DURATION 60m keep 1d PRECISION 'ns' CACHEMODEL 'both';
-
 ```
 
 修改数据库驱动为3.0版本即可，代码基本不需要做过多调整，部分语法不兼容问题需要按3.0语法规则调整语法。
@@ -241,7 +242,3 @@ CREATE DATABASE IF NOT EXISTS agent DURATION 60m keep 1d PRECISION 'ns' CACHEMOD
 - 事件分类使用TD3.0的流式计算。
 
 - 平台端升级3.0。
-
-
-
-
