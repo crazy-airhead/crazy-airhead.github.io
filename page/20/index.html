@@ -172,6 +172,239 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/01/05/kotlin/spring-boot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/01/05/kotlin/spring-boot/" class="post-title-link" itemprop="url">Kotlin开发SpringBoot的应用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-05 21:09:27" itemprop="dateCreated datePublished" datetime="2019-01-05T21:09:27+08:00">2019-01-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringBoot/" itemprop="url" rel="index"><span itemprop="name">SpringBoot</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringBoot/kotlin/" itemprop="url" rel="index"><span itemprop="name">kotlin</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li>SpringBoot</li>
+<li>kotlin</li>
+</ul>
+<h1 id="Kotlin简介"><a href="#Kotlin简介" class="headerlink" title="Kotlin简介"></a>Kotlin简介</h1><p>Kotlin是JetBrains公司开发的静态编程语言，它运行在JVM之上，它是面向对象的语言但吸收了很多函数式编程的特性。以下是一些它比较有趣的特性：</p>
+<ul>
+<li>Kotlin是一种静态类型语言，但因为它的类型推断，能有动态语言的编程体验，同时性能也和纯Java一样。</li>
+<li>支持属性</li>
+<li>相对轻量型的标准库</li>
+<li>易学，Java开发者可以快速理解这门语言</li>
+<li>支持Java互操作，100%兼容Java</li>
+<li>对Android开发友好</li>
+<li>内置不变性和空安全支持</li>
+<li>代码易读，编码高效</li>
+<li>拓展类库不需要继承或者装饰模式</li>
+<li>不需要分号（;）</li>
+</ul>
+<h1 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h1><p>使用IDEA的安装向导创建应用，File&gt;New&gt;Project, 然后选择Spring Initializr。接着按向导进行设置如下参数：</p>
+<ul>
+<li>Package name: “blog”</li>
+<li>Artifact: “blog”</li>
+<li>Type: Gradle Project</li>
+<li>Language: Kotlin</li>
+<li>Name: “Blog”</li>
+<li>Dependencies: “Web”, “Mustache”, JPA” and “H2”<h1 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h1><h2 id="Gradle构建"><a href="#Gradle构建" class="headerlink" title="Gradle构建"></a>Gradle构建</h2><h3 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h3><code>build.gradle</code></li>
+</ul>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">  ext &#123;</span><br><span class="line">    kotlinVersion = <span class="string">&#x27;1.2.41&#x27;</span></span><br><span class="line">    springBootVersion = <span class="string">&#x27;2.0.2.RELEASE&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">  repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line">  &#125;</span><br><span class="line">  dependencies &#123;</span><br><span class="line">    classpath(<span class="string">&quot;org.springframework.boot:spring-boot-gradle-plugin:$&#123;springBootVersion&#125;&quot;</span>)</span><br><span class="line">    classpath(<span class="string">&quot;org.jetbrains.kotlin:kotlin-gradle-plugin:$&#123;kotlinVersion&#125;&quot;</span>)</span><br><span class="line">    classpath(<span class="string">&quot;org.jetbrains.kotlin:kotlin-allopen:$&#123;kotlinVersion&#125;&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;kotlin&#x27;</span></span><br><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;kotlin-spring&#x27;</span></span><br><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;org.springframework.boot&#x27;</span></span><br><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;io.spring.dependency-management&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="编译选项"><a href="#编译选项" class="headerlink" title="编译选项"></a>编译选项</h3><p><code>build.gradle</code></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">sourceCompatibility = <span class="number">1.8</span></span><br><span class="line">compileKotlin &#123;</span><br><span class="line">  kotlinOptions &#123;</span><br><span class="line">    freeCompilerArgs = [<span class="string">&quot;-Xjsr305=strict&quot;</span>]</span><br><span class="line">    jvmTarget = <span class="string">&quot;1.8&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">compileTestKotlin &#123;</span><br><span class="line">  kotlinOptions &#123;</span><br><span class="line">    freeCompilerArgs = [<span class="string">&quot;-Xjsr305=strict&quot;</span>]</span><br><span class="line">    jvmTarget = <span class="string">&quot;1.8&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><p><code>build.gradle</code></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  compile(<span class="string">&#x27;org.springframework.boot:spring-boot-starter-data-jpa&#x27;</span>)</span><br><span class="line">  compile(<span class="string">&#x27;org.springframework.boot:spring-boot-starter-web&#x27;</span>)</span><br><span class="line">  compile(<span class="string">&#x27;org.springframework.boot:spring-boot-starter-mustache&#x27;</span>)</span><br><span class="line">  compile(<span class="string">&#x27;com.fasterxml.jackson.module:jackson-module-kotlin&#x27;</span>)</span><br><span class="line">  compile(<span class="string">&quot;org.jetbrains.kotlin:kotlin-stdlib-jdk8&quot;</span>)</span><br><span class="line">  compile(<span class="string">&quot;org.jetbrains.kotlin:kotlin-reflect&quot;</span>)</span><br><span class="line">  testCompile(<span class="string">&#x27;org.springframework.boot:spring-boot-starter-test&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><p><code>src/main/kotlin/blog/BlogApplication.kt</code></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> blog</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.runApplication</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BlogApplication</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">  runApplication&lt;BlogApplication&gt;(*args)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>src/main/kotlin/blog/BlogApplication.kt</code></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">  runApplication&lt;BlogApplication&gt;(*args) &#123;</span><br><span class="line">    setBannerMode(Banner.Mode.OFF)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="创建Controller"><a href="#创建Controller" class="headerlink" title="创建Controller"></a>创建Controller</h2><p><code>src/main/kotlin/blog/HtmlController.kt</code></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> blog</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Controller</span><br><span class="line"><span class="keyword">import</span> org.springframework.ui.Model</span><br><span class="line"><span class="keyword">import</span> org.springframework.ui.<span class="keyword">set</span></span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.<span class="keyword">annotation</span>.GetMapping</span><br><span class="line"></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HtmlController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@GetMapping(<span class="meta-string">&quot;/&quot;</span>)</span></span><br><span class="line">  <span class="function"><span class="keyword">fun</span> <span class="title">blog</span><span class="params">(model: <span class="type">Model</span>)</span></span>: String &#123;</span><br><span class="line">    model[<span class="string">&quot;title&quot;</span>] = <span class="string">&quot;Blog&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;blog&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="创建模板"><a href="#创建模板" class="headerlink" title="创建模板"></a>创建模板</h2><p>使用Mustache templates.<br><code>src/main/resources/templates/header.mustache</code></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">title</span>&gt;</span>&#123;&#123;title&#125;&#125;<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>src/main/resources/templates/footer.mustache</code></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>src/main/resources/templates/blog.mustache</code></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;&gt; header&#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>&#123;&#123;title&#125;&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"></span><br><span class="line">&#123;&#123;&gt; footer&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>通过运行<code>BlogApplication.kt</code>的main函数启动应用, 打开<a target="_blank" rel="noopener" href="http://localhost:8080/">http://localhost:8080/</a>, 我们就可以看到标题”Blog”。</p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>本文主要内容来自Spring官网案例，可能过参考链接查看详细内容。通过IDEA简单的配置和简单的Kotlin代码编写，我们就可构建一个基于SpringBoot的样例，能过这个样例是否对Kotlin感兴趣了呢，可以扫码订阅《快速上手Kotlin开发》。</p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a target="_blank" rel="noopener" href="https://spring.io/blog/2016/02/15/developing-spring-boot-applications-with-kotlin">https://spring.io/blog/2016/02/15/developing-spring-boot-applications-with-kotlin</a><br><a target="_blank" rel="noopener" href="https://spring.io/guides/tutorials/spring-boot-kotlin/">https://spring.io/guides/tutorials/spring-boot-kotlin/</a><br><a target="_blank" rel="noopener" href="https://github.com/spring-guides/tut-spring-boot-kotlin.git">tut-spring-boot-kotlin</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/26/java/illegal-reflective-access/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/26/java/illegal-reflective-access/" class="post-title-link" itemprop="url">illegal-reflective-access警告</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-26 11:58:38" itemprop="dateCreated datePublished" datetime="2018-12-26T11:58:38+08:00">2018-12-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>740</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>升级Java11时，启动Jfinal-club提示如下警告：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">WARNING: An illegal reflective access operation has occurred</span><br><span class="line">WARNING: Illegal reflective access by net.sf.cglib.core.ReflectUtils$1 (file:/C:/.m2/repository/cglib/cglib-nodep/3.2.5/cglib-nodep-3.2.5.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain)</span><br><span class="line">WARNING: Please consider reporting this to the maintainers of net.sf.cglib.core.ReflectUtils$1</span><br><span class="line">WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations</span><br><span class="line">WARNING: All illegal access operations will be denied in a future release</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>增加JVM选项–add-opens java.base/java.lang=ALL-UNNAMED</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/46671472/illegal-reflective-access-by-org-springframework-cglib-core-reflectutils1">https://stackoverflow.com/questions/46671472/illegal-reflective-access-by-org-springframework-cglib-core-reflectutils1</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/24/java/list/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1164,245 +1397,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/hbase/hbase-indexer/getting-start/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/12/05/hbase/hbase-indexer/getting-start/" class="post-title-link" itemprop="url">Hbase Indexer - 入门</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-12-05 12:31:00" itemprop="dateCreated datePublished" datetime="2018-12-05T12:31:00+08:00">2018-12-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="构建（Building-the-binary-distribution）"><a href="#构建（Building-the-binary-distribution）" class="headerlink" title="构建（Building the binary distribution）"></a>构建（Building the binary distribution）</h2><p>Use the following command to build the binary distribution (.tar.gz &amp; rpm):</p>
-<p>使用如下命令构建生成二进制发布包（.tar.gz &amp; rpm）:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn -DskipTests -Pdist install</span><br></pre></td></tr></table></figure>
-
-<h2 id="测试（Testing）"><a href="#测试（Testing）" class="headerlink" title="测试（Testing）"></a>测试（Testing）</h2><p>These steps assume a running HBase 0.94.x installation (preferably CDH 4.2), as well as a running Solr installation. For this example, the configured Solr schema will need to have a multi-valued field called “data”, as well as a unique key field called “id”.</p>
-<p>以下这此步骤假定已经安装了Hbase 0.94.x(最好是CDH 4.2)和Solr。在这个例子中，Solr的映射，需要配置多值字段“data”和唯一键字段“id”。</p>
-<ol>
-<li><p>Enable replication and other settings that are outlined in the <a target="_blank" rel="noopener" href="https://github.com/NGDATA/hbase-indexer/blob/master/hbase-sep/hbase-sep-demo/README.md">hbase-sep demo instructions</a></p>
-</li>
-<li><p>按<a target="_blank" rel="noopener" href="https://github.com/NGDATA/hbase-indexer/blob/master/hbase-sep/hbase-sep-demo/README.md">hbase-sep demo instructions</a>的配置复制集和其他设置。</p>
-</li>
-<li><p>Unzip the binary distribution (instructions for creating the binary distribution are listed above).</p>
-</li>
-<li><p>解压发布包（生成发布包的方式已经在上文列出）。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tar zxvf hbase_indexer.tar.gz</span><br></pre></td></tr></table></figure></li>
-<li><p>Copy the hbase-sep jar files from the lib directory of the binary distribution into the lib directory of HBase.</p>
-</li>
-<li><p>将发布包下的lib目录的hbase-sep jar文件拷贝到Hbase的lib目录。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd hbase_indexer</span><br><span class="line">$ sudo cp lib/hbase-sep-* /usr/lib/hbase/lib</span><br></pre></td></tr></table></figure></li>
-<li><p>Create a table in HBase that has replication enabled. For this example, we’ll create a table called “record” with a single column family called ‘data’.</p>
-</li>
-<li><p>创建一个开启复制集功能的表。这个例子中，我们会创建“record”表，有一个列簇“data”。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hbase&gt; create &#x27;record&#x27;, &#123;NAME =&gt; &#x27;data&#x27;, REPLICATION_SCOPE =&gt; 1&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>Start the hbase-indexer server</p>
-</li>
-<li><p>启动hbase-indexer服务</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/hbase-indexer server</span><br></pre></td></tr></table></figure></li>
-<li><p>Create an indexer definition. For this example, we’ll just index anything in the data column family into the “data” field in Solr. Save the below contents in a file called ‘sample.xml’.</p>
-</li>
-<li><p>创建索引器定义。在这个例子中，我们只是把data列簇中所有内容都放到Solr的“data”字段中进行索引。将以下内容保存为”sample.xml”。</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">indexer</span> <span class="attr">table</span>=<span class="string">&quot;record&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;data&quot;</span> <span class="attr">value</span>=<span class="string">&quot;data:*&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">indexer</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
-<li><p>Add the indexer definition to the indexer server. The following command assumes that the Solr ZooKeeper is running on the current host, and the name of the collection to be used for indexing is “core0”.</p>
-</li>
-<li><p>把索引定义添加到inderxer服务中。下面的命令假设Solr ZooKeeper运行在当前的主机中，并且用于索引的集合名为“core0”。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/hbase-indexer add-indexer  -n sampleindex -c sample.xml --cp solr.collection=core0 </span><br></pre></td></tr></table></figure></li>
-<li><p>Add some data to the record table in HBase. The data added to the data column family in the record table should show up in the Solr index.</p>
-</li>
-<li><p>向Hbase的recode表添加一些数据。添加到record表中的数据应该会出现在Solr的索引中。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hbase&gt; put &#x27;record&#x27;, &#x27;row1&#x27;, &#x27;data:value&#x27;, &#x27;Test of HBase Indexer&#x27;</span><br></pre></td></tr></table></figure></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/hbase/hbase-indexer/requirements/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/12/05/hbase/hbase-indexer/requirements/" class="post-title-link" itemprop="url">Hbase Indexer - 要求</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-12-05 12:30:00" itemprop="dateCreated datePublished" datetime="2018-12-05T12:30:00+08:00">2018-12-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>The following software is required for running the HBase Indexer:</p>
-<p>运行Hbase Indexer需要下面的这些软件:</p>
-<ul>
-<li>HBase 0.94.x</li>
-<li>Solr 4.x in cloud mode</li>
-<li>ZooKeeper 3.x (required by the two above packages)</li>
-</ul>
-<p>All components can be run on a single machine, or they can be run on multiple machines on a cluster.</p>
-<p>所有的组件可以运行在单机，也可运行在多台机器的集群上。</p>
-<h2 id="详情（Details）"><a href="#详情（Details）" class="headerlink" title="详情（Details）"></a>详情（Details）</h2><h3 id="HBase"><a href="#HBase" class="headerlink" title="HBase"></a>HBase</h3><p>HBase 0.94.x is the supported version of HBase for the HBase Indexer. It is recommended to use the version of HBase 0.94.2 that is bundled with Cloudera CDH 4.2. However, other versions of HBase 0.94.x may also work. CDH 4.2 is currently used for testing.</p>
-<p>Hbase 0.94.x是Hbase Indexer支持的版本。推荐使用Cloudera CDH 4.2附带的HBase 0.94.2版本。尽管，其他的0.94.x版本也能正常工作，但CDH 4.2被用于当前的测试。</p>
-<p>HBase should be configured to use HDFS as its filesystem – HBase Indexer is not fully functional if the local filesystem implementation is used instead of HDFS.</p>
-<p>Hbase要配置HDFS做为它的文件系统，如果使用本地文件系统而不是HDFS，HBase Indexer就不行完全运行了。</p>
-<h2 id="Solr"><a href="#Solr" class="headerlink" title="Solr"></a>Solr</h2><p>Solr 4.x is required for the HBase Indexer, and it must be configured to run in cloud mode. Solr 4.2.0 is currently used for development testing.</p>
-<p>Hbase Indexer 需要Solr 4.x版本，并且要求配置在云模式下运行。Solr 4.2.0是当并开发测试的版本。</p>
-<h2 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h2><p>It is recommended that the version of ZooKeeper that is bundled in CDH 4.2 is used.</p>
-<p>推荐使用和CDH4.2附带的ZooKeeper版本。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1472,20 +1466,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-count">237</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">88</span>
+        <span class="site-state-item-count">91</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1543,12 +1537,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">459k</span>
+    <span title="站点总字数">483k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:57</span>
+    <span title="站点阅读时长">7:19</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

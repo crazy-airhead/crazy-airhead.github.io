@@ -172,6 +172,199 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2022/11/21/go/go-plugin/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/21/go/go-plugin/" class="post-title-link" itemprop="url">go-plugin教程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-21 15:26:32 / 修改时间：15:30:23" itemprop="dateCreated datePublished" datetime="2022-11-21T15:26:32+08:00">2022-11-21</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>20k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>18 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><a target="_blank" rel="noopener" href="https://cheppers.com/post/hashicorps-go-plugin-extensive-tutorial/">原文 HashiCorp’s go-plugin extensive tutorial</a></p>
+<h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>If you don’t know what go-plugin is, don’t worry, here is a small introduction on the subject matter:</p>
+<p>Back in the old days when Go didn’t have the <code>plugin</code> package, HashiCorp was desperately looking for a way to use plugins.</p>
+<p>In the old days, Lua plus Go wasn’t really a thing yet, and to be honest, nobody wants to write Lua ( joking!).</p>
+<p>And thus Mitchell had this brilliant idea of using RPC over the local network to serve a local interface as something that could easily be implemented with any other language that supported RPC. This sounds convoluted but has many benefits! For example, your code will never crash because of a plugin and the ability to use any language to implement a plugin. Not just Go.</p>
+<p>It has been a battle-hardened solution for years now and is being actively used by Terraform, Vault, Consule, and especially Packer. All using go-plugin in order to provide a much needed flexibility. Writing a plugin is easy. Or so they say.</p>
+<p>It can get complicated quickly, for example, if you are trying to use GRPC. You can lose sight of what exactly you’ll need to implement, where and why; or utilizing various languages or using go-plugins in your own project and extending your CLI with pluggable components.</p>
+<p>These are all nothing to sneeze at. Suddenly you’ll find yourself with hundreds of lines of code pasted from various examples and yet nothing works. Or worse, it DOES work but you have no idea how. Then you find yourself needing to extend it with a new capability, or you find an elusive bug and can’t trace its origins.</p>
+<p>Fear not. I’ll try to demystify things and draw a clear picture about how it works and how the pieces fit together.</p>
+<p>Let’s start at the beginning.</p>
+<h2 id="Basic-plugin"><a href="#Basic-plugin" class="headerlink" title="Basic plugin"></a>Basic plugin</h2><p>Let’s start by writing a simple Go GRPC plugin. In fact, we can go through the basic example in the go-plugin’s repository which can be quite confusing when first starting out. We’ll go step-by-step, and the switch to GRPC will be much easier!</p>
+<h2 id="Basic-concepts"><a href="#Basic-concepts" class="headerlink" title="Basic concepts"></a>Basic concepts</h2><h3 id="Server"><a href="#Server" class="headerlink" title="Server"></a>Server</h3><p>In the case of plugins, the Server is the one serving the plugin’s implementation. This means the server will have to provide the implementation to an interface.</p>
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><p>The Client calls the server in order to execute the desired behavior. The underlying logic will connect to the server running on localhost on a random higher port, call the wanted function’s implementation and wait for a response. Once the response is received provide that back to the calling Client.</p>
+<h2 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h2><h3 id="The-main-function"><a href="#The-main-function" class="headerlink" title="The main function"></a>The main function</h3><h4 id="Logger"><a href="#Logger" class="headerlink" title="Logger"></a>Logger</h4><p>The plugins defined here use stdout in a special way. If you aren’t writing a Go based plugin, you will have to do that yourself by outputting something like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1|1|tcp|127.0.0.1:1234|grpc </span><br></pre></td></tr></table></figure>
+
+<p>We’ll come back to this later. Suffice to say the framework will pick this up and will connect to the plugin based on the output. In order to get some output back, we must define a special logger:</p>
+<p> <code>// Create an hclog.Logger logger := hclog.New(&amp;hclog.LoggerOptions&#123;     Name:   &quot;plugin&quot;,     Output: os.Stdout,     Level:  hclog.Debug, &#125;)</code> </p>
+<h4 id="NewClient"><a href="#NewClient" class="headerlink" title="NewClient"></a>NewClient</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> // We&#x27;re a host! Start by launching the plugin process. client := plugin.NewClient(&amp;plugin.ClientConfig&#123;</span><br><span class="line">    HandshakeConfig: handshakeConfig,</span><br><span class="line">    Plugins:         pluginMap,</span><br><span class="line">    Cmd:             exec.Command(&quot;./plugin/greeter&quot;),</span><br><span class="line">    Logger:          logger,</span><br><span class="line">&#125;) defer client.Kill() </span><br></pre></td></tr></table></figure>
+
+<p>What is happening here? Let’s see one by one: <strong>HandshakeConfig: handshakeConfig</strong>: This part is the handshake configuration of the plugin. It has a nice comment as well.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> // handshakeConfigs are used to just do a basic handshake between // a plugin and host. If the handshake fails, a user friendly error is shown. // This prevents users from executing bad plugins or executing a plugin // directory. It is a UX feature, not a security feature. var handshakeConfig = plugin.HandshakeConfig&#123;</span><br><span class="line">    ProtocolVersion:  1,</span><br><span class="line">    MagicCookieKey:   &quot;BASIC_PLUGIN&quot;,</span><br><span class="line">    MagicCookieValue: &quot;hello&quot;,</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>The <strong>ProtocolVersion</strong> here is used in order to maintain compatibility with your current plugin versions. It’s basically like an API version. If you increase this, you will have two options. Don’t accept lower protocol versions nor switch to the version number and use a different client implementation for a lower version than for a higher version. This way you will maintain backwards compatibility. The <strong>MagicCookieKey</strong> and <strong>MagicCookieValue</strong> are used for a basic handshake which the comment is talking about. You have to set this <strong>ONCE</strong> for your application. Never change it again, for if you do, your plugins will no longer work. For uniqueness sake, I suggest using UUID. <strong>Cmd</strong> is one of the most important parts about a plugin. Basically how plugins work is that they boil down to a compiled binary which is executed and starts an RPC server. This is where you will have to define the binary which will be executed and does all this. Since this is all happening locally, (please keep in mind that Go-plugins only support localhost, and for a good reason), these binaries will most likely sit next to your application’s binary or in a pre-configured global location. Something like: <code>~/.config/my-app/plugins</code>. This is individual for each plugin of course. The plugins can be autoloaded via a discovery function given a path and a glob. And last but not least is the <code>Plugins</code> map. This map is used in order to identify a plugin called <code>Dispense</code>. This map is globally available and must stay consistent in order for all the plugins to work:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// pluginMap is the map of plugins we can dispense. var pluginMap = map[string]plugin.Pluglin   &quot;greeter&quot;: &amp;example.GreeterPlugin&#123;&#125;, &#125; </span><br></pre></td></tr></table></figure>
+
+<p>You can see that the key is the name of the plugin and the value is the plugin. We then proceed to create an RPC client:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> // Connect via RPC rpcClient, err := client.Client() if err != nil &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>Nothing fancy about this one… Now comes the interesting part:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> // Request the plugin raw, err := rpcClient.Dispense(&quot;greeter&quot;) if err != nil &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>What’s happening here? Dispense will look in the above created map and search for the plugin. If it cannot find it, it will throw an error at us. If it does find it, it will cast this plugin to an RPC or a GRPC type plugin. Then proceed to create an RPC or a GRPC client out of it. There is no call yet. This is just creating a client and parsing it to a respective representation. Now comes the magic:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// We should have a Greeter now! This feels like a normal interface // implementation but is in fact over an RPC connection. greeter := raw.(example.Greeter) fmt.Println(greeter.Greet()) </span><br></pre></td></tr></table></figure>
+
+<p>Here we are type asserting our raw GRPC client into our own plugin type. This is so we can call the respective function on the plugin! Once that’s done we will have a {client,struct,implementation} that can be called like a simple function. The implementation right now comes from greeter_impl.go, but that will change once protoc makes an appearance. Behind the scenes, go-plugin will do a bunch of hat tricks with multiplexing TCP connections as well as a remote procedure call to our plugin. Our plugin then will run the function, generate some kind of output, and will then send that back for the waiting client. The client will then proceed to parse the message into a given response type and will then return it back to the client’s callee. This concludes main.go for now.</p>
+<h3 id="The-Interface"><a href="#The-Interface" class="headerlink" title="The Interface"></a>The Interface</h3><p>Now let’s investigate the Interface. The interface is used to provide calling details. This interface will be what defines our plugins’ capabilities. How does our look like?</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> // Greeter is the interface that we&#x27;re exposing as a plugin. type Greeter interface &#123;</span><br><span class="line">    Greet() string</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>This is pretty simple. It defines a function which will return a string typed value. Now, we will need a couple of things for this to work. Firstly we need something which defines the RPC workings. go-plugin is working with <code>net/http</code> inside. It also uses something called Yamux for connection multiplexing, but we needn’t worry about this detail. Implementing the RPC details looks like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> // Here is an implementation that talks over RPC type GreeterRPC struct &#123;</span><br><span class="line">    client *rpc.Client</span><br><span class="line">&#125;</span><br><span class="line">func (g *GreeterRPC) Greet() string &#123;</span><br><span class="line">    var resp string</span><br><span class="line">    err := g.client.Call(&quot;Plugin.Greet&quot;, new(interface&#123;&#125;), &amp;resp)</span><br><span class="line">    if err != nil &#123;</span><br><span class="line">        // You usually want your interfaces to return errors. If they don&#x27;t,</span><br><span class="line">        // there isn&#x27;t much other choice here.</span><br><span class="line">        panic(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return resp</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>Here the GreeterRPC struct is an RPC specific implementation that will handle communication over RPC. This is Client in this setup. In case of gRPC, this would look something like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> // GRPCClient is an implementation of KV that talks over RPC. type GreeterGRPC struct&#123; client proto.GreeterClient &#125;</span><br><span class="line">func (m *GreeterGRPC) Greet() (string, error) &#123;</span><br><span class="line">    s, err := m.client.Greet(context.Background(), &amp;proto.Empty&#123;&#125;)</span><br><span class="line">    return s, err</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>What is happening here? What’s Proto and what is GreeterClient? GRPC uses Google’s protoc library to serialize and unserialize data.<code>proto.GreeterClient</code> is generated Go code by protoc. This code is a skeleton for which implementation detail will be replaced on run time. Well, the actual result will be used and not replaced as such. Back to our previous example. The RPC client calls a specific Plugin function called Greet for which the implementation will be provided by a Server that will be streamed back over the RPC protocol. The server is pretty easy to follow:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> // Here is the RPC server that GreeterRPC talks to, conforming to // the requirements of net/rpc type GreeterRPCServer struct &#123;</span><br><span class="line">    // This is the real implementation</span><br><span class="line">    Impl Greeter</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>Impl is the concrete implementation that will be called in the Server’s implementation of the Greet plugin. Now we must define Greet on the RPCServer in order for it to be able to call the remote code. This looks like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> func (s *GreeterRPCServer) Greet(args interface&#123;&#125;, resp *string) error &#123;</span><br><span class="line">    *resp = s.Impl.Greet()</span><br><span class="line">    return nil</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>This is all still boilerplate for the RPC works. Now comes plugin. For this, the comment is actually quite good too:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> // This is the implementation of plugin.Plugin so we can serve/consume this // // This has two methods: Server must return an RPC server for this plugin // type. We construct a GreeterRPCServer for this. // // Client must return an implementation of our interface that communicates // over an RPC client. We return GreeterRPC for this. // // Ignore MuxBroker. That is used to create more multiplexed streams on our // plugin connection and is a more advanced use case. type GreeterPlugin struct &#123;</span><br><span class="line">    // Impl Injection</span><br><span class="line">    Impl Greeter</span><br><span class="line">&#125;</span><br><span class="line">func (p *GreeterPlugin) Server(*plugin.MuxBroker) (interface&#123;&#125;, error) &#123;</span><br><span class="line">    return &amp;GreeterRPCServer&#123;Impl: p.Impl&#125;, nil</span><br><span class="line">&#125;</span><br><span class="line">func (GreeterPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface&#123;&#125;, error) &#123;</span><br><span class="line">    return &amp;GreeterRPC&#123;client: c&#125;, nil</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>What does this mean? So, remember: <code>GreeterRPCServer</code> is the one calling the actual implementation while Client is receiving the result of that call. The <code>GreeterPlugin</code> has the <code>Greeter</code> interface embedded just like the <code>RPCServer</code>. We will use the <code>GreeterPlugin</code> as a struct in the plugin map. This is the plugin that we will actually use. This is all still common stuff. These things will need to be visible for both. The plugin’s implementation will use the interface to see what it needs to implement. The Client will use it see what to call and what API is available. Like, <code>Greet</code>. How does the implementation look like?</p>
+<h3 id="The-Implementation"><a href="#The-Implementation" class="headerlink" title="The Implementation"></a>The Implementation</h3><p>In a completely separate package, but which still has access to the interface definition, this plugin could be something like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> // Here is a real implementation of Greeter type GreeterHello struct &#123;</span><br><span class="line">    logger hclog.Logger</span><br><span class="line">&#125;</span><br><span class="line">func (g *GreeterHello) Greet() string &#123;</span><br><span class="line">    g.logger.Debug(&quot;message from GreeterHello.Greet&quot;)</span><br><span class="line">    return &quot;Hello!&quot;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>We create a struct and then add the function to it which is defined by the plugin’s interface. This interface, since it’s required by both parties, could well sit in a common package outside of both programs. Something like a SDK. Both code could import it and use it as a common dependency. This way we have separated the interface from the plugin <strong>and</strong> the calling client. The <code>main</code> function could look something like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> logger := hclog.New(&amp;hclog.LoggerOptions&#123;</span><br><span class="line">    Level:      hclog.Trace,</span><br><span class="line">    Output:     os.Stderr,</span><br><span class="line">    JSONFormat: true,</span><br><span class="line">&#125;)</span><br><span class="line">greeter := &amp;GreeterHello&#123;</span><br><span class="line">    logger: logger,</span><br><span class="line">&#125; // pluginMap is the map of plugins we can dispense. var pluginMap = map[string]plugin.Plugin&#123;</span><br><span class="line">    &quot;greeter&quot;: &amp;example.GreeterPlugin&#123;Impl: greeter&#125;,</span><br><span class="line">&#125;</span><br><span class="line">logger.Debug(&quot;message from plugin&quot;, &quot;foo&quot;, &quot;bar&quot;)</span><br><span class="line">plugin.Serve(&amp;plugin.ServeConfig&#123;</span><br><span class="line">    HandshakeConfig: handshakeConfig,</span><br><span class="line">    Plugins:         pluginMap,</span><br><span class="line">&#125;) </span><br></pre></td></tr></table></figure>
+
+<p>Notice two things that we need. One is the <code>handshakeConfig</code>. You can either define it here, with the same cookie details as you defined in the client code, or you can extract the handshake information into the SDK. This is up to you. Then the next interesting thing is the <code>plugin.Serve</code> method. This is where the magic happens. The plugins open up a RPC communication socket and over a hijacked <code>stdout</code>, broadcasts its availability to the calling Client in this format:</p>
+<p> <code>CORE-PROTOCOL-VERSION | APP-PROTOCOL-VERSION | NETWORK-TYPE | NETWORK-ADDR | PROTOCOL</code> </p>
+<p>For Go plugins, you don’t have to concern yourself with this. <code>go-plugin</code> takes care of all this for you. For non-Go versions, we must take this into account. And before calling serve, we need to output this information to <code>stdout</code>. For example, a Python plugin must deal with this himself. Like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># Output information print(&quot;1|1|tcp|127.0.0.1:1234|grpc&quot;) sys.stdout.flush() </span><br></pre></td></tr></table></figure>
+
+<p>For GRPC plugins, it’s also mandatory to implement a HealthChecker. How would all this look like with GRPC? It gets slightly more complicated but not too much. We need to use <code>protoc</code> to create a protocol description for our implementation, and then we will call that. Let’s look at this now by converting the basic greeter example into GRPC.</p>
+<h1 id="GRPC-Basic-plugin"><a href="#GRPC-Basic-plugin" class="headerlink" title="GRPC Basic plugin"></a>GRPC Basic plugin</h1><p>The example that’s under GRPC is quite elaborate and perhaps you don’t need the Python part. I will focus on the basic RPC example into a GRPC example. That should not be a problem.</p>
+<h2 id="The-API"><a href="#The-API" class="headerlink" title="The API"></a>The API</h2><p>First and foremost, you will need to define an API to implement with <code>protoc</code>. For our basic example, the protoc file could look like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> syntax = &quot;proto3&quot;; package proto;</span><br><span class="line">message GreetResponse &#123;</span><br><span class="line">    string message = 1;</span><br><span class="line">&#125;</span><br><span class="line">message Empty &#123;&#125;</span><br><span class="line">service GreeterService &#123;</span><br><span class="line">    rpc Greet(Empty) returns (GreetResponse);</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>The syntax is quite simple and readable. What this defines is a message, which is a response, that will contain a <code>message</code> with the type <code>string</code>. The <code>service</code> defines a service which has a method called <code>Greet</code>. The service definition is basically an interface for which we will be providing the concrete implementation through the plugin. To read more about protoc, visit this page: <a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/">Google Protocol Buffer</a>.</p>
+<h2 id="Generate-the-code"><a href="#Generate-the-code" class="headerlink" title="Generate the code"></a>Generate the code</h2><p>Now, with the protoc definition in hand, we need to generate the stubs that the local client implementation can call. That client call will then, through the remote procedure call, call the right function on the server which will have the concrete implementation at the ready. Run it and return the result in the specified format. Because the stub needs to be available by both parties, (the client AND the server), this needs to live in a shared location. Why? Because the client is calling the stub and the server is implementing the stub. Both need it in order to know what to call/implement. To generate the code, run this command:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protoc -I proto/ proto/greeter.proto --go_out=plugins=grpc:proto </span><br></pre></td></tr></table></figure>
+
+<p>I encourage you to read the generated code. Much will make little sense at first. It will have a bunch of structs and defined things that the GRPC package will use in order to server the function. The interesting bits and pieces are:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> func (m *GreetResponse) GetMessage() string &#123;</span><br><span class="line">    if m != nil &#123;</span><br><span class="line">        return m.Message</span><br><span class="line">    &#125;</span><br><span class="line">    return &quot;&quot;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>Which will get use the message inside the response.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> type GreeterServiceClient interface &#123;</span><br><span class="line">    Greet(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GreetResponse, error)</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>This is our ServiceClient interface which defines the Greet function’s topology. And lastly, this guy:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> func RegisterGreeterServiceServer(s *grpc.Server, srv GreeterServiceServer) &#123;</span><br><span class="line">    s.RegisterService(&amp;_GreeterService_serviceDesc, srv)</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>Which we will need in order to register our implementation for the server. We can ignore the rest. ## The interface Much like the RPC, we need to define an interface for the client and server to use. This must be in a shared place as both the server and the client need to know about it. You could put this into an SDK and your peers could just get the SDK and implement some function for define and done. The interface definition in the GRPC land could look something like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> // Greeter is the interface that we&#x27;re exposing as a plugin. type Greeter interface &#123;</span><br><span class="line">    Greet() string</span><br><span class="line">&#125;</span><br><span class="line">// This is the implementation of plugin.GRPCPlugin so we can serve/consume this. type GreeterGRPCPlugin struct &#123;</span><br><span class="line">    // GRPCPlugin must still implement the Plugin interface</span><br><span class="line">    plugin.Plugin</span><br><span class="line">    // Concrete implementation, written in Go. This is only used for plugins</span><br><span class="line">    // that are written in Go.</span><br><span class="line">    Impl Greeter</span><br><span class="line">&#125;</span><br><span class="line">func (p *GreeterGRPCPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error &#123;</span><br><span class="line">    proto.RegisterGreeterServer(s, &amp;GRPCServer&#123;Impl: p.Impl&#125;)</span><br><span class="line">    return nil</span><br><span class="line">&#125;</span><br><span class="line">func (p *GreeterGRPCPlugin) GRPCClient(ctx context.Context, broker *plugin.GRPCBroker, c *grpc.ClientConn) (interface&#123;&#125;, error) &#123;</span><br><span class="line">    return &amp;GRPCClient&#123;client: proto.NewGreeterClient(c)&#125;, nil</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>With this we have the Plugin’s implementation for hashicorp what needed to be done. The plugin will call the underlying implementation and serve/consume the plugin. We can now write the GRPC part of it. Please note that <code>proto</code> is a shared library too where the protocol stubs reside. That needs to be somewhere on the path or in a separate SDK of some sort, but it must be visible.</p>
+<h2 id="Writing-the-GRPC-Client"><a href="#Writing-the-GRPC-Client" class="headerlink" title="Writing the GRPC Client"></a>Writing the GRPC Client</h2><p>Firstly we define the grpc client struct:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// GRPCClient is an implementation of Greeter that talks over RPC. type GRPCClient struct&#123; client proto.GreeterClient &#125; </span><br></pre></td></tr></table></figure>
+
+<p>Then we define how the client will call the remote function:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> func (m *GRPCClient) Greet() string &#123;</span><br><span class="line">    ret, _ := m.client.Greet(context.Background(), &amp;proto.Empty&#123;&#125;)</span><br><span class="line">    return ret.Message</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>This will take the <code>client</code> in the <code>GRPCClient</code> and will call the method on it. Once that’s done we will return to the result <code>Message</code> property which will be <code>Hello!</code>. <code>proto.Empty</code> is an empty struct; we use this if there is no parameter for a defined method or no return value. We can’t just leave it blank. <code>protoc</code> needs to be told explicitly that there is no parameter or return value.</p>
+<h2 id="Writing-the-GRPC-Server"><a href="#Writing-the-GRPC-Server" class="headerlink" title="Writing the GRPC Server"></a>Writing the GRPC Server</h2><p>The server implementation will also be similar. We call <code>Impl</code> here which will have our concrete plugin implementation.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> // Here is the gRPC server that GRPCClient talks to. type GRPCServer struct &#123;</span><br><span class="line">    // This is the real implementation</span><br><span class="line">    Impl Greeter</span><br><span class="line">&#125;</span><br><span class="line">func (m *GRPCServer) Greet(</span><br><span class="line">    ctx context.Context,</span><br><span class="line">    req *proto.Empty) *proto.GreeterResponse &#123;</span><br><span class="line">    v := m.Impl.Greet()</span><br><span class="line">    return &amp;proto.GreeterResponse&#123;Message: v&#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>And we will use the <code>protoc</code> defined message response. <code>v</code> will have the response from <code>Greet</code> which will be <code>Hello!</code> provided by the concrete plugin’s implementation. We then transform that into a protoc type by setting the <code>Message</code> property on the <code>GreeterResponse</code> struct provided by the automatically generated protoc stub code. Easy, right?</p>
+<h2 id="Writing-the-plugin-itself"><a href="#Writing-the-plugin-itself" class="headerlink" title="Writing the plugin itself"></a>Writing the plugin itself</h2><p>The whole thing looks much like the RPC implementation with just a few small modifications and changes. This can sit completely outside of everything, or can even be provided by a third party implementor.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> // Here is a real implementation of KV that writes to a local file with // the key name and the contents are the value of the key. type Greeter struct&#123;&#125;</span><br><span class="line">func (Greeter) Greet() error &#123;</span><br><span class="line">    return &quot;Hello!&quot;</span><br><span class="line">&#125;</span><br><span class="line">func main() &#123;</span><br><span class="line">    plugin.Serve(&amp;plugin.ServeConfig&#123;</span><br><span class="line">        HandshakeConfig: shared.Handshake,</span><br><span class="line">        Plugins: map[string]plugin.Plugin&#123;</span><br><span class="line">            &quot;greeter&quot;: &amp;shared.GreeterGRPCPlugin&#123;Impl: &amp;Greeter&#123;&#125;&#125;,</span><br><span class="line">        &#125;,</span><br><span class="line"></span><br><span class="line">        // A non-nil value here enables gRPC serving for this plugin...</span><br><span class="line">        GRPCServer: plugin.DefaultGRPCServer,</span><br><span class="line">    &#125;)</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h2 id="Calling-it-all-in-the-main"><a href="#Calling-it-all-in-the-main" class="headerlink" title="Calling it all in the main"></a>Calling it all in the main</h2><p>Once all that is done, the <code>main</code> function looks the same as RPC’s main but with some small modifications.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> // We&#x27;re a host. Start by launching the plugin process. client := plugin.NewClient(&amp;plugin.ClientConfig&#123;</span><br><span class="line">    HandshakeConfig: shared.Handshake,</span><br><span class="line">    Plugins:         shared.PluginMap,</span><br><span class="line">    Cmd:             exec.Command(&quot;./plugin/greeter&quot;),</span><br><span class="line">    AllowedProtocols: []plugin.Protocol&#123;plugin.ProtocolGRPC&#125;,</span><br><span class="line">&#125;) </span><br></pre></td></tr></table></figure>
+
+<p>The <code>NewClient</code> now defines <code>AllowedProtocols</code> to be <code>ProtocolGRPC</code>. The rest is the same as before calling <code>Dispense</code> and value hinting the plugin to the correct type then calling <code>Greet()</code>.</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This is it. We made it! Now our plugin works over GRPC with a defined API by protoc. The plugin’s implementation can live where ever we want it to, but it needs some shared data. These are:</p>
+<ul>
+<li>The generated code by <code>protoc</code></li>
+<li>The defined plugin interface</li>
+<li>The GRPC Server and Client</li>
+</ul>
+<p>These need to be visible by both the Client and the Server. The Server here is the plugin. If you are planning on making people be able to extend your application with go-plugin, you should make these available as a separate SDK. So people won’t have to include your whole project just to implement an interface and use protoc. In fact, you could also extract the <code>protoc</code> definition into a separate repository so that your SDK can also pull it in. You will have three repositories:</p>
+<ul>
+<li>Your application;</li>
+<li>The SDK providing the interface and the GRPC Server and Client implementation;</li>
+<li>The protoc definition file and generated skeleton ( for Go based plugins).</li>
+</ul>
+<p>Other languages will have to generate their own protoc code, and includ it into the plugin; like the Python implementation example located here: <a target="_blank" rel="noopener" href="https://github.com/hashicorp/go-plugin/tree/master/examples/grpc/plugin-python">Go-plugin Python Example</a>. Also, read this documentation carefully: <a target="_blank" rel="noopener" href="https://github.com/hashicorp/go-plugin/blob/master/docs/guide-plugin-write-non-go.md">non-go go-plugin</a>. This document will also clarify what <code>1|1|tcp|127.0.0.1:1234|grpc</code> means and will dissipate the confusion around how plugins work. Lastly, if you would like to have an in-depth explanation about how go-plugin came to be, watch this video by Mitchell: <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=SRvm3zQQc1Q">go-plugin explanation video</a>. I must warn you though- it’s an hour long. But worth the watch!<br>That’s it. I hope this has helped to clear the confusion around how to use go-plugin.</p>
+<p>Happy plugging!</p>
+<p>Gergely.</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2022/10/30/tdengine/upgrade3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1152,107 +1345,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2021/08/02/finance/loan/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/02/finance/loan/" class="post-title-link" itemprop="url">一个消费贷的故事</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-02 20:57:26" itemprop="dateCreated datePublished" datetime="2021-08-02T20:57:26+08:00">2021-08-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AE%9A%E6%8A%95%E8%AF%BE%E5%A0%82/" itemprop="url" rel="index"><span itemprop="name">定投课堂</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AE%9A%E6%8A%95%E8%AF%BE%E5%A0%82/%E9%87%91%E8%9E%8D/" itemprop="url" rel="index"><span itemprop="name">金融</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>桑德拉还是学生时，曾参与了一项针对低收入家庭的“领先”儿童发展计划。现在，她在信函挪威小镇的“领先”项目理事会中负责管理工作。她被雇主北卡罗来纳大学威明顿分校评选为优秀员工，还在WMNX电台主持了一档广播节目，算是威明顿当地的名人。但光鲜的外表不能代表全部：她丈夫曾是一名行政厨师，最近却失业了；夫妻俩本来一直能提前一个月支付房租和各项账单，但现在手头却有些吃紧；他们的汽车保险眼看就要到期了，却没有续报。</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/08/02/finance/loan/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1322,20 +1414,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-count">237</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">88</span>
+        <span class="site-state-item-count">91</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1393,12 +1485,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">459k</span>
+    <span title="站点总字数">483k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:57</span>
+    <span title="站点阅读时长">7:19</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

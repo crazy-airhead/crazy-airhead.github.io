@@ -172,6 +172,372 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/22/go/go-little-book/chapter-1/" class="post-title-link" itemprop="url">Go Little Book - 第一章 - 基础</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-22 10:03:33" itemprop="dateCreated datePublished" datetime="2018-11-22T10:03:33+08:00">2018-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>16k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>14 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="第一章-基础（Chapter-1-The-Basics）"><a href="#第一章-基础（Chapter-1-The-Basics）" class="headerlink" title="第一章 - 基础（Chapter 1 - The Basics）"></a>第一章 - 基础（Chapter 1 - The Basics）</h1><p>Go is a compiled, statically typed language with a C-like syntax and garbage collection. What does that mean?</p>
+<p>Go是一门静态类型、编译型语言，有类C风格的语法和垃圾回收机制。这意味着什么呢？</p>
+<h2 id="编译（Compilation）"><a href="#编译（Compilation）" class="headerlink" title="编译（Compilation）"></a>编译（Compilation）</h2><p>Compilation is the process of translating the source code that you write into a lower level language – either assembly (as is the case with Go), or some other intermediary language (as with Java and C#).</p>
+<p>编译将你写的源代码转换成一种更低级的语言————可能是汇编（如Go就是这样），或者其他中间语言（如Java和C#）的过程。</p>
+<p>Compiled languages can be unpleasant to work with because compilation can be slow. It’s hard to iterate quickly if you have to spend minutes or hours waiting for code to compile. Compilation speed is one of the major design goals of Go. This is good news for people working on large projects as well as those of us used to a quick feedback cycle offered by interpreted languages.</p>
+<p>因为编译可能很慢，使用编译型语言可能不是个令人愉快的事情。很难实现快速迭代因为你不得不花几分钟甚至几个小时的时间来等待编绎完成。编译速度是Go设计时的一个主要目标。这对于大项目的开发人员来说是个好消息，就像我们可以使用解释语言提供的快速反馈周期。</p>
+<p>Compiled languages tend to run faster and the executable can be run without additional dependencies (at least, that’s true for languages like C, C++ and Go which compile directly to assembly).</p>
+<p>编译型语言往往运行得更快，不需要额外的依赖也可以正常运行（至少，像C、C++和Go这样直接编译成汇编的语言来说，就是如此。）</p>
+<h2 id="静态类型（Static-Typing）"><a href="#静态类型（Static-Typing）" class="headerlink" title="静态类型（Static Typing）"></a>静态类型（Static Typing）</h2><p>Being statically typed means that variables must be of a specific type (int, string, bool, []byte, etc.). This is either achieved by specifying the type when the variable is declared or, in many cases, letting the compiler infer the type (we’ll look at examples shortly).</p>
+<p>静态类型是指变量必须指定一个类型（整型、字符串、布尔、字节数组等等）。可以在申明变量的时候指定数据类型，也可以,大多数情况是让编译器来推断类型（我们将会在接下来的例子中看到）。</p>
+<p>There’s a lot more that can be said about static typing, but I believe it’s something better understood by looking at code. If you’re used to dynamically typed languages, you might find this cumbersome. You’re not wrong, but there are advantages, especially when you pair static typing with compilation. The two are often conflated. It’s true that when you have one, you normally have the other but it isn’t a hard rule. With a rigid type system, a compiler is able to detect problems beyond mere syntactical mistakes as well as make further optimizations.</p>
+<p>关于静态类型还有很多可以介绍，但我相信理解它更好的方式是阅读代码。如果你习惯于动态语言，你可能觉得这比较麻烦。没错，不过静态类型也有优势，尤其是和编译相结合的时候。静态类型和编译这两者经常被混为一谈。虽然这不是硬性的规定，但通常情况下，有其一就必有其二。在严格类型系统中，编译器除了能够检测出单纯的语法错误问题还能做出进一步的优化。</p>
+<h2 id="类C语法（C-Like-Syntax）"><a href="#类C语法（C-Like-Syntax）" class="headerlink" title="类C语法（C-Like Syntax）"></a>类C语法（C-Like Syntax）</h2><p>Saying that a language has a C-like syntax means that if you’re used to any other C-like languages such as C, C++, Java, JavaScript and C#, then you’re going to find Go familiar – superficially, at least. For example, it means <code>&amp;&amp;</code> is used as a boolean AND, <code>==</code> is used to compare equality, <code>&#123;</code> and <code>&#125;</code> start and end a scope, and array indexes start at 0.</p>
+<p>说一门语言有一个类C的语法意味着，如果你使用的任何其他类似C语言，如C，C ++，Java，JavaScript以及C＃，那么你会发现Go的相似之处————至少从表面上看。比如，<code>&amp;&amp;</code>表示逻辑与,<code>==</code>表示相等判断，<code>&#123;&#125;</code>和<code>&#125;</code>是作用域的开始和结束，以及数组从0开始索引。</p>
+<p>C-like syntax also tends to mean semi-colon terminated lines and parentheses around conditions. Go does away with both of these, though parentheses are still used to control precedence. For example, an <code>if</code> statement looks like this:</p>
+<p>类C语法也往往使用分号结束行和条件表达式用括号括起来。Go没用使用这两种方式，尽管依然使用括号来控制优先权。比如，一个<code>if</code>表达式看起来像这样：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> name == <span class="string">&quot;Leto&quot;</span> &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&quot;the spice must flow&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>And in more complicated cases, parentheses are still useful:</p>
+<p>在更复杂的情况下，括号依然有用：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (name == <span class="string">&quot;Goku&quot;</span> &amp;&amp; power &gt; <span class="number">9000</span>) || (name == <span class="string">&quot;gohan&quot;</span> &amp;&amp; power &lt; <span class="number">4000</span>)  &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&quot;super Saiyan&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Beyond this, Go is much closer to C than C# or Java - not only in terms of syntax, but in terms of purpose. That’s reflected in the terseness and simplicity of the language which will hopefully start to become obvious as you learn it.</p>
+<p>除此之外，Go比C#或者Java更接近C，不仅在语法方面，还在用途方面。这体现在语言风格的简洁和简单，随着不断深入学习，你会越来越明显的体会到这种特性。</p>
+<h2 id="垃圾回收机制（Garbage-Collected）"><a href="#垃圾回收机制（Garbage-Collected）" class="headerlink" title="垃圾回收机制（Garbage Collected）"></a>垃圾回收机制（Garbage Collected）</h2><p>Some variables, when created, have an easy-to-define life. A variable local to a function, for example, disappears when the function exits. In other cases, it isn’t so obvious – at least to a compiler. For example, the lifetime of a variable returned by a function or referenced by other variables and objects can be tricky to determine. Without garbage collection, it’s up to developers to free the memory associated with such variables at a point where the developer knows the variable isn’t needed. How? In C, you’d literally <code>free(str);</code> the variable.</p>
+<p>一些变量，在创建时就有明确的生命周期。如函数内的局部变量，当函数结束时就消失了。在另一些情况下，就没有这么明显了，起码对编译器来说是这样。比如函数中返回的变量，变量的引用和对象的引用的生命周期就很难判断了。没有垃圾回收机制的情况下，这依赖于开发人员在不需要这些变量时进行内存的释放。怎么实现？例如在c中，你需要正确的去释放一个变量的内存<code>free(str);</code>。</p>
+<p>Languages with garbage collectors (e.g., Ruby, Python, Java, JavaScript, C#, Go) are able to keep track of these and free them when they’re no longer used. Garbage collection adds overhead, but it also eliminates a number of devastating bugs.</p>
+<p>有垃圾回收机制的语言（如Ruby、Python、Java、JavaScript、C#、Go）能记录变量并在不使用时进行释放。垃圾回收机制增加了开销，但也杜绝了一些破坏性的bug。</p>
+<h2 id="运行Go代码（Running-Go-Code）"><a href="#运行Go代码（Running-Go-Code）" class="headerlink" title="运行Go代码（Running Go Code）"></a>运行Go代码（Running Go Code）</h2><p>Let’s start our journey by creating a simple program and learning how to compile and execute it. Open your favorite text editor and write the following code:</p>
+<p>让我们创建一个简单的例子来学习如何编译和运行它，来开始我们的Go学习之旅。打开你最喜欢的文本编辑器，输入如下的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="built_in">println</span>(<span class="string">&quot;it&#x27;s over 9000!&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Save the file as <code>main.go</code>. For now, you can save it anywhere you want; we don’t need to live inside Go’s workspace for trivial examples.</p>
+<p>将文件保存为<code>main.go</code>。开始，你可以将它保存在任何你想要的地方；作为简单的例子，我们还不需要深入理解Go的工作区。</p>
+<p>Next, open a shell/command prompt and change the directory to where you saved the file. For me, that means typing <code>cd ~/code</code>.</p>
+<p>接下来，打开一个shell/命令行，然后将目录切换到你保存文件的位置。对我来，输入<code>cd ~/code</code>就可以了。</p>
+<p>Finally, run the program by entering:</p>
+<p>最后，能过输入如下命令来运行程序：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go run main.go</span><br></pre></td></tr></table></figure>
+
+<p>If everything worked, you should see <em>it’s over 9000!</em>.</p>
+<p>如果一切正常，你会看到 *it’s over 9000!*。</p>
+<p>But wait, what about the compilation step? <code>go run</code> is a handy command that compiles <em>and</em> runs your code. It uses a temporary directory to build the program, executes it and then cleans itself up. You can see the location of the temporary file by running:</p>
+<p>等等，那编译过程呢？<code>go run</code>是一个方便的编译和执行代码的命令。它使用临时目录来生成程序和运行，然后清理。通过下面的代码你可以查看临时文件所在位置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go run --work main.go</span><br></pre></td></tr></table></figure>
+
+<p>To explicitly compile code, use <code>go build</code>:</p>
+<p>要显示的编译代码，使用<code>go build</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go build main.go</span><br></pre></td></tr></table></figure>
+
+<p>This will generate an executable <code>main</code> which you can run. On Linux / OSX, don’t forget that you need to prefix the executable with dot-slash, so you need to type <code>./main</code>.</p>
+<p>这会生成一个可执行的<code>main</code>程序。在Linux/OSX中，不要忘记在可执行文件前面加上点和反斜杠，所有你需要输入<code>./main</code>。</p>
+<p>While developing, you can use either <code>go run</code> or <code>go build</code>. When you deploy your code however, you’ll want to deploy a binary via <code>go build</code> and execute that.</p>
+<p>在开发的时候，你可以使用<code>go run</code>或者<code>go build</code>。但当你发布的时候，你需要使用<code>go build</code>来生成可执行文件并运行它。</p>
+<h3 id="主函数（Main）"><a href="#主函数（Main）" class="headerlink" title="主函数（Main）"></a>主函数（Main）</h3><p>Hopefully, the code that we just executed is understandable. We’ve created a function and printed out a string with the built-in <code>println</code> function. Did <code>go run</code> know what to execute because there was only a single choice? No. In Go, the entry point to a program has to be a function called <code>main</code> within a package <code>main</code>.</p>
+<p>但愿，我们刚刚的执行的代码是可以理解的。我们创建了一个函数，它调用内置的<code>println</code>函数打印一个字符串。难道是因为只有一个选择，所以<code>go run</code>才知道要执行什么吗？不是的，在Go语言中，程序的入口是<code>main</code>包中的<code>main</code>函数。</p>
+<p>We’ll talk more about packages in a later chapter. For now, while we focus on understanding the basics of Go, we’ll always write our code within the <code>main</code> package.</p>
+<p>后续章节我们会介绍更多包的内容。现在，为了我们着重理解Go的基础知识，我们只在<code>main</code>包中写代码。</p>
+<p>If you want, you can alter the code and change the package name. Run the code via <code>go run</code> and you should get an error. Then, change the name back to <code>main</code> but use a different function name. You should see a different error message. Try making those same changes but use <code>go build</code> instead. Notice that the code compiles, there’s just no entry point to run it. This is perfectly normal when you are, for example, building a library.</p>
+<p>如果你愿意，你也可以修改代码并改变包名89。并使用<code>go run</code>去执行，你会得到一个错误信息。然后，将包名改成<code>main</code>，但是函数名不叫<code>main</code>，再次运行代码，你会得到一个不同的错误信息。使用<code>go build</code>进行相同的操作，注意编译代码时，这里没有运行代码的入口点。这是很正常的，例如当你编译一个库时。</p>
+<h2 id="包导入（Imports）"><a href="#包导入（Imports）" class="headerlink" title="包导入（Imports）"></a>包导入（Imports）</h2><p>Go has a number of built-in functions, such as <code>println</code>, which can be used without reference. We can’t get very far though, without making use of Go’s standard library and eventually using third-party libraries. In Go, the <code>import</code> keyword is used to declare the packages that are used by the code in the file.</p>
+<p>Go有一些内建函数是不需要引入就可以直接使用，如<code>println</code>。不利用Go标准库和第三方类库的话，我们不能走得很远。在Go中，使用<code>import</code>关键字来申明代码中使用的包。</p>
+<p>Let’s change our program:<br>让我们来修改下程序：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">if</span> <span class="built_in">len</span>(os.Args) != <span class="number">2</span> &#123;</span><br><span class="line">    os.Exit(<span class="number">1</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  fmt.Println(<span class="string">&quot;It&#x27;s over &quot;</span>, os.Args[<span class="number">1</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Which you can run via:</p>
+<p>通过下面的命令来运行它：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go run main.go 9000</span><br></pre></td></tr></table></figure>
+
+<p>We’re now using two of Go’s standard packages: <code>fmt</code> and <code>os</code>. We’ve also introduced another built-in function <code>len</code>. <code>len</code> returns the size of a string, or the number of values in a dictionary, or, as we see here, the number of elements in an array. If you’re wondering why we expect 2 arguments, it’s because the first argument – at index 0 – is always the path of the currently running executable. (Change the program to print it out and see for yourself.)</p>
+<p>我们用了两个Go的标准包：<code>fmt</code>和<code>os</code>。我们引入了另一个内建函数<code>len</code>。<code>len</code>返加字符串的长度，或者字典的个数，再或者，如这个例子，数组元素的个数。如果你想知道为什么我们期望是两个参数，这是因为索引为0的第一个参数是当前可执程序的路径（你可以自己修改代码将它打印出来看看）。</p>
+<p>You’ve probably noticed we prefix the function name with the package, e.g., <code>fmt.Println</code>. This is different from many other languages. We’ll learn more about packages in later chapters. For now, knowing how to import and use a package is a good start.</p>
+<p>你可能已经注意到了函数名之前的包名了，比如：<code>fmt.Println</code>，这和其他很多语言不同。后续章节我们会学习更多包的内容。现在，知道如何导入和使用包就好了。</p>
+<p>Go is strict about importing packages. It will not compile if you import a package but don’t use it. Try to run the following:</p>
+<p>Go对包导入很严格。如果导入了包，但没有使用是不能通过编译的。试试运行下面的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You should get two errors about <code>fmt</code> and <code>os</code> being imported and not used. Can this get annoying? Absolutely. Over time, you’ll get used to it (it’ll still be annoying though). Go is strict about this because unused imports can slow compilation; admittedly a problem most of us don’t have to this degree.</p>
+<p>你会看到两个错误信息，显示<code>fmt</code>和<code>os</code>包被导入但是没有被使用。这会让人烦吗？绝对的。随着时间的推移，你会习惯（虽然还是烦人）。Go之所以在这点上这么严格是因为导入未使用的包会影响编译速度。不可否认的是，我们大多数人都没有这个深度。</p>
+<p>Another thing to note is that Go’s standard library is well documented. You can head over to <a target="_blank" rel="noopener" href="http://golang.org/pkg/fmt/#Println">http://golang.org/pkg/fmt/#Println</a> to learn more about the <code>Println</code> function that we used. You can click on that section header and see the source code. Also, scroll to the top to learn more about Go’s formatting capabilities.</p>
+<p>令一个值得注意的地方就是Go的标准包的文档很完善。你可以通过<a target="_blank" rel="noopener" href="http://golang.org/pkg/fmt/#Println">http://golang.org/pkg/fmt/#Println</a> 来学习更多我们用到过的<code>Println</code>的内容。你可以点击章节标题来查看源码。也可以滚动到顶部来查看更多关于Go格式化的功能。</p>
+<p>If you’re ever stuck without internet access, you can get the documentation running locally via:<br>如果你不能访问网络，你可以通过下面的方面运行本地的文档：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">godoc -http=:6060</span><br></pre></td></tr></table></figure>
+
+<p>and pointing your browser to <code>http://localhost:6060</code></p>
+<p>然后通过<code>http://localhost:6060</code>来浏览。</p>
+<h2 id="变量和声明（Variables-and-Declarations）"><a href="#变量和声明（Variables-and-Declarations）" class="headerlink" title="变量和声明（Variables and Declarations）"></a>变量和声明（Variables and Declarations）</h2><p>It’d be nice to begin and end our look at variables by saying <em>you declare and assign to a variable by doing x = 4.</em> Unfortunately, things are more complicated in Go. We’ll begin our conversation by looking at simple examples. Then, in the next chapter, we’ll expand this when we look at creating and using structures. Still, it’ll probably take some time before you truly feel comfortable with it.</p>
+<p><em>通过x = 4就能声明和赋值变量</em> ，对你来说可能是一个好的开始和结束。不幸的是，Go中要复杂一些。我们将通过简单的例子来开始我们的话题。然后，我们会在下一章节中，在讲解分创建的使用结构体的时候，我们会展开来讲解。但是，你可以需要花一些时间来适应它。</p>
+<p>You might be thinking <em>Woah! What can be so complicated about this?</em> Let’s start looking at some examples.</p>
+<p>你可能会觉得 *哇！为什么这么复杂?*让我们来看些例子吧。</p>
+<p>The most explicit way to deal with variable declaration and assignment in Go is also the most verbose:</p>
+<p>在Go中最直接也是最繁索的变量声明和赋值方式是：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">var</span> power <span class="keyword">int</span></span><br><span class="line">  power = <span class="number">9000</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;It&#x27;s over %d\n&quot;</span>, power)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here, we declare a variable <code>power</code> of type <code>int</code>. By default, Go assigns a zero value to variables. Integers are assigned <code>0</code>, booleans <code>false</code>, strings <code>&quot;&quot;</code> and so on. Next, we assign <code>9000</code> to our <code>power</code> variable. We can merge the first two lines:</p>
+<p>这里，我们声明了一个<code>int</code>类型的变量<code>power</code>。默认情况下，Go给变量赋为0值。整型赋为<code>0</code>，布尔型赋为<code>false</code>，字符串赋为<code>&quot;&quot;</code>等等。接着，我们给变量<code>power</code>赋值为<code>9000</code>。我们可以合并开始的这两行：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> power <span class="keyword">int</span> = <span class="number">9000</span></span><br></pre></td></tr></table></figure>
+
+<p>Still, that’s a lot of typing. Go has a handy short variable declaration operator, <code>:=</code>, which can infer the type:</p>
+<p>依然，还是需要很多的输入。Go有更方便的变量声明操作符，<code>:=</code>，它可以推断类型。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">power := <span class="number">9000</span></span><br></pre></td></tr></table></figure>
+
+<p>This is handy, and it works just as well with functions:</p>
+<p>这很方便，对函数也同样适用：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  power := getPower()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getPower</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">9001</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>It’s important that you remember that <code>:=</code> is used to declare the variable as well as assign a value to it. Why? Because a variable can’t be declared twice (not in the same scope anyway). If you try to run the following, you’ll get an error.</p>
+<p>记住<code>:=</code>用于声明和赋值变量这点很重要。为什么呢？因为一个变量不能被声明两次（在同一个作用域中）。如果你尝试运行下面的代码，你会看到一个错误信息。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  power := <span class="number">9000</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;It&#x27;s over %d\n&quot;</span>, power)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// COMPILER ERROR:</span></span><br><span class="line">  <span class="comment">// no new variables on left side of :=</span></span><br><span class="line">  power := <span class="number">9001</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;It&#x27;s also over %d\n&quot;</span>, power)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The compiler will complain with <em>no new variables on left side of :=</em>. This means that when we first declare a variable, we use <code>:=</code> but on subsequent assignment, we use the assignment operator <code>=</code>. This makes a lot of sense, but it can be tricky for your muscle memory to remember when to switch between the two.</p>
+<p>编译器会抱错提示 <em>:=左边不是新的变量</em>。这就是说我们一开始用<code>:=</code>来声明一个变量，接下来我们需要用<code>=</code>来给变量赋值。这很用意义，但是对你的记忆力来说是一个负担，因为你要记住这两者之间切换的时机。</p>
+<p>If you read the error message closely, you’ll notice that <em>variables</em> is plural. That’s because Go lets you assign multiple variables (using either <code>=</code> or <code>:=</code>):</p>
+<p>如果你仔细看错误信息，你会发现 <em>变量</em>用了复数形式。因为Go支持多个变量同时赋值（使用<code>=</code>或者<code>:=</code>）:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  name, power := <span class="string">&quot;Goku&quot;</span>, <span class="number">9000</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;%s&#x27;s power is over %d\n&quot;</span>, name, power)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>As long as one of the variables is new, <code>:=</code> can be used. Consider:</p>
+<p>只要有一个变量是新的就可以使用<code>:=</code> 操作符。例如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  power := <span class="number">1000</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;default power is %d\n&quot;</span>, power)</span><br><span class="line"></span><br><span class="line">  name, power := <span class="string">&quot;Goku&quot;</span>, <span class="number">9000</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;%s&#x27;s power is over %d\n&quot;</span>, name, power)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Although <code>power</code> is being used twice with <code>:=</code>, the compiler won’t complain the second time we use it, it’ll see that the other variable, <code>name</code>, is a new variable and allow <code>:=</code>. However, you can’t change the type of <code>power</code>. It was declared (implicitly) as an integer and thus, can only be assigned integers.</p>
+<p>虽然变量<code>power</code>使用了<code>:=</code>，但是编译器不会在第2次使用<code>:=</code>时报错，因为这里有一个新变量<code>name</code>，允许使用<code>:=</code>。但你不能改变<code>power</code>的类型。它已经被声明（隐式的）为整型，所以只能用整数来赋值。</p>
+<p>For now, the last thing to know is that, like imports, Go won’t let you have unused variables. For example,</p>
+<p>最后，和包导入一样，Go不允许未使用的变量。例如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  name, power := <span class="string">&quot;Goku&quot;</span>, <span class="number">1000</span></span><br><span class="line">  fmt.Printf(<span class="string">&quot;default power is %d\n&quot;</span>, power)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>won’t compile because <code>name</code> is declared but not used. Like unused imports it’ll cause some frustration, but overall I think it helps with code cleanliness and readability.</p>
+<p>不会被编译因为变量<code>name</code>声明了但没有使用。和包导入一样会带来一些挫败感，但总的来说，这是为了代码的简洁和可读性。</p>
+<p>There’s more to learn about declaration and assignments. For now, remember that you’ll use <code>var NAME TYPE</code> when declaring a variable to its zero value, <code>NAME := VALUE</code> when declaring and assigning a value, and <code>NAME = VALUE</code> when assigning to a previously declared variable.</p>
+<p>声明和赋值还有内容需要学习。现在，只要记住，用<code>var NAME TYPE</code>来声明变量并赋0值，用<code>NAME := VALUE</code>声明变量并赋值，和用<code>NAME = VALUE</code>给已声明的变量赋值。</p>
+<h2 id="函数声明（Function-Declarations）"><a href="#函数声明（Function-Declarations）" class="headerlink" title="函数声明（Function Declarations）"></a>函数声明（Function Declarations）</h2><p>This is a good time to point out that functions can return multiple values. Let’s look at three functions: one with no return value, one with one return value, and one with two return values.</p>
+<p>现在是一个好的时机来指出函数是可以有多返回值的。让我们来看3个函数：一个没有返回值，一个有一个返回值，另一个有两个返回值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(message <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(a <span class="keyword">int</span>, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">power</span><span class="params">(name <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">int</span>, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>We’d use the last one like so:<br>我们像这样来使用最后一个函数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">value, exists := power(<span class="string">&quot;goku&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> exists == <span class="literal">false</span> &#123;</span><br><span class="line">  <span class="comment">// handle this error case</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Sometimes, you only care about one of the return values. In these cases, you assign the other values to <code>_</code>:</p>
+<p>有时，你可能只关心其中一个返回值。在这种情况下，你可以把其他值赋为<code>_</code>:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">_, exists := power(<span class="string">&quot;goku&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> exists == <span class="literal">false</span> &#123;</span><br><span class="line">  <span class="comment">// handle this error case</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This is more than a convention. <code>_</code>, the blank identifier, is special in that the return value isn’t actually assigned. This lets you use <code>_</code> over and over again regardless of the returned type.</p>
+<p>这不仅仅是一个约定。<code>_</code>，空白标识符，尤其在用在返回值时它没有真正的赋值。无论返回值是什么类型你都可以使用<code>_</code>。</p>
+<p>Finally, there’s something else that you’re likely to run into with function declarations. If parameters share the same type, we can use a shorter syntax:</p>
+<p>最后，你可能遇到一些不同的函数声明方式。如果函数的参数类型都相同，那么可以用以下更简洁的方式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Being able to return multiple values is something you’ll use often. You’ll also frequently use <code>_</code> to discard a value. Named return values and the slightly less verbose parameter declaration aren’t that common. Still, you’ll run into all of these sooner than later so it’s important to know about them.</p>
+<p>你会常常用到函数多返回值这个特性。你也会经常使用<code>_</code>去舍弃一个返回值。具名返回值和无名参数声明并不常见。但是迟早你都会遇到，最好对他们都有所了解。</p>
+<h2 id="继续之前（Before-You-Continue）"><a href="#继续之前（Before-You-Continue）" class="headerlink" title="继续之前（Before You Continue）"></a>继续之前（Before You Continue）</h2><p>We looked at a number of small individual pieces and it probably feels disjointed at this point. We’ll slowly build larger examples and hopefully, the pieces will start to come together.</p>
+<p>现在我们已经学习了许多的小知识点，你可能会觉得有点脱节。我们会逐步构建一个更大的例子，有望将这些小知识点串联起来。</p>
+<p>If you’re coming from a dynamic language, the complexity around types and declarations might seem like a step backwards. I don’t disagree with you. For some systems, dynamic languages are categorically more productive.</p>
+<p>如果你是来自动态类型语言的开发人员，你可能会觉得Go的变量类型和声明的复杂是一种倒退。我同意你的看法。对于一些系统，动态类型的语言绝对更有效率。</p>
+<p>If you’re coming from a statically typed language, you’re probably feeling comfortable with Go. Inferred types and multiple return values are nice (though certainly not exclusive to Go). Hopefully as we learn more, you’ll appreciate the clean and terse syntax.</p>
+<p>如果你是来自静态类型语言的开发人员，你可能会习惯使用Go。类型推断和多返回值是如此的美好（尽管这不是Go独有的）。希望随着我们不断深入的学习，你会喜欢上Go干净和简洁的语法。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/getting-start/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/22/go/go-little-book/getting-start/" class="post-title-link" itemprop="url">Go Little Book - 入门</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-22 10:02:33" itemprop="dateCreated datePublished" datetime="2018-11-22T10:02:33+08:00">2018-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h1><p>如果你想试试Go，你可以使用Go运行环境，它可以让你无需安装任何东西就可以在网上运行代码。这也是在Go论坛如StackOverflow中寻求帮助时，分享Go代码最常用的方式。</p>
+<p>安装Go很简单。你可以从源码安装，但我建议你用一个已编译好的可执行文件。当你打开下载页面时，你可以看到不同平台的安装包。让我们避免使用这些并学习自己如何配置Go。然后你就会发现这不难。</p>
+<p>除了简单的例子，Go被设计成只有你的代码在工作区时才能正常运行。这个工作区是有<code>bin</code>、<code>pkg</code>和<code>src</code>三个子目录的文件夹。你也许会想强制Go去适应你自己的风格 - 别想。</p>
+<p>通常，我把我的项目放在<code>~/code</code>目录下。例如，<code>~/code/blog</code>是我的博客。对于Go来说，我的工作区是<code>~/code/go</code>，而我Go版本的博客会在<del>/code/go/src/blog下。因为这经常用到，我做了个符号链接，通过`</del>/code/blog`来访问它：</p>
+<pre><code>ln -s ~/code/go/src/blog ~/code/blog
+</code></pre>
+<p>总之，无论你把你的项目放在哪，创建一个Go目录包含src子目录来放置你的项目。</p>
+<h2 id="OSX-Linux"><a href="#OSX-Linux" class="headerlink" title="OSX / Linux"></a>OSX / Linux</h2><p>下载你平台对应<code>tar.gz</code>。OSX，你需要关心<code>go#.#.#.darwin-amd64-osx10.8.tar.gz</code>，其中<code>#.#.#</code>表示Go的最新版本。</p>
+<p>通过<code>tar -C /usr/local -xzf go#.#.#.darwin-amd64-osx10.8.tar.gz</code>将文件解压到<code>/usr/local</code>目录。</p>
+<p>设置两个环境变量：</p>
+<ol>
+<li><code>GOPATH</code>指向你的工作区，对我来说是<code>$HOME/code/go</code>。</li>
+<li>我们需要将Go可执行文件的路径添加到<code>PATH</code>。</li>
+</ol>
+<p>你可以通过shell来完成设置：</p>
+<pre><code>echo &#39;export GOPATH=$HOME/code/go&#39; &gt;&gt; $HOME/.profile
+echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
+</code></pre>
+<p>为了使这些变量生效，你需要关闭并重新打开你的Shell，或者运行<code>source $HOME/.profile</code>命令。</p>
+<p>输入<code>go version</code>,你会看到类似这样的输出<code>go version go1.3.3</code>。</p>
+<h2 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h2><p>下载最新的zip文件。如果你是x64系统，你需要下载<code>go#.#.#.windows-amd64.zip</code>，其中<code>#.#.#</code>表示Go的最新版本。</p>
+<p>将其解压到你想要的位置。<code>c:\Go</code>是个不错和选择。</p>
+<p>Set up two environment variables:<br>设置两个环境变理：</p>
+<ol>
+<li><code>GOPATH</code> 指向你的工作区. 可以是这样的目录<code>c:\users\goku\work\go</code>。</li>
+<li>添加 <code>c:\Go\bin</code> 至你的<code>PATH</code>环境变量中。</li>
+</ol>
+<p>环境变量可以通过<code>系统</code>控制面板中的<code>环境变量</code>按钮中的<code>高级</code>标签页来设置。某些版本的Windows通过<code>System</code>控制面板里面的<code>高级系统Settings</code>选项提供该控制面板。</p>
+<p>打开一个命令行窗口，输入<code>go version</code>，你会看到类似这样的输出<code>go version go1.3.3 windows/amd64</code>。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/introduction/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1205,391 +1571,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/10/android/android-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/08/10/android/android-2/" class="post-title-link" itemprop="url">Hbuilder Android平台第三方插件开发指导</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-10 11:25:05" itemprop="dateCreated datePublished" datetime="2018-08-10T11:25:05+08:00">2018-08-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>7.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>官方文档为兼容各个版本，看起来比较杂乱，不容易读懂。自己根据实际的开发情况，整理了本文。本文参考官方文档<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/66">Android平台第三方插件开发指导</a>， 对官方文档有理解不到位之处未能说明清楚，请参看官方文档。</p>
-<p>下载最新版本5+SDK,<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/103">下载地址</a>， 将SDK解压到任意目录，目录结构如下，以下统称为5+SDK目录。</p>
-<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder12.png"></p>
-<h2 id="术语字典"><a href="#术语字典" class="headerlink" title="术语字典"></a>术语字典</h2><h3 id="JS-Plugin-Bridge"><a href="#JS-Plugin-Bridge" class="headerlink" title="JS Plugin Bridge"></a>JS Plugin Bridge</h3><p>H5+ Plugin Bridge层JS部分API，插件调用者通过调用API，触发Native层扩展插件相应方法的调用。</p>
-<h3 id="Native-Plugin-Bridge"><a href="#Native-Plugin-Bridge" class="headerlink" title="Native Plugin Bridge"></a>Native Plugin Bridge</h3><p>H5+ Plugin Bridge层Native部分API，插件开发者通过实现接口类方法，实现扩展插件业务逻辑。插件开发者调用API，实现Native扩展方法运行结果的返回。</p>
-<h3 id="Native层扩展插件"><a href="#Native层扩展插件" class="headerlink" title="Native层扩展插件"></a>Native层扩展插件</h3><p>开发者使用原生语言实现的5+扩展插件，可被JS层通知调用。</p>
-<h3 id="插件类别名（插件别名）"><a href="#插件类别名（插件别名）" class="headerlink" title="插件类别名（插件别名）"></a>插件类别名（插件别名）</h3><p>读时需要按插件类|别名的方式来断句。JS层字符串，用来声明JS层和Native层插件的对应关系。</p>
-<h2 id="技术架构"><a href="#技术架构" class="headerlink" title="技术架构"></a>技术架构</h2><p>HTML5+ 基座扩展采用三层结构，JS层、PluginBridge层和Native层。 三层功能分别是： </p>
-<ul>
-<li>JS层： 在Webview页面调用，触发Native层代码，获取执行结果。 </li>
-<li>PluginBridge层： 将JS层请求进行处理，触发Native层扩展插件代码。 </li>
-<li>Native层： 插件扩展的平台原生代码，负责执行业务逻辑并执行结果返回到请求页面。</li>
-<li><img src="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/6e2bd27ff777bed57750a5b3b6143a0f.png"></li>
-</ul>
-<p>插件开发者在开发扩展插件时需要为扩展插件编写对应的JS API，JS API将在HTML页面中触发调用对应Native扩展方法的请求，并负责接收运行结果。</p>
-<p>插件调用者（也可能为插件调用者）通过调用Javascript Plugin Bridge的API用来完成对Native层代码的调用和运行结果的返回。</p>
-<p>在实际应用中，插件开发者可以根据扩展方法的实际需求不同，提供同步或者异步JS API，插件调用者根据JS API将设置为同步执行或异步执行。</p>
-<h2 id="扩展插件工作流程"><a href="#扩展插件工作流程" class="headerlink" title="扩展插件工作流程"></a>扩展插件工作流程</h2><h3 id="同步执行"><a href="#同步执行" class="headerlink" title="同步执行"></a>同步执行</h3><p>同步执行的扩展方法会阻塞当前JS代码的执行，直到Native层插件扩展方法执行完毕。<br><img src="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/095b9c2bdb95d1d9ef68ddeeb610b883.png"></p>
-<h3 id="异步执行"><a href="#异步执行" class="headerlink" title="异步执行"></a>异步执行</h3><p>异步扩展方法不会阻塞当前JS代码的执行，插件调用者需要设置回调方法接收Native层返回的执行结果。插件开发者需要在插件中调用 Native plugin brigde的方法将执行结果返回到请求页面。<br><img src="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/e7b481bc1dc1caf69cda678f92587cd9.png"></p>
-<p>工程示例请参考SDK内包含的HBuilder-Integrate-AS工程，工程里已经整合了插件开发和集成方式的示例。</p>
-<h2 id="插件实现方式"><a href="#插件实现方式" class="headerlink" title="插件实现方式"></a>插件实现方式</h2><h3 id="创建插件类"><a href="#创建插件类" class="headerlink" title="创建插件类"></a>创建插件类</h3><p>创建一个继承自StandardFeature的类，实现第三方插件扩展。</p>
-<p>创建插件类需要引入的包 </p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">importio.dcloud.common.DHInterface.IWebview;</span><br><span class="line">importio.dcloud.common.DHInterface.StandardFeature;</span><br><span class="line">importio.dcloud.common.util.JSUtil;</span><br></pre></td></tr></table></figure>
-
-<h3 id="实现扩展方法"><a href="#实现扩展方法" class="headerlink" title="实现扩展方法"></a>实现扩展方法</h3><h4 id="插件初始化"><a href="#插件初始化" class="headerlink" title="插件初始化"></a>插件初始化</h4><p>重写onStart方法，需要设置dcloud_properties.xml的Service节点，该方法才会被调用。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStart</span><span class="params">(Contextcontext,Bundlebundle,String[]strings)</span></span></span><br></pre></td></tr></table></figure>
-<h4 id="扩展插件方法声明"><a href="#扩展插件方法声明" class="headerlink" title="扩展插件方法声明"></a>扩展插件方法声明</h4><p>Native层扩展插件的方法声明如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">methodName</span><span class="params">(IWebview webView, JSONArray array)</span></span></span><br></pre></td></tr></table></figure>
-<h4 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h4><table>
-<thead>
-<tr>
-<th>参数名</th>
-<th>类型</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>webView</td>
-<td>IWebview</td>
-<td>发起请求的webview</td>
-</tr>
-<tr>
-<td>array</td>
-<td>JSONArray</td>
-<td>JS请求传入的参数</td>
-</tr>
-</tbody></table>
-<p>只有符合以上函数声明的方法，才可被JS层调用。</p>
-<h3 id="决定执行方法"><a href="#决定执行方法" class="headerlink" title="决定执行方法"></a>决定执行方法</h3><p>插件开发者对返回值的不同调用方式决定了JS API的执行方法。不同的执行方法对入参array(JSONArray)的要求也会有所有不同。</p>
-<h4 id="同步执行方法"><a href="#同步执行方法" class="headerlink" title="同步执行方法"></a>同步执行方法</h4><p>插件开发者通过JSUtil.wrapJsVar返回时为同步执行。同步执行方法在返回结果时可以直接将结果以return的形式返回给js层。</p>
-<h5 id="方法声明"><a href="#方法声明" class="headerlink" title="方法声明"></a>方法声明</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">wrapJsVar</span><span class="params">(String value)</span></span>;</span><br></pre></td></tr></table></figure>
-<h5 id="参数说明-1"><a href="#参数说明-1" class="headerlink" title="参数说明"></a>参数说明</h5><table>
-<thead>
-<tr>
-<th>参数名</th>
-<th>类型</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>value</td>
-<td>String</td>
-<td>要返回到JS层的值</td>
-</tr>
-</tbody></table>
-<p>查看io.dclod.util.JSUtil了解更多的返回值类型的处理(boolean,Number, String, JSONArray, JSONObject)。</p>
-<h5 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSUtil.wrapJsVar(<span class="string">&quot;Html5 Plus Plugin Hello1!&quot;</span>);</span><br></pre></td></tr></table></figure>
-<h4 id="异步执行方法"><a href="#异步执行方法" class="headerlink" title="异步执行方法"></a>异步执行方法</h4><p>插件开发者调用JSUtil.execCallback返回时为异步执行。通过CallbackId实现回调函数的关联处理，对于CallbackId的传入由插件开发者具体约定入参array(JSONArray)中的位置，通常使用第一个。</p>
-<h5 id="方法声明-1"><a href="#方法声明-1" class="headerlink" title="方法声明"></a>方法声明</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">execCallback</span><span class="params">(IWebview pWebView, String pCallbackId, String pMessage, <span class="keyword">int</span> pStatus, <span class="keyword">boolean</span> isJson, <span class="keyword">boolean</span> pKeepCallback)</span></span>;</span><br></pre></td></tr></table></figure>
-<h5 id="参数说明-2"><a href="#参数说明-2" class="headerlink" title="参数说明"></a>参数说明</h5><table>
-<thead>
-<tr>
-<th>参数名</th>
-<th>类型</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>pWebView</td>
-<td>IWebview</td>
-<td>扩展插件方法运行的窗口</td>
-</tr>
-<tr>
-<td>pCallbackId</td>
-<td>String</td>
-<td>回调函数的唯一标识</td>
-</tr>
-<tr>
-<td>pMessage</td>
-<td>String</td>
-<td>回调函数的参数，即返回结果</td>
-</tr>
-<tr>
-<td>pStatus</td>
-<td>int</td>
-<td>操作是否成功，成功则使用JSUtil.OK，否则使用错误代码</td>
-</tr>
-<tr>
-<td>isJson</td>
-<td>boolean</td>
-<td>回调函数参数是否为JSON数据</td>
-</tr>
-<tr>
-<td>pKeepCallback</td>
-<td>boolean</td>
-<td>是否可多次触发回调函数</td>
-</tr>
-</tbody></table>
-<h5 id="示例代码-1"><a href="#示例代码-1" class="headerlink" title="示例代码"></a>示例代码</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSUtil.execCallback(pWebview, cbId, (which==AlertDialog.BUTTON_POSITIVE)?<span class="string">&quot;ok&quot;</span>:<span class="string">&quot;cancel&quot;</span>, JSUtil.OK, <span class="keyword">false</span>, <span class="keyword">false</span>);</span><br></pre></td></tr></table></figure>
-<h4 id="完整代码示例"><a href="#完整代码示例" class="headerlink" title="完整代码示例"></a>完整代码示例</h4><p>该示例只展示同步或异步方法，完整内容参考官网或者SDK中示例工程。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.H5PlusPlugin;</span><br><span class="line"><span class="keyword">import</span> io.dcloud.common.DHInterface.IWebview;</span><br><span class="line"><span class="keyword">import</span> io.dcloud.common.DHInterface.StandardFeature;</span><br><span class="line"><span class="keyword">import</span> io.dcloud.common.util.JSUtil;</span><br><span class="line"><span class="keyword">import</span> org.json.JSONArray;</span><br><span class="line"><span class="keyword">import</span> org.json.JSONException;</span><br><span class="line"><span class="keyword">import</span> org.json.JSONObject;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PGPlugintest</span> <span class="keyword">extends</span> <span class="title">StandardFeature</span></span></span><br><span class="line"><span class="class"></span>&#123;   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">PluginTestFunction</span><span class="params">(IWebview pWebview, JSONArray array)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        String CallBackID = array.optString(<span class="number">0</span>);</span><br><span class="line">        JSONArray newArray = <span class="keyword">new</span> JSONArray();</span><br><span class="line">        newArray.put(array.optString(<span class="number">1</span>));</span><br><span class="line">        newArray.put(array.optString(<span class="number">2</span>));</span><br><span class="line">        newArray.put(array.optString(<span class="number">3</span>));</span><br><span class="line">        newArray.put(array.optString(<span class="number">4</span>));</span><br><span class="line">        JSUtil.execCallback(pWebview, CallBackID, newArray, JSUtil.OK, <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">PluginTestFunctionSync</span><span class="params">(IWebview pWebview, JSONArray array)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        String inValue1 = array.optString(<span class="number">0</span>);</span><br><span class="line">        String inValue2 = array.optString(<span class="number">1</span>);</span><br><span class="line">        String inValue3 = array.optString(<span class="number">2</span>);</span><br><span class="line">        String inValue4 = array.optString(<span class="number">3</span>);</span><br><span class="line">        String ReturnValue = inValue1 + <span class="string">&quot;-&quot;</span> + inValue2 + <span class="string">&quot;-&quot;</span> + inValue3 + <span class="string">&quot;-&quot;</span> + inValue4;</span><br><span class="line">        <span class="keyword">return</span> JSUtil.wrapJsVar(ReturnValue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="插件调用方法"><a href="#插件调用方法" class="headerlink" title="插件调用方法"></a>插件调用方法</h2><h3 id="设置插件类别名"><a href="#设置插件类别名" class="headerlink" title="设置插件类别名"></a>设置插件类别名</h3><p>插件调用者在实现JS API时首先要定义一个插件类别名，在Android工程的assets\data\dcloud_properties.xml文件中声明插件类别名和Native层扩展插件类的对应关系。feature节点下声明的插件将会在调用时创建相应的对象。</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">features</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">feature</span> <span class="attr">name</span>=<span class="string">&quot;plugintest&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.example.H5PlusPlugin.PGPlugintest&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">feature</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">features</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>如果开发的插件有应用启动时初始化的需求，需要同时配置service节点。</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">services</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">service</span> <span class="attr">name</span>=<span class="string">&quot;plugintest&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.example.H5PlusPlugin.PGPlugintest&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">service</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">services</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="调用方式实现"><a href="#调用方式实现" class="headerlink" title="调用方式实现"></a>调用方式实现</h3><h4 id="同步调用"><a href="#同步调用" class="headerlink" title="同步调用"></a>同步调用</h4><p>插件调用者需要调用JS Plugin Bridge的window.plus.bridge.execSync()方法，该方法可同步获取Native插件返回的运行结果。</p>
-<h5 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> plus.bridge.execSync( <span class="built_in">String</span> service, <span class="built_in">String</span> action, <span class="built_in">Array</span>&lt;<span class="built_in">String</span>&gt; args );</span><br></pre></td></tr></table></figure>
-<h5 id="参数说明-3"><a href="#参数说明-3" class="headerlink" title="参数说明"></a>参数说明</h5><table>
-<thead>
-<tr>
-<th>参数名</th>
-<th>类型</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>service</td>
-<td>String</td>
-<td>插件类别名</td>
-</tr>
-<tr>
-<td>action</td>
-<td>String</td>
-<td>调用Native层插件方法名称</td>
-</tr>
-<tr>
-<td>args</td>
-<td>Array<String></td>
-<td>参数列表</td>
-</tr>
-</tbody></table>
-<h4 id="异步调用"><a href="#异步调用" class="headerlink" title="异步调用"></a>异步调用</h4><p>插件调用者需要调用JS Plugin Bridge的plus.bridge.exec()方法，该方法会通知Native层插件执行指定方法，运行结果会通过回调的方式通知JS层。</p>
-<h5 id="函数声明-1"><a href="#函数声明-1" class="headerlink" title="函数声明"></a>函数声明</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> plus.bridge.exec( <span class="built_in">String</span> service, <span class="built_in">String</span> action, <span class="built_in">Array</span>&lt;<span class="built_in">String</span>&gt; args );</span><br></pre></td></tr></table></figure>
-<h5 id="参数说明-4"><a href="#参数说明-4" class="headerlink" title="参数说明"></a>参数说明</h5><table>
-<thead>
-<tr>
-<th>参数名</th>
-<th>类型</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>service</td>
-<td>String</td>
-<td>插件类别名</td>
-</tr>
-<tr>
-<td>action</td>
-<td>String</td>
-<td>调用Native层插件方法名称</td>
-</tr>
-<tr>
-<td>args</td>
-<td>Array<String></td>
-<td>参数列表</td>
-</tr>
-<tr>
-<td>为了接收和处理结果，插件调用者需要调用window.plus.bridge.callbackId（）生成callbackId，并通过args（ Array<String> ）传入。对JS不是很了解，个人认为应该类似一个Map（回调函数表），提供回调函数注册。</td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<h2 id="实际使用及示例代码"><a href="#实际使用及示例代码" class="headerlink" title="实际使用及示例代码"></a>实际使用及示例代码</h2><p>根据业务的需要和使用的方便，可以在JS层进行插件调用的封装使用。</p>
-<h3 id="封装示例"><a href="#封装示例" class="headerlink" title="封装示例"></a>封装示例</h3><p>该示例只展示同步或异步方法，完整内容参考官网或者SDK中示例工程。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.addEventListener( <span class="string">&quot;plusready&quot;</span>,  <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="comment">// 声明的JS“扩展插件别名”</span></span><br><span class="line">    <span class="keyword">var</span> _BARCODE = <span class="string">&#x27;plugintest&#x27;</span>,</span><br><span class="line">        B = <span class="built_in">window</span>.plus.bridge;</span><br><span class="line">    <span class="keyword">var</span> plugintest = </span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 声明异步返回方法</span></span><br><span class="line">        <span class="attr">PluginTestFunction</span> : <span class="function"><span class="keyword">function</span> (<span class="params">Argus1, Argus2, Argus3, Argus4, successCallback, errorCallback </span>) </span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="keyword">var</span> success = <span class="keyword">typeof</span> successCallback !== <span class="string">&#x27;function&#x27;</span> ? <span class="literal">null</span> : <span class="function"><span class="keyword">function</span>(<span class="params">args</span>) </span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                successCallback(args);</span><br><span class="line">            &#125;,</span><br><span class="line">            fail = <span class="keyword">typeof</span> errorCallback !== <span class="string">&#x27;function&#x27;</span> ? <span class="literal">null</span> : <span class="function"><span class="keyword">function</span>(<span class="params">code</span>) </span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                errorCallback(code);</span><br><span class="line">            &#125;;</span><br><span class="line">            callbackID = B.callbackId(success, fail);</span><br><span class="line"><span class="comment">// 通知Native层plugintest扩展插件运行”PluginTestFunction”方法</span></span><br><span class="line">            <span class="keyword">return</span> B.exec(_BARCODE, <span class="string">&quot;PluginTestFunction&quot;</span>, [callbackID, Argus1, Argus2, Argus3, Argus4]);</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="comment">// 声明同步返回方法</span></span><br><span class="line">        <span class="attr">PluginTestFunctionSync</span> : <span class="function"><span class="keyword">function</span> (<span class="params">Argus1, Argus2, Argus3, Argus4</span>) </span></span><br><span class="line"><span class="function">        </span>&#123;            </span><br><span class="line">            <span class="comment">// 通知Native层plugintest扩展插件运行“PluginTestFunctionSync”方法并同步返回结果                       </span></span><br><span class="line">            <span class="keyword">return</span> B.execSync(_BARCODE, <span class="string">&quot;PluginTestFunctionSync&quot;</span>, [Argus1, Argus2, Argus3, Argus4]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">window</span>.plus.plugintest = plugintest;</span><br><span class="line">&#125;, <span class="literal">true</span> );</span><br></pre></td></tr></table></figure>
-<h3 id="HTML使用示例"><a href="#HTML使用示例" class="headerlink" title="HTML使用示例"></a>HTML使用示例</h3><p>该示例只展示同步或异步方法，完整内容参考官网或者SDK中示例工程。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">HTML</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;HandheldFriendly&quot;</span> <span class="attr">content</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;MobileOptimized&quot;</span> <span class="attr">content</span>=<span class="string">&quot;320&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>H5Plugin<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;./js/common.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;./js/test.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">pluginShow</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            plus.plugintest.PluginTestFunction(<span class="string">&quot;Html5&quot;</span>,<span class="string">&quot;Plus&quot;</span>,<span class="string">&quot;AsyncFunction&quot;</span>,<span class="string">&quot;MultiArgument!&quot;</span>, <span class="function"><span class="keyword">function</span>(<span class="params"> result </span>) </span>&#123;alert( result[<span class="number">0</span>]  + <span class="string">&quot;_&quot;</span> + result[<span class="number">1</span>]  + <span class="string">&quot;_&quot;</span> + result[<span class="number">2</span>]  + <span class="string">&quot;_&quot;</span> + result[<span class="number">3</span>] );&#125;,<span class="function"><span class="keyword">function</span>(<span class="params">result</span>)</span>&#123;alert(result)&#125;);</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">pluginGetString</span>(<span class="params"></span>)</span></span></span><br><span class="line"><span class="function"><span class="javascript">        </span>&#123;</span></span><br><span class="line"><span class="javascript">            alert(plus.plugintest.PluginTestFunctionSync(<span class="string">&quot;Html5&quot;</span>,<span class="string">&quot;Plus&quot;</span>,<span class="string">&quot;SyncFunction&quot;</span>,<span class="string">&quot;MultiArgument!&quot;</span>));</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;./css/common.css&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text/css&quot;</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">header</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;nvbt&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;back();&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;iback&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;nvtt&quot;</span>&gt;</span>PluginTest<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">header</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;dcontent&quot;</span> <span class="attr">class</span>=<span class="string">&quot;dcontent&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span>/&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;button&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;pluginShow()&quot;</span>&gt;</span>PluginTestFunction()<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;button&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;pluginGetString()&quot;</span>&gt;</span>PluginTestFunctionSync()<span class="tag">&lt;/<span class="name">div</span>&gt;</span>   </span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/66">Android平台第三方插件开发指导</a><br><a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/80">Android平台以WebView方式集成HTML5+SDK方法</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/09/ipfs/ipfs-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/08/09/ipfs/ipfs-1/" class="post-title-link" itemprop="url">IPFS私有网络</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-09 22:53:13" itemprop="dateCreated datePublished" datetime="2018-08-09T22:53:13+08:00">2018-08-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ipfs/" itemprop="url" rel="index"><span itemprop="name">ipfs</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>本文来源<a target="_blank" rel="noopener" href="https://github.com/ipfs/go-ipfs/blob/master/docs/experimental-features.md#private-networks">Private Networks</a></p>
-<h2 id="私有网络（Private-Networks）"><a href="#私有网络（Private-Networks）" class="headerlink" title="私有网络（Private Networks）"></a>私有网络（Private Networks）</h2><p>Allows ipfs to only connect to other peers who have a shared secret key.</p>
-<p>IPFS只有共享密钥的节点才可互相连接。</p>
-<h2 id="状态（State）"><a href="#状态（State）" class="headerlink" title="状态（State）"></a>状态（State）</h2><p>Experimental</p>
-<p> 实验性</p>
-<h2 id="In-Version"><a href="#In-Version" class="headerlink" title="In Version"></a>In Version</h2><p>master, 0.4.7</p>
-<h2 id="如何启用（How-to-enable）"><a href="#如何启用（How-to-enable）" class="headerlink" title="如何启用（How to enable）"></a>如何启用（How to enable）</h2><p>Generate a pre-shared-key using <a target="_blank" rel="noopener" href="https://github.com/Kubuxu/go-ipfs-swarm-key-gen">ipfs-swarm-key-gen</a>:</p>
-<p>通过<a target="_blank" rel="noopener" href="https://github.com/Kubuxu/go-ipfs-swarm-key-gen">ipfs-swarm-key-gen</a>生成一个共享密钥：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen</span><br><span class="line">ipfs-swarm-key-gen &gt; ~/.ipfs/swarm.key</span><br></pre></td></tr></table></figure>
-
-<p>To join a given private network, get the key file from someone in the network and save it to ~/.ipfs/swarm.key (If you are using a custom $IPFS_PATH, put it in there instead).</p>
-<p>加入私有网络，需要从网络中的其他人中获取密钥文件并把它保存为<code>~/.ipfs/swarm.key</code>（如果你设置了$IPFS_PATH，替换为设置的目录）。</p>
-<p>When using this feature, you will not be able to connect to the default bootstrap nodes (Since we aren’t part of your private network) so you will need to set up your own bootstrap nodes.</p>
-<p>当你使用这个功能的时候，你不可以使用默认的启动节点（因为不是私有网络的一部分），因此你需要设置你自己的启动节点。</p>
-<p>First, to prevent your node from even trying to connect to the default bootstrap nodes, run:</p>
-<p>首先为了防止你的节点尝试连接默认的启动节点，你需要运行：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipfs bootstrap rm --all</span><br></pre></td></tr></table></figure>
-
-<p><strong>注意，这里有个BUG，可能会导致当前节点也被移除，而启动错误，需要手动重新添加。</strong></p>
-<p>Then add your own bootstrap peers with:</p>
-<p>然后添加你自己的启动节点</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipfs bootstrap add &lt;multiaddr&gt;</span><br></pre></td></tr></table></figure>
-
-<p>For example:</p>
-<p>例如：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipfs bootstrap add /ip4/104.236.76.40/tcp/4001/ipfs/QmSoLV4Bbm51jM9C4gDYZQ9Cy3U6aXMJDAbzgu2fzaDs64</span><br></pre></td></tr></table></figure>
-
-<p>Bootstrap nodes are no different from all other nodes in the network apart from the function they serve.</p>
-<p>除了提供启动功能外，启动节点和网络中的其他节点没有什么不同。</p>
-<p>To be extra cautious, You can also set the LIBP2P_FORCE_PNET environment variable to 1 to force the usage of private networks. If no private network is configured, the daemon will fail to start.</p>
-<p>为了更安全，你也可以设置LIBP2P_FORCE_PNET环境变量为1来强制使用私用网络。如果没有配置私有网络，ipfs守护进程就会无法启动。</p>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/35141862">https://zhuanlan.zhihu.com/p/35141862</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1659,20 +1640,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-count">237</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">88</span>
+        <span class="site-state-item-count">91</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1730,12 +1711,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">459k</span>
+    <span title="站点总字数">483k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:57</span>
+    <span title="站点阅读时长">7:19</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
