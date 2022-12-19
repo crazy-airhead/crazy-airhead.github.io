@@ -1,19 +1,13 @@
 ---
-
 title: 使用VSCode+Docker搭建PHP远程开发环境
 toc: true
 p: php/env
 date: 2020-05-19 14:03:51
 categories:
-
 - VSCode
 - Docker
 - PHP
-  tags:
-- VSCode
-- Docker
-- PHP
-
+tags: [VSCode, Docker, PHP]
 ---
 
 ## 为什么
@@ -21,8 +15,11 @@ categories:
 搭建VSCode+Docker搭建PHP远程开发环境搭建，主要解决以下几个问题：
 
 - 微信开发调试问题。
+
 - 随时随地办公问题(具体参看[code-server](https://github.com/cdr/code-server))。
+
 - 减少本地环境污染，PHP与Node版本可能冲突(dyld: Library not loaded: /usr/local/opt/icu4c/lib/libicui18n.64.dylib)。
+
 - 减少硬盘使用。
   
   <!-- more -->
