@@ -172,6 +172,101 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/01/25/git/git-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/01/25/git/git-3/" class="post-title-link" itemprop="url">备份Git代码仓库并定时更新</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-01-25 16:04:33 / 修改时间：20:58:25" itemprop="dateCreated datePublished" datetime="2023-01-25T16:04:33+08:00">2023-01-25</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>公司所在机房时不时断电，且因为机房没配置UPS，于是考虑用自己家里的NAS做一个GitLab仓库的异地备份。</p>
+<p>之前其实已经在物理机（CentOS7系统）上通过部署Gogs，通过新增镜像仓库的方式实现了代码的异地备份。但Linux的VPN客户端不稳定的，即便配置了自动重连，但无法断线重连，导致无法正常同步。于是使用<a href="https://l4qiang.me/2019/05/30/virtualizaition/ovirt/">oVirt</a> 安装了Windows虚拟机，并使用SoftEther Vpn Client配置好公司的VPN网络，需要开机自动启动和断线自动连接。</p>
+<p>考虑到之前部署Gogs时只能一个个新增镜像仓库，也是花了不少时间。这次重新部署，直接使用Git命令（不依赖Gogs）、自动化脚步和Windows定时任务的方式进行同步备份。</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="SSH-Keys"><a href="#SSH-Keys" class="headerlink" title="SSH Keys"></a>SSH Keys</h3><p>因为涉及到多个项目的同步，配置上SSH Keys，可以减少配置和增加安全性。</p>
+<ol>
+<li><p>生成ssh公私钥，使用下面的脚本，都使用默认，敲回车即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -o -t rsa -b 4096 -C &quot;l4qiang@gmail.com&quot;</span><br></pre></td></tr></table></figure></li>
+<li><p>复制<code>/c/Users/v/.ssh/id_rsa/id_rsa.pub</code>内容</p>
+</li>
+<li><p>添加用户的SSH Keys，点击用户头像，<code>settings-&gt;SSH Keys</code>，将复制的公钥贴入Key的文本框中，点击Add Key按钮。</p>
+</li>
+<li><p>测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@xxx.com</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="Git镜像仓库与同步"><a href="#Git镜像仓库与同步" class="headerlink" title="Git镜像仓库与同步"></a>Git镜像仓库与同步</h3><p>主要使用两个git命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建镜像</span></span><br><span class="line">git <span class="built_in">clone</span> --mirror git@xxx.com/l4qiang/aaa.git</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 同步</span></span><br><span class="line">git --git-dir=aaa.git remote update</span><br></pre></td></tr></table></figure>
+
+<h3 id="脚本"><a href="#脚本" class="headerlink" title="脚本"></a>脚本</h3><p>编写脚本并命名为<code>sync.sh</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">gitpath_prefix=git@xxx.com:</span><br><span class="line">gitpath_name=(l4qiang/aaa.git l4qiang/bbb.git)</span><br><span class="line">rep_path=/c/Repository</span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> <span class="string">&quot;<span class="variable">$&#123;gitpath_name[@]&#125;</span>&quot;</span>; </span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">cd</span> <span class="variable">$rep_path</span></span><br><span class="line">    user_name=<span class="variable">$&#123;name%/*&#125;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="variable">$user_name</span></span><br><span class="line">    project_name=<span class="variable">$&#123;name##*/&#125;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="variable">$project_name</span></span><br><span class="line">    <span class="keyword">if</span> [ -d <span class="string">&quot;<span class="variable">$name</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;正在备份，同步……&quot;</span><span class="variable">$name</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">cd</span> <span class="variable">$user_name</span></span><br><span class="line">        git --git-dir=<span class="variable">$project_name</span> remote update</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;正在备份，创建……&quot;</span><span class="variable">$name</span> </span><br><span class="line"></span><br><span class="line">        mkdir -p <span class="variable">$name</span></span><br><span class="line">        <span class="built_in">cd</span> <span class="variable">$user_name</span></span><br><span class="line">        git <span class="built_in">clone</span> --mirror $gitpath_prefix<span class="variable">$name</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><p>打开<code>Task Scheduler</code>，选择<code>Action-&gt;Create Basic Task</code>，按格式填写对应的任务信息。</p>
+<p>主要时Actions部分，填写如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;C:\Program Files\Git\bin\bash.exe&quot; /c/Repository/sync.sh</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2022/11/21/go/go-plugin/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1242,109 +1337,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2022/01/01/homework/123/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/01/01/homework/123/" class="post-title-link" itemprop="url">写作课作业-123</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-01-01 21:04:05" itemprop="dateCreated datePublished" datetime="2022-01-01T21:04:05+08:00">2022-01-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E8%96%84%E4%B8%96%E5%AE%81%E5%8C%BB%E5%AD%A6%E9%80%9A%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">薄世宁医学通识</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>今天抽时间总算把《薄世宁医学通识讲义》读完。书中的一些医疗的发展历史，在《医学大神》这套书中有所讲解，推荐看看，既能了解历史而且故事性很强很容易读。对医疗过程，医疗结果和医疗意义的部分补充，如果自己还在从事医疗信息化的开发应该是有帮助的，于是推荐给了之前的同事，希望他也看看。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/01/homework/123/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1414,7 +1406,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">237</span>
+          <span class="site-state-item-count">238</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1476,7 +1468,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -1485,12 +1477,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">483k</span>
+    <span title="站点总字数">484k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:19</span>
+    <span title="站点阅读时长">7:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

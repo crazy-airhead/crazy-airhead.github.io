@@ -172,6 +172,107 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/24/android/android-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/24/android/android-3/" class="post-title-link" itemprop="url">个推透传消息打开指定页面</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-24 06:40:18" itemprop="dateCreated datePublished" datetime="2018-08-24T06:40:18+08:00">2018-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>公司IM项目采用个推进行消息推送，之前使用Hbuilder在线打包的方式集成。这次采用Hbuilder插件开发并离线打包的方式新增视频功能（视频使用WebRTC协议），其中的呼入消息需要使用到个推的推送（主要考量就是复用，减少开发量）。<br>通过个推官网的文档<a target="_blank" rel="noopener" href="http://docs.getui.com/getui/mobile/android/androidstudio_maven/">Android Studio快速集成（推荐）</a>，能很快的将个推SDK集成进来。</p>
+<h2 id="实现及问题"><a href="#实现及问题" class="headerlink" title="实现及问题"></a>实现及问题</h2><h3 id="业务逻辑"><a href="#业务逻辑" class="headerlink" title="业务逻辑"></a>业务逻辑</h3><ol>
+<li>视频发起者，发起视频邀请。</li>
+<li>服务器接到请求后，推送个推透传消息给视频接收者。</li>
+<li>视频接收者，弹出的呼入页面，点击接收开始视频会话，或拒绝视频邀请。<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3>需要继承自com.igexin.sdk.GTIntentService的类，用于接收CID、透传消息。以下为对应的事件回调方法：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoIntentService</span> <span class="keyword">extends</span> <span class="title">GTIntentService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceiveMessageData</span><span class="params">(Context context, GTTransmitMessage msg)</span> </span>&#123;</span><br><span class="line">         <span class="comment">//省略其他业务逻辑</span></span><br><span class="line">        Intent intent = <span class="keyword">new</span> Intent(getBaseContext(), XxxActivity.class);</span><br><span class="line">        getApplication().startActivity(intent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceiveClientId</span><span class="params">(Context context, String clientid)</span> </span>&#123;</span><br><span class="line">        Log.e(TAG, <span class="string">&quot;onReceiveClientId -&gt; &quot;</span> + <span class="string">&quot;clientid = &quot;</span> + clientid);</span><br><span class="line">        <span class="comment">//省略注册个推与用户信息</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3>正常情况，此时应该能弹出指定的XxxActivity页面，然而并未弹出。经过一段资料查找和测试验证。需要增加<code>Intent.FLAG_ACTIVITY_NEW_TASK</code>的设置，代码如下：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceiveMessageData</span><span class="params">(Context context, GTTransmitMessage msg)</span> </span>&#123;</span><br><span class="line">     <span class="comment">//省略其他业务逻辑</span></span><br><span class="line">    Intent intent = <span class="keyword">new</span> Intent(getBaseContext(), XxxActivity.class);</span><br><span class="line">    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);</span><br><span class="line">    getApplication().startActivity(intent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="FLAG-ACTIVITY-NEW-TASK"><a href="#FLAG-ACTIVITY-NEW-TASK" class="headerlink" title="FLAG_ACTIVITY_NEW_TASK"></a>FLAG_ACTIVITY_NEW_TASK</h3><blockquote>
+<p>int FLAG_ACTIVITY_NEW_TASK<br>If set, this activity will become the start of a new task on this history stack.</p>
+</blockquote>
+</li>
+</ol>
+<p>如果设置了<code>FLAG_ACTIVITY_NEW_TASK</code>，页面会被置顶。从文档来看主要还是对Android开发的基础知识不够了解。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>算是Android开发中的一个小坑吧，记录下来，方便日后查找。希望本文对采用类似方案的朋友有所帮助。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Monkey_King_Bar/article/details/78568582">个推-点击推送跳转至指定页面（透传）</a><br><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/content/Intent">Intent</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/10/android/android-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1865,126 +1966,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2017/12/11/zeronet/zeronet-4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/12/11/zeronet/zeronet-4/" class="post-title-link" itemprop="url">创建ZeroNet站点</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-12-11 20:56:22" itemprop="dateCreated datePublished" datetime="2017-12-11T20:56:22+08:00">2017-12-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zeronet/" itemprop="url" rel="index"><span itemprop="name">zeronet</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="最简单的方式：使用页面"><a href="#最简单的方式：使用页面" class="headerlink" title="最简单的方式：使用页面"></a>最简单的方式：使用页面</h2><ul>
-<li>在ZeroHello站点时，点击左边栏的“⋮ ”&gt;”创建新的空站点”菜单</li>
-<li>你会跳转到一个只有你可以修改的全新站点<br>You can find and modify your site’s content in data/[yoursiteaddress] directory</li>
-<li>你可以在<code>data/[你的地址]</code>目录找到和修改你的站点内容<br>After the modifications open your site, drag the topright “0” button to left, then press sign and publish buttons on the bottom</li>
-<li>当你修改好你的站点后，拖动右上的”0”按钮到左边，然后点击底部的签名和发布按钮。<h2 id="手动方式：使用命令行"><a href="#手动方式：使用命令行" class="headerlink" title="手动方式：使用命令行"></a>手动方式：使用命令行</h2></li>
-</ul>
-<ol>
-<li>创建站点结构</li>
-</ol>
-<ul>
-<li>如果ZeroNet在运行需要关闭</li>
-<li>进入ZeroNet的安装目录，然后运行：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ zeronet.py siteCreate</span><br><span class="line">...</span><br><span class="line">- Site private key: 23DKQpzxhbVBrAtvLEc2uvk7DZweh4qL3fn3jpM3LgHDczMK2TtYUq</span><br><span class="line">- Site address: 13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2</span><br><span class="line">...</span><br><span class="line">- Site created!</span><br><span class="line">$ zeronet.py</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
-<li>这样会创建你的站点的初始文件<br><code>data/13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2</code><blockquote>
-<p>注意：使用bundle版本的Windows的用户需要进入ZeroBudle/ZeroNet目录，然后执行<code>&quot;../Python/python.exe&quot; zeronet.py siteCreate</code></p>
-</blockquote>
-</li>
-</ul>
-<ol>
-<li>创建/修改站点</li>
-</ol>
-<ul>
-<li>更新<code>data/[your site address key]</code>目录下的网站文件（比如：13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2）</li>
-<li>当你的站点准备好时运行：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ zeronet.py siteSign 13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2</span><br><span class="line">- Signing site: 13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2...</span><br><span class="line">Private key (input hidden):</span><br></pre></td></tr></table></figure></li>
-<li>输入你创建网站时的私钥。这一步会对所有的文件进行签名，所以节点可以验证网站所有者的身份</li>
-</ul>
-<ol>
-<li>发布网站更新</li>
-</ol>
-<ul>
-<li>为了通知节点你修改了站点内容，你需要运行如下命令：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ zeronet.py sitePublish 13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2</span><br><span class="line">...</span><br><span class="line">Site:13DNDk..bhC2 Publishing to 3/10 peers...</span><br><span class="line">Site:13DNDk..bhC2 Successfuly published to 3 peers</span><br><span class="line">- Serving files....</span><br></pre></td></tr></table></figure></li>
-<li>这样就好了，你已经成功的将你的修改签名和发布出去了。</li>
-<li>你的站点可以通过这个网址访问：<br><code>http://localhost:43110/13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2</code>。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2054,7 +2035,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">237</span>
+          <span class="site-state-item-count">238</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2116,7 +2097,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -2125,12 +2106,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">483k</span>
+    <span title="站点总字数">484k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:19</span>
+    <span title="站点阅读时长">7:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

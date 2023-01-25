@@ -172,6 +172,140 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/07/24/mysql/jsontype/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/24/mysql/jsontype/" class="post-title-link" itemprop="url">Mysql的JSON类型01</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-24 19:44:32" itemprop="dateCreated datePublished" datetime="2019-07-24T19:44:32+08:00">2019-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Mysql从5.7.8版本开始支持JSON字段，可以高效的处理JSON文档。相比字符串字段，JSON字段有下面的几处优势：</p>
+<ul>
+<li>自动的校验JSON格式，无效的文档会产生错误</li>
+<li>优化的存储格式（结构化的二进制格式），访问数据时不需要额外的解析，可能通过键或者数组索引来直接该问数据，而不是读取整个字段。</li>
+</ul>
+<p>JSON字段的存储空间要求与LONGBLOB和LONGTEXT是一样的（<em>L</em> + 4 bytes, where <em>L</em> &lt; 2^32）。同时JSON字段的默认值只能是NULL。</p>
+<p>为了操作JSON字段，提供了一系列的JSON和GeoJSON函数。</p>
+<p>和其他的二进制类型一样，JSON字段不支持索引，但可以通过提取值的方式生成（虚拟）索引。</p>
+<h2 id="创建JSON值"><a href="#创建JSON值" class="headerlink" title="创建JSON值"></a>创建JSON值</h2><p>新增JSON类型字段与其他类型没什么不同，插入时可以直接按字符串的方式进行插入，但必须是合法的JSON格式，如果不是语法直接报错。另外需要注意的是JSON字段使用utf8mb4字符集和uft8mb4_bin排序，因此1.其他字符集的字符串会被转换，2.JSON文档旭大小写敏感的，null，true，false只能用小写。</p>
+<p>下面是官网的一些例子和自己的补充。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE TABLE t1 (jdoc JSON);</span><br><span class="line">Query OK, 0 rows affected (0.20 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; INSERT INTO t1 VALUES(&#x27;&#123;&quot;key1&quot;: &quot;value1&quot;, &quot;key2&quot;: &quot;value2&quot;&#125;&#x27;);</span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; INSERT INTO t1 VALUES(&#x27;[1, 2,&#x27;);</span><br><span class="line">ERROR 3140 (22032) at line 2: Invalid JSON text:</span><br><span class="line">&quot;Invalid value.&quot; at position 6 in value (or column) &#x27;[1, 2,&#x27;.</span><br><span class="line"></span><br><span class="line">--下面语法也是能成功插入</span><br><span class="line">mysql&gt; insert into t1 values(&#x27;true&#x27;);</span><br><span class="line">mysql&gt; insert into t1 VALUES(&#x27;1&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>对于不太确定是否是MySql中支持的json内容，可以通过JSON_TYPE()进行测试。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_TYPE(&#x27;[&quot;a&quot;, &quot;b&quot;, 1]&#x27;);</span><br><span class="line">+----------------------------+</span><br><span class="line">| JSON_TYPE(&#x27;[&quot;a&quot;, &quot;b&quot;, 1]&#x27;) |</span><br><span class="line">+----------------------------+</span><br><span class="line">| ARRAY                      |</span><br><span class="line">+----------------------------+</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT JSON_TYPE(&#x27;&quot;hello&quot;&#x27;);</span><br><span class="line">+----------------------+</span><br><span class="line">| JSON_TYPE(&#x27;&quot;hello&quot;&#x27;) |</span><br><span class="line">+----------------------+</span><br><span class="line">| STRING               |</span><br><span class="line">+----------------------+</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT JSON_TYPE(&#x27;hello&#x27;);</span><br><span class="line">ERROR 3146 (22032): Invalid data type for JSON data in argument 1</span><br><span class="line">to function json_type; a JSON string or JSON type is required.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql&gt; select JSON_TYPE(&#x27;true&#x27;);</span><br><span class="line">+----------------------+</span><br><span class="line">| JSON_TYPE(&#x27;true&#x27;)    |</span><br><span class="line">+----------------------+</span><br><span class="line">| BOOLEAN              |</span><br><span class="line">+----------------------+</span><br><span class="line">mysql&gt; select JSON_TYPE(&#x27;1&#x27;);</span><br><span class="line">+----------------------+</span><br><span class="line">| JSON_TYPE(&#x27;1&#x27;)       |</span><br><span class="line">+----------------------+</span><br><span class="line">| INTEGER              |</span><br><span class="line">+----------------------+</span><br><span class="line">mysql&gt; select JSON_TYPE(&#x27;2019-01-01&#x27;);</span><br><span class="line">ERROR 3141 (22032): Invalid JSON text in argument 1 to function json_type: &quot;The document root must not be followed by other values.&quot; at position 4.</span><br></pre></td></tr></table></figure>
+
+<p>通过JSON_ARRAY()可以生成JSON数组。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_ARRAY(&#x27;a&#x27;, 1, NOW());</span><br><span class="line">+----------------------------------------+</span><br><span class="line">| JSON_ARRAY(&#x27;a&#x27;, 1, NOW())              |</span><br><span class="line">+----------------------------------------+</span><br><span class="line">| [&quot;a&quot;, 1, &quot;2015-07-27 09:43:47.000000&quot;] |</span><br><span class="line">+----------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>通过JSON_OBJECT()可以生成JSON对象。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_OBJECT(&#x27;key1&#x27;, 1, &#x27;key2&#x27;, &#x27;abc&#x27;);</span><br><span class="line">+---------------------------------------+</span><br><span class="line">| JSON_OBJECT(&#x27;key1&#x27;, 1, &#x27;key2&#x27;, &#x27;abc&#x27;) |</span><br><span class="line">+---------------------------------------+</span><br><span class="line">| &#123;&quot;key1&quot;: 1, &quot;key2&quot;: &quot;abc&quot;&#125;            |</span><br><span class="line">+---------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>如果使用JSON_OBJECT()插入数据需要处理引号(“)。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE TABLE facts (sentence JSON);</span><br><span class="line"></span><br><span class="line">--官网中说这个会无效，实际测试中是有效的。</span><br><span class="line">mysql&gt; INSERT INTO facts VALUES</span><br><span class="line">     &gt;   (JSON_OBJECT(&quot;mascot&quot;, &quot;Our mascot is a dolphin named \&quot;Sakila\&quot;.&quot;));</span><br><span class="line"></span><br><span class="line">--官网中说需要使用这个，实际测试时却报错。</span><br><span class="line">mysql&gt; INSERT INTO facts VALUES</span><br><span class="line">     &gt;   (&#x27;&#123;&quot;mascot&quot;: &quot;Our mascot is a dolphin named \\&quot;Sakila\\&quot;.&quot;&#125;&#x27;);</span><br><span class="line">Unknown command &#x27;\\&#x27;.</span><br><span class="line">ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &#x27;\\&quot;.&quot;))&#x27; at line 1  </span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT sentence FROM facts;</span><br><span class="line">+---------------------------------------------------------+</span><br><span class="line">| sentence                                                |</span><br><span class="line">+---------------------------------------------------------+</span><br><span class="line">| &#123;&quot;mascot&quot;: &quot;Our mascot is a dolphin named \&quot;Sakila\&quot;.&quot;&#125; |</span><br><span class="line">+---------------------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT col-&gt;&quot;$.mascot&quot; FROM qtest;</span><br><span class="line">ERROR 1146 (42S02): Table &#x27;test.qtest&#x27; doesn&#x27;t exist</span><br><span class="line">mysql&gt; SELECT sentence-&gt;&quot;$.mascot&quot; FROM facts;</span><br><span class="line">+---------------------------------------------+</span><br><span class="line">| sentence-&gt;&quot;$.mascot&quot;                        |</span><br><span class="line">+---------------------------------------------+</span><br><span class="line">| &quot;Our mascot is a dolphin named \&quot;Sakila\&quot;.&quot; |</span><br><span class="line">+---------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT sentence-&gt;&gt;&quot;$.mascot&quot; FROM facts;</span><br><span class="line">+-----------------------------------------+</span><br><span class="line">| sentence-&gt;&gt;&quot;$.mascot&quot;                   |</span><br><span class="line">+-----------------------------------------+</span><br><span class="line">| Our mascot is a dolphin named &quot;Sakila&quot;. |</span><br><span class="line">+-----------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>其实如果要简单点就是用单引号(‘)。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; INSERT INTO facts VALUES(JSON_OBJECT(&#x27;mascot&#x27;, &#x27;Our mascot is a dolphin named &quot;Sakila&quot;.&#x27;));</span><br><span class="line">Query OK, 1 row affected (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>而通过JSON_MERGE()可以合并两个JSON文档。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_MERGE(&#x27;[&quot;a&quot;, 1]&#x27;, &#x27;&#123;&quot;key&quot;: &quot;value&quot;&#125;&#x27;);</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">| JSON_MERGE(&#x27;[&quot;a&quot;, 1]&#x27;, &#x27;&#123;&quot;key&quot;: &quot;value&quot;&#125;&#x27;) |</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">| [&quot;a&quot;, 1, &#123;&quot;key&quot;: &quot;value&quot;&#125;]                 |</span><br><span class="line">+--------------------------------------------+</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT JSON_MERGE(&#x27;&#123;&quot;key1&quot;:&quot;value1&quot;&#125;&#x27;, &#x27;&#123;&quot;key2&quot;:&quot;value2&quot;&#125;&#x27;);</span><br><span class="line">+------------------------------------------------------+</span><br><span class="line">| JSON_MERGE(&#x27;&#123;&quot;key1&quot;:&quot;value1&quot;&#125;&#x27;, &#x27;&#123;&quot;key2&quot;:&quot;value2&quot;&#125;&#x27;) |</span><br><span class="line">+------------------------------------------------------+</span><br><span class="line">| &#123;&quot;key1&quot;: &quot;value1&quot;, &quot;key2&quot;: &quot;value2&quot;&#125;                 |</span><br><span class="line">+------------------------------------------------------+</span><br><span class="line">1 row in set, 1 warning (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT JSON_MERGE(&#x27;1&#x27;, &#x27;&#123;&quot;key2&quot;:&quot;value2&quot;&#125;&#x27;);</span><br><span class="line">+--------------------------------------+</span><br><span class="line">| JSON_MERGE(&#x27;1&#x27;, &#x27;&#123;&quot;key2&quot;:&quot;value2&quot;&#125;&#x27;) |</span><br><span class="line">+--------------------------------------+</span><br><span class="line">| [1, &#123;&quot;key2&quot;: &quot;value2&quot;&#125;]              |</span><br><span class="line">+--------------------------------------+</span><br><span class="line">1 row in set, 1 warning (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>以上例子可以看出JSON_MEGER是根据两个JSON文档的类型来结构返回类型的，类型相同时不转换，类型不同时转为JSON数组。还有些细节可能参看官网<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/json.html#json-normalization">Normalization, Merging, and Autowrapping of JSON Values</a>。</p>
+<h2 id="查询和修改JSON值"><a href="#查询和修改JSON值" class="headerlink" title="查询和修改JSON值"></a>查询和修改JSON值</h2><p>通过JSON_EXTRACT()可以提取JSON文档值，具体语法说明参看<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/json.html#json-path-syntax">JSON Path Syntax</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_EXTRACT(&#x27;&#123;&quot;id&quot;: 14, &quot;name&quot;: &quot;Aztalan&quot;&#125;&#x27;, &#x27;$.name&#x27;);</span><br><span class="line">+---------------------------------------------------------+</span><br><span class="line">| JSON_EXTRACT(&#x27;&#123;&quot;id&quot;: 14, &quot;name&quot;: &quot;Aztalan&quot;&#125;&#x27;, &#x27;$.name&#x27;) |</span><br><span class="line">+---------------------------------------------------------+</span><br><span class="line">| &quot;Aztalan&quot;                                               |</span><br><span class="line">+---------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>通过JSON_SET()来修改值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET @j = &#x27;[&quot;a&quot;, &#123;&quot;b&quot;: [true, false]&#125;, [10, 20]]&#x27;;</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT JSON_SET(@j, &#x27;$[1].b[0]&#x27;, 1, &#x27;$[2][2]&#x27;, 2);</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">| JSON_SET(@j, &#x27;$[1].b[0]&#x27;, 1, &#x27;$[2][2]&#x27;, 2) |</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">| [&quot;a&quot;, &#123;&quot;b&quot;: [1, false]&#125;, [10, 20, 2]]      |</span><br><span class="line">+--------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>通过JSON_INSERT()来插入新值，但不替换旧值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_INSERT(@j, &#x27;$[1].b[0]&#x27;, 1, &#x27;$[2][2]&#x27;, 2);</span><br><span class="line">+-----------------------------------------------+</span><br><span class="line">| JSON_INSERT(@j, &#x27;$[1].b[0]&#x27;, 1, &#x27;$[2][2]&#x27;, 2) |</span><br><span class="line">+-----------------------------------------------+</span><br><span class="line">| [&quot;a&quot;, &#123;&quot;b&quot;: [true, false]&#125;, [10, 20, 2]]      |</span><br><span class="line">+-----------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>通过JSON_REPLACE()来替换旧值而忽略新值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_REPLACE(@j, &#x27;$[1].b[0]&#x27;, 1, &#x27;$[2][2]&#x27;, 2);</span><br><span class="line">+------------------------------------------------+</span><br><span class="line">| JSON_REPLACE(@j, &#x27;$[1].b[0]&#x27;, 1, &#x27;$[2][2]&#x27;, 2) |</span><br><span class="line">+------------------------------------------------+</span><br><span class="line">| [&quot;a&quot;, &#123;&quot;b&quot;: [1, false]&#125;, [10, 20]]             |</span><br><span class="line">+------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>通过JSON_REMOVE()来移除文档中的值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_REMOVE(@j, &#x27;$[2]&#x27;, &#x27;$[1].b[1]&#x27;, &#x27;$[1].b[1]&#x27;);</span><br><span class="line">+---------------------------------------------------+</span><br><span class="line">| JSON_REMOVE(@j, &#x27;$[2]&#x27;, &#x27;$[1].b[1]&#x27;, &#x27;$[1].b[1]&#x27;) |</span><br><span class="line">+---------------------------------------------------+</span><br><span class="line">| [&quot;a&quot;, &#123;&quot;b&quot;: [true]&#125;]                              |</span><br><span class="line">+---------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<h2 id="聚合查询"><a href="#聚合查询" class="headerlink" title="聚合查询"></a>聚合查询</h2><p>对于JSON文档的聚合查询（MIN，MAX，GROUP_CONCAT）没有什么实际意义，是不支持的。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/06/13/java/fastjson/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -401,7 +535,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-31 11:23:01" itemprop="dateModified" datetime="2022-10-31T11:23:01+08:00">2022-10-31</time>
+                <time title="修改时间：2022-12-24 20:39:37" itemprop="dateModified" datetime="2022-12-24T20:39:37+08:00">2022-12-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -423,7 +557,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -457,7 +591,7 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># hostnamectl set-hostname ovirt.goldsyear.com</span></span><br></pre></td></tr></table></figure>
 
 <p><code>vim /etc/hosts</code>，增加</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 192.168.131.199 ovirt.goldsyear.com</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 192.168.131.199 ovirt.goldsyear.com server-node1</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># systemctl disable firewalld</span></span><br><span class="line"><span class="comment"># systemctl disable NetworkManager</span></span><br></pre></td></tr></table></figure>
 
@@ -483,11 +617,13 @@
 <h2 id="配置oVirt-Engine"><a href="#配置oVirt-Engine" class="headerlink" title="配置oVirt Engine"></a>配置oVirt Engine</h2><p>运行<code>engine-setup</code>，根据提醒进行安装相关配置，除防火墙选配选<code>no</code>,因为上一步已关闭，其它都可直接回车接受默认选项，此处内容可直接参看官册指南。其间需要输入密码，后面登录管理端需要用到该密码。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># engine-setup</span></span><br></pre></td></tr></table></figure>
 
+<h2 id="安装oVirt-Node"><a href="#安装oVirt-Node" class="headerlink" title="安装oVirt Node"></a>安装oVirt Node</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install vdsm</span><br></pre></td></tr></table></figure>
+
 <p>配置完成后可通过<code>https://ovirt.goldsyear.com/ovirt-engine</code>进行访问，该地址会在配置完成后信息中提示出来。</p>
 <h2 id="管理oVirt"><a href="#管理oVirt" class="headerlink" title="管理oVirt"></a>管理oVirt</h2><p>我自己没有截图用了<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/9d699c05c17b">CentOS7 安装并使用Ovirt 4.2</a>的图。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/4042820-47375fef5b48d070?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="img"></p>
 <p>登录ovirt UI，用户名 admin，密码是安装过程中设置的密码。已经提供了默认的数据中心，集群和网络，因为是单机使用，可以在默认配置的基础上进行相关的管理。</p>
-<h3 id="添加主机"><a href="#添加主机" class="headerlink" title="添加主机"></a>添加主机</h3><p>装宿主机的信息填上，等待安装（可在事年查看安装情况）。</p>
+<h3 id="添加主机"><a href="#添加主机" class="headerlink" title="添加主机"></a>添加主机</h3><p>装宿主机的信息填上，等待安装（可在「事件」查看安装情况）。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/4042820-29be69fe16987392?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="img"></p>
 <p>完成后需要确认添加。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/4042820-b60ea815280e954b?imageMogr2/auto-orient/" alt="img"></p>
@@ -499,10 +635,10 @@
 
 <h5 id="导出"><a href="#导出" class="headerlink" title="导出"></a>导出</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># vim /etc/exports   </span></span><br><span class="line">	/data/ssd 0.0.0.0/0.0.0.0(rw,sync)</span><br><span class="line">	/data/iso 0.0.0.0/0.0.0.0(rw,sync,no_root_squash)</span><br></pre></td></tr></table></figure>
 
-<h5 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># exportfs -a				</span></span><br><span class="line"><span class="comment"># systemctl start rpcbind      </span></span><br><span class="line"><span class="comment"># systemctl start nfs-server start    </span></span><br><span class="line"><span class="comment"># systemctl enable rpcbind nfs-server   </span></span><br></pre></td></tr></table></figure>
+<h5 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># exportfs -a				</span></span><br><span class="line"><span class="comment"># systemctl start rpcbind      </span></span><br><span class="line"><span class="comment"># systemctl start nfs-server   </span></span><br><span class="line"><span class="comment"># systemctl enable rpcbind nfs-server   </span></span><br></pre></td></tr></table></figure>
 
-<h4 id="添加NFS存储域"><a href="#添加NFS存储域" class="headerlink" title="添加NFS存储域"></a>添加NFS存储域</h4><p><img src="https://upload-images.jianshu.io/upload_images/4042820-6f1b030a333fa690?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="img"></p>
-<h4 id="添加ISO存储域"><a href="#添加ISO存储域" class="headerlink" title="添加ISO存储域"></a>添加ISO存储域</h4><p><img src="https://upload-images.jianshu.io/upload_images/4042820-8cbf0d888fd7b900?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="img"></p>
+<h4 id="添加NFS-SSD存储域"><a href="#添加NFS-SSD存储域" class="headerlink" title="添加NFS SSD存储域"></a>添加NFS SSD存储域</h4><p><img src="https://upload-images.jianshu.io/upload_images/4042820-6f1b030a333fa690?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="img"></p>
+<h4 id="添加NFS-ISO存储域"><a href="#添加NFS-ISO存储域" class="headerlink" title="添加NFS ISO存储域"></a>添加NFS ISO存储域</h4><p><img src="https://upload-images.jianshu.io/upload_images/4042820-8cbf0d888fd7b900?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="img"></p>
 <p>添加成功后可以查看宿主机目录，如<code>/data/iso/5d56c384-5e1c-46ee-a2aa-d4bedda4b6a2/images/11111111-1111-1111-1111-111111111111</code>，实际目录可能略有不同，上传iso文件。</p>
 <h3 id="创建虚拟机"><a href="#创建虚拟机" class="headerlink" title="创建虚拟机"></a>创建虚拟机</h3><p>创建虚拟机，添加实例镜像和nic（用默认的ovirtmgmt网络）。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/4042820-2f5bf6fa419aa9e3?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="img"></p>
@@ -517,12 +653,17 @@
 <li>engine-cleanup</li>
 <li>yum remove ovirt-engine</li>
 </ol>
+<h2 id="查看状态"><a href="#查看状态" class="headerlink" title="查看状态"></a>查看状态</h2><p>systemctl status ovirt-engine</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ul>
+<li>添加主机是如果防火墙被开启，请再次关闭防火墙</li>
+</ul>
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>以上就是oVirt的单机安装和配置使用过程，更多的内容需要不断的使用才会发现。之前对于CentOS和oVirt都不是太了解参考网上资料能基本完成，另感谢同事王的帮助，加深我对CentOS分区和oVirt的域等概念的理解。</p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://www.ovirt.org/documentation/install-guide/chap-Installing_oVirt.html">https://www.ovirt.org/documentation/install-guide/chap-Installing_oVirt.html</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lpwmm/article/category/7607937">https://blog.csdn.net/lpwmm/article/category/7607937</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/9d699c05c17b">https://www.jianshu.com/p/9d699c05c17b</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/83e0f25d2700">https://www.jianshu.com/p/83e0f25d2700</a></p>
 <p><a target="_blank" rel="noopener" href="https://linuxhint.com/install_ovirt_centos7/">https://linuxhint.com/install_ovirt_centos7/</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.51cto.com/964678615/2483173">https://blog.51cto.com/964678615/2483173</a></p>
 
       
     </div>
@@ -1214,97 +1355,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/04/23/spring/start-error/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/23/spring/start-error/" class="post-title-link" itemprop="url">Spring boot无法启动</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-23 14:37:37" itemprop="dateCreated datePublished" datetime="2019-04-23T14:37:37+08:00">2019-04-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>286</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>今天启动Spring boot的一个项目时，提示“Process finished with exit code 1”，项目无法启动。<br>初步分析可能是没有配置环境变了，检查了下是有的，加了debug=true，也没出提示日志。</p>
-<p>于是上网查了下，确实说的是环境变量<code>spring.profiles.active</code>没在配置，重新检查配置时发现，之前的环境变量居然是<code>spring.active.profiles</code>。因为换电脑，没有在这台机器运行不同环境，没有发现错误。</p>
-<p>提醒下自己，检查配置内容还是要认真些。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://www.xttblog.com/?p=2992">解决 Spring boot 启动报 Process finished with exit code 1 问题</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1374,7 +1424,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">237</span>
+          <span class="site-state-item-count">238</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1436,7 +1486,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -1445,12 +1495,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">483k</span>
+    <span title="站点总字数">484k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:19</span>
+    <span title="站点阅读时长">7:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
