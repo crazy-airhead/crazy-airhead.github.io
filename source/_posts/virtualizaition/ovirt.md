@@ -66,7 +66,7 @@ DNS1="8.8.8.8"       # DNS服务器
 `vim /etc/hosts`，增加
 
 ```sh
-# 192.168.131.199 ovirt.goldsyear.com
+# 192.168.131.199 ovirt.goldsyear.com server-node1
 ```
 
 ### 关闭防火墙
@@ -118,6 +118,11 @@ DNS1="8.8.8.8"       # DNS服务器
 # engine-setup
 ```
 
+## 安装oVirt Node
+```sh
+yum -y install vdsm
+```
+
 配置完成后可通过`https://ovirt.goldsyear.com/ovirt-engine`进行访问，该地址会在配置完成后信息中提示出来。
 
 ## 管理oVirt
@@ -130,7 +135,7 @@ DNS1="8.8.8.8"       # DNS服务器
 
 ### 添加主机
 
-装宿主机的信息填上，等待安装（可在事年查看安装情况）。
+装宿主机的信息填上，等待安装（可在「事件」查看安装情况）。
 
 ![img](https://upload-images.jianshu.io/upload_images/4042820-29be69fe16987392?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp)
 
@@ -176,15 +181,15 @@ DNS1="8.8.8.8"       # DNS服务器
 ```sh
 # exportfs -a				
 # systemctl start rpcbind      
-# systemctl start nfs-server start    
+# systemctl start nfs-server   
 # systemctl enable rpcbind nfs-server   
 ```
 
-#### 添加NFS存储域
+#### 添加NFS SSD存储域
 
 ![img](https://upload-images.jianshu.io/upload_images/4042820-6f1b030a333fa690?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp)
 
-#### 添加ISO存储域
+#### 添加NFS ISO存储域
 
 ![img](https://upload-images.jianshu.io/upload_images/4042820-8cbf0d888fd7b900?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp)
 
@@ -215,6 +220,14 @@ DNS1="8.8.8.8"       # DNS服务器
 1. engine-cleanup
 2. yum remove ovirt-engine
 
+
+## 查看状态
+systemctl status ovirt-engine
+
+## 问题
+- 添加主机是如果防火墙被开启，请再次关闭防火墙
+
+
 ## 小结
 
 以上就是oVirt的单机安装和配置使用过程，更多的内容需要不断的使用才会发现。之前对于CentOS和oVirt都不是太了解参考网上资料能基本完成，另感谢同事王的帮助，加深我对CentOS分区和oVirt的域等概念的理解。
@@ -230,6 +243,8 @@ DNS1="8.8.8.8"       # DNS服务器
 <https://www.jianshu.com/p/83e0f25d2700>
 
 <https://linuxhint.com/install_ovirt_centos7/>
+
+<https://blog.51cto.com/964678615/2483173>
 
 
 
