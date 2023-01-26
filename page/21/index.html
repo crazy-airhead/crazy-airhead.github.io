@@ -172,6 +172,337 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/hbase/hbase-indexer/indexer-configuration/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/05/hbase/hbase-indexer/indexer-configuration/" class="post-title-link" itemprop="url">Hbase Indexer - 索引器配置</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-05 12:34:00" itemprop="dateCreated datePublished" datetime="2018-12-05T12:34:00+08:00">2018-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>The most basic indexer configuration only requires a table name and a single field. However, there are many configuration settings that can be used in an indexer configuration file to customize behavior.</p>
+<p>最基础索引器配置只需要一个表名和一个字段名就可以。但是，有很多配置可以用于配置可以自定义解析器的行为。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">indexer</span> <span class="attr">table</span>=<span class="string">&quot;mytable&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;fieldname&quot;</span> <span class="attr">value</span>=<span class="string">&quot;columnfamily:qualifier&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">indexer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="全局索引器属性（Global-indexer-attributes）"><a href="#全局索引器属性（Global-indexer-attributes）" class="headerlink" title="全局索引器属性（Global indexer attributes）"></a>全局索引器属性（Global indexer attributes）</h2><p>The following is a list of attributes that can be set on the top-level <indexer> element in an indexer configuration.</p>
+<p>以下列出的属性可以在顶层<code>&lt;indexer&gt;</code>节点中配置。</p>
+<h3 id="table"><a href="#table" class="headerlink" title="table"></a>table</h3><p>The table attribute specifies the name of the HBase table to be indexed by the indexer. It is the only mandatory attribute in the indexer element.</p>
+<p>table属性用于指定HBase需要索引器索引的表名。这个indexer节点中强制要求的属性。</p>
+<h3 id="mapping-type"><a href="#mapping-type" class="headerlink" title="mapping-type"></a>mapping-type</h3><p>The mapping-type attribute has two possible values: row, or column. This attribute specifies whether row-based or column-based indexing is to be performed.</p>
+<p>mapping-type属性有两种值：row和column。这个属性用于指定是基于行还是基于列的索引方式。</p>
+<p>Row-based indexing treats all data within a single HBase row as input for a single document in Solr. This is the kind of indexing that would be used for an HBase table that contains a separate entity in each row, e.g. a table containing users.</p>
+<p>基于行索引方式把Hbase一行当中的所有数据当成Solr的一个文档输入。这种方式用于索引一行就表示一个独立的实体的Hbase表，比如包含用户的表。</p>
+<p>Column-based indexing treats each HBase cell as input for a single document in Solr. This approach could be used for example in a messaging platform where a single user’s messages are all stored in a single row, with each message being stored in a separate cell.</p>
+<p>基于列索引方式把Hbase的一个列当作Solr的一个文档输入。这种处理可以用于消息平台，一个用户的所有消息存在同一行中，而每条消息存在一个单独的列上。</p>
+<p>The default mapping-type value is row.</p>
+<p>默认的mapping-type是row。</p>
+<h3 id="read-row"><a href="#read-row" class="headerlink" title="read-row"></a>read-row</h3><p>The read-row attribute has two possible values: dynamic, or never.</p>
+<p>read-row属性有两种值：dyamic和never。</p>
+<p>This attribute is only important when using row-based indexing. It specifies whether or not the indexer should re-read data from HBase in order to perform indexing.</p>
+<p>这个属性中对基于行索引的方式才是重要的。它指定索引器为了进行索引是否需要从Hbase重新读取数据。</p>
+<p>When set to “dynamic”, the indexer will read the necessary data from a row if a partial update to the row is performed in HBase. In dynamic mode, the row will not be re-read if all data needed to perform indexing is included in the row update.</p>
+<p>当被设置为“dynamic”时，如果HBase是一行数据的部分数据更新时，索引器会读取这一行中需要的数据。dynamic模式下，如果是一行的全部数据的更新，索引器不会重新读取Hbase的数据。</p>
+<p>If this attribute is set to never, a row will never be re-read by the indexer.</p>
+<p>如果这个属性被设置为never，索引器不会重读行数据。</p>
+<p>The default setting is “dynamic”.</p>
+<p>默认的设置是“dynamic”。</p>
+<h3 id="mapper"><a href="#mapper" class="headerlink" title="mapper"></a>mapper</h3><p>The mapper attribute allows the user to specify a custom mapper class that will create a Solr document from a HBase Result object. The mapper class must implement the com.ngdata.hbaseindexer.parse.ResultToSolrMapper interface.</p>
+<p>mapper属性允许用户指定一个自定义的类通过Hbase结果对象来创建Solr文档。但这个mapper类必需实现<code>com.ngdata.hbaseindexer.parse.ResultToSolrMapper</code>接口。</p>
+<p>By default, the built-in com.ngdata.hbaseindexer.parse.DefaultResultToSolrMapper is used.</p>
+<p>默认情况，使用的是内署的<code>com.ngdata.hbaseindexer.parse.DefaultResultToSolrMapper</code>。</p>
+<h3 id="unique-key-formatter"><a href="#unique-key-formatter" class="headerlink" title="unique-key-formatter"></a>unique-key-formatter</h3><p>The unique-key-formatter attribute specifies the name of the class used to format HBase row keys (as well as column families and column qualifiers) as text. A textual representation of these pieces of information is needed for indexing in Solr, as all data in Solr is textual, but row keys, column families, and column qualifiers are byte arrays.</p>
+<p>unique-key-formatter指定了用于格式化Hbase rowkeys（列簇和列限定符也一样）为文本的类名。在Solr中索引需要这些信息的文本表示，因为Solr中的所有数据都是文本数据，但是行键、列族和列限定符是字节数组。</p>
+<p>A unique-key-formatter class must implement the com.ngdata.hbaseindexer.uniquekey.UniqueKeyFormatter interface.</p>
+<p>一个unique-key-formatter类必须实现<code>com.ngdata.hbaseindexer.uniquekey.UniqueKeyFormatter</code>接口。</p>
+<p>The default value of this attribute is com.ngdata.hbaseindexer.uniquekey.StringUniqueKeyFormatter. The StringUniqueKey formatter simply treats row keys and other byte arrays as strings.</p>
+<p>这个属性的默认值是<code>com.ngdata.hbaseindexer.uniquekey.StringUniqueKeyFormatter</code>。StringUniqueKeyFormatter只是简单的把rowkey或者其他字节数据当成字符串。</p>
+<p>If your row keys, column families, or qualifiers can’t simply be used as strings, consider using the com.ngdata.hbaseindexer.uniquekey.HexUniqueKeyFormatter.</p>
+<p>如果你的rowkey，列簇，或者限定符不能简单的用字符串表示，就你需要考虑使用<code>com.ngdata.hbaseindexer.uniquekey.HexUniqueKeyFormatter</code>。</p>
+<h3 id="unique-key-field"><a href="#unique-key-field" class="headerlink" title="unique-key-field"></a>unique-key-field</h3><p>This attribute specifies the name of the document identifier field used in Solr.</p>
+<p>这个属性指定Solr中文档的标识字段。</p>
+<p>The default value for this field is “id”.</p>
+<p>默认值是“id”。</p>
+<h3 id="row-field"><a href="#row-field" class="headerlink" title="row-field"></a>row-field</h3><p>The row-field attribute specifies the name of the Solr field to be used for storing an HBase row key.</p>
+<p>row-field属性指定了Solr中用于存储Hbase rowkey的安段名。</p>
+<p>This field is only important when doing column-based indexing. In order for the indexer to be able to delete all documents for a single row from the index, it needs to be able to find all documents for the row in Solr. When this attribute is populated in the indexer definition, it’s value is used as the name of a field in Solr to store the encoded row key.</p>
+<p>这个字段对于基于列索引方式才很重要。索引器为了能够从索引中删除一行的所有文档，它一个字段能在Solr中找到该行的所有文档。在索引器定义中设置这个属性时，它的值将用作Solr中字段的名称，以存储编码的行键。</p>
+<p>By default, this attribute is empty, meaning that the row key is not stored in Solr. The consequence of this is that deleting a complete row or complete column family in HBase will not delete the indexed documents in Solr.</p>
+<p>默认情况，这个属性为空，这意味着rowkey不会被存储在Solr里面。这样的结果就是在Hbase中删除一个完整的行或者列并不删除Solr中的已经索引的文档。</p>
+<h3 id="column-family-field"><a href="#column-family-field" class="headerlink" title="column-family-field"></a>column-family-field</h3><p>The column-family-field specifies the name of the Solr field to be used for storing the HBase column family name.</p>
+<p>column-family-field指定Solr中用于存储HBase列簇名的字段名。</p>
+<p>See the description of the row-field attribute for more information.</p>
+<p>查看row-field属性查看更多的信息。</p>
+<p>By default, this attribute is empty, so the column-family name is not saved in Solr.</p>
+<p>默认情况，这个属性为空，也就是说，列簇不会被Solr存储。</p>
+<h3 id="table-name-field"><a href="#table-name-field" class="headerlink" title="table-name-field"></a>table-name-field</h3><p>The table-name-field specifies the name of the Solr field to be used for storing the name of the HBase table where a record is stored.</p>
+<p>table-name-field指定Solr中用于存储Hbase表名的字段名。</p>
+<p>By default, this attribute is empty, so the name of the HBase table is not stored unless this setting is explicitly set in the indexer config.</p>
+<p>默认情况，这个属性是空，也就是说Hbase的表名不会被存储除非在indexer节点中明确指定。</p>
+<h2 id="indxer内定义的节点（Elements-within-the-indexer-definition）"><a href="#indxer内定义的节点（Elements-within-the-indexer-definition）" class="headerlink" title="indxer内定义的节点（Elements within the indexer definition）"></a>indxer内定义的节点（Elements within the indexer definition）</h2><p>There are three types of elements that can be used within an indexer configuration: <field>, <extract>, and <param>.</p>
+<p>在indexer节点有三种类型的节点：<field>, <extract>和<param></p>
+<h3 id=""><a href="#" class="headerlink" title=""></a><field></h3><p>The field element defines a single field to be indexed in Solr, as well as where its contents are to be taken from and interpreted from HBase. There are typically one or more fields listed in an indexer configuration – one for each Solr field to be stored.</p>
+<p>field节点定义了要在Solr中索引的单个字段，以及要从Hbase获取和解析的内容。索引器配置中通常列出一个或多个字段——每个Solr字段都要存储一个字段。</p>
+<p>The field attribute has four attributes, listed below.</p>
+<p>field有如下的四个属性。</p>
+<h4 id="name"><a href="#name" class="headerlink" title="name"></a>name</h4><p>The name attribute specifies the name of a Solr field in which to store data. A field with a matching name should be defined in the Solr schema.</p>
+<p>name属性指定了Solr的中存储数据的字段名。这个字段需要在Solr的Schema中有匹配的字段名。</p>
+<p>The name attribute is mandatory.</p>
+<p>name属性是必须的。</p>
+<h4 id="value"><a href="#value" class="headerlink" title="value"></a>value</h4><p>The value attribute specifies the data to be used from HBase for populating the field in Solr. It takes the form of a column family name and qualifier, separated by a colon.</p>
+<p>value属性指定了Hase用于填充Solr字段的数据。它采用列族名和限定符的形式，用冒号分隔。</p>
+<p>The qualifier portion can end in an asterisk, which is interpreted as a wildcard. In this case, all matching column-family and qualifier expressions will be used.</p>
+<p>限定符部分可以星号结尾，该星号被解释为通配符。在这种情况下，将使用所有匹配的列族表达式和限定符表达式。</p>
+<p>The following are examples of valid value attributes:</p>
+<p>以下是有效值属性的示例：</p>
+<ul>
+<li>mycolumnfamily:myqualifier</li>
+<li>mycolumnfamily:my*</li>
+<li>mycolumnfamily:*</li>
+</ul>
+<h4 id="source"><a href="#source" class="headerlink" title="source"></a>source</h4><p>The source attribute determines what portion of an HBase KeyValue will be used as indexing content.</p>
+<p>Source属性确定HBASE KeyValue的哪个部分将用作索引内容。</p>
+<p>It has two possible values: value and qualifier.、</p>
+<p>它有两个可能的值：value和qualifier。</p>
+<p>When value is specified (which is the case by default), then the cell value is used as input for indexing.</p>
+<p>当指定值时(默认情况下是这种情况)，则使用单元格值作为索引的输入。</p>
+<p>When qualifier is specified, then the column qualifier is used as input for indexing.</p>
+<p>当指定限定符时，列限定符将用作索引的输入。</p>
+<h4 id="type"><a href="#type" class="headerlink" title="type"></a>type</h4><p>The type attribute defines the datatype of the content in HBase.</p>
+<p>type属性定义HBASE中内容的数据类型。</p>
+<p>Because all data is stored in HBase as byte arrays, but all content in Solr is indexed as text, a method for converting from byte arrays to the actual datatype is needed.</p>
+<p>因为所有数据都以字节数组的形式存储在HBASE中，但是Solr中的所有内容都被索引为文本，所以需要一个方法将字节数组转换为实际的数据类型。</p>
+<p>The value of this field can be one of any of the datatypes supported by the HBase Bytes class: int, long, string, boolean, float, double, short, or bigdecimal.</p>
+<p>该字段的值可以是HBASE Bytes类支持的任何数据类型之一：int、long、string、boole、Float、Double、Short或Big十进制。</p>
+<p>If the Bytes-based representation has not been used for storing data in HBase, the name of a custom class can be specified for this attribute. The custom class must implement the com.ngdata.hbaseindexer.parse.ByteArrayValueMapper interface.</p>
+<p>如果没有使用基于Bytes的表示形式在HBASE中存储数据，则可以为该属性指定自定义类的名称。自定义类必须实现com.ngdata.hbaseindexer.parse.ByteArrayValueMapper接口。</p>
+<h3 id="-1"><a href="#-1" class="headerlink" title=""></a><param></h3><p>The <param> element defines a key-value pair that will be supplied to custom classes that implement the com.ngdata.hbaseindexer.Configurable interface.</p>
+<param>节点定义了一个键值对，它将提供给实现com.ngdata.hbase indexer.Configable接口的自定义类。
+
+<param> elements can also be nested in a <field> element.
+
+<param>元素也可以嵌套在<field>元素中。
+
+<p>The element has two attributes: name and value. Both are mandatory.</p>
+<p>访节点有两个属性：name和value。两者都是必须的。</p>
+<h2 id="配置样例（Example-configuration）"><a href="#配置样例（Example-configuration）" class="headerlink" title="配置样例（Example configuration）"></a>配置样例（Example configuration）</h2><p>The example configuration below demonstrates all elements and attributes that can be used to configure an indexer.</p>
+<p>下面的示例配置演示了可用于配置索引器的所有元素和属性。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">   Do row-based indexing on table &quot;table1&quot;, never re-reading updated content.</span></span><br><span class="line"><span class="comment">   Store the unique document id in Solr field called &quot;custom-id&quot;.</span></span><br><span class="line"><span class="comment">   Additionally store the row key in a Solr field called &quot;custom-row&quot;, and store the </span></span><br><span class="line"><span class="comment">   column family in a Solr field called &quot;custom-family&quot;.</span></span><br><span class="line"><span class="comment">  </span></span><br><span class="line"><span class="comment">   Perform conversion of byte array keys using the class &quot;com.mycompany.MyKeyFormatter&quot;.</span></span><br><span class="line"><span class="comment">--&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">indexer</span></span></span><br><span class="line"><span class="tag">    <span class="attr">table</span>=<span class="string">&quot;table1&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">mapping-type</span>=<span class="string">&quot;row&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">read-row</span>=<span class="string">&quot;never&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">unique-key-field</span>=<span class="string">&quot;custom-id&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">row-field</span>=<span class="string">&quot;custom-row&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">column-family-field</span>=<span class="string">&quot;custom-family&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">table-name-field</span>=<span class="string">&quot;custom-table&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">unique-key-formatter</span>=<span class="string">&quot;com.mycompany.MyKeyFormatter&quot;</span></span></span><br><span class="line"><span class="tag">    &gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- A float-based field taken from any qualifier in the column family &quot;colfam&quot; --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;field1&quot;</span> <span class="attr">value</span>=<span class="string">&quot;colfam:*&quot;</span> <span class="attr">source</span>=<span class="string">&quot;qualifier&quot;</span> <span class="attr">type</span>=<span class="string">&quot;float&quot;</span>/&gt;</span></span><br><span class="line">  </span><br><span class="line">  <span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">&quot;globalKeyA&quot;</span> <span class="attr">value</span>=<span class="string">&quot;globalValueA&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">&quot;globalKeyB&quot;</span> <span class="attr">value</span>=<span class="string">&quot;globalValueB&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">indexer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="http://cloudera.github.io/cdk/docs/0.8.0/cdk-morphlines/index.html">morphlines</a><br><img src="http://cloudera.github.io/cdk/docs/0.8.0/cdk-morphlines/images/morphlines-architecture.jpg" alt="morphlines-architecture"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/hbase/hbase-indexer/getting-start-tutorial/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/05/hbase/hbase-indexer/getting-start-tutorial/" class="post-title-link" itemprop="url">Hbase Indexer - 教程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-05 12:33:00" itemprop="dateCreated datePublished" datetime="2018-12-05T12:33:00+08:00">2018-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>This page explains how to start doing basic indexing in HBase. Before following this tutorial, make sure that the HBase Indexer and other required software is installed and running as explained in the <a target="_blank" rel="noopener" href="https://github.com/NGDATA/hbase-indexer/wiki/Installation">installation instructions</a>.</p>
+<p>这篇解释如何在Hbase中开始基础索引。在开始教程之前，请确保Hbase Indexer和其他需要的软件已经<a href="">安装</a>和运行。</p>
+<p>At this point, HBase and Solr (in cloud mode) should be running, and the HBase Indexer should be unpacked in a directory (which we’ll call $INDEXER_HOME). For this tutorial, it is assumed that the default example index schema is being used by Solr (as explained on the <a target="_blank" rel="noopener" href="https://github.com/NGDATA/hbase-indexer/wiki/Installation">installation page</a>).</p>
+<p>此时，Hbasa和Solr（云模式）已经行行，并且Hbase Indexer已经解压到一个目录中（这是我们称为<code>$INDEXER_HOME</code>）。在这个教程中，我们假设用的是Solr的默认example索引（就像<a target="_blank" rel="noopener" href="https://github.com/NGDATA/hbase-indexer/wiki/Installation">安装</a>中说的那样）。</p>
+<h2 id="启动Hbase-Indexer（Start-the-HBase-Indexer-daemon）"><a href="#启动Hbase-Indexer（Start-the-HBase-Indexer-daemon）" class="headerlink" title="启动Hbase Indexer（Start the HBase Indexer daemon）"></a>启动Hbase Indexer（Start the HBase Indexer daemon）</h2><p>In a terminal, execute the following (assuming $INDEXER_HOME points to the directory where the hbase-indexer tar.gz distribution was unpacked).</p>
+<p>在终端中，运行如下命令（假定<code>$INDEXER_HOME</code>指向hbase-indexer tar.gz解压的目录）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd $INDEXER_HOME</span><br><span class="line">./bin/hbase-indexer server</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建需要索引的表（Create-a-table-to-be-indexed-in-HBase）"><a href="#创建需要索引的表（Create-a-table-to-be-indexed-in-HBase）" class="headerlink" title="创建需要索引的表（Create a table to be indexed in HBase）"></a>创建需要索引的表（Create a table to be indexed in HBase）</h2><p>In the HBase shell, create a table. For this tutorial, we’ll create a table named “indexdemo-user”, with a single column family named “info”. Note that the <code>REPLICATION_SCOPE</code> of the column family of the table must be set to 1.</p>
+<p>在Hbase shell，创建一个表。在这里，我们创建一个“indexdemo-user”的表，有一个“info”的列簇。注意列簇的<code>REPLICATION_SCOPE</code>必须设置成1。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hbase shell</span><br><span class="line">hbase&gt; create &#x27;indexdemo-user&#x27;, &#123; NAME =&gt; &#x27;info&#x27;, REPLICATION_SCOPE =&gt; &#x27;1&#x27; &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="添加索引器（Add-an-indexer）"><a href="#添加索引器（Add-an-indexer）" class="headerlink" title="添加索引器（Add an indexer）"></a>添加索引器（Add an indexer）</h2><p>Now we’ll create an indexer that will index the the indexdemo-user table as its contents are updated.</p>
+<p>现在我们创建一个索引器，在indexdemo-user表的内容被更新是他会进行索引。</p>
+<p>In your favourite text editor, create a new xml file called indexdemo-indexer.xml, with the following content:</p>
+<p>用你喜欢的编辑器，创建一个新的xml文件，命名为<code>indexdemo-indexer.xml</code>，添加如下内容：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">indexer</span> <span class="attr">table</span>=<span class="string">&quot;indexdemo-user&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;firstname_s&quot;</span> <span class="attr">value</span>=<span class="string">&quot;info:firstname&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;lastname_s&quot;</span> <span class="attr">value</span>=<span class="string">&quot;info:lastname&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;age_i&quot;</span> <span class="attr">value</span>=<span class="string">&quot;info:age&quot;</span> <span class="attr">type</span>=<span class="string">&quot;int&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">indexer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>The above file defines three pieces of information that will be used for indexing, how to interpret them, and how they will be stored in Solr.</p>
+<p>上面的文件定义了三个索引字段的信息，如何解析，如何在Solr中存储。</p>
+<p>Next, create an indexer based on the created indexer xml file.</p>
+<p>接下来，基于xml文件创建一个索引器。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./bin/hbase-indexer add-indexer -n myindexer -c indexdemo-indexer.xml \</span><br><span class="line">        -cp solr.zk=localhost:2181/solr -cp solr.collection=collection1</span><br></pre></td></tr></table></figure>
+
+<p>Note that the above command assumes that ZooKeeper is running on localhost on port 2181, and that there is a Solr Core called “collection1” configured. If you are doing this tutorial on an existing HBase/Solr environment, you may need to use different settings.</p>
+<p>注意上面的命令假设，ZooKeeper运行要本机的2181端口上，并且Solr Core已经创建了一个名为“collection1”的索引。如果你在一个现有的Hbase/Solr环境运行本教程，你需要修改配置。</p>
+<h2 id="更新表内容（Update-the-table-content）"><a href="#更新表内容（Update-the-table-content）" class="headerlink" title="更新表内容（Update the table content）"></a>更新表内容（Update the table content）</h2><p>In the HBase shell, try adding some data to the indexdemo-user table<br>在Hbase shell中，尝试给<code>indexdemo-user</code>添加一些数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hbase&gt; put &#x27;indexdemo-user&#x27;, &#x27;row1&#x27;, &#x27;info:firstname&#x27;, &#x27;John&#x27;</span><br><span class="line">hbase&gt; put &#x27;indexdemo-user&#x27;, &#x27;row1&#x27;, &#x27;info:lastname&#x27;, &#x27;Smith&#x27;</span><br></pre></td></tr></table></figure>
+<p>After adding this data, take a look in Solr (i.e. <a target="_blank" rel="noopener" href="http://localhost:8983/solr/#/collection1/query">http://localhost:8983/solr/#/collection1/query</a>). You should see a single document in Solr that has the firstname_s field set to “John”, and the lastname_s field set to “Smith”.</p>
+<p>添加数据之后，来看一下Solr（i.e. <a target="_blank" rel="noopener" href="http://localhost:8983/solr/#/collection1/quer%EF%BC%89%EF%BC%8C%E4%BD%A0%E5%BA%94%E8%AF%A5%E8%83%BD%E7%9C%8B%E5%88%B0%E4%B8%80%E4%B8%AA%E6%96%87%E6%A1%A3%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%96%87%E6%A1%A3%E7%9A%84firstname_s%E5%AD%97%E6%AE%B5%E5%80%BC%E4%B8%BA%E2%80%9CJohn%E2%80%9D%EF%BC%8C%E5%90%8C%E6%97%B6lastname_s%E5%AD%97%E6%AE%B5%E5%80%BC%E4%B8%BA%E2%80%9CSmith%E2%80%9D%E3%80%82">http://localhost:8983/solr/#/collection1/quer），你应该能看到一个文档，这个文档的firstname_s字段值为“John”，同时lastname_s字段值为“Smith”。</a></p>
+<p>Note If you don’t have autoCommit enabled in Solr, you won’t be able to see the updated contents immediately in Solr. The demo environment has autoCommit enabled for a commit every second.</p>
+<p><strong>注意</strong>如果没有开启<code>autoCommit</code>，你不会马上在Solr看到更新的内容。这例子的环境<code>autoCommit</code>已经开启并设置为每秒自动提交1次。</p>
+<p>Now try updating the data you’ve just added</p>
+<p>现在尝试更新你刚才添加的数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hbase&gt; put &#x27;indexdemo-user&#x27;, &#x27;row1&#x27;, &#x27;info:firstname&#x27;, &#x27;Jim&#x27;</span><br></pre></td></tr></table></figure>
+<p>And now check the content in Solr. The document’s firstname_s field now contains the string “Jim”.</p>
+<p>然后在Solr有检查内容。看下文档的firstname_s是不是变成了“Jim”</p>
+<p>Finally, delete the row from HBase.</p>
+<p>最后，删除Hbase的这条记录。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hbase&gt; deleteall &#x27;indexdemo-user&#x27;, &#x27;row1&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>You can now verify that the data has been deleted from Solr.</p>
+<p>你可以验证下Solr中的数据是不是已经删除了。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/hbase/hbase-indexer/getting-start-install/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1342,466 +1673,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/22/go/go-little-book/chapter-4/" class="post-title-link" itemprop="url">Go Little Book - 第四章 - 代码组织和接口</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-22 10:45:23" itemprop="dateCreated datePublished" datetime="2018-11-22T10:45:23+08:00">2018-11-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>12k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>11 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="第四章-代码组织和接口（Chapter-4-Code-Organization-and-Interfaces）"><a href="#第四章-代码组织和接口（Chapter-4-Code-Organization-and-Interfaces）" class="headerlink" title="第四章 - 代码组织和接口（Chapter 4 - Code Organization and Interfaces）"></a>第四章 - 代码组织和接口（Chapter 4 - Code Organization and Interfaces）</h1><p>It’s now time to look at how to organize our code.</p>
-<p>现在是时候来看看我们是怎么组织代码了。</p>
-<h2 id="包（Packages）"><a href="#包（Packages）" class="headerlink" title="包（Packages）"></a>包（Packages）</h2><p>To keep more complicated libraries and systems organized, we need to learn about packages. In Go, package names follow the directory structure of your Go workspace. If we were building a shopping system, we’d probably start with a package name “shopping” and put our source files in <code>$GOPATH/src/shopping/</code>.</p>
-<p>为了组织更复杂的类库和系统，我们需要了解包。在Go中，包名紧跟在工作目录结构之下。如果我们构建一个电商系统，我们可能以”shopping”命名包和把源文件存在<code>$GOPATH/src/shopping/</code>下。</p>
-<p>We don’t want to put everything inside this folder though. For example, maybe we want to isolate some database logic inside its own folder. To achieve this, we create a subfolder at <code>$GOPATH/src/shopping/db</code>. The package name of the files within this subfolder is simply <code>db</code>, but to access it from another package, including the <code>shopping</code> package, we need to import <code>shopping/db</code>.</p>
-<p>显然我们不想反所有的东西都放在这个目录。例如，我们希望在数据库目录下关联一些数据库的逻辑。要达到这个目的，我们创建了一个子目录<code>$GOPATH/src/shopping/db</code>。这个目录下的包名可以是简单的<code>db</code>，但是其他包需要访问这个包时，就需要包含<code>shopping</code>，我们需要这样导入<code>shopping/db</code>。</p>
-<p>In other words, when you name a package, via the <code>package</code> keyword, you provide a single value, not a complete hierarchy (e.g., “shopping” or “db”). When you import a package, you specify the complete path.</p>
-<p>换名话来说，当你命名一个包时，可以通过<code>package</code>关键字，你提供一个单一的值，不是完整的层级（比如，”shopping”或者”db”）。当你导入包时，你需要指定完整的路径。</p>
-<p>Let’s try it. Inside your Go workspace’s <code>src</code> folder (which we set up in Getting Started of the Introduction), create a new folder called <code>shopping</code> and a subfolder within it called <code>db</code>.</p>
-<p>让我们来试一试，在我们的Go的工作目录下的<code>src</code>文件夹中（我们在入门介绍中设置的），创建一个<code>shopping</code>的文件夹并创建一个<code>db</code>的子文件夹。</p>
-<p>Inside of <code>shopping/db</code>, create a file called <code>db.go</code> and add the following code:</p>
-<p>在<code>shopping/db</code>目录下，创建一个名为<code>db.go</code>的文件并添加如下代码： </p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> db</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</span><br><span class="line">  Price <span class="keyword">float64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LoadItem</span><span class="params">(id <span class="keyword">int</span>)</span> *<span class="title">Item</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;Item&#123;</span><br><span class="line">    Price: <span class="number">9.001</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Notice that the name of the package is the same as the name of the folder. Also, obviously, we aren’t actually accessing the database. We’re just using this as an example to show how to organize code.</p>
-<p>注意下包名和文件夹的名字是一样的。显然，我们也没有真下的访问数据库。我们只是用这个例子来演示如何组织代码。</p>
-<p>Now, create a file called <code>pricecheck.go</code> inside of the main <code>shopping</code> folder. Its content is:</p>
-<p>现在，在主目录<code>shopping</code>下创建一个名为<code>pricecheck.go</code>的文件。它的代码如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> shopping</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping/db&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PriceCheck</span><span class="params">(itemId <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">float64</span>, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">  item := db.LoadItem(itemId)</span><br><span class="line">  <span class="keyword">if</span> item == <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>, <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> item.Price, <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>It’s tempting to think that importing <code>shopping/db</code> is somehow special because we’re inside the <code>shopping</code> package/folder already. In reality, you’re importing <code>$GOPATH/src/shopping/db</code>, which means you could just as easily import <code>test/db</code> so long as you had a package named <code>db</code> inside of your workspace’s <code>src/test</code> folder.</p>
-<p>这很容易理解，导入<code>shopping/ db</code>有些特殊，因为我们是<code>shopping</code>包/文件夹中了。实际上，要导入<code>$ GOPATH/src/shopping/db</code>，这意味着你可以很容易地导入<code>test/db</code>，只要工作空间下的<code>src/test/db</code>的文件夹有一个<code>db</code>的包。</p>
-<p>If you’re building a package, you don’t need anything more than what we’ve seen. To build an executable, you still need a <code>main</code>. The way I prefer to do this is to create a subfolder called <code>main</code> inside of <code>shopping</code> with a file called <code>main.go</code> and the following content:</p>
-<p>如果你想建一个包，只需要我们看到的这些内容就可以了。要创建一个可执行程序，我们还需要一个<code>main</code>函数。我喜欢在<code>shopping</code>文件夹下建一个<code>main</code>文件夹并新增一个<code>main.go</code>的文件。它的内容如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping&quot;</span></span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(shopping.PriceCheck(<span class="number">4343</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>You can now run your code by going into your <code>shopping</code> project and typing:</p>
-<p>进入<code>shopping</code>目录输入如下内容可以运行代码：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go run main/main.go</span><br></pre></td></tr></table></figure>
-
-<h3 id="循环导入（Cyclical-Imports）"><a href="#循环导入（Cyclical-Imports）" class="headerlink" title="循环导入（Cyclical Imports）"></a>循环导入（Cyclical Imports）</h3><p>As you start writing more complex systems, you’re bound to run into cyclical imports. This happens when package A imports package B but package B imports package A (either directly or indirectly through another package). This is something the compiler won’t allow.</p>
-<p>当你开始写一些更复杂的系统时，你不免会碰到循环导入的问题。当包A的导入了包B但是包B又导入了包A（无论是直接还是间接通过其他包导入）循环导入就发生了。这是编译器不允许的。</p>
-<p>Let’s change our shopping structure to cause the error.</p>
-<p>让我们来修改一下<code>shopping</code>的结构来引发这个错误。</p>
-<p>Move the <code>Item</code> definition from <code>shopping/db/db.go</code> into <code>shopping/pricecheck.go</code>. Your <code>pricecheck.go</code> file should now look like:</p>
-<p>把<code>Item</code>的定义从<code>shopping/db/db.go</code>移到<code>shopping/pricecheck.go</code>中。你的<code>pricecheck.go</code>应该看起来像这样：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> shopping</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping/db&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</span><br><span class="line">  Price <span class="keyword">float64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PriceCheck</span><span class="params">(itemId <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">float64</span>, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">  item := db.LoadItem(itemId)</span><br><span class="line">  <span class="keyword">if</span> item == <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>, <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> item.Price, <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>If you try to run the code, you’ll get a couple of errors from <code>db/db.go</code> about <code>Item</code> being undefined. This makes sense. <code>Item</code> no longer exists in the <code>db</code> package; it’s been moved to the shopping package. We need to change <code>shopping/db/db.go</code> to:</p>
-<p>如果你尝试运行代码，你会从<code>db/db.go</code>中收到一些错误信息说<code>Item</code>未定义。这好理解。<code>Item</code>已经不在<code>db</code>包下了；这被移到了<code>shopping</code>包。我们需要修改<code>shopping/db/db.go</code>的代码为：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> db</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LoadItem</span><span class="params">(id <span class="keyword">int</span>)</span> *<span class="title">shopping</span>.<span class="title">Item</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;shopping.Item&#123;</span><br><span class="line">    Price: <span class="number">9.001</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Now when you try to run the code, you’ll get a dreaded <em>import cycle not allowed</em> error. We solve this by introducing another package which contains shared structures. Your directory structure should look like:</p>
-<p>现在当你尝试运行代码时，你会收到一个令人害怕的错误<em>import cycle not allowed</em>。我们通过引入一个包含共享结构的另一个包来解决这个问题。你的目录结构看起来像这样：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$GOPATH/src</span><br><span class="line">  - shopping</span><br><span class="line">    pricecheck.go</span><br><span class="line">    - db</span><br><span class="line">      db.go</span><br><span class="line">    - models</span><br><span class="line">      item.go</span><br><span class="line">    - main</span><br><span class="line">      main.go</span><br></pre></td></tr></table></figure>
-
-<p><code>pricecheck.go</code> will still import <code>shopping/db</code>, but <code>db.go</code> will now import <code>shopping/models</code> instead of <code>shopping</code>, thus breaking the cycle. Since we moved the shared <code>Item</code> structure to <code>shopping/models/item.go</code>, we need to change <code>shopping/db/db.go</code> to reference the <code>Item</code> structure from <code>models</code> package:</p>
-<p><code>pricecheck.go</code>一样是导入<code>shopping/db</code>，但是<code>db.go</code>现在要导入<code>shopping/models</code>来替换<code>shopping</code>，这样打破了循环。因为将共享结构体<code>Item</code>移到了<code>shopping/models/item.go</code>，我们需要修改<code>shopping/db/db.go</code>从<code>model</code>包中引用结构体<code>Item</code>：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> db</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping/models&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LoadItem</span><span class="params">(id <span class="keyword">int</span>)</span> *<span class="title">models</span>.<span class="title">Item</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;models.Item&#123;</span><br><span class="line">    Price: <span class="number">9.001</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>You’ll often need to share more than just <code>models</code>, so you might have other similar folder named <code>utilities</code> and such. The important rule about these shared packages is that they shouldn’t import anything from the <code>shopping</code> package or any sub-packages. In a few sections, we’ll look at interfaces which can help us untangle these types of dependencies.</p>
-<p>你常常需要的共享结构不仅仅是<code>models</code>，所以你可能还有一些类似<code>utilities</code>这样的文件夹。最重要的原则是这些共享对象，不能导入<code>shopping</code>包或者它的子包。要不了几个章节，我们会看到接口是如何解开这些依赖的。</p>
-<h3 id="可见性（Visibility）"><a href="#可见性（Visibility）" class="headerlink" title="可见性（Visibility）"></a>可见性（Visibility）</h3><p>Go uses a simple rule to define what types and functions are visible outside of a package. If the name of the type or function starts with an uppercase letter, it’s visible. If it starts with a lowercase letter, it isn’t.</p>
-<p>Go用一个非常简单的原则来决定一个包的类型和函数是否在包外可见。如果类型或者函数是以大写字母开头，就是可见的，如果是小写字母开头，就是不可见的。</p>
-<p>This also applies to structure fields. If a structure field name starts with a lowercase letter, only code within the same package will be able to access them.</p>
-<p>这对结构体的字段也是一样适用的。如果一个结构体的字段名是以小写字母开头，只有在同一个包里的代码可以访问它们。</p>
-<p>For example, if our <code>items.go</code> file had a function that looked like:</p>
-<p>例如：在我们的<code>items.go</code>文件中有这样的一个函数：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewItem</span><span class="params">()</span> *<span class="title">Item</span></span> &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>it could be called via <code>models.NewItem()</code>. But if the function was named <code>newItem</code>, we wouldn’t be able to access it from a different package.</p>
-<p>可以通过<code>models.NewItem()</code>来调用。但是如果这个函数被命名为<code>newItem</code>，我们就不能在其他包里面来调用它了。</p>
-<p>Go ahead and change the name of the various functions, types and fields from the <code>shopping</code> code. For example, if you rename the <code>Item&#39;s</code> <code>Price</code> field to <code>price</code>, you should get an error.</p>
-<p>继续修改在<code>shopping</code>中修改函数，类型和字段的名字。例如，如果你修改<code>Item</code>的<code>Price</code>为<code>price</code>,你会收到一个编译错误。</p>
-<h3 id="包管理（Package-Management）"><a href="#包管理（Package-Management）" class="headerlink" title="包管理（Package Management）"></a>包管理（Package Management）</h3><p>The <code>go</code> command we’ve been using to <code>run</code> and <code>build</code> has a <code>get</code> subcommand which is used to fetch third-party libraries. <code>go get</code> supports various protocols but for this example, we’ll be getting a library from Github, meaning, you’ll need <code>git</code> installed on your computer.</p>
-<p>我们用来<code>run</code>和<code>build</code>的<code>go</code>命令，它还一个<code>get</code>的子命令用来获取第三方的类库。<code>go get</code>支持多种协议，但是这里，我们将从Github上获取一个类库。这是说，你要在你的电脑上安装好<code>git</code>。</p>
-<p>Assuming you already have git installed, from a shell/command prompt, enter:</p>
-<p>假设你已经安装好了git，打开一个shell/命令提示符，输入：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/mattn/go-sqlite3</span><br></pre></td></tr></table></figure>
-
-<p><code>go get</code> fetches the remote files and stores them in your workspace. Go ahead and check your <code>$GOPATH/src</code>. In addition to the <code>shopping</code> project that we created, you’ll now see a <code>github.com</code> folder. Within, you’ll see a <code>mattn</code> folder which contains a <code>go-sqlite3</code> folder.</p>
-<p><code>go get</code>获取远程文件并把它们存在你的工作目录中。到<code>$GOPATH/src</code>目录中检查一下。除了我们自己创建的<code>shopping</code>项目外，还会看到一个<code>github.com</code>文件夹。里面你会看到一个包含<code>go-sqlite3</code>文件夹的<code>mattn</code>文件夹。</p>
-<p>We just talked about how to import packages that live in our workspace. To use our newly gotten <code>go-sqlite3</code> package, we’d import it like so:</p>
-<p>我们刚介绍了在工作区中如何导入包。要用我们刚刚获取到的<code>go-sqlite3</code>包，我们需要像这样来导入它：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;github.com/mattn/go-sqlite3&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>I know this looks like a URL but in reality, it’ll simply import the <code>go-sqlite3</code> package which it expects to find in <code>$GOPATH/src/github.com/mattn/go-sqlite3</code>.</p>
-<p>我知道这看起来像是一个URL，但实际上，如果知道是在<code>$GOPATH/src/github.com/mattn/go-sqlite3</code>目录，导入<code>go-sqlite3</code>包是很简单的。</p>
-<h3 id="依赖管理（Dependency-Management）"><a href="#依赖管理（Dependency-Management）" class="headerlink" title="依赖管理（Dependency Management）"></a>依赖管理（Dependency Management）</h3><p><code>go get</code> has a couple of other tricks up its sleeve. If we <code>go get</code> within a project, it’ll scan all the files, looking for <code>imports</code> to third-party libraries and will download them. In a way, our own source code becomes a <code>Gemfile</code> or <code>package.json</code>.</p>
-<p><code>go get</code>有一些其他的戏法。如果我们在一个项目中执行<code>go get</code>，它会扫描所有文件并查找所有导入的第三方库，然后下载这些第三方库。某种程度上说，我们自己的源代码变成一个<code>Gemfile</code>或者<code>package.json</code>。</p>
-<p>If you call <code>go get -u</code> it’ll update the packages (or you can update a specific package via <code>go get -u FULL_PACKAGE_NAME</code>).</p>
-<p>执行<code>go get -u</code>将更新你的包（或者你可以通过<code>go get -u FULL_PACKAGE_NAME</code>更新指定的包）</p>
-<p>Eventually, you might find <code>go get</code> inadequate. For one thing, there’s no way to specify a revision, it always points to the master/head/trunk/default. This is an even larger problem if you have two projects needing different versions of the same library.</p>
-<p>最后，你可能发现了<code>go get</code>的一些不足。首先，它不能指定一个修订，它会一直指向<code>master/head/trunk/default</code>。这是一个严重的问题，尤其当你有2个项目需要同一个库的不同版本时。</p>
-<p>To solve this, you can use a third-party dependency management tool. They are still young, but two promising ones are <a target="_blank" rel="noopener" href="https://github.com/nitrous-io/goop">goop</a> and <a target="_blank" rel="noopener" href="https://github.com/tools/godep">godep</a>. A more complete list is available at the <a target="_blank" rel="noopener" href="https://code.google.com/p/go-wiki/wiki/PackageManagementTools">go-wiki</a>.</p>
-<p>为了解决这个问题，你可以使用一个第三方的依赖管理工具。虽然还不太成熟，但是有2个依赖管理工具比较有前景，即<a target="_blank" rel="noopener" href="https://github.com/nitrous-io/goop">goop</a>和<a target="_blank" rel="noopener" href="https://github.com/tools/godep">godep</a>。更完整的列表可以参考<a target="_blank" rel="noopener" href="https://github.com/golang/go/wiki/PackageManagementTools">go-wiki</a>。</p>
-<h2 id="接口（Interfaces）"><a href="#接口（Interfaces）" class="headerlink" title="接口（Interfaces）"></a>接口（Interfaces）</h2><p>Interfaces are types that define a contract but not an implementation. Here’s an example:</p>
-<p>接中是一种定义了协议但没有实现的类型。这是一个例子：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Logger <span class="keyword">interface</span> &#123;</span><br><span class="line">  Log(message <span class="keyword">string</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>You might be wondering what purpose this could possibly serve. Interfaces help decouple your code from specific implementations. For example, we might have various types of loggers:</p>
-<p>你可能会想知道这么做有什么目的。接口可以帮的的代码从特定的实现中解藕出来。例如,我们可能有多种类型的日志：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SqlLogger <span class="keyword">struct</span> &#123; ... &#125;</span><br><span class="line"><span class="keyword">type</span> ConsoleLogger <span class="keyword">struct</span> &#123; ... &#125;</span><br><span class="line"><span class="keyword">type</span> FileLogger <span class="keyword">struct</span> &#123; ... &#125;</span><br></pre></td></tr></table></figure>
-
-<p>Yet by programming against the interface, rather than these concrete implementations, we can easily change (and test) which we use without any impact to our code.</p>
-<p>是的，能过接口而不是这些具体的实现来编程，我们可以很容易的在不影响我们的代码的基础上修改（和测试）。</p>
-<p>How would you use one? Just like any other type, it could be a structure’s field:</p>
-<p>你要如何来使用？就像其他类型一样，它可以是一个结构体的字段：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Server <span class="keyword">struct</span> &#123;</span><br><span class="line">  logger Logger</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>or a function parameter (or return value):</p>
-<p>或者是一个函数的参数（或者访回值）：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(logger Logger)</span></span> &#123;</span><br><span class="line">  logger.Log(<span class="string">&quot;hello!&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>In a language like C# or Java, we have to be explicit when a class implements an interface:</p>
-<p>在像C#或者Java的语言中，我们必须显示的申请明一个类实现了一个接口：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class ConsoleLogger : Logger &#123;</span><br><span class="line">  public void Logger(message <span class="keyword">string</span>) &#123;</span><br><span class="line">    Console.WriteLine(message)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>In Go, this happens implicitly. If your structure has a function name <code>Log</code> with a <code>string</code> parameter and no return value, then it can be used as a <code>Logger</code>. This cuts down on the verboseness of using interfaces:</p>
-<p>在Go中，这是隐式的。如果的结构体有一个名为<code>Log</code>的函数，有一个<code>string</code>的参数和没有返回值，那么它就可以当作<code>Logger</code>来使用。这减少了使用接口时的繁索：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ConsoleLogger <span class="keyword">struct</span> &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l ConsoleLogger)</span> <span class="title">Log</span><span class="params">(message <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">  fmt.Println(message)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>It also tends to promote small and focused interfaces. The standard library is full of interfaces. The <code>io</code> package has a handful of popular ones such as <code>io.Reader</code>, <code>io.Writer</code>, and <code>io.Closer</code>. If you write a function that expects a parameter that you’ll only be calling <code>Close()</code> on, you absolutely should accept an <code>io.Closer</code> rather than whatever concrete type you’re using.</p>
-<p>这也会倾向于促进接口的小巧和单一。标准库中到处都是接口。在<code>io</code>包中有一些流行的接口，如<code>io.Reader</code>, <code>io.Writer</code>, 和<code>io.Closer</code>。如果你要写一个函数需要一个参数但只调用它的<code>Close()</code>方法，你绝对可以使用<code>io.Closer</code>接口需不是任何具体的类型。</p>
-<p>Interfaces can also participate in composition. And, interfaces themselves can be composed of other interfaces. For example, <code>io.ReadCloser</code> is an interface composed of the <code>io.Reader</code> interface as well as the <code>io.Closer</code> interface.</p>
-<p>接口也可以组合。也就是说接口可以有其他接口组成。例如，<code>io.ReadCloser</code>就是由接口<code>io.Reader</code>和<code>io.Closer</code>接口组成。</p>
-<p>Finally, interfaces are commonly used to avoid cyclical imports. Since they don’t have implementations, they’ll have limited dependencies.</p>
-<p>最后，接口常用于避免循环导入。由于接口没有实现，他们的依赖关系有限。</p>
-<h2 id="继续之前（Before-You-Continue）"><a href="#继续之前（Before-You-Continue）" class="headerlink" title="继续之前（Before You Continue）"></a>继续之前（Before You Continue）</h2><p>Ultimately, how you structure your code around Go’s workspace is something that you’ll only feel comfortable with after you’ve written a couple of non-trivial projects. What’s most important for you to remember is the tight relationship between package names and your directory structure (not just within a project, but within the entire workspace).</p>
-<p>最后，当你试着用go写一些简单的项目之后，你会习惯在go语言的工作区中组织代码的方式。最重要是的记住go语言中的包名和你的目录结构有密切关系（不仅仅在一个项目中，在整个工作空间都如此）。</p>
-<p>The way Go handles visibility of types is straightforward and effective. It’s also consistent. There are a few things we haven’t looked at, such as constants and global variables but rest assured, their visibility is determined by the same naming rule.</p>
-<p>go语言处理类型的可见性方法是简单有效的。也是一致的。还有一些内容我们没有介绍，例如常量和全局变量，但是不用担心，它们的可见性也是遵循同样的规则。</p>
-<p>Finally, if you’re new to interfaces, it might take some time before you get a feel for them. However, the first time you see a function that expects something like <code>io.Reader</code>, you’ll find yourself thanking the author for not demanding more than he or she needed.</p>
-<p>最后，如果你不熟悉go语言中的接口，你可能需要花一些时间去感受它们。无论如何，当你首次看见一个函数需要例如<code>io.Reader</code>之类的参数时，你会发现你自己感激作者的要求不是太苛刻。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/22/go/go-little-book/chapter-3/" class="post-title-link" itemprop="url">Go Little Book - 第三章 - 字典 ，数组和切片</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-22 10:45:04" itemprop="dateCreated datePublished" datetime="2018-11-22T10:45:04+08:00">2018-11-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>13k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>12 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="第三章-字典-，数组和切片（Chapter-3-Maps-Arrays-and-Slices）"><a href="#第三章-字典-，数组和切片（Chapter-3-Maps-Arrays-and-Slices）" class="headerlink" title="第三章 - 字典 ，数组和切片（Chapter 3 - Maps, Arrays and Slices）"></a>第三章 - 字典 ，数组和切片（Chapter 3 - Maps, Arrays and Slices）</h1><p>So far we’ve seen a number of simple types and structures. It’s now time to look at arrays, slices and maps.</p>
-<p>目前为止我们看了些简单类型和结构体。现在是时候来看看数组，切片和字典了。</p>
-<h2 id="数组（Arrays）"><a href="#数组（Arrays）" class="headerlink" title="数组（Arrays）"></a>数组（Arrays）</h2><p>If you come from Python, Ruby, Perl, JavaScript or PHP (and more), you’re probably used to programming with <em>dynamic arrays</em>. These are arrays that resize themselves as data is added to them. In Go, like many other languages, arrays are fixed. Declaring an array requires that we specify the size, and once the size is specified, it cannot grow:</p>
-<p>如果你从Python、Ruby、Perl、JavaScript或者PHP（还有更多），你可能使用过<em>动态数组</em>。这些数组当数据添加进来可以调整大小。在Go中，和其他语言一样，数组是固定大小的。申请一个数组需要我们指定它的大小。申明一个数组时需要指定大小，一旦大小指定了，就不能增长了：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> scores [<span class="number">10</span>]<span class="keyword">int</span></span><br><span class="line">scores[<span class="number">0</span>] = <span class="number">339</span></span><br></pre></td></tr></table></figure>
-
-<p>The above array can hold up to 10 scores using indexes <code>scores[0]</code> through <code>scores[9]</code>. Attempts to access an out of range index in the array will result in a compiler or runtime error.</p>
-<p>上面的这个数组从<code>scores[0]</code>到<code>scores[9]</code>可以容纳10个分数。尝试访问超出数组索引的会报编译或者运行时错误。</p>
-<p>We can initialize the array with values:</p>
-<p>我们可以带值初始化数组：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores := [<span class="number">4</span>]<span class="keyword">int</span>&#123;<span class="number">9001</span>, <span class="number">9333</span>, <span class="number">212</span>, <span class="number">33</span>&#125;</span><br></pre></td></tr></table></figure>
-
-<p>We can use <code>len</code> to get the length of the array. <code>range</code> can be used to iterate over it:</p>
-<p>我们可能通过<code>len</code>来获取数组的长度。可以用<code>range</code>来迭代数组。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> index, value := <span class="keyword">range</span> scores &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Arrays are efficient but rigid. We often don’t know the number of elements we’ll be dealing with upfront. For this, we turn to slices.</p>
-<p>数组高效但不灵活。我们常常不能预先知道有多少元素需要处理。因此，我们使用切片。</p>
-<h2 id="切片（Slices）"><a href="#切片（Slices）" class="headerlink" title="切片（Slices）"></a>切片（Slices）</h2><p>In Go, you rarely, if ever, use arrays directly. Instead, you use slices. A slice is a lightweight structure that wraps and represents a portion of an array. There are a few ways to create a slice, and we’ll go over when to use which later on. The first is a slight variation on how we created an array:</p>
-<p>在Go中，你很少，或者根本不，直接使用数组。反而，你使用切片。切片是对数组一个轻量型封装。有几种方式来创建一个切片，我们会全部过一遍。第一种方式和创建数组有一点小小的变化。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores := []<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">4</span>,<span class="number">293</span>,<span class="number">4</span>,<span class="number">9</span>&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Unlike the array declaration, our slice isn’t declared with a length within the square brackets. To understand how the two are different, let’s see another way to create a slice, using <code>make</code>:</p>
-<p>和申请数组不同，我们的切片没有在中括号内指定长度。要理解这两者的不同，我们用另一种方式创建切片，使用<code>make</code>：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
-
-<p>We use <code>make</code> instead of <code>new</code> because there’s more to creating a slice than just allocating the memory (which is what <code>new</code> does). Specifically, we have to allocate the memory for the underlying array and also initialize the slice.  In the above, we initialize a slice with a length of 10 and a capacity of 10. The length is the size of the slice, the capacity is the size of the underlying array. Using <code>make</code> we can specify the two separately:</p>
-<p>我们使用<code>make</code>来替代<code>new</code>因为创建一个切片比只是分配内存（<code>new</code>做的事情）要复杂一些。特别的，我们需要分配底层数组和初始化切片。上面的例子，我们初始化了一个长度和容量为10的切片。长度是切片的大小，容量时底层数组的大小。使用<code>make</code>时可以分开提定这两个值：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
-
-<p>This creates a slice with a length of 0 but with a capacity of 10. (If you’re paying attention, you’ll note that <code>make</code> and <code>len</code> <em>are</em> overloaded. Go is a language that, to the frustration of some, makes use of features which aren’t exposed for developers to use.)</p>
-<p>这创建了一个长度为0但容量为10的切片。（如果你留心，你会注意到<code>make</code>和<code>len</code><em>是</em>重载的。Go有的时候令人沮丧，一些在使用的功能没有暴露给开发者使用。）</p>
-<p>To better understand the interplay between length and capacity, let’s look at some examples:</p>
-<p>为了更好的理解长度和容量之间的相互作用，让我们来看一个例子：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">  scores[<span class="number">5</span>] = <span class="number">9033</span></span><br><span class="line">  fmt.Println(scores)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Our first example crashes. Why? Because our slice has a length of 0. Yes, the underlying array has 10 elements, but we need to explicitly expand our slice in order to access those elements. One way to expand a slice is via <code>append</code>:</p>
-<p>我们的第一个程序崩溃了。为什么呢？因我们的切片的长度为0。是的，底层数组有10个元素，但是我们需要显示的扩展切片来访问这些元素。一种扩展方式是使用<code>append</code>：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">  scores = <span class="built_in">append</span>(scores, <span class="number">5</span>)</span><br><span class="line">  fmt.Println(scores) <span class="comment">// prints [5]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>But that changes the intent of our original code. Appending to a slice of length 0 will set the first element. For whatever reason, our crashing code wanted to set the element at index 5. To do this, we can re-slice our slice:</p>
-<p>上面的修改改变了我们的原始代码的意图。扩展一个长度为0的切片会设置第一个元素。无论什么原因，我们崩溃的代码想要的是修改索引为5的元素。 我们可以重切片一次我们的切片：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">  scores = scores[<span class="number">0</span>:<span class="number">6</span>]</span><br><span class="line">  scores[<span class="number">5</span>] = <span class="number">9033</span></span><br><span class="line">  fmt.Println(scores)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>How large can we resize a slice? Up to its capacity which, in this case, is 10. You might be thinking <em>this doesn’t actually solve the fixed-length issue of arrays.</em> It turns out that <code>append</code> is pretty special. If the underlying array is full, it will create a new larger array and copy the values over (this is exactly how dynamic arrays work in PHP, Python, Ruby, JavaScript, …). This is why, in the example above that used <code>append</code>, we had to re-assign the value returned by <code>append</code> to our <code>scores</code> variable: <code>append</code> might have created a new value if the original had no more space.</p>
-<p>我们调整切片最大是多少？这是由它的容量决定的，在本例中，是10。你可能会想<em>这没有从本质上解决数能固定和长度的问题</em>。事实上，<code>append</code>是非常特殊的。当底层数组满了，它会创建一个新的数组，并把数值拷贝过来（PHP, Python, Ruby, JavaScript等也是这么做的）。这也就是为什么，我们上面的代码，使用了<code>append</code>之后，我们需要把<code>append</code>的返回值重新赋值给<code>scores</code>的原因：<code>append</code>会产生一个新的值如果原始的空间不足。</p>
-<p>If I told you that Go grew arrays with a 2x algorithm, can you guess what the following will output?</p>
-<p>如果我告诉你说Go是近两倍的算法来增长数组，那下面的代码会输出什么？</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">5</span>)</span><br><span class="line">  c := <span class="built_in">cap</span>(scores)</span><br><span class="line">  fmt.Println(c)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">25</span>; i++ &#123;</span><br><span class="line">    scores = <span class="built_in">append</span>(scores, i)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// if our capacity has changed,</span></span><br><span class="line">    <span class="comment">// Go had to grow our array to accommodate the new data</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">cap</span>(scores) != c &#123;</span><br><span class="line">      c = <span class="built_in">cap</span>(scores)</span><br><span class="line">      fmt.Println(c)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>The initial capacity of <code>scores</code> is 5. In order to hold 20 values, it’ll have to be expanded 3 times with a capacity of 10, 20 and finally 40.</p>
-<p><code>scores</code>最初的容量是5。为了容纳20个值，它将会扩展3次，分别是10，20和40。</p>
-<p>As a final example, consider:</p>
-<p>来思考下最后一个例子：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">5</span>)</span><br><span class="line">  scores = <span class="built_in">append</span>(scores, <span class="number">9332</span>)</span><br><span class="line">  fmt.Println(scores)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Here, the output is going to be <code>[0, 0, 0, 0, 0, 9332]</code>. Maybe you thought it would be <code>[9332, 0, 0, 0, 0]</code>? To a human, that might seem logical. To a compiler, you’re telling it to append a value to a slice that already holds 5 values.</p>
-<p>这里，输出是<code>[0, 0, 0, 0, 0, 9332]</code>。可能你会想它应该是<code>[9332, 0, 0, 0, 0]</code>？对于人来说这可能符合逻辑。对于编译器来说，你告诉它的就是要扩展一个已经有5个值的切片。</p>
-<p>Ultimately, there are four common ways to initialize a slice:</p>
-<p>最后，有四种常用的方式来初始化一个切片：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">names := []<span class="keyword">string</span>&#123;<span class="string">&quot;leto&quot;</span>, <span class="string">&quot;jessica&quot;</span>, <span class="string">&quot;paul&quot;</span>&#125;</span><br><span class="line">checks := <span class="built_in">make</span>([]<span class="keyword">bool</span>, <span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> names []<span class="keyword">string</span></span><br><span class="line">scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">20</span>)</span><br></pre></td></tr></table></figure>
-
-<p>When do you use which? The first one shouldn’t need much of an explanation. You use this when you know the values that you want in the array ahead of time.</p>
-<p>何时用哪一种呢？第一种不需要过多的解释。当你知道所有的值并且你要的是数组头的时候使用。</p>
-<p>The second one is useful when you’ll be writing into specific indexes of a slice. For example:</p>
-<p>当你需要写入切片的指定索引时，第二种就很有用。比如：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">extractPowers</span><span class="params">(saiyans []*Saiyans)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">  powers := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="built_in">len</span>(saiyans))</span><br><span class="line">  <span class="keyword">for</span> index, saiyan := <span class="keyword">range</span> saiyans &#123;</span><br><span class="line">    powers[index] = saiyan.Power</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> powers</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>The third version is a nil slice and is used in conjunction with <code>append</code>, when the number of elements is unknown.</p>
-<p>当知道有多少元素的时候，就可使用第三种是一个空切片和<code>append</code>配合使用。</p>
-<p>The last version lets us specify an initial capacity; useful if we have a general idea of how many elements we’ll need.</p>
-<p>当我们对需要多少元素有多少了解时使用最后一种方式来指定初始容量。</p>
-<p>Even when you know the size, <code>append</code> can be used. It’s largely a matter of preference:</p>
-<p>即使你知道了大小，<code>append</code>依然可以使用。这很大程度上是一个偏好问题：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">extractPowers</span><span class="params">(saiyans []*Saiyans)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">  powers := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="built_in">len</span>(saiyans))</span><br><span class="line">  <span class="keyword">for</span> _, saiyan := <span class="keyword">range</span> saiyans &#123;</span><br><span class="line">    powers = <span class="built_in">append</span>(powers, saiyan.Power)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> powers</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Slices as wrappers to arrays is a powerful concept. Many languages have the concept of slicing an array. Both JavaScript and Ruby arrays have a <code>slice</code> method. You can also get a slice in Ruby by using <code>[START..END]</code> or in Python via <code>[START:END]</code>. However, in these languages, a slice is actually a new array with the values of the original copied over. If we take Ruby, what’s the output of the following?</p>
-<p>切片做为数组的封装是一个很有用的概念。许多语言有数组切片的概念。JavaScript和Ruby的数组都有<code>slice</code>方法。你可以对通过<code>[START..END]</code>或者在Python中用<code>[START:END]</code>的方式取得一个切片。但是，在这些语言中切片是对原数组的拷贝。如果我们使用Ruby，下面的代码会输出什么？</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">scores = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">slice = scores[<span class="number">2.</span><span class="number">.4</span>]</span><br><span class="line">slice[<span class="number">0</span>] = <span class="number">999</span></span><br><span class="line">puts scores</span><br></pre></td></tr></table></figure>
-
-<p>The answer is <code>[1, 2, 3, 4, 5]</code>. That’s because <code>slice</code> is a completely new array with copies of values. Now, consider the Go equivalent:</p>
-<p>答案是<code>[1, 2, 3, 4, 5]</code>。那是因为<code>slice</code>是一个复制了所有值的全新数组。现在，来看下Go相同的代码：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">scores := []<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;</span><br><span class="line">slice := scores[<span class="number">2</span>:<span class="number">4</span>]</span><br><span class="line">slice[<span class="number">0</span>] = <span class="number">999</span></span><br><span class="line">fmt.Println(scores)</span><br></pre></td></tr></table></figure>
-
-<p>The output is <code>[1, 2, 999, 4, 5]</code>.</p>
-<p>输出是<code>[1, 2, 999, 4, 5]</code>。</p>
-<p>This changes how you code. For example, a number of functions take a position parameter. In JavaScript, if we want to find the first space in a string (yes, slices work on strings too!) after the first five characters, we’d write:</p>
-<p>这改变了你的编码方式。比如，一些函数需要一个位置参数。在JavaScript中，如果我们需要找到字符串中第五个字符之后的第一个空格（是的，切片对字符串也是有效的！）， 我们这样写：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">haystack = <span class="string">&quot;the spice must flow&quot;</span>;</span><br><span class="line">console.log(haystack.indexOf(<span class="string">&quot; &quot;</span>, <span class="number">5</span>));</span><br></pre></td></tr></table></figure>
-
-<p>In Go, we leverage slices:</p>
-<p>在Go中，我们使用切片：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strings.Index(haystack[<span class="number">5</span>:], <span class="string">&quot; &quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<p>We can see from the above example, that <code>[X:]</code> is shorthand for <em>from X to the end</em> while <code>[:X]</code> is shorthand for <em>from the start to X</em>. Unlike other languages, Go doesn’t support negative values. If we want all of the values of a slice except the last, we do:</p>
-<p>上面的例子，我们可以看到，<code>[X:]</code>是<em>从X到结束</em>的简写，就如<code>[:X]</code>是<em>从开始到X</em>的简写一样。和其他语言不同的是，Go不支持反向取值（这边感觉不对）。如果我们需要切片除了最后一个值以外的所有值，我们这样来写：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scores := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">scores = scores[:<span class="built_in">len</span>(scores)<span class="number">-1</span>]</span><br></pre></td></tr></table></figure>
-
-<p>The above is the start of an efficient way to remove a value from an unsorted slice:</p>
-<p>以上是一种快速删除未排序的切片中的某个值的方法的开头：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">  scores = removeAtIndex(scores, <span class="number">2</span>)</span><br><span class="line">  fmt.Println(scores)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeAtIndex</span><span class="params">(source []<span class="keyword">int</span>, index <span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">  lastIndex := <span class="built_in">len</span>(source) - <span class="number">1</span></span><br><span class="line">  <span class="comment">//swap the last value and the value we want to remove</span></span><br><span class="line">  source[index], source[lastIndex] = source[lastIndex], source[index]</span><br><span class="line">  <span class="keyword">return</span> source[:lastIndex]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Finally, now that we know about slices, we can look at another commonly used built-in function: <code>copy</code>. <code>copy</code> is one of those functions that highlights how slices change the way we code. Normally, a method that copies values from one array to another has 5 parameters: <code>source</code>, <code>sourceStart</code>, <code>count</code>, <code>destination</code> and <code>destinationStart</code>. With slices, we only need two:</p>
-<p>最后，既然我们是学习了切片，我们来看另一个常用的内置函数： <code>copy</code>。 <code>copy</code>是能突出切片是如何改变我们的编码方式的函数之一。通常，数组间拷贝需要5个参数：<code>source</code>, <code>sourceStart</code>, <code>count</code>, <code>destination</code> 和 <code>destinationStart</code>。使用切片只要两个：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;math/rand&quot;</span></span><br><span class="line">  <span class="string">&quot;sort&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">  <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">    scores[i] = <span class="keyword">int</span>(rand.Int31n(<span class="number">1000</span>))</span><br><span class="line">  &#125;</span><br><span class="line">  sort.Ints(scores)</span><br><span class="line"></span><br><span class="line">  worst := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">5</span>)</span><br><span class="line">  <span class="built_in">copy</span>(worst, scores[:<span class="number">5</span>])</span><br><span class="line">  fmt.Println(worst)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Take some time and play with the above code. Try variations. See what happens if you change copy to something like <code>copy(worst[2:4], scores[:5])</code>, or what if you try to copy more or less than <code>5</code> values into <code>worst</code>?</p>
-<p>花一些时间来执行上面的代码。多试几次。看看会发生什么，如果将代码改为<code>copy(worst[2:4], scores[:5])</code>，或者要拷贝比<code>5</code>更多或少的值到<code>worst</code>？</p>
-<h2 id="映射（Maps）"><a href="#映射（Maps）" class="headerlink" title="映射（Maps）"></a>映射（Maps）</h2><p>Maps in Go are what other languages call hashtables or dictionaries. They work as you expect: you define a key and value, and can get, set and delete values from it.</p>
-<p>Go中的映射在其他语言中叫哈希表或者字典。它们都如你想的一样：你定义一个键和值，然后你可以通过映射来删改查这些值。</p>
-<p>Maps, like slices, are created with the <code>make</code> function. Let’s look at an example:</p>
-<p>映射，和切片一样，是通过<code>make</code>函数来创建的。让我们来看一个例子：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  lookup := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>)</span><br><span class="line">  lookup[<span class="string">&quot;goku&quot;</span>] = <span class="number">9001</span></span><br><span class="line">  power, exists := lookup[<span class="string">&quot;vegeta&quot;</span>]</span><br><span class="line"></span><br><span class="line">  <span class="comment">// prints 0, false</span></span><br><span class="line">  <span class="comment">// 0 is the default value for an integer</span></span><br><span class="line">  fmt.Println(power, exists)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>To get the number of keys, we use <code>len</code>. To remove a value based on its key, we use <code>delete</code>:</p>
-<p>我们使用<code>len</code>来获取有多少键。要通过键来删除一个值，我们用<code>delete</code>：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// returns 1</span></span><br><span class="line">total := <span class="built_in">len</span>(lookup)</span><br><span class="line"></span><br><span class="line"><span class="comment">// has no return, can be called on a non-existing key</span></span><br><span class="line"><span class="built_in">delete</span>(lookup, <span class="string">&quot;goku&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<p>Maps grow dynamically. However, we can supply a second argument to <code>make</code> to set an initial size:</p>
-<p>映射是动态增长的。但是，我们可以通过<code>make</code>的第二个参数来设置它的初始大小：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lookup := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>, <span class="number">100</span>)</span><br></pre></td></tr></table></figure>
-
-<p>If you have some idea of how many keys your map will have, defining an initial size can help with performance.</p>
-<p>如果知道有多少值，指定初始大小可以有更好的性能表现。</p>
-<p>When you need a map as a field of a structure, you define it as:</p>
-<p>如果想要把映射做为结构体的一个字段，我们这样定义：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Saiyan <span class="keyword">struct</span> &#123;</span><br><span class="line">  Name <span class="keyword">string</span></span><br><span class="line">  Friends <span class="keyword">map</span>[<span class="keyword">string</span>]*Saiyan</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>One way to initialize the above is via:</p>
-<p>初始化的一种方式：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">goku := &amp;Saiyan&#123;</span><br><span class="line">  Name: <span class="string">&quot;Goku&quot;</span>,</span><br><span class="line">  Friends: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*Saiyan),</span><br><span class="line">&#125;</span><br><span class="line">goku.Friends[<span class="string">&quot;krillin&quot;</span>] = ... <span class="comment">//todo load or create Krillin</span></span><br></pre></td></tr></table></figure>
-
-<p>There’s yet another way to declare and initialize values in Go. Like <code>make</code>, this approach is specific to maps and arrays. We can declare as a composite literal:</p>
-<p>在Go中有另一种申明和初始化的方式。和<code>make</code>一样，这对映射和数组都是有效的。我们可以像组合文字一样申明：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lookup := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>&#123;</span><br><span class="line">  <span class="string">&quot;goku&quot;</span>: <span class="number">9001</span>,</span><br><span class="line">  <span class="string">&quot;gohan&quot;</span>: <span class="number">2044</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>We can iterate over a map using a <code>for</code> loop combined with the <code>range</code> keyword:</p>
-<p>我们可以通过<code>for</code>和<code>range</code>关键字来迭代映射：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> key, value := <span class="keyword">range</span> lookup &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Iteration over maps isn’t ordered. Each iteration over a lookup will return the key value pair in a random order.</p>
-<p>映射的迭代器是无序的。每个迭代器随机查找键值对。</p>
-<h2 id="指针和值（Pointers-versus-Values）"><a href="#指针和值（Pointers-versus-Values）" class="headerlink" title="指针和值（Pointers versus Values）"></a>指针和值（Pointers versus Values）</h2><p>We finished Chapter 2 by looking at whether you should assign and pass pointers or values. We’ll now have this same conversation with respect to array and map values. Which of these should you use?</p>
-<p>通过了解什么时候传值或指针我们结束了第二章。在数组和映射的值方面我们将碰到相同的问题。我们应该用哪一种？</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a := <span class="built_in">make</span>([]Saiyan, <span class="number">10</span>)</span><br><span class="line"><span class="comment">//or</span></span><br><span class="line">b := <span class="built_in">make</span>([]*Saiyan, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
-
-<p>Many developers think that passing <code>b</code> to, or returning it from, a function is going to be more efficient. However, what’s being passed/returned is a copy of the slice, which itself is a reference. So with respect to passing/returning the slice itself, there’s no difference.</p>
-<p>许多开发人员会想对于一个函数来说是传<code>b</code>还是将它做为返回值更高效。然而，这里传递或者返回的都是一个切片的拷贝，它本身就是一个引用。所以就传递或者返回这个切片而言，没有什么区别。</p>
-<p>Where you will see a difference is when you modify the values of a slice or map. At this point, the same logic that we saw in Chapter 2 applies. So the decision on whether to define an array of pointers versus an array of values comes down to how you use the individual values, not how you use the array or map itself.</p>
-<p>当你改变一个切片或者映射的值时，你会看见不同。在这点上，同样的逻辑，我们在第二章看到已经适用。所以是否定义一个数组指针还是一个数组值主要归结于如何使用单个值，而不是你如何使用数组或者映射本身。</p>
-<h2 id="继续之前（Before-You-Continue）"><a href="#继续之前（Before-You-Continue）" class="headerlink" title="继续之前（Before You Continue）"></a>继续之前（Before You Continue）</h2><p>Arrays and maps in Go work much like they do in other languages. If you’re used to dynamic arrays, there might be a small adjustment, but <code>append</code> should solve most of your discomfort. If we peek beyond the superficial syntax of arrays, we find slices. Slices are powerful and they have a surprisingly large impact on the clarity of your code.</p>
-<p>在Go中数组和映射的工作方式与其他语言非常像。如果你用过动态数组，可能有会有一些需要调整，但是通过<code>append</code>可以解决所有的不适。如果我们抛开数组表面的语法，我们就会发现切片。切片是相当强大的，使用切片对你代码的整洁性有着非常巨大的影响。</p>
-<p>There are edge cases that we haven’t covered, but you’re not likely to run into them. And, if you do, hopefully the foundation we’ve built here will let you understand what’s going on.</p>
-<p>这里有一些边界例子我们没有涉及到，但是你不太可能遇见这些例子。另外，如果你遇到了，希望我们已经打下的基础能让你理解这是怎么回事。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1871,14 +1742,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">238</span>
+          <span class="site-state-item-count">240</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">82</span>
+        <span class="site-state-item-count">84</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -1942,12 +1813,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">484k</span>
+    <span title="站点总字数">486k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:20</span>
+    <span title="站点阅读时长">7:22</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

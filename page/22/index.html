@@ -172,6 +172,466 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/22/go/go-little-book/chapter-4/" class="post-title-link" itemprop="url">Go Little Book - 第四章 - 代码组织和接口</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-22 10:45:23" itemprop="dateCreated datePublished" datetime="2018-11-22T10:45:23+08:00">2018-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="第四章-代码组织和接口（Chapter-4-Code-Organization-and-Interfaces）"><a href="#第四章-代码组织和接口（Chapter-4-Code-Organization-and-Interfaces）" class="headerlink" title="第四章 - 代码组织和接口（Chapter 4 - Code Organization and Interfaces）"></a>第四章 - 代码组织和接口（Chapter 4 - Code Organization and Interfaces）</h1><p>It’s now time to look at how to organize our code.</p>
+<p>现在是时候来看看我们是怎么组织代码了。</p>
+<h2 id="包（Packages）"><a href="#包（Packages）" class="headerlink" title="包（Packages）"></a>包（Packages）</h2><p>To keep more complicated libraries and systems organized, we need to learn about packages. In Go, package names follow the directory structure of your Go workspace. If we were building a shopping system, we’d probably start with a package name “shopping” and put our source files in <code>$GOPATH/src/shopping/</code>.</p>
+<p>为了组织更复杂的类库和系统，我们需要了解包。在Go中，包名紧跟在工作目录结构之下。如果我们构建一个电商系统，我们可能以”shopping”命名包和把源文件存在<code>$GOPATH/src/shopping/</code>下。</p>
+<p>We don’t want to put everything inside this folder though. For example, maybe we want to isolate some database logic inside its own folder. To achieve this, we create a subfolder at <code>$GOPATH/src/shopping/db</code>. The package name of the files within this subfolder is simply <code>db</code>, but to access it from another package, including the <code>shopping</code> package, we need to import <code>shopping/db</code>.</p>
+<p>显然我们不想反所有的东西都放在这个目录。例如，我们希望在数据库目录下关联一些数据库的逻辑。要达到这个目的，我们创建了一个子目录<code>$GOPATH/src/shopping/db</code>。这个目录下的包名可以是简单的<code>db</code>，但是其他包需要访问这个包时，就需要包含<code>shopping</code>，我们需要这样导入<code>shopping/db</code>。</p>
+<p>In other words, when you name a package, via the <code>package</code> keyword, you provide a single value, not a complete hierarchy (e.g., “shopping” or “db”). When you import a package, you specify the complete path.</p>
+<p>换名话来说，当你命名一个包时，可以通过<code>package</code>关键字，你提供一个单一的值，不是完整的层级（比如，”shopping”或者”db”）。当你导入包时，你需要指定完整的路径。</p>
+<p>Let’s try it. Inside your Go workspace’s <code>src</code> folder (which we set up in Getting Started of the Introduction), create a new folder called <code>shopping</code> and a subfolder within it called <code>db</code>.</p>
+<p>让我们来试一试，在我们的Go的工作目录下的<code>src</code>文件夹中（我们在入门介绍中设置的），创建一个<code>shopping</code>的文件夹并创建一个<code>db</code>的子文件夹。</p>
+<p>Inside of <code>shopping/db</code>, create a file called <code>db.go</code> and add the following code:</p>
+<p>在<code>shopping/db</code>目录下，创建一个名为<code>db.go</code>的文件并添加如下代码： </p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> db</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</span><br><span class="line">  Price <span class="keyword">float64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LoadItem</span><span class="params">(id <span class="keyword">int</span>)</span> *<span class="title">Item</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;Item&#123;</span><br><span class="line">    Price: <span class="number">9.001</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Notice that the name of the package is the same as the name of the folder. Also, obviously, we aren’t actually accessing the database. We’re just using this as an example to show how to organize code.</p>
+<p>注意下包名和文件夹的名字是一样的。显然，我们也没有真下的访问数据库。我们只是用这个例子来演示如何组织代码。</p>
+<p>Now, create a file called <code>pricecheck.go</code> inside of the main <code>shopping</code> folder. Its content is:</p>
+<p>现在，在主目录<code>shopping</code>下创建一个名为<code>pricecheck.go</code>的文件。它的代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> shopping</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping/db&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PriceCheck</span><span class="params">(itemId <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">float64</span>, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">  item := db.LoadItem(itemId)</span><br><span class="line">  <span class="keyword">if</span> item == <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>, <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> item.Price, <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>It’s tempting to think that importing <code>shopping/db</code> is somehow special because we’re inside the <code>shopping</code> package/folder already. In reality, you’re importing <code>$GOPATH/src/shopping/db</code>, which means you could just as easily import <code>test/db</code> so long as you had a package named <code>db</code> inside of your workspace’s <code>src/test</code> folder.</p>
+<p>这很容易理解，导入<code>shopping/ db</code>有些特殊，因为我们是<code>shopping</code>包/文件夹中了。实际上，要导入<code>$ GOPATH/src/shopping/db</code>，这意味着你可以很容易地导入<code>test/db</code>，只要工作空间下的<code>src/test/db</code>的文件夹有一个<code>db</code>的包。</p>
+<p>If you’re building a package, you don’t need anything more than what we’ve seen. To build an executable, you still need a <code>main</code>. The way I prefer to do this is to create a subfolder called <code>main</code> inside of <code>shopping</code> with a file called <code>main.go</code> and the following content:</p>
+<p>如果你想建一个包，只需要我们看到的这些内容就可以了。要创建一个可执行程序，我们还需要一个<code>main</code>函数。我喜欢在<code>shopping</code>文件夹下建一个<code>main</code>文件夹并新增一个<code>main.go</code>的文件。它的内容如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping&quot;</span></span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(shopping.PriceCheck(<span class="number">4343</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You can now run your code by going into your <code>shopping</code> project and typing:</p>
+<p>进入<code>shopping</code>目录输入如下内容可以运行代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go run main/main.go</span><br></pre></td></tr></table></figure>
+
+<h3 id="循环导入（Cyclical-Imports）"><a href="#循环导入（Cyclical-Imports）" class="headerlink" title="循环导入（Cyclical Imports）"></a>循环导入（Cyclical Imports）</h3><p>As you start writing more complex systems, you’re bound to run into cyclical imports. This happens when package A imports package B but package B imports package A (either directly or indirectly through another package). This is something the compiler won’t allow.</p>
+<p>当你开始写一些更复杂的系统时，你不免会碰到循环导入的问题。当包A的导入了包B但是包B又导入了包A（无论是直接还是间接通过其他包导入）循环导入就发生了。这是编译器不允许的。</p>
+<p>Let’s change our shopping structure to cause the error.</p>
+<p>让我们来修改一下<code>shopping</code>的结构来引发这个错误。</p>
+<p>Move the <code>Item</code> definition from <code>shopping/db/db.go</code> into <code>shopping/pricecheck.go</code>. Your <code>pricecheck.go</code> file should now look like:</p>
+<p>把<code>Item</code>的定义从<code>shopping/db/db.go</code>移到<code>shopping/pricecheck.go</code>中。你的<code>pricecheck.go</code>应该看起来像这样：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> shopping</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping/db&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</span><br><span class="line">  Price <span class="keyword">float64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PriceCheck</span><span class="params">(itemId <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">float64</span>, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">  item := db.LoadItem(itemId)</span><br><span class="line">  <span class="keyword">if</span> item == <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>, <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> item.Price, <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>If you try to run the code, you’ll get a couple of errors from <code>db/db.go</code> about <code>Item</code> being undefined. This makes sense. <code>Item</code> no longer exists in the <code>db</code> package; it’s been moved to the shopping package. We need to change <code>shopping/db/db.go</code> to:</p>
+<p>如果你尝试运行代码，你会从<code>db/db.go</code>中收到一些错误信息说<code>Item</code>未定义。这好理解。<code>Item</code>已经不在<code>db</code>包下了；这被移到了<code>shopping</code>包。我们需要修改<code>shopping/db/db.go</code>的代码为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> db</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LoadItem</span><span class="params">(id <span class="keyword">int</span>)</span> *<span class="title">shopping</span>.<span class="title">Item</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;shopping.Item&#123;</span><br><span class="line">    Price: <span class="number">9.001</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Now when you try to run the code, you’ll get a dreaded <em>import cycle not allowed</em> error. We solve this by introducing another package which contains shared structures. Your directory structure should look like:</p>
+<p>现在当你尝试运行代码时，你会收到一个令人害怕的错误<em>import cycle not allowed</em>。我们通过引入一个包含共享结构的另一个包来解决这个问题。你的目录结构看起来像这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$GOPATH/src</span><br><span class="line">  - shopping</span><br><span class="line">    pricecheck.go</span><br><span class="line">    - db</span><br><span class="line">      db.go</span><br><span class="line">    - models</span><br><span class="line">      item.go</span><br><span class="line">    - main</span><br><span class="line">      main.go</span><br></pre></td></tr></table></figure>
+
+<p><code>pricecheck.go</code> will still import <code>shopping/db</code>, but <code>db.go</code> will now import <code>shopping/models</code> instead of <code>shopping</code>, thus breaking the cycle. Since we moved the shared <code>Item</code> structure to <code>shopping/models/item.go</code>, we need to change <code>shopping/db/db.go</code> to reference the <code>Item</code> structure from <code>models</code> package:</p>
+<p><code>pricecheck.go</code>一样是导入<code>shopping/db</code>，但是<code>db.go</code>现在要导入<code>shopping/models</code>来替换<code>shopping</code>，这样打破了循环。因为将共享结构体<code>Item</code>移到了<code>shopping/models/item.go</code>，我们需要修改<code>shopping/db/db.go</code>从<code>model</code>包中引用结构体<code>Item</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> db</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;shopping/models&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LoadItem</span><span class="params">(id <span class="keyword">int</span>)</span> *<span class="title">models</span>.<span class="title">Item</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;models.Item&#123;</span><br><span class="line">    Price: <span class="number">9.001</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You’ll often need to share more than just <code>models</code>, so you might have other similar folder named <code>utilities</code> and such. The important rule about these shared packages is that they shouldn’t import anything from the <code>shopping</code> package or any sub-packages. In a few sections, we’ll look at interfaces which can help us untangle these types of dependencies.</p>
+<p>你常常需要的共享结构不仅仅是<code>models</code>，所以你可能还有一些类似<code>utilities</code>这样的文件夹。最重要的原则是这些共享对象，不能导入<code>shopping</code>包或者它的子包。要不了几个章节，我们会看到接口是如何解开这些依赖的。</p>
+<h3 id="可见性（Visibility）"><a href="#可见性（Visibility）" class="headerlink" title="可见性（Visibility）"></a>可见性（Visibility）</h3><p>Go uses a simple rule to define what types and functions are visible outside of a package. If the name of the type or function starts with an uppercase letter, it’s visible. If it starts with a lowercase letter, it isn’t.</p>
+<p>Go用一个非常简单的原则来决定一个包的类型和函数是否在包外可见。如果类型或者函数是以大写字母开头，就是可见的，如果是小写字母开头，就是不可见的。</p>
+<p>This also applies to structure fields. If a structure field name starts with a lowercase letter, only code within the same package will be able to access them.</p>
+<p>这对结构体的字段也是一样适用的。如果一个结构体的字段名是以小写字母开头，只有在同一个包里的代码可以访问它们。</p>
+<p>For example, if our <code>items.go</code> file had a function that looked like:</p>
+<p>例如：在我们的<code>items.go</code>文件中有这样的一个函数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewItem</span><span class="params">()</span> *<span class="title">Item</span></span> &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>it could be called via <code>models.NewItem()</code>. But if the function was named <code>newItem</code>, we wouldn’t be able to access it from a different package.</p>
+<p>可以通过<code>models.NewItem()</code>来调用。但是如果这个函数被命名为<code>newItem</code>，我们就不能在其他包里面来调用它了。</p>
+<p>Go ahead and change the name of the various functions, types and fields from the <code>shopping</code> code. For example, if you rename the <code>Item&#39;s</code> <code>Price</code> field to <code>price</code>, you should get an error.</p>
+<p>继续修改在<code>shopping</code>中修改函数，类型和字段的名字。例如，如果你修改<code>Item</code>的<code>Price</code>为<code>price</code>,你会收到一个编译错误。</p>
+<h3 id="包管理（Package-Management）"><a href="#包管理（Package-Management）" class="headerlink" title="包管理（Package Management）"></a>包管理（Package Management）</h3><p>The <code>go</code> command we’ve been using to <code>run</code> and <code>build</code> has a <code>get</code> subcommand which is used to fetch third-party libraries. <code>go get</code> supports various protocols but for this example, we’ll be getting a library from Github, meaning, you’ll need <code>git</code> installed on your computer.</p>
+<p>我们用来<code>run</code>和<code>build</code>的<code>go</code>命令，它还一个<code>get</code>的子命令用来获取第三方的类库。<code>go get</code>支持多种协议，但是这里，我们将从Github上获取一个类库。这是说，你要在你的电脑上安装好<code>git</code>。</p>
+<p>Assuming you already have git installed, from a shell/command prompt, enter:</p>
+<p>假设你已经安装好了git，打开一个shell/命令提示符，输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/mattn/go-sqlite3</span><br></pre></td></tr></table></figure>
+
+<p><code>go get</code> fetches the remote files and stores them in your workspace. Go ahead and check your <code>$GOPATH/src</code>. In addition to the <code>shopping</code> project that we created, you’ll now see a <code>github.com</code> folder. Within, you’ll see a <code>mattn</code> folder which contains a <code>go-sqlite3</code> folder.</p>
+<p><code>go get</code>获取远程文件并把它们存在你的工作目录中。到<code>$GOPATH/src</code>目录中检查一下。除了我们自己创建的<code>shopping</code>项目外，还会看到一个<code>github.com</code>文件夹。里面你会看到一个包含<code>go-sqlite3</code>文件夹的<code>mattn</code>文件夹。</p>
+<p>We just talked about how to import packages that live in our workspace. To use our newly gotten <code>go-sqlite3</code> package, we’d import it like so:</p>
+<p>我们刚介绍了在工作区中如何导入包。要用我们刚刚获取到的<code>go-sqlite3</code>包，我们需要像这样来导入它：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;github.com/mattn/go-sqlite3&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>I know this looks like a URL but in reality, it’ll simply import the <code>go-sqlite3</code> package which it expects to find in <code>$GOPATH/src/github.com/mattn/go-sqlite3</code>.</p>
+<p>我知道这看起来像是一个URL，但实际上，如果知道是在<code>$GOPATH/src/github.com/mattn/go-sqlite3</code>目录，导入<code>go-sqlite3</code>包是很简单的。</p>
+<h3 id="依赖管理（Dependency-Management）"><a href="#依赖管理（Dependency-Management）" class="headerlink" title="依赖管理（Dependency Management）"></a>依赖管理（Dependency Management）</h3><p><code>go get</code> has a couple of other tricks up its sleeve. If we <code>go get</code> within a project, it’ll scan all the files, looking for <code>imports</code> to third-party libraries and will download them. In a way, our own source code becomes a <code>Gemfile</code> or <code>package.json</code>.</p>
+<p><code>go get</code>有一些其他的戏法。如果我们在一个项目中执行<code>go get</code>，它会扫描所有文件并查找所有导入的第三方库，然后下载这些第三方库。某种程度上说，我们自己的源代码变成一个<code>Gemfile</code>或者<code>package.json</code>。</p>
+<p>If you call <code>go get -u</code> it’ll update the packages (or you can update a specific package via <code>go get -u FULL_PACKAGE_NAME</code>).</p>
+<p>执行<code>go get -u</code>将更新你的包（或者你可以通过<code>go get -u FULL_PACKAGE_NAME</code>更新指定的包）</p>
+<p>Eventually, you might find <code>go get</code> inadequate. For one thing, there’s no way to specify a revision, it always points to the master/head/trunk/default. This is an even larger problem if you have two projects needing different versions of the same library.</p>
+<p>最后，你可能发现了<code>go get</code>的一些不足。首先，它不能指定一个修订，它会一直指向<code>master/head/trunk/default</code>。这是一个严重的问题，尤其当你有2个项目需要同一个库的不同版本时。</p>
+<p>To solve this, you can use a third-party dependency management tool. They are still young, but two promising ones are <a target="_blank" rel="noopener" href="https://github.com/nitrous-io/goop">goop</a> and <a target="_blank" rel="noopener" href="https://github.com/tools/godep">godep</a>. A more complete list is available at the <a target="_blank" rel="noopener" href="https://code.google.com/p/go-wiki/wiki/PackageManagementTools">go-wiki</a>.</p>
+<p>为了解决这个问题，你可以使用一个第三方的依赖管理工具。虽然还不太成熟，但是有2个依赖管理工具比较有前景，即<a target="_blank" rel="noopener" href="https://github.com/nitrous-io/goop">goop</a>和<a target="_blank" rel="noopener" href="https://github.com/tools/godep">godep</a>。更完整的列表可以参考<a target="_blank" rel="noopener" href="https://github.com/golang/go/wiki/PackageManagementTools">go-wiki</a>。</p>
+<h2 id="接口（Interfaces）"><a href="#接口（Interfaces）" class="headerlink" title="接口（Interfaces）"></a>接口（Interfaces）</h2><p>Interfaces are types that define a contract but not an implementation. Here’s an example:</p>
+<p>接中是一种定义了协议但没有实现的类型。这是一个例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Logger <span class="keyword">interface</span> &#123;</span><br><span class="line">  Log(message <span class="keyword">string</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You might be wondering what purpose this could possibly serve. Interfaces help decouple your code from specific implementations. For example, we might have various types of loggers:</p>
+<p>你可能会想知道这么做有什么目的。接口可以帮的的代码从特定的实现中解藕出来。例如,我们可能有多种类型的日志：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SqlLogger <span class="keyword">struct</span> &#123; ... &#125;</span><br><span class="line"><span class="keyword">type</span> ConsoleLogger <span class="keyword">struct</span> &#123; ... &#125;</span><br><span class="line"><span class="keyword">type</span> FileLogger <span class="keyword">struct</span> &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Yet by programming against the interface, rather than these concrete implementations, we can easily change (and test) which we use without any impact to our code.</p>
+<p>是的，能过接口而不是这些具体的实现来编程，我们可以很容易的在不影响我们的代码的基础上修改（和测试）。</p>
+<p>How would you use one? Just like any other type, it could be a structure’s field:</p>
+<p>你要如何来使用？就像其他类型一样，它可以是一个结构体的字段：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Server <span class="keyword">struct</span> &#123;</span><br><span class="line">  logger Logger</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>or a function parameter (or return value):</p>
+<p>或者是一个函数的参数（或者访回值）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(logger Logger)</span></span> &#123;</span><br><span class="line">  logger.Log(<span class="string">&quot;hello!&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In a language like C# or Java, we have to be explicit when a class implements an interface:</p>
+<p>在像C#或者Java的语言中，我们必须显示的申请明一个类实现了一个接口：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class ConsoleLogger : Logger &#123;</span><br><span class="line">  public void Logger(message <span class="keyword">string</span>) &#123;</span><br><span class="line">    Console.WriteLine(message)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In Go, this happens implicitly. If your structure has a function name <code>Log</code> with a <code>string</code> parameter and no return value, then it can be used as a <code>Logger</code>. This cuts down on the verboseness of using interfaces:</p>
+<p>在Go中，这是隐式的。如果的结构体有一个名为<code>Log</code>的函数，有一个<code>string</code>的参数和没有返回值，那么它就可以当作<code>Logger</code>来使用。这减少了使用接口时的繁索：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ConsoleLogger <span class="keyword">struct</span> &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l ConsoleLogger)</span> <span class="title">Log</span><span class="params">(message <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">  fmt.Println(message)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>It also tends to promote small and focused interfaces. The standard library is full of interfaces. The <code>io</code> package has a handful of popular ones such as <code>io.Reader</code>, <code>io.Writer</code>, and <code>io.Closer</code>. If you write a function that expects a parameter that you’ll only be calling <code>Close()</code> on, you absolutely should accept an <code>io.Closer</code> rather than whatever concrete type you’re using.</p>
+<p>这也会倾向于促进接口的小巧和单一。标准库中到处都是接口。在<code>io</code>包中有一些流行的接口，如<code>io.Reader</code>, <code>io.Writer</code>, 和<code>io.Closer</code>。如果你要写一个函数需要一个参数但只调用它的<code>Close()</code>方法，你绝对可以使用<code>io.Closer</code>接口需不是任何具体的类型。</p>
+<p>Interfaces can also participate in composition. And, interfaces themselves can be composed of other interfaces. For example, <code>io.ReadCloser</code> is an interface composed of the <code>io.Reader</code> interface as well as the <code>io.Closer</code> interface.</p>
+<p>接口也可以组合。也就是说接口可以有其他接口组成。例如，<code>io.ReadCloser</code>就是由接口<code>io.Reader</code>和<code>io.Closer</code>接口组成。</p>
+<p>Finally, interfaces are commonly used to avoid cyclical imports. Since they don’t have implementations, they’ll have limited dependencies.</p>
+<p>最后，接口常用于避免循环导入。由于接口没有实现，他们的依赖关系有限。</p>
+<h2 id="继续之前（Before-You-Continue）"><a href="#继续之前（Before-You-Continue）" class="headerlink" title="继续之前（Before You Continue）"></a>继续之前（Before You Continue）</h2><p>Ultimately, how you structure your code around Go’s workspace is something that you’ll only feel comfortable with after you’ve written a couple of non-trivial projects. What’s most important for you to remember is the tight relationship between package names and your directory structure (not just within a project, but within the entire workspace).</p>
+<p>最后，当你试着用go写一些简单的项目之后，你会习惯在go语言的工作区中组织代码的方式。最重要是的记住go语言中的包名和你的目录结构有密切关系（不仅仅在一个项目中，在整个工作空间都如此）。</p>
+<p>The way Go handles visibility of types is straightforward and effective. It’s also consistent. There are a few things we haven’t looked at, such as constants and global variables but rest assured, their visibility is determined by the same naming rule.</p>
+<p>go语言处理类型的可见性方法是简单有效的。也是一致的。还有一些内容我们没有介绍，例如常量和全局变量，但是不用担心，它们的可见性也是遵循同样的规则。</p>
+<p>Finally, if you’re new to interfaces, it might take some time before you get a feel for them. However, the first time you see a function that expects something like <code>io.Reader</code>, you’ll find yourself thanking the author for not demanding more than he or she needed.</p>
+<p>最后，如果你不熟悉go语言中的接口，你可能需要花一些时间去感受它们。无论如何，当你首次看见一个函数需要例如<code>io.Reader</code>之类的参数时，你会发现你自己感激作者的要求不是太苛刻。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/22/go/go-little-book/chapter-3/" class="post-title-link" itemprop="url">Go Little Book - 第三章 - 字典 ，数组和切片</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-22 10:45:04" itemprop="dateCreated datePublished" datetime="2018-11-22T10:45:04+08:00">2018-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="第三章-字典-，数组和切片（Chapter-3-Maps-Arrays-and-Slices）"><a href="#第三章-字典-，数组和切片（Chapter-3-Maps-Arrays-and-Slices）" class="headerlink" title="第三章 - 字典 ，数组和切片（Chapter 3 - Maps, Arrays and Slices）"></a>第三章 - 字典 ，数组和切片（Chapter 3 - Maps, Arrays and Slices）</h1><p>So far we’ve seen a number of simple types and structures. It’s now time to look at arrays, slices and maps.</p>
+<p>目前为止我们看了些简单类型和结构体。现在是时候来看看数组，切片和字典了。</p>
+<h2 id="数组（Arrays）"><a href="#数组（Arrays）" class="headerlink" title="数组（Arrays）"></a>数组（Arrays）</h2><p>If you come from Python, Ruby, Perl, JavaScript or PHP (and more), you’re probably used to programming with <em>dynamic arrays</em>. These are arrays that resize themselves as data is added to them. In Go, like many other languages, arrays are fixed. Declaring an array requires that we specify the size, and once the size is specified, it cannot grow:</p>
+<p>如果你从Python、Ruby、Perl、JavaScript或者PHP（还有更多），你可能使用过<em>动态数组</em>。这些数组当数据添加进来可以调整大小。在Go中，和其他语言一样，数组是固定大小的。申请一个数组需要我们指定它的大小。申明一个数组时需要指定大小，一旦大小指定了，就不能增长了：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> scores [<span class="number">10</span>]<span class="keyword">int</span></span><br><span class="line">scores[<span class="number">0</span>] = <span class="number">339</span></span><br></pre></td></tr></table></figure>
+
+<p>The above array can hold up to 10 scores using indexes <code>scores[0]</code> through <code>scores[9]</code>. Attempts to access an out of range index in the array will result in a compiler or runtime error.</p>
+<p>上面的这个数组从<code>scores[0]</code>到<code>scores[9]</code>可以容纳10个分数。尝试访问超出数组索引的会报编译或者运行时错误。</p>
+<p>We can initialize the array with values:</p>
+<p>我们可以带值初始化数组：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores := [<span class="number">4</span>]<span class="keyword">int</span>&#123;<span class="number">9001</span>, <span class="number">9333</span>, <span class="number">212</span>, <span class="number">33</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>We can use <code>len</code> to get the length of the array. <code>range</code> can be used to iterate over it:</p>
+<p>我们可能通过<code>len</code>来获取数组的长度。可以用<code>range</code>来迭代数组。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> index, value := <span class="keyword">range</span> scores &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Arrays are efficient but rigid. We often don’t know the number of elements we’ll be dealing with upfront. For this, we turn to slices.</p>
+<p>数组高效但不灵活。我们常常不能预先知道有多少元素需要处理。因此，我们使用切片。</p>
+<h2 id="切片（Slices）"><a href="#切片（Slices）" class="headerlink" title="切片（Slices）"></a>切片（Slices）</h2><p>In Go, you rarely, if ever, use arrays directly. Instead, you use slices. A slice is a lightweight structure that wraps and represents a portion of an array. There are a few ways to create a slice, and we’ll go over when to use which later on. The first is a slight variation on how we created an array:</p>
+<p>在Go中，你很少，或者根本不，直接使用数组。反而，你使用切片。切片是对数组一个轻量型封装。有几种方式来创建一个切片，我们会全部过一遍。第一种方式和创建数组有一点小小的变化。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores := []<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">4</span>,<span class="number">293</span>,<span class="number">4</span>,<span class="number">9</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Unlike the array declaration, our slice isn’t declared with a length within the square brackets. To understand how the two are different, let’s see another way to create a slice, using <code>make</code>:</p>
+<p>和申请数组不同，我们的切片没有在中括号内指定长度。要理解这两者的不同，我们用另一种方式创建切片，使用<code>make</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<p>We use <code>make</code> instead of <code>new</code> because there’s more to creating a slice than just allocating the memory (which is what <code>new</code> does). Specifically, we have to allocate the memory for the underlying array and also initialize the slice.  In the above, we initialize a slice with a length of 10 and a capacity of 10. The length is the size of the slice, the capacity is the size of the underlying array. Using <code>make</code> we can specify the two separately:</p>
+<p>我们使用<code>make</code>来替代<code>new</code>因为创建一个切片比只是分配内存（<code>new</code>做的事情）要复杂一些。特别的，我们需要分配底层数组和初始化切片。上面的例子，我们初始化了一个长度和容量为10的切片。长度是切片的大小，容量时底层数组的大小。使用<code>make</code>时可以分开提定这两个值：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<p>This creates a slice with a length of 0 but with a capacity of 10. (If you’re paying attention, you’ll note that <code>make</code> and <code>len</code> <em>are</em> overloaded. Go is a language that, to the frustration of some, makes use of features which aren’t exposed for developers to use.)</p>
+<p>这创建了一个长度为0但容量为10的切片。（如果你留心，你会注意到<code>make</code>和<code>len</code><em>是</em>重载的。Go有的时候令人沮丧，一些在使用的功能没有暴露给开发者使用。）</p>
+<p>To better understand the interplay between length and capacity, let’s look at some examples:</p>
+<p>为了更好的理解长度和容量之间的相互作用，让我们来看一个例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">  scores[<span class="number">5</span>] = <span class="number">9033</span></span><br><span class="line">  fmt.Println(scores)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Our first example crashes. Why? Because our slice has a length of 0. Yes, the underlying array has 10 elements, but we need to explicitly expand our slice in order to access those elements. One way to expand a slice is via <code>append</code>:</p>
+<p>我们的第一个程序崩溃了。为什么呢？因我们的切片的长度为0。是的，底层数组有10个元素，但是我们需要显示的扩展切片来访问这些元素。一种扩展方式是使用<code>append</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">  scores = <span class="built_in">append</span>(scores, <span class="number">5</span>)</span><br><span class="line">  fmt.Println(scores) <span class="comment">// prints [5]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>But that changes the intent of our original code. Appending to a slice of length 0 will set the first element. For whatever reason, our crashing code wanted to set the element at index 5. To do this, we can re-slice our slice:</p>
+<p>上面的修改改变了我们的原始代码的意图。扩展一个长度为0的切片会设置第一个元素。无论什么原因，我们崩溃的代码想要的是修改索引为5的元素。 我们可以重切片一次我们的切片：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">  scores = scores[<span class="number">0</span>:<span class="number">6</span>]</span><br><span class="line">  scores[<span class="number">5</span>] = <span class="number">9033</span></span><br><span class="line">  fmt.Println(scores)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>How large can we resize a slice? Up to its capacity which, in this case, is 10. You might be thinking <em>this doesn’t actually solve the fixed-length issue of arrays.</em> It turns out that <code>append</code> is pretty special. If the underlying array is full, it will create a new larger array and copy the values over (this is exactly how dynamic arrays work in PHP, Python, Ruby, JavaScript, …). This is why, in the example above that used <code>append</code>, we had to re-assign the value returned by <code>append</code> to our <code>scores</code> variable: <code>append</code> might have created a new value if the original had no more space.</p>
+<p>我们调整切片最大是多少？这是由它的容量决定的，在本例中，是10。你可能会想<em>这没有从本质上解决数能固定和长度的问题</em>。事实上，<code>append</code>是非常特殊的。当底层数组满了，它会创建一个新的数组，并把数值拷贝过来（PHP, Python, Ruby, JavaScript等也是这么做的）。这也就是为什么，我们上面的代码，使用了<code>append</code>之后，我们需要把<code>append</code>的返回值重新赋值给<code>scores</code>的原因：<code>append</code>会产生一个新的值如果原始的空间不足。</p>
+<p>If I told you that Go grew arrays with a 2x algorithm, can you guess what the following will output?</p>
+<p>如果我告诉你说Go是近两倍的算法来增长数组，那下面的代码会输出什么？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">5</span>)</span><br><span class="line">  c := <span class="built_in">cap</span>(scores)</span><br><span class="line">  fmt.Println(c)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">25</span>; i++ &#123;</span><br><span class="line">    scores = <span class="built_in">append</span>(scores, i)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// if our capacity has changed,</span></span><br><span class="line">    <span class="comment">// Go had to grow our array to accommodate the new data</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">cap</span>(scores) != c &#123;</span><br><span class="line">      c = <span class="built_in">cap</span>(scores)</span><br><span class="line">      fmt.Println(c)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The initial capacity of <code>scores</code> is 5. In order to hold 20 values, it’ll have to be expanded 3 times with a capacity of 10, 20 and finally 40.</p>
+<p><code>scores</code>最初的容量是5。为了容纳20个值，它将会扩展3次，分别是10，20和40。</p>
+<p>As a final example, consider:</p>
+<p>来思考下最后一个例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">5</span>)</span><br><span class="line">  scores = <span class="built_in">append</span>(scores, <span class="number">9332</span>)</span><br><span class="line">  fmt.Println(scores)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here, the output is going to be <code>[0, 0, 0, 0, 0, 9332]</code>. Maybe you thought it would be <code>[9332, 0, 0, 0, 0]</code>? To a human, that might seem logical. To a compiler, you’re telling it to append a value to a slice that already holds 5 values.</p>
+<p>这里，输出是<code>[0, 0, 0, 0, 0, 9332]</code>。可能你会想它应该是<code>[9332, 0, 0, 0, 0]</code>？对于人来说这可能符合逻辑。对于编译器来说，你告诉它的就是要扩展一个已经有5个值的切片。</p>
+<p>Ultimately, there are four common ways to initialize a slice:</p>
+<p>最后，有四种常用的方式来初始化一个切片：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">names := []<span class="keyword">string</span>&#123;<span class="string">&quot;leto&quot;</span>, <span class="string">&quot;jessica&quot;</span>, <span class="string">&quot;paul&quot;</span>&#125;</span><br><span class="line">checks := <span class="built_in">make</span>([]<span class="keyword">bool</span>, <span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> names []<span class="keyword">string</span></span><br><span class="line">scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+
+<p>When do you use which? The first one shouldn’t need much of an explanation. You use this when you know the values that you want in the array ahead of time.</p>
+<p>何时用哪一种呢？第一种不需要过多的解释。当你知道所有的值并且你要的是数组头的时候使用。</p>
+<p>The second one is useful when you’ll be writing into specific indexes of a slice. For example:</p>
+<p>当你需要写入切片的指定索引时，第二种就很有用。比如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">extractPowers</span><span class="params">(saiyans []*Saiyans)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">  powers := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="built_in">len</span>(saiyans))</span><br><span class="line">  <span class="keyword">for</span> index, saiyan := <span class="keyword">range</span> saiyans &#123;</span><br><span class="line">    powers[index] = saiyan.Power</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> powers</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The third version is a nil slice and is used in conjunction with <code>append</code>, when the number of elements is unknown.</p>
+<p>当知道有多少元素的时候，就可使用第三种是一个空切片和<code>append</code>配合使用。</p>
+<p>The last version lets us specify an initial capacity; useful if we have a general idea of how many elements we’ll need.</p>
+<p>当我们对需要多少元素有多少了解时使用最后一种方式来指定初始容量。</p>
+<p>Even when you know the size, <code>append</code> can be used. It’s largely a matter of preference:</p>
+<p>即使你知道了大小，<code>append</code>依然可以使用。这很大程度上是一个偏好问题：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">extractPowers</span><span class="params">(saiyans []*Saiyans)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">  powers := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="built_in">len</span>(saiyans))</span><br><span class="line">  <span class="keyword">for</span> _, saiyan := <span class="keyword">range</span> saiyans &#123;</span><br><span class="line">    powers = <span class="built_in">append</span>(powers, saiyan.Power)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> powers</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Slices as wrappers to arrays is a powerful concept. Many languages have the concept of slicing an array. Both JavaScript and Ruby arrays have a <code>slice</code> method. You can also get a slice in Ruby by using <code>[START..END]</code> or in Python via <code>[START:END]</code>. However, in these languages, a slice is actually a new array with the values of the original copied over. If we take Ruby, what’s the output of the following?</p>
+<p>切片做为数组的封装是一个很有用的概念。许多语言有数组切片的概念。JavaScript和Ruby的数组都有<code>slice</code>方法。你可以对通过<code>[START..END]</code>或者在Python中用<code>[START:END]</code>的方式取得一个切片。但是，在这些语言中切片是对原数组的拷贝。如果我们使用Ruby，下面的代码会输出什么？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">scores = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">slice = scores[<span class="number">2.</span><span class="number">.4</span>]</span><br><span class="line">slice[<span class="number">0</span>] = <span class="number">999</span></span><br><span class="line">puts scores</span><br></pre></td></tr></table></figure>
+
+<p>The answer is <code>[1, 2, 3, 4, 5]</code>. That’s because <code>slice</code> is a completely new array with copies of values. Now, consider the Go equivalent:</p>
+<p>答案是<code>[1, 2, 3, 4, 5]</code>。那是因为<code>slice</code>是一个复制了所有值的全新数组。现在，来看下Go相同的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">scores := []<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;</span><br><span class="line">slice := scores[<span class="number">2</span>:<span class="number">4</span>]</span><br><span class="line">slice[<span class="number">0</span>] = <span class="number">999</span></span><br><span class="line">fmt.Println(scores)</span><br></pre></td></tr></table></figure>
+
+<p>The output is <code>[1, 2, 999, 4, 5]</code>.</p>
+<p>输出是<code>[1, 2, 999, 4, 5]</code>。</p>
+<p>This changes how you code. For example, a number of functions take a position parameter. In JavaScript, if we want to find the first space in a string (yes, slices work on strings too!) after the first five characters, we’d write:</p>
+<p>这改变了你的编码方式。比如，一些函数需要一个位置参数。在JavaScript中，如果我们需要找到字符串中第五个字符之后的第一个空格（是的，切片对字符串也是有效的！）， 我们这样写：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">haystack = <span class="string">&quot;the spice must flow&quot;</span>;</span><br><span class="line">console.log(haystack.indexOf(<span class="string">&quot; &quot;</span>, <span class="number">5</span>));</span><br></pre></td></tr></table></figure>
+
+<p>In Go, we leverage slices:</p>
+<p>在Go中，我们使用切片：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strings.Index(haystack[<span class="number">5</span>:], <span class="string">&quot; &quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>We can see from the above example, that <code>[X:]</code> is shorthand for <em>from X to the end</em> while <code>[:X]</code> is shorthand for <em>from the start to X</em>. Unlike other languages, Go doesn’t support negative values. If we want all of the values of a slice except the last, we do:</p>
+<p>上面的例子，我们可以看到，<code>[X:]</code>是<em>从X到结束</em>的简写，就如<code>[:X]</code>是<em>从开始到X</em>的简写一样。和其他语言不同的是，Go不支持反向取值（这边感觉不对）。如果我们需要切片除了最后一个值以外的所有值，我们这样来写：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scores := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">scores = scores[:<span class="built_in">len</span>(scores)<span class="number">-1</span>]</span><br></pre></td></tr></table></figure>
+
+<p>The above is the start of an efficient way to remove a value from an unsorted slice:</p>
+<p>以上是一种快速删除未排序的切片中的某个值的方法的开头：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">  scores = removeAtIndex(scores, <span class="number">2</span>)</span><br><span class="line">  fmt.Println(scores)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeAtIndex</span><span class="params">(source []<span class="keyword">int</span>, index <span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">  lastIndex := <span class="built_in">len</span>(source) - <span class="number">1</span></span><br><span class="line">  <span class="comment">//swap the last value and the value we want to remove</span></span><br><span class="line">  source[index], source[lastIndex] = source[lastIndex], source[index]</span><br><span class="line">  <span class="keyword">return</span> source[:lastIndex]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Finally, now that we know about slices, we can look at another commonly used built-in function: <code>copy</code>. <code>copy</code> is one of those functions that highlights how slices change the way we code. Normally, a method that copies values from one array to another has 5 parameters: <code>source</code>, <code>sourceStart</code>, <code>count</code>, <code>destination</code> and <code>destinationStart</code>. With slices, we only need two:</p>
+<p>最后，既然我们是学习了切片，我们来看另一个常用的内置函数： <code>copy</code>。 <code>copy</code>是能突出切片是如何改变我们的编码方式的函数之一。通常，数组间拷贝需要5个参数：<code>source</code>, <code>sourceStart</code>, <code>count</code>, <code>destination</code> 和 <code>destinationStart</code>。使用切片只要两个：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;math/rand&quot;</span></span><br><span class="line">  <span class="string">&quot;sort&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">  <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">    scores[i] = <span class="keyword">int</span>(rand.Int31n(<span class="number">1000</span>))</span><br><span class="line">  &#125;</span><br><span class="line">  sort.Ints(scores)</span><br><span class="line"></span><br><span class="line">  worst := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">5</span>)</span><br><span class="line">  <span class="built_in">copy</span>(worst, scores[:<span class="number">5</span>])</span><br><span class="line">  fmt.Println(worst)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Take some time and play with the above code. Try variations. See what happens if you change copy to something like <code>copy(worst[2:4], scores[:5])</code>, or what if you try to copy more or less than <code>5</code> values into <code>worst</code>?</p>
+<p>花一些时间来执行上面的代码。多试几次。看看会发生什么，如果将代码改为<code>copy(worst[2:4], scores[:5])</code>，或者要拷贝比<code>5</code>更多或少的值到<code>worst</code>？</p>
+<h2 id="映射（Maps）"><a href="#映射（Maps）" class="headerlink" title="映射（Maps）"></a>映射（Maps）</h2><p>Maps in Go are what other languages call hashtables or dictionaries. They work as you expect: you define a key and value, and can get, set and delete values from it.</p>
+<p>Go中的映射在其他语言中叫哈希表或者字典。它们都如你想的一样：你定义一个键和值，然后你可以通过映射来删改查这些值。</p>
+<p>Maps, like slices, are created with the <code>make</code> function. Let’s look at an example:</p>
+<p>映射，和切片一样，是通过<code>make</code>函数来创建的。让我们来看一个例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  lookup := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>)</span><br><span class="line">  lookup[<span class="string">&quot;goku&quot;</span>] = <span class="number">9001</span></span><br><span class="line">  power, exists := lookup[<span class="string">&quot;vegeta&quot;</span>]</span><br><span class="line"></span><br><span class="line">  <span class="comment">// prints 0, false</span></span><br><span class="line">  <span class="comment">// 0 is the default value for an integer</span></span><br><span class="line">  fmt.Println(power, exists)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To get the number of keys, we use <code>len</code>. To remove a value based on its key, we use <code>delete</code>:</p>
+<p>我们使用<code>len</code>来获取有多少键。要通过键来删除一个值，我们用<code>delete</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// returns 1</span></span><br><span class="line">total := <span class="built_in">len</span>(lookup)</span><br><span class="line"></span><br><span class="line"><span class="comment">// has no return, can be called on a non-existing key</span></span><br><span class="line"><span class="built_in">delete</span>(lookup, <span class="string">&quot;goku&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Maps grow dynamically. However, we can supply a second argument to <code>make</code> to set an initial size:</p>
+<p>映射是动态增长的。但是，我们可以通过<code>make</code>的第二个参数来设置它的初始大小：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lookup := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>, <span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+
+<p>If you have some idea of how many keys your map will have, defining an initial size can help with performance.</p>
+<p>如果知道有多少值，指定初始大小可以有更好的性能表现。</p>
+<p>When you need a map as a field of a structure, you define it as:</p>
+<p>如果想要把映射做为结构体的一个字段，我们这样定义：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Saiyan <span class="keyword">struct</span> &#123;</span><br><span class="line">  Name <span class="keyword">string</span></span><br><span class="line">  Friends <span class="keyword">map</span>[<span class="keyword">string</span>]*Saiyan</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>One way to initialize the above is via:</p>
+<p>初始化的一种方式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">goku := &amp;Saiyan&#123;</span><br><span class="line">  Name: <span class="string">&quot;Goku&quot;</span>,</span><br><span class="line">  Friends: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*Saiyan),</span><br><span class="line">&#125;</span><br><span class="line">goku.Friends[<span class="string">&quot;krillin&quot;</span>] = ... <span class="comment">//todo load or create Krillin</span></span><br></pre></td></tr></table></figure>
+
+<p>There’s yet another way to declare and initialize values in Go. Like <code>make</code>, this approach is specific to maps and arrays. We can declare as a composite literal:</p>
+<p>在Go中有另一种申明和初始化的方式。和<code>make</code>一样，这对映射和数组都是有效的。我们可以像组合文字一样申明：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lookup := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>&#123;</span><br><span class="line">  <span class="string">&quot;goku&quot;</span>: <span class="number">9001</span>,</span><br><span class="line">  <span class="string">&quot;gohan&quot;</span>: <span class="number">2044</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>We can iterate over a map using a <code>for</code> loop combined with the <code>range</code> keyword:</p>
+<p>我们可以通过<code>for</code>和<code>range</code>关键字来迭代映射：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> key, value := <span class="keyword">range</span> lookup &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Iteration over maps isn’t ordered. Each iteration over a lookup will return the key value pair in a random order.</p>
+<p>映射的迭代器是无序的。每个迭代器随机查找键值对。</p>
+<h2 id="指针和值（Pointers-versus-Values）"><a href="#指针和值（Pointers-versus-Values）" class="headerlink" title="指针和值（Pointers versus Values）"></a>指针和值（Pointers versus Values）</h2><p>We finished Chapter 2 by looking at whether you should assign and pass pointers or values. We’ll now have this same conversation with respect to array and map values. Which of these should you use?</p>
+<p>通过了解什么时候传值或指针我们结束了第二章。在数组和映射的值方面我们将碰到相同的问题。我们应该用哪一种？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a := <span class="built_in">make</span>([]Saiyan, <span class="number">10</span>)</span><br><span class="line"><span class="comment">//or</span></span><br><span class="line">b := <span class="built_in">make</span>([]*Saiyan, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Many developers think that passing <code>b</code> to, or returning it from, a function is going to be more efficient. However, what’s being passed/returned is a copy of the slice, which itself is a reference. So with respect to passing/returning the slice itself, there’s no difference.</p>
+<p>许多开发人员会想对于一个函数来说是传<code>b</code>还是将它做为返回值更高效。然而，这里传递或者返回的都是一个切片的拷贝，它本身就是一个引用。所以就传递或者返回这个切片而言，没有什么区别。</p>
+<p>Where you will see a difference is when you modify the values of a slice or map. At this point, the same logic that we saw in Chapter 2 applies. So the decision on whether to define an array of pointers versus an array of values comes down to how you use the individual values, not how you use the array or map itself.</p>
+<p>当你改变一个切片或者映射的值时，你会看见不同。在这点上，同样的逻辑，我们在第二章看到已经适用。所以是否定义一个数组指针还是一个数组值主要归结于如何使用单个值，而不是你如何使用数组或者映射本身。</p>
+<h2 id="继续之前（Before-You-Continue）"><a href="#继续之前（Before-You-Continue）" class="headerlink" title="继续之前（Before You Continue）"></a>继续之前（Before You Continue）</h2><p>Arrays and maps in Go work much like they do in other languages. If you’re used to dynamic arrays, there might be a small adjustment, but <code>append</code> should solve most of your discomfort. If we peek beyond the superficial syntax of arrays, we find slices. Slices are powerful and they have a surprisingly large impact on the clarity of your code.</p>
+<p>在Go中数组和映射的工作方式与其他语言非常像。如果你用过动态数组，可能有会有一些需要调整，但是通过<code>append</code>可以解决所有的不适。如果我们抛开数组表面的语法，我们就会发现切片。切片是相当强大的，使用切片对你代码的整洁性有着非常巨大的影响。</p>
+<p>There are edge cases that we haven’t covered, but you’re not likely to run into them. And, if you do, hopefully the foundation we’ve built here will let you understand what’s going on.</p>
+<p>这里有一些边界例子我们没有涉及到，但是你不太可能遇见这些例子。另外，如果你遇到了，希望我们已经打下的基础能让你理解这是怎么回事。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1411,301 +1871,6 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/09/19/git/git-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/09/19/git/git-1/" class="post-title-link" itemprop="url">管理多个Github帐号</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-09-19 08:15:40" itemprop="dateCreated datePublished" datetime="2018-09-19T08:15:40+08:00">2018-09-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/git/GitHub/" itemprop="url" rel="index"><span itemprop="name">GitHub</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/git/GitHub/ssh/" itemprop="url" rel="index"><span itemprop="name">ssh</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>之前通过GithubPages和Hexo搭建了个人博客，在<a href="https://l4qiang.me/2016/10/05/hexo/">这里</a>可看到搭建的方法。现在呢，希望用另一个帐号，管理一个不同内容的<a target="_blank" rel="noopener" href="http://goldyear.info/">博客</a>。有了之前的经验，整个搭建的过程还是比较顺利，主要碰到的问题就是代码发布。之前github帐号，是通过Windows的<a target="_blank" rel="noopener" href="https://www.howto-connect.com/how-to-use-credential-manager-windows-10/">凭证管理</a>来实现的，按理说Github配置了多个帐号也是可以管理的。如图：</p>
-<p><img src="crdential.png" alt="crdential.png"></p>
-<p>但是两套博客在发布代码的时候都出现了问题。</p>
-<h2 id="初步方案"><a href="#初步方案" class="headerlink" title="初步方案"></a>初步方案</h2><p>将用户名和密码配置在Hexo的<code>_config.yml</code>的配置项中，形如</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://enderjo:xyz@github.com/enderjo/enderjo.github.io</span><br></pre></td></tr></table></figure>
-
-<p>虽然这样配置是解决了发布问题，但密码安全问题就暴露出来了，想想之前有了解到Github有ssh功能，但也没用过，初步试了下一样发现两个帐号配置的问题，github不支持同一个公钥用于不同的帐号，会提示公钥已经被使用了，请教了下前同事事了解到ssh有个config的配置。</p>
-<h2 id="最终方案"><a href="#最终方案" class="headerlink" title="最终方案"></a>最终方案</h2><p>基于同事的提示刚开始创建的config如下:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Host github:enderjo</span><br><span class="line"> Hostname github.com</span><br><span class="line"> User git</span><br><span class="line"> PreferredAuthentications publickey</span><br><span class="line"> IdentityFile ~/.ssh/github-enderjo/id_rsa</span><br></pre></td></tr></table></figure>
-
-<p>Window中在用户目录<code>%USERPROFILE%</code>下。之后使用ssh测试也是通的。<br>如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh -T github.com:enderjo</span></span><br><span class="line">Hi enderjo! You&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span><br></pre></td></tr></table></figure>
-
-<p>但测试Git Clone的时候提示无法</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">clone</span> git@github.com:enderjo/enderjo.github.io.git</span></span><br><span class="line">Cloning into &#x27;enderjo.github.io&#x27;...</span><br><span class="line">git@github.com: Permission denied (publickey).</span><br><span class="line">fatal: Could not read from remote repository.</span><br><span class="line"></span><br><span class="line">Please make sure you have the correct access rights</span><br><span class="line">and the repository exists.</span><br></pre></td></tr></table></figure>
-
-<p>参考<a target="_blank" rel="noopener" href="https://help.github.com/articles/error-permission-denied-publickey/">Error: Permission denied (publickey)</a>通过ssh-add证书的方式，能正常git clone。此时已可初步判断，git clone没有正常取到config的配置。<br>接着同事发来这篇文章<br><a target="_blank" rel="noopener" href="https://gitlab.com/gitlab-org/gitlab-ce/issues/45593">https://gitlab.com/gitlab-org/gitlab-ce/issues/45593</a><br>其中提到，可通过如下命令查看git clone的实际执行过程：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GIT_TRACE=1 GIT_SSH_COMMAND=&quot;ssh -vvv&quot; git clone git@gitlab.example.com:my-group/my-project.git</span><br></pre></td></tr></table></figure>
-
-<p>测试后的部分代码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ GIT_TRACE=1 GIT_SSH_COMMAND=&quot;ssh -vvv&quot; git clone git@github.com:enderjo/enderjo.github.io.git</span><br><span class="line">14:03:51.164492 exec-cmd.c:236          trace: resolved executable dir: C:/Program Files/Git/mingw64/bin</span><br><span class="line">14:03:51.165492 git.c:415               trace: built-in: git clone git@github.com:enderjo/enderjo.github.io.git</span><br><span class="line">Cloning into &#x27;enderjo.github.io&#x27;...</span><br><span class="line">14:03:51.225463 run-command.c:637       trace: run_command: unset GIT_DIR; &#x27;ssh -vvv&#x27; git@github.com &#x27;git-upload-pack &#x27;\&#x27;&#x27;enderjo/enderjo.github.io.git&#x27;\&#x27;&#x27;&#x27;</span><br></pre></td></tr></table></figure>
-
-<p>此时我们可以看到，实际执行的地址和测试的地址是不一样的。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -T git@github.com:enderjo</span><br><span class="line">$ ssh -vvv git@github.com</span><br></pre></td></tr></table></figure>
-
-<p>ssh命令是根据config文件中Host记录与ssh命令时所输入的主机名来进行匹配的，而git clone因为使用<code>:</code>分隔用户名。</p>
-<p>之后查到<a target="_blank" rel="noopener" href="https://blog.csdn.net/huasonl88/article/details/52166876">这篇</a>文章。config文件中的Host就是一个别名。</p>
-<p>调整config</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Host gh-enderjo</span><br><span class="line"> Hostname github.com</span><br><span class="line"> User git</span><br><span class="line"> PreferredAuthentications publickey</span><br><span class="line"> IdentityFile ~/.ssh/github-enderjo/id_rsa</span><br></pre></td></tr></table></figure>
-
-<p>修改git clone命令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git clone gh-enderjo:enderjo/enderjo.github.io.git</span><br><span class="line">Cloning into &#x27;enderjo.github.io&#x27;...</span><br><span class="line">remote: Counting objects: 4822, done.</span><br><span class="line">remote: Compressing objects: 100% (386/386), done.</span><br><span class="line">remote: Total 4822 (delta 873), reused 2292 (delta 846), pack-reused 2496</span><br><span class="line">Receiving objects: 100% (4822/4822), 5.20 MiB | 215.00 KiB/s, done.</span><br><span class="line">Resolving deltas: 100% (1686/1686), done.</span><br></pre></td></tr></table></figure>
-
-<p>测试正常，修改Hexo的_config.yml也能正常发布代码了。</p>
-<h2 id="增加Mac的配置"><a href="#增加Mac的配置" class="headerlink" title="增加Mac的配置"></a>增加Mac的配置</h2><p>因为之前配置过了Windows，这里我需要把Windows中的ssh配置先拷贝到Mac上（~/.ssh）。<br>测试，此时会提示。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Permissions 0755 for &#x27;/Users/airhead/.ssh/github-enderjo/id_rsa&#x27; are too open.</span><br><span class="line">It is required that your private key files are NOT accessible by others.</span><br><span class="line">This private key will be ignored.</span><br><span class="line">Load key &quot;/Users/airhead/.ssh/github-enderjo/id_rsa&quot;: bad permissions</span><br><span class="line">git@github.com: Permission denied (publickey).</span><br><span class="line">fatal: Could not read from remote repository.</span><br><span class="line"></span><br><span class="line">Please make sure you have the correct access rights</span><br></pre></td></tr></table></figure>
-
-<p>需要修改权限为400（600也可以），注意修改路径</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 400 /Users/airhead/.ssh/github-enderjo/id_rsa</span><br></pre></td></tr></table></figure>
-
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>利用ssh的config功能可以很好的管理Git的多帐号问题，但需要注意修改Git仓库的获取地址。</p>
-<p>虽然一直有使用Git，但对于Git和ssh还是有很多不了解的地方。</p>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://help.github.com/articles/error-permission-denied-publickey/">Error: Permission denied (publickey)</a><br><a target="_blank" rel="noopener" href="https://gitlab.com/gitlab-org/gitlab-ce/issues/45593">https://gitlab.com/gitlab-org/gitlab-ce/issues/45593</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/huasonl88/article/details/52166876">ssh-config配置</a><br><a target="_blank" rel="noopener" href="https://deepzz.com/post/how-to-setup-ssh-config.html">SSH Config 那些你所知道和不知道的事</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/09/08/frontend/news/news-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/09/08/frontend/news/news-1/" class="post-title-link" itemprop="url">(翻译)GitHub.com前端移除jQuery库</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-09-08 06:42:30" itemprop="dateCreated datePublished" datetime="2018-09-08T06:42:30+08:00">2018-09-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/frentend/" itemprop="url" rel="index"><span itemprop="name">frentend</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/frentend/news/" itemprop="url" rel="index"><span itemprop="name">news</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>11k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>10 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>因本人能力有限，理解不到位，翻译内容可能存在偏差。如果可能，请尽量读<a target="_blank" rel="noopener" href="https://githubengineering.com/removing-jquery-from-github-frontend/?utm_source=wanqu.co&utm_campaign=Wanqu+Daily&utm_medium=website">原文</a>。</p>
-</blockquote>
-<p>We have recently completed a milestone where we were able to drop jQuery as a dependency of the frontend code for GitHub.com. This marks the end of a gradual, years-long transition of increasingly decoupling from jQuery until we were able to completely remove the library. In this post, we will explain a bit of history of how we started depending on jQuery in the first place, how we realized when it was no longer needed, and point out that—instead of replacing it with another library or framework—we were able to achieve everything that we needed using standard browser APIs.</p>
-<p>我们最近完成了一个里程碑，就是将jQuery从我们Github.com的前端依赖库中移了。直到完全移除了jQuery库才意味着一个逐步的、长达数年的去jQuery化的结束。在这篇文章中，我们会解释为一些历史，为什么我们一开始会引入jQuery，我们是何时意识到已经不再需要jQuery了，以及找出可替代它的类库或者框架，我需要使用浏览器的标准API来达到目的。</p>
-<h2 id="为什么jQuery之前是有用的（Why-jQuery-made-sense-early-on）"><a href="#为什么jQuery之前是有用的（Why-jQuery-made-sense-early-on）" class="headerlink" title="为什么jQuery之前是有用的（Why jQuery made sense early on）"></a>为什么jQuery之前是有用的（Why jQuery made sense early on）</h2><p>GitHub.com pulled in <a target="_blank" rel="noopener" href="https://blog.jquery.com/2007/09/16/jquery-1-2-1-released/">jQuery 1.2.1</a> as a dependency in late 2007. For a bit of context, that was a year before Google released the first version of their Chrome browser. There was no standard way to query DOM elements by a CSS selector, no standard way to animate visual styles of an element, and the 【XMLHttpRequest interface](<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest">https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest</a>) pioneered by Internet Explorer was, like many other APIs, inconsistent between browsers.</p>
-<p>GitHub.com在2007年底时引入了<a target="_blank" rel="noopener" href="https://blog.jquery.com/2007/09/16/jquery-1-2-1-released/">jQuery 1.2.1</a>。因为这样的一些背景，当时距Google发布第一个版本还有一年时间。通过CSS选择器来查询DOM元素没有标准的方式，将元素视觉动画化也没有标准的样式，IE提供<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest">XMLHttpRequest接口</a>，和其他API一样，在不同的浏览器之间也是不同。</p>
-<p>jQuery made it simple to manipulate the DOM, define animations, and make “AJAX” requests— basically, it enabled web developers to create more modern, dynamic experiences that stood out from the rest. Most importantly of all, the JavaScript features built in one browser with jQuery would generally work in other browsers, too. In those early days of GitHub when most of its features were still getting fleshed out, this allowed the small development team to prototype rapidly and get new features out the door without having to adjust code specifically for each web browser.</p>
-<p>jQuery使得操作DOM，定义动画，发起“AJAX”请求变得简单——基本上，它使Web开发人员能够创建出更现代、更动态的体验，这些体验在其他方面都非常突出。更为重要的是，使用了jQuery的JavaScript特性在不同的浏览器都可正常工作。在GitHub早期，它的大部分功能还在不断充实，这使得小型开发团队能够快速地进行原型，而无需为每个Web浏览器专门调整代码来实现新的特性。</p>
-<p>The simple interface of jQuery also served as a blueprint to craft extension libraries that would later serve as building blocks for the rest of GitHub.com frontend: <a target="_blank" rel="noopener" href="https://github.com/defunkt/jquery-pjax">pjax</a> and <a target="_blank" rel="noopener" href="https://github.com/defunkt/facebox">facebox</a>.</p>
-<p>jQuery的简单接口为设计扩展库提供了蓝图，GitHub.com扩展前端的基础模块： <a target="_blank" rel="noopener" href="https://github.com/defunkt/jquery-pjax">pjax</a>和<a target="_blank" rel="noopener" href="https://github.com/defunkt/facebox">facebox</a>。</p>
-<p>We will always be thankful to John Resig and the jQuery contributors for creating and maintaining such a useful and, for the time, essential library.</p>
-<p>我们将一直感激John Resig和jQuery的贡献者创建和维护了这样一个有用的，对于当时来说，必不可少的类库。</p>
-<h2 id="近年来的Web标准（Web-standards-in-the-later-years）"><a href="#近年来的Web标准（Web-standards-in-the-later-years）" class="headerlink" title="近年来的Web标准（Web standards in the later years）"></a>近年来的Web标准（Web standards in the later years）</h2><p>Over the years, GitHub grew into a company with hundreds of engineers and a dedicated team gradually formed to take responsibility for the size and quality of JavaScript code that we serve to web browsers. One of the things that we’re constantly on the lookout for is technical debt, and sometimes technical debt grows around dependenices that once provided value, but whose value dropped over time.</p>
-<p>这些年来，Github成长为一家拥有数百名工程师的公司，并逐渐形成了一只专门负责我们运行在Web浏览器上的JavaScript代码的大小和质量的团队。其中一件我们一直在做的事情就是找出技术债务，有时技术债务会随着曾经提供价值的附属物而增长，但其价值会随着时间的推移而下降。</p>
-<p>When it came to jQuery, we compared it against the rapid evolution of supported web standard in modern browsers and realized:</p>
-<p>The $(selector) pattern can easily be replaced with querySelectorAll();<br>CSS classname switching can now be achieved using Element.classList;<br>CSS now supports defining visual animations in stylesheets rather than in JavaScript;<br>$.ajax requests can be performed using the Fetch Standard;<br>The addEventListener() interface is stable enough for cross-platform use;<br>We could easily encapsulate the event delegation pattern with a lighweight library;<br>Some syntactic sugar that jQuery provides has become reduntant with the evolution of JavaScript language.<br>Furthermore, the chaining syntax didn’t satisfy how we wanted to write code going forward. For example:</p>
-<p>$(‘.js-widget’)<br>  .addClass(‘is-loading’)<br>  .show()<br>This syntax is simple to write, but to our standards, doesn’t communicate intent really well. Did the author expect one or more js-widget elements on this page? Also, if we update our page markup and accidentally leave out the js-widget classname, will an exception in the browser inform us that something went wrong? By default, jQuery silently skips the whole expresion when nothing matched the initial selector; but to us, such behavior was a bug rather than a feature.</p>
-<p>Finally, we wanted to start annotating types with Flow to perform static type checking at build time, and we concluded that the chaining syntax doesn’t lend itself well to static analysis, since almost every result of a jQuery method call is of the same type. We chose Flow over alternatives because, at the time, features such as @flow weak mode allowed us to progressively and efficiently start applying types to a codebase which was largely untyped.</p>
-<p>All in all, decoupling from jQuery would mean that we could rely on web standards more, have MDN web docs be de-facto default documentation for our frontend developers, maintain more resilient code in the future, and eventually drop a 30 kB dependency from our packaged bundles, speeding up page load times and JavaScript execution times.</p>
-<p>Incremental decoupling<br>Even with an end goal in sight, we knew that it wouldn’t be feasible to just allocate all resources we had to rewriting everything from jQuery to vanilla JS. If anything, such a rushed endeavor would likely lead to many regressions in site functionality that we would later have to weed out. Instead, we:</p>
-<p>Set up metrics that tracked ratio of jQuery calls used per overall line of code and monitored that graph over time to make sure that it’s either staying constant or going down, not up.</p>
-<p>Graph of jQuery usage going down over time.</p>
-<p>We discouraged importing jQuery in any new code. To facilitate that using automation, we created eslint-plugin-jquery which would fail CI checks if anyone tried to use jQuery features, for example $.ajax.</p>
-<p>There were now plenty of violations of eslint rules in old code, all of which we’ve annotated with specific eslint-disable rules in code comments. To the reader of that code, those comments would serve as a clear signal that this code doesn’t represent our current coding practices.</p>
-<p>We created a pull request bot that would leave a review comment on a pull request pinging our team whenever somebody tried to add a new eslint-disable rule. This way we would get involved in code review early and suggest alternatives.</p>
-<p>A lot of old code had explicit coupling to external interfaces of pjax and facebox jQuery plugins, so we’ve kept their interfaces relatively the same while we’ve internally replaced their implementation with vanilla JS. Having static type checking helped us have greater confidence around those refactorings.</p>
-<p>Plenty of old code interfaced with rails-behaviors, our adapter for the Ruby on Rails approach to “unobtrusive” JS, in a way that they would attach an AJAX lifecycle handler to certain forms:</p>
-<p>  // LEGACY APPROACH<br>  $(document).on(‘ajaxSuccess’, ‘form.js-widget’, function(event, xhr, settings, data) {<br>    // insert response data somewhere into the DOM<br>  })<br>Instead of having to rewrite all of those call sites at once to the new approach, we’ve opted to trigger fake ajax* lifecycle events and keep these forms submitting their contents asynchronously as before; only this time fetch() was used internally.</p>
-<p>We maintained a custom build of jQuery and whenever we’ve identified that we’re not using a certain module of jQuery anymore, we would remove it from the custom build and ship a slimmer version. For instance, after we have removed the final usage of jQuery-specific CSS pseudo-selectors such as :visible or :checkbox, we were able to remove the Sizzle module; and when the last $.ajax call was replaced with fetch(), we were able to remove the AJAX module. This served a dual purpose: speeding up JavaScript execution times while at the same time ensuring that no new code is created that would try using the removed functionality.</p>
-<p>We kept dropping support for old Internet Explorer versions as soon as it would be feasible to, as informed by our site analytics. Whenever use of a certain IE version dropped below a certain treshold, we would stop serving JavaScript to it and focus on testing against and supporting more modern browsers. Dropping support for IE 8–9 early on allowed us to adopt many native browser features that would otherwise be hard to polyfill.</p>
-<p>As part of our refined approach to building frontend features on GitHub.com, we focused on getting away with regular HTML foundation as much as we could, and only adding JavaScript behaviors as progressive enhancement. As a result, even those web forms and other UI elements that were enhanced using JS would usually also work with JavaScript disabled in the browser. In some cases, we were able to delete certain legacy behaviors altogether instead of having to rewrite them in vanilla JS.</p>
-<p>With these and similar efforts combined over the years, we were able gradually reduce our dependence on jQuery until there was not a single line of code referencing it anymore.</p>
-<p>Custom Elements<br>One technology that has been making waves in the recent years is Custom Elements: a component library native to the browser, which means that there are no additional bytes of a framework for the user to download, parse and compile.</p>
-<p>We had created a few Custom Elements based on the v0 specification since 2014. However, as standards were still in flux back then, we did not invest as much. It was not until 2017 when the Web Components v1 spec was released and implemented in both Chrome and Safari that we began to adopt Custom Elements on a wider scale.</p>
-<p>During the jQuery migration, we looked for patterns that would be suitable for extraction as custom elements. For example, we converted our facebox usage for displaying modal dialogs to the <details-dialog> element.</p>
-<p>Our general philosophy of striving for progressive enhancement extends to custom elements as well. This means that we keep as much of the content in markup as possible and only add behaviors on top of that. For example, <local-time> shows the raw timestamp by default and gets upgraded to translate the time to the local timezone, while <details-dialog>, when nested in the <details> element, is interactive even without JavaScript, but gets upgraded with accessibility enhancements.</p>
-<p>Here is an example of how a <local-time> custom element could be implemented:</p>
-<p>// The local-time element displays time in the user’s current timezone<br>// and locale.<br>//<br>// Example:<br>//   <local-time datetime="2018-09-06T08:22:49Z">Sep 6, 2018</local-time><br>//<br>class LocalTimeElement extends HTMLElement {<br>  static get observedAttributes() {<br>    return [‘datetime’]<br>  }</p>
-<p>  attributeChangedCallback(attrName, oldValue, newValue) {<br>    if (attrName === ‘datetime’) {<br>      const date = new Date(newValue)<br>      this.textContent = date.toLocaleString()<br>    }<br>  }<br>}</p>
-<p>if (!window.customElements.get(‘local-time’)) {<br>  window.LocalTimeElement = LocalTimeElement<br>  window.customElements.define(‘local-time’, LocalTimeElement)<br>}</p>
-<p>One aspect of Web Components that we’re looking forward to adopting is Shadow DOM. The powerful nature of Shadow DOM has the potential to unlock a lot of possibilities for the web, but that also makes it harder to polyfill. Because polyfilling it today incurs a performance penalty even for code that manipulates parts of the DOM unrelated to web components, it is unfeasible for us to start using it in production.</p>
-<p>Polyfills<br>These are the polyfills that helped us transition to using standard browser features. We try to serve most of these polyfills only when absolutely necessary, i.e. to outdated browsers as part of a separate “compatibility” JavaScript bundle.</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/github/eventlistener-polyfill#readme">github/eventlistener-polyfill</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/github/fetch#readme">github/fetch</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/github/form-data-entries#readme">github/form-data-entries</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/iamdustan/smoothscroll#readme">iamdustan/smoothscroll</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/javan/details-element-polyfill#readme">javan/details-element-polyfill</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/jonathantneal/closest#readme">jonathantneal/closest</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/kumarharsh/custom-event-polyfill#readme">kumarharsh/custom-event-polyfill</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/marvinhagemeister/request-idle-polyfill#readme">marvinhagemeister/request-idle-polyfill</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/mathiasbynens/Array.from#readme">mathiasbynens/Array.from</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/mathiasbynens/String.prototype.codePointAt#readme">mathiasbynens/String.prototype.codePointAt</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/mathiasbynens/String.prototype.endsWith#readme">mathiasbynens/String.prototype.endsWith</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/mathiasbynens/String.prototype.startsWith#readme">mathiasbynens/String.prototype.startsWith</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/medikoo/es6-symbol#readme">medikoo/es6-symbol</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/nicjansma/usertiming.js#readme">nicjansma/usertiming.js</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/rubennorte/es6-object-assign#readme">rubennorte/es6-object-assign</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/stefanpenner/es6-promise#readme">stefanpenner/es6-promise</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/webcomponents/template#template">webcomponents/template</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/webcomponents/URL#readme">webcomponents/URL</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/webcomponents/webcomponentsjs#readme">webcomponents/webcomponentsjs</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/WebReflection/url-search-params#readme">WebReflection/url-search-params</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/yola/classlist-polyfill#readme">yola/classlist-polyfill</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1775,14 +1940,14 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">238</span>
+          <span class="site-state-item-count">240</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">82</span>
+        <span class="site-state-item-count">84</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -1846,12 +2011,12 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">484k</span>
+    <span title="站点总字数">486k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:20</span>
+    <span title="站点阅读时长">7:22</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

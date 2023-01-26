@@ -22,12 +22,12 @@
     var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="本文描述最新版本CentOS(CentOS-7-x86_64-DVD-1810)单机安装oVirt及创建虚拟机的过程。本文主要为自己做记录，以便下次重装时有参考。本文主要参考oVirt官网的安装指南  准备系统采用最小安装方式安装好CentOS7。 基础工具包此步骤非必需，只是为方便后面的一些操作。 1# yum install epel-release net-tools vim unzip">
+  <meta name="description" content="本文描述最新版本CentOS(CentOS-7-x86_64-DVD-1810)单机安装oVirt及创建虚拟机的过程。本文主要为自己做记录，以便下次重装时有参考。本文主要参考oVirt官网的安装指南">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CentOS安装oVirt4.3">
-<meta property="og:url" content="http://l4qiang.me/2019/05/30/virtualizaition/ovirt/index.html">
+<meta property="og:url" content="http://l4qiang.me/2019/05/30/virtualization/ovirt/index.html">
 <meta property="og:site_name" content="CrazyAirhead">
-<meta property="og:description" content="本文描述最新版本CentOS(CentOS-7-x86_64-DVD-1810)单机安装oVirt及创建虚拟机的过程。本文主要为自己做记录，以便下次重装时有参考。本文主要参考oVirt官网的安装指南  准备系统采用最小安装方式安装好CentOS7。 基础工具包此步骤非必需，只是为方便后面的一些操作。 1# yum install epel-release net-tools vim unzip">
+<meta property="og:description" content="本文描述最新版本CentOS(CentOS-7-x86_64-DVD-1810)单机安装oVirt及创建虚拟机的过程。本文主要为自己做记录，以便下次重装时有参考。本文主要参考oVirt官网的安装指南">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/4042820-47375fef5b48d070?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/4042820-29be69fe16987392?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp">
@@ -37,14 +37,14 @@
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/4042820-2f5bf6fa419aa9e3?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp">
 <meta property="og:image" content="https://img-blog.csdn.net/20180420192509414?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xwd21t/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 <meta property="article:published_time" content="2019-05-30T06:08:31.000Z">
-<meta property="article:modified_time" content="2022-12-24T12:39:37.770Z">
+<meta property="article:modified_time" content="2023-01-26T02:17:51.461Z">
 <meta property="article:author" content="L4qiang">
 <meta property="article:tag" content="CentOS">
 <meta property="article:tag" content="oVirt">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/4042820-47375fef5b48d070?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp">
 
-<link rel="canonical" href="http://l4qiang.me/2019/05/30/virtualizaition/ovirt/">
+<link rel="canonical" href="http://l4qiang.me/2019/05/30/virtualization/ovirt/">
 
 
 <script id="page-configurations">
@@ -185,7 +185,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/30/virtualizaition/ovirt/">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/30/virtualization/ovirt/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -215,7 +215,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-24 20:39:37" itemprop="dateModified" datetime="2022-12-24T20:39:37+08:00">2022-12-24</time>
+                <time title="修改时间：2023-01-26 10:17:51" itemprop="dateModified" datetime="2023-01-26T10:17:51+08:00">2023-01-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -259,6 +259,8 @@
         <blockquote>
 <p>本文描述最新版本CentOS(CentOS-7-x86_64-DVD-1810)单机安装oVirt及创建虚拟机的过程。<br>本文主要为自己做记录，以便下次重装时有参考。<br>本文主要参考oVirt官网的<a target="_blank" rel="noopener" href="https://www.ovirt.org/documentation/install-guide/chap-Installing_oVirt.html">安装指南</a></p>
 </blockquote>
+<span id="more"></span>
+
 <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><h3 id="系统"><a href="#系统" class="headerlink" title="系统"></a>系统</h3><p>采用最小安装方式安装好CentOS7。</p>
 <h3 id="基础工具包"><a href="#基础工具包" class="headerlink" title="基础工具包"></a>基础工具包</h3><p>此步骤非必需，只是为方便后面的一些操作。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># yum install epel-release net-tools vim unzip zip wget ftp -y</span></span><br></pre></td></tr></table></figure>
@@ -483,14 +485,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">238</span>
+          <span class="site-state-item-count">240</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">82</span>
+        <span class="site-state-item-count">84</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -554,12 +556,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">484k</span>
+    <span title="站点总字数">486k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:20</span>
+    <span title="站点阅读时长">7:22</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -687,7 +689,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'crazy-airhead.github.io',
       owner       : 'airhead',
       admin       : ['crazy-airhead'],
-      id          : '35dc6f0c580ac341b3be5214d5691f81',
+      id          : '47395233af8196792bf132198f67a0cc',
         language: '',
       distractionFreeMode: true
     });
