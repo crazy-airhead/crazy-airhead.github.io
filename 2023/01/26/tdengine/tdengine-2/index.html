@@ -22,15 +22,15 @@
     var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="记录点滴，注重积累。">
+  <meta name="description" content="安装参考前文系统升级TDengine3.0安装TDegine。 创建原始数据表虽然程序中支持使用动态创建原始数据表，但在创建流计算时需要原始数据表的信息，因此先创建，此处省略其他字段。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="引入tdengine流计算">
 <meta property="og:url" content="http://l4qiang.me/2023/01/26/tdengine/tdengine-2/index.html">
 <meta property="og:site_name" content="CrazyAirhead">
-<meta property="og:description" content="记录点滴，注重积累。">
+<meta property="og:description" content="安装参考前文系统升级TDengine3.0安装TDegine。 创建原始数据表虽然程序中支持使用动态创建原始数据表，但在创建流计算时需要原始数据表的信息，因此先创建，此处省略其他字段。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-01-26T02:09:15.000Z">
-<meta property="article:modified_time" content="2023-01-26T02:19:15.630Z">
+<meta property="article:modified_time" content="2023-01-26T02:47:28.317Z">
 <meta property="article:author" content="L4qiang">
 <meta property="article:tag" content="tdengine">
 <meta name="twitter:card" content="summary">
@@ -200,7 +200,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-01-26 10:09:15 / 修改时间：10:19:15" itemprop="dateCreated datePublished" datetime="2023-01-26T10:09:15+08:00">2023-01-26</time>
+              <time title="创建时间：2023-01-26 10:09:15 / 修改时间：10:47:28" itemprop="dateCreated datePublished" datetime="2023-01-26T10:09:15+08:00">2023-01-26</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -218,14 +218,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>0</span>
+              <span>1.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -237,7 +237,21 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>参考前文<a href="https://l4qiang.me/2022/10/30/tdengine/tdengine-1/">系统升级TDengine3.0</a>安装TDegine。</p>
+<h2 id="创建原始数据表"><a href="#创建原始数据表" class="headerlink" title="创建原始数据表"></a>创建原始数据表</h2><p>虽然程序中支持使用动态创建原始数据表，但在创建流计算时需要原始数据表的信息，因此先创建，此处省略其他字段。</p>
+<span id="more"></span>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> if <span class="keyword">not</span> <span class="keyword">exists</span> st_aaa</span><br><span class="line">(</span><br><span class="line">ts <span class="type">timestamp</span>,</span><br><span class="line">sts <span class="type">nchar</span>(<span class="number">32</span>),</span><br><span class="line">id <span class="type">nchar</span>(<span class="number">24</span>),</span><br><span class="line">create_time <span class="type">timestamp</span></span><br><span class="line">) tags</span><br><span class="line">(</span><br><span class="line">source_ip <span class="type">nchar</span>(<span class="number">64</span>),</span><br><span class="line">group_id <span class="type">bigint</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建流计算"><a href="#创建流计算" class="headerlink" title="创建流计算"></a>创建流计算</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> stream if <span class="keyword">not</span> <span class="keyword">exists</span> stream_aaa <span class="keyword">TRIGGER</span> AT_ONCE fill_history <span class="number">1</span> <span class="keyword">into</span> cnt_aaa <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> _wstart ts, <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> group_sum, <span class="keyword">FIRST</span>(ts) <span class="keyword">AS</span> first_ts, <span class="keyword">FIRST</span>(id) <span class="keyword">AS</span> first_id, source_ip</span><br><span class="line"><span class="keyword">FROM</span> st_aaa </span><br><span class="line"><span class="keyword">PARTITION</span> <span class="keyword">BY</span> source_ip</span><br><span class="line"><span class="type">INTERVAL</span>(<span class="number">1</span>s) SLIDING(<span class="number">1</span>s);</span><br></pre></td></tr></table></figure>
+
+<h2 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">taos&gt; select * from cnt_aaa;</span><br><span class="line">              ts               |      group_count      |           first_ts            |            first_id            |           source_ip            |           tar</span><br><span class="line">get_ip            |       group_id        |</span><br><span class="line">========================================================================================================================================================================</span><br><span class="line">===========================================</span><br><span class="line"> 2023-01-26 10:42:29.000000000 |                     1 | 2023-01-26 10:42:29.000001000 | 20230126104229000001           | 172.18.23.1                    | 172.18.23.246</span><br><span class="line">                  |   7564974818487156978 |</span><br><span class="line"> 2023-01-26 10:42:31.000000000 |                     1 | 2023-01-26 10:42:31.000022000 | 20230126104231000022           | 172.18.21.11                   | 172.18.20.19 </span><br><span class="line">                  |   1887179168227876716 |</span><br><span class="line"> 2023-01-26 10:42:31.000000000 |                     1 | 2023-01-26 10:42:31.000017000 | 20230126104231000017           | 172.18.21.11                   | 172.18.20.14 </span><br><span class="line">                  |   4478081376045249307 |</span><br><span class="line"> 2023-01-26 10:42:31.000000000 |                     1 | 2023-01-26 10:42:31.000015000 | 20230126104231000015           | 172.18.21.11                   | 172.18.20.12 </span><br><span class="line">                  |   8150718786340743195 |</span><br><span class="line"> 2023-01-26 10:42:31.000000000 |                     1 | 2023-01-26 10:42:31.000019000 | 20230126104231000019           | 172.18.21.11                   | 172.18.20.16 </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CREATE STREAM [IF NOT EXISTS] stream_name [stream_options] INTO stb_name SUBTABLE(expression) AS subquery</span><br><span class="line">stream_options: &#123;</span><br><span class="line"> TRIGGER    [AT_ONCE | WINDOW_CLOSE | MAX_DELAY time]</span><br><span class="line"> WATERMARK   time</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>官网提供的文档<code>stream_options</code>没有分段写，第一次容易把stream_options也当成语法，其实的应该写在stream_name后面。</p>
+<h2 id="参考连接"><a href="#参考连接" class="headerlink" title="参考连接"></a>参考连接</h2><p><a target="_blank" rel="noopener" href="https://docs.taosdata.com/taos-sql/stream/">流式计算 </a></p>
+
     </div>
 
     
@@ -358,6 +372,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE%E8%A1%A8"><span class="nav-number">2.</span> <span class="nav-text">创建原始数据表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%B5%81%E8%AE%A1%E7%AE%97"><span class="nav-number">3.</span> <span class="nav-text">创建流计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2"><span class="nav-number">4.</span> <span class="nav-text">查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">5.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%BF%9E%E6%8E%A5"><span class="nav-number">6.</span> <span class="nav-text">参考连接</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -442,12 +457,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">486k</span>
+    <span title="站点总字数">488k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:22</span>
+    <span title="站点阅读时长">7:24</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
