@@ -14,6 +14,8 @@ tags:
 > 本文主要为自己做记录，以便下次重装时有参考。
 > 本文主要参考oVirt官网的[安装指南](https://www.ovirt.org/documentation/install-guide/chap-Installing_oVirt.html)
 
+<!-- more -->
+
 ## 准备
 
 ### 系统
