@@ -67,6 +67,25 @@ num   pkts bytes target     prot opt in     out     source               destina
 iptables -t nat -D PREROUTING 1
 ```
 
+## 统一处理
+- 检查ip转发
+```
+sysctl net.ipv4.ip_forward
+```
+如果为1，不需要修改
+- 清理路由
+```
+iptables -t nat -F
+```
+- 增加对应网关路由
+```
+iptables -t nat -A POSTROUTING -s 172.17.0.0/16 ! -o docker0 -j MASQUERADE
+```
+如果还有其他网卡，也可一起增加
+```
+iptables -t nat -A POSTROUTING -s 172.18.0.0/16 ! -o br-80d019e60f1b -j MASQUERADE
+```
+
 ## 遗留问题
 
 - 如果重启Docker服务还是会增加该路由，需要重新手动删除。自己对网络不是太熟悉，Docker官网提供了份[Docker and iptables ](https://docs.docker.com/network/iptables/)的说明文档，后续继续研究。
