@@ -172,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/01/26/tdengine/tdengine-2/">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/05/01/course100/009/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -186,7 +186,896 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/01/26/tdengine/tdengine-2/" class="post-title-link" itemprop="url">引入tdengine流计算</a>
+            <a href="/2023/05/01/course100/009/" class="post-title-link" itemprop="url">定投人生课堂搜索工具</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-05-01 07:00:03" itemprop="dateCreated datePublished" datetime="2023-05-01T07:00:03+08:00">2023-05-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-05-02 16:25:00" itemprop="dateModified" datetime="2023-05-02T16:25:00+08:00">2023-05-02</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="是什么"><a href="#是什么" class="headerlink" title="是什么"></a>是什么</h2><p>「定投搜索」是一个免费的Mixin机器人，是「定投人生课堂」课程搜索工具，可以通过关键字检索「定投人生课堂」的课程内容，返回课程列表。</p>
+<h2 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h2><ol>
+<li><p>登录Mixin，点击搜索「7000103414」，确认是「定投搜索」后添加机器人。</p>
+</li>
+<li><p>把搜索关键字发给该机器人，机器人会返回检索到的课程列表（结果最多10条课程）。</p>
+<ul>
+<li><p>支持多关键字，关键字之间使用空格分隔。</p>
+</li>
+<li><p>支持命令模式，使用<code>/</code>开启命令模式，当前只支持<code>/d</code>，表示返回课程详情，除了返回查询结果，还将一并返回查询结果的课程的卡片。如：<code>机会成本 /d</code>，可以在下面的图中看到返回结果。</p>
+</li>
+</ul>
+</li>
+<li><p>听课。</p>
+<ul>
+<li><p>从结果中复制课程标题到「定投人生课堂」搜索该课程，开始听课。</p>
+</li>
+<li><p>如果返回课程详情，直接点击卡片，授权后开始听课。</p>
+</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://assets.quill.im/mhxpas3dauszrwragc3p0pnjrrx5" alt="WechatIMG239.png"><br><img src="https://assets.quill.im/v011v1c9sryqm9ug0ndib8zbytp5" alt="WechatIMG238.png"></p>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="搜索不到结果"><a href="#搜索不到结果" class="headerlink" title="搜索不到结果"></a>搜索不到结果</h3><blockquote>
+<ul>
+<li><p>技术原因，课程内容是语音的，使用的是语音识别技术，可能无法完全识别，可能识别错误，可能存在错别字，导致检索不到，另外中文需要分词，分词的结果可能会和我们的预期不一致，导致检索不到。</p>
+</li>
+<li><p>客观原因，没有导入课程数据，或者确实没有匹配的关键字。</p>
+</li>
+<li><p>可能的解决办法，调整关键字重新搜索。</p>
+</li>
+</ul>
+</blockquote>
+<h3 id="数据如何获取"><a href="#数据如何获取" class="headerlink" title="数据如何获取"></a>数据如何获取</h3><blockquote>
+<p>手工整理。请不要找我索取课程数据，整理自己的课程笔记更重要，请听「学习的真相」的「必要关联」和「三个大脑」。</p>
+</blockquote>
+<h3 id="数据何时更新"><a href="#数据何时更新" class="headerlink" title="数据何时更新"></a>数据何时更新</h3><blockquote>
+<p>课程数据是手动整理的，无法保证与课程内容的实时同步，只会不定期导入。</p>
+</blockquote>
+<h3 id="功能是否会更新"><a href="#功能是否会更新" class="headerlink" title="功能是否会更新"></a>功能是否会更新</h3><blockquote>
+<p>目前功能基本可用，暂无功能计划，后续可能会增加命令模式的命令。</p>
+<p>如果大家有新的想法，可以反馈。</p>
+</blockquote>
+<h3 id="是否收费"><a href="#是否收费" class="headerlink" title="是否收费"></a>是否收费</h3><blockquote>
+<p>免费。如果觉得「定投搜索」工具确实对你有帮助，欢迎打赏，打赏本文即可。</p>
+</blockquote>
+<h3 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h3><blockquote>
+<p>其他问题可以添加我的微信「Crazy_Airhead」，或Mixin号「1091586」，进行反馈和沟通。</p>
+</blockquote>
+<h2 id="为什么"><a href="#为什么" class="headerlink" title="为什么"></a>为什么</h2><p>偶尔会想起一些模糊的课程内容，想重听一遍课程，但定投人生课堂只能按标题内容模糊搜索，于是只能凭记忆在Mixin中找，可能半天过去了还找不到自己想要的课程，这过程其实是挺痛苦的。在「定投人生课堂后花园」的里也会看到类似的查找课程的问题，于是有了做这个工具的想法。</p>
+<p>之前为「且慢且慢且慢」写作群的战友提供过写作练习工具，但因为服务器和域名过期等原因，服务就中断了，非常抱歉。计划做这个工具的时候是想收费的，因为提供服务需要成本，实际做的过程中时候发现不需要公网服务器也可以提供服务，于是少了收费的欲望，本着服务战友的想法，于是决定免费开放服务。</p>
+<p>此次提供的「定投搜索」工具，因为用了自家的NAS，理论上是可以长期服务战友们。如果「定投人生课堂」提供了更好的搜索功能，这个「定投搜索」工具也就没有存在的意义了，到时会停止服务。</p>
+<p>在提供服务期间，如果出现无法使用的情况，请战友们及时反馈。</p>
+<h2 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h2><p>刚开始有做「定投搜索」这个工具的想法时，小熊老师（微信号「huashichenxiong」）给了不少积极的反馈，让我开始实际编写这个工具；中间因为工作忙没怎么做，小熊老师又不停地鼓励；现在能提供服务，也是和小熊老师讨论Mixin机器人开发，打破自己的做微信公众号的思维定势（微信的机器人和微信公众号不是同一个物种），于是趁着放假时间赶紧完成剩下的工作。总之非常感谢小熊老师，如果没有小熊老师的鼓励，这个工具不知道什么时候才能完工。</p>
+<p>感谢Mixin好友「字友与自由」，Mixin号「39488252」，帮忙解答了机器人无法接收消息的问题。他写了个Java版的SDK（<a target="_blank" rel="noopener" href="https://github.com/tooonly/mixin-java-sdk%EF%BC%89%EF%BC%8C%E6%9C%89%E9%9C%80%E8%A6%81%E6%88%98%E5%8F%8B%E7%9A%84%E5%8F%AF%E4%BB%A5%E8%87%AA%E5%B7%B1%E8%8E%B7%E5%8F%96%E3%80%82">https://github.com/tooonly/mixin-java-sdk）</a>，有需要战友的可以自己获取。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/02/22/bigdata/dss/install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/02/22/bigdata/dss/install/" class="post-title-link" itemprop="url">单机部署DSS</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-02-22 23:12:53 / 修改时间：23:26:41" itemprop="dateCreated datePublished" datetime="2023-02-22T23:12:53+08:00">2023-02-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index"><span itemprop="name">大数据</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/course/" itemprop="url" rel="index"><span itemprop="name">course</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/course/dds/" itemprop="url" rel="index"><span itemprop="name">dds</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="零、注意事项"><a href="#零、注意事项" class="headerlink" title="零、注意事项"></a><strong>零、注意事项</strong></h1><ul>
+<li><p>确保安装的系统为CentOS7</p>
+</li>
+<li><p>服务器存在多网卡问题。首先通过命令<code>ifconfig</code>禁用多余的网卡，以确保激活的网卡数只有1个。</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看网卡ifconfig# 禁用指定网卡ifconfig [NIC_NAME] down</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>网卡多IP问题。在确保服务器只存在一个网卡是激活状态的情况下，通过命令查看网卡对应的IP数，若大于1，那么就需要去掉网卡中指定的IP，采用动态获取IP的方式，具体命令如下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> $(hostname -I) ip addr flush dev [NIC_NAME] ifdown [NIC_NAME] ifup [NIC_NAME]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>hostname配置。在安装前用户需要配置hostname到ip的映射</li>
+</ul>
+<h1 id="一、基础软件安装"><a href="#一、基础软件安装" class="headerlink" title="一、基础软件安装"></a><strong>一、基础软件安装</strong></h1><ul>
+<li>需要的命令工具：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y telnet tar sed dos2unix unzip zip expect curl</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>检查cp等命令是否有别名alias，避免安装时提示。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aliasvi ~/.bashrc<span class="comment"># 删除cp rm 的别名，</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>需要安装的软件<ul>
+<li><p>MySQL(5.5+)，安装Hive时已安装</p>
+</li>
+<li><p>JDK (1.8.0_141以上)，安装Hadoop时已安装</p>
+</li>
+<li><p>Python(2.x和3.x都支持)，默认包含python2，无需安装，但需要安装pip和matplotlib</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.pypip config <span class="built_in">set</span> global.index-url https://mirrors.aliyun.com/pypi/simple/python -m pip install matplotlib</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装Nginx</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y epel-releasesudo yum -y updatesudo yum install -y nginxsystemctl start nginxsystemctl <span class="built_in">enable</span> nginx</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>安装Hadoop2.7.2</p>
+</li>
+<li><p>安装Hive2.3.3（未找到2.3.3版本，使用的是2.3.9版本）</p>
+</li>
+<li><p>安装Spark2.0以上版本</p>
+<p>    <a target="_blank" rel="noopener" href="https://ytq6nfyc5n.feishu.cn/docx/XbzzdTJsFoWrcAxcmd0cqQQvn9e">部署Hadoop+Hive+Spark</a></p>
+<p>    确保可以执行如下命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hdfs dfs -ls /hive -e <span class="string">&quot;show databases&quot;</span>spark-sql -e <span class="string">&quot;show databases&quot;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="二、创建用户"><a href="#二、创建用户" class="headerlink" title="二、创建用户"></a><strong>二、创建用户</strong></h1><ol>
+<li><p>假设<strong>部署用户是hadoop账号</strong>（可以不是hadoop用户，但是推荐使用Hadoop的超级用户进行部署，这里只是一个示例）</p>
+</li>
+<li><p>在所有需要部署的机器上创建部署用户，用于安装 ，如下命令创建部署用户hadoop</p>
+</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo useradd hadoop</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>因为Linkis的服务是以 <code>sudo -u $&#123;linux-user&#125;</code> 方式来切换引擎，从而执行作业，所以部署用户需要有 sudo 权限，而且是免密的，按下面步骤修改部署用户权限</li>
+</ol>
+<p>编辑/etc/sudoers文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/sudoers</span><br></pre></td></tr></table></figure>
+
+<p>在/etc/sudoers文件中添加下面内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop  ALL=(ALL)  NOPASSWD: NOPASSWD: ALL</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>修复文件权限</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...chown root:root /etc/sudo.conf -Rchown root:root /etc/sudoers.d -R</span><br></pre></td></tr></table></figure>
+
+<h1 id="三、准备安装包"><a href="#三、准备安装包" class="headerlink" title="三、准备安装包"></a><strong>三、准备安装包</strong></h1><ul>
+<li><p>用户可以自行编译或者去 release 页面下载安装包：<a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/DataSphereStudio/releases/tag/1.1.1">DSS Release-1.1.1</a></p>
+</li>
+<li><p>DSS &amp; Linkis 一键安装部署包的层级目录结构如下：</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">├── dss_linkis # 一键部署主目录  ├── bin # 用于一键安装，以及一键启动 DSS + Linkis  ├── conf # 一键部署的参数配置目录  ├── wedatasphere-dss-x.x.x-dist.tar.gz # DSS后端安装包  ├── wedatasphere-dss-web-x.x.x-dist.zip # DSS前端和Linkis前端安装包  ├── wedatasphere-linkis-x.x.x-dist.tar.gz # Linkis后端安装包</span><br></pre></td></tr></table></figure>
+
+<h1 id="四、修改配置"><a href="#四、修改配置" class="headerlink" title="四、修改配置"></a><strong>四、修改配置</strong></h1><ul>
+<li><p>用户需要对 <code>xx/dss_linkis/conf</code> 目录下的 <code>config.sh</code> 和 <code>db.sh</code> 进行修改。</p>
+</li>
+<li><p>打开 <code>config.sh</code>，按需修改相关配置参数，参数说明如下：</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#################### 一键安装部署的基本配置 ####################### deploy user（部署用户，默认为当前登录用户）deployUser=hadoop### Linkis_VERSIONLINKIS_VERSION=1.1.1### DSS Web（本机安装一般无需修改，但需确认此端口是否占用，若被占用，修改一个可用端口即可）DSS_NGINX_IP=127.0.0.1DSS_WEB_PORT=8085### DSS VERSIONDSS_VERSION=1.1.1############## linkis的其他默认配置信息 start ############## ### Specifies the user workspace, which is used to store the user&#x27;s script files and log files.### Generally local directory##file:// required. 指定用户使用的目录路径，一般用于存储用户的脚本文件和日志文件等，是用户的工作空间WORKSPACE_USER_ROOT_PATH=file:///tmp/linkis/ ### User&#x27;s root hdfs path##hdfs:// required. 结果集日志等文件路径，用于存储Job的结果集文件HDFS_USER_ROOT_PATH=hdfs:///tmp/linkis ### Path to store job ResultSet:file or hdfs path##hdfs:// required. 结果集日志等文件路径，用于存储Job的结果集文件，如果未配置 使用HDFS_USER_ROOT_PATH的配置RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis ### Path to store started engines and engine logs, must be local. 存放执行引擎的工作路径，需要部署用户有写权限的本地目录ENGINECONN_ROOT_PATH=/appcom/tmp### 基础组件环境信息###HADOOP CONF DIR #/appcom/config/hadoop-config（用户根据实际情况修改）</span></span><br><span class="line">HADOOP_CONF_DIR=/appcom/config/hadoop-config<span class="comment">###HIVE CONF DIR  #/appcom/config/hive-config（用户根据实际情况修改）</span></span><br><span class="line">HIVE_CONF_DIR=/appcom/config/hive-config<span class="comment">###SPARK CONF DIR #/appcom/config/spark-config（用户根据实际情况修改）</span></span><br><span class="line">SPARK_CONF_DIR=/appcom/config/spark-config<span class="comment">###for install （用户根据实际情况修改）LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module##YARN REST URL spark engine required（根据实际情况修改IP和端口）</span></span><br><span class="line">YARN_RESTFUL_URL=http://127.0.0.1:8088<span class="comment">## Engine version#SPARK_VERSION（根据实际版本情况修改版本号）</span></span><br><span class="line">SPARK_VERSION=2.4.3<span class="comment">##HIVE_VERSION（根据实际版本情况修改版本号）</span></span><br><span class="line">HIVE_VERSION=2.3.9<span class="comment">##PYTHON_VERSION（根据实际版本情况修改版本号）</span></span><br><span class="line">PYTHON_VERSION=python2<span class="comment">## LDAP is for enterprise authorization, if you just want to have a try, ignore it.#LDAP_URL=ldap://localhost:1389/#LDAP_BASEDN=dc=webank,dc=com#LDAP_USER_NAME_FORMAT=cn=%s@xxx.com,OU=xxx,DC=xxx,DC=com############## linkis的其他默认配置信息 end ################################# The install Configuration of all Linkis&#x27;s Micro-Services ######################################## 用户可以根据实际情况修改IP和端口 #####################    NOTICE:#       1. If you just wanna try, the following micro-service configuration can be set without any settings.#            These services will be installed by default on this machine.#       2. In order to get the most complete enterprise-level features, we strongly recommend that you install#          the following microservice parameters####  EUREKA install information###  You can access it in your browser at the address below:http://$&#123;EUREKA_INSTALL_IP&#125;:$&#123;EUREKA_PORT&#125;###  Microservices Service Registration Discovery CenterLINKIS_EUREKA_INSTALL_IP=127.0.0.1LINKIS_EUREKA_PORT=9600#LINKIS_EUREKA_PREFER_IP=true###  Gateway install information#LINKIS_GATEWAY_INSTALL_IP=127.0.0.1LINKIS_GATEWAY_PORT=9001### ApplicationManager#LINKIS_MANAGER_INSTALL_IP=127.0.0.1LINKIS_MANAGER_PORT=9101### EngineManager#LINKIS_ENGINECONNMANAGER_INSTALL_IP=127.0.0.1LINKIS_ENGINECONNMANAGER_PORT=9102### EnginePluginServer#LINKIS_ENGINECONN_PLUGIN_SERVER_INSTALL_IP=127.0.0.1LINKIS_ENGINECONN_PLUGIN_SERVER_PORT=9103### LinkisEntrance#LINKIS_ENTRANCE_INSTALL_IP=127.0.0.1LINKIS_ENTRANCE_PORT=9104###  publicservice#LINKIS_PUBLICSERVICE_INSTALL_IP=127.0.0.1LINKIS_PUBLICSERVICE_PORT=9105### cs#LINKIS_CS_INSTALL_IP=127.0.0.1LINKIS_CS_PORT=9108########## Linkis微服务配置完毕 ############################# The install Configuration of all DataSphereStudio&#x27;s Micro-Services ######################################### 非注释的参数必须配置，注释掉的参数可按需修改 #################### #    NOTICE:#       1. If you just wanna try, the following micro-service configuration can be set without any settings.#            These services will be installed by default on this machine.#       2. In order to get the most complete enterprise-level features, we strongly recommend that you install#          the following microservice parameters## 用于存储发布到 Schedulis 的临时ZIP包文件WDS_SCHEDULER_PATH=file:///appcom/tmp/wds/scheduler### DSS_SERVER### This service is used to provide dss-server capability.### project-server#DSS_FRAMEWORK_PROJECT_SERVER_INSTALL_IP=127.0.0.1#DSS_FRAMEWORK_PROJECT_SERVER_PORT=9002### orchestrator-server#DSS_FRAMEWORK_ORCHESTRATOR_SERVER_INSTALL_IP=127.0.0.1#DSS_FRAMEWORK_ORCHESTRATOR_SERVER_PORT=9003### apiservice-server#DSS_APISERVICE_SERVER_INSTALL_IP=127.0.0.1#DSS_APISERVICE_SERVER_PORT=9004### dss-workflow-server#DSS_WORKFLOW_SERVER_INSTALL_IP=127.0.0.1#DSS_WORKFLOW_SERVER_PORT=9005### dss-flow-execution-server#DSS_FLOW_EXECUTION_SERVER_INSTALL_IP=127.0.0.1#DSS_FLOW_EXECUTION_SERVER_PORT=9006###dss-scriptis-server#DSS_SCRIPTIS_SERVER_INSTALL_IP=127.0.0.1#DSS_SCRIPTIS_SERVER_PORT=9008########## DSS微服务配置完毕################### other default configuration 其他默认配置信息  ############## ## java application default jvm memory（Java应用的堆栈大小。如果部署机器的内存少于8G，推荐128M；## 达到16G时，推荐至少256M；如果想拥有非常良好的用户使用体验，推荐部署机器的内存至少达到32G）export SERVER_HEAP_SIZE=&quot;128M&quot;##sendemail配置，只影响DSS工作流中发邮件功能EMAIL_HOST=smtp.163.comEMAIL_PORT=25EMAIL_USERNAME=xxx@163.comEMAIL_PASSWORD=xxxxxEMAIL_PROTOCOL=smtp### Save the file path exported by the orchestrator serviceORCHESTRATOR_FILE_PATH=/appcom/tmp/dss### Save DSS flow execution service log pathEXECUTION_LOG_PATH=/appcom/tmp/dss############## other default configuration 其他默认配置信息 ############## </span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>请注意：DSS 推荐使用 LDAP 进行用户登录鉴权，如您想接入公司的 LDAP，还需在上面的 <code>config.sh</code> 中填写 LDAP 的配置参数。 <a target="_blank" rel="noopener" href="https://web.mit.edu/rhel-doc/5/RHEL-5-manual/Deployment_Guide-en-US/s1-ldap-quickstart.html">如何安装 LDAP？</a></p>
+</li>
+<li><p>修改数据库配置。请确保配置的数据库，安装机器可以正常访问，否则将会出现 DDL 和 DML 导入失败的错误，打开 <code>db.sh</code>，按需修改相关配置参数，参数说明如下：</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">配置DSS数据库MYSQL_HOST=127.0.0.1MYSQL_PORT=3306MYSQL_DB=dssMYSQL_USER=xxxMYSQL_PASSWORD=xxx<span class="comment">## Hive metastore的数据库配置，用于Linkis访问Hive的元数据信息HIVE_HOST=127.0.0.1HIVE_PORT=3306HIVE_DB=xxxHIVE_USER=xxxHIVE_PASSWORD=xxx</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="五、安装和使用"><a href="#五、安装和使用" class="headerlink" title="五、安装和使用"></a><strong>五、安装和使用</strong></h1><ol>
+<li><strong>停止机器上所有<strong><strong>DSS</strong></strong>及Linkis服务</strong></li>
+</ol>
+<ul>
+<li>若从未安装过DSS及Linkis服务，忽略此步骤</li>
+</ul>
+<ol start="2">
+<li><strong>将当前目录切换到bin目录</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> xx/dss_linkis/bin</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><p><strong>执行安装脚本</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh install.sh</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>该安装脚本会检查各项集成环境命令，如果没有请按照提示进行安装，以下命令为必须项：</p>
+</li>
+<li><p><em>yum; java; mysql; unzip; expect; telnet; tar; sed; dos2unix; nginx</em></p>
+</li>
+<li><p>安装时，脚本会询问您是否需要初始化数据库并导入元数据，Linkis 和 DSS 均会询问，<strong>第一次安装必须选是(2)</strong></p>
+</li>
+<li><p>通过查看控制台打印的日志信息查看是否安装成功，如果有错误信息，可以查看具体报错原因</p>
+</li>
+<li><p><em>除非用户想重新安装整个应用，否则该命令执行一次即可</em></p>
+</li>
+</ol>
+</li>
+<li><p><strong>启动服务</strong></p>
+</li>
+</ol>
+<ul>
+<li>若用户的Linkis安装包是通过自己编译获取且用户想启用数据源管理功能，那么就需要去修改配置以启动该项功能，使用下载的安装包无需操作</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 切换到Linkis配置文件目录cd xx/dss_linkis/linkis/conf## 打开配置文件linkis-env.shvi linkis-env.sh## 将如下配置改为trueexport ENABLE_METADATA_MANAGER=true</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>若用户的Linkis安装包是通过自己编译获取，在启动服务前尽量将后续用到的密码改成和部署用户名一致，使用下载的安装包无需操作</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 切换到Linkis配置文件目录cd xx/dss_linkis/linkis/conf/## 打开配置文件linkis-mg-gateway.propertiesvi linkis-mg-gateway.properties## 修改密码wds.linkis.admin.password=hadoop</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在xx/dss_linkis/bin目录下执行启动服务脚本</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh start-all.sh</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果启动产生了错误信息，可以查看具体报错原因。启动后，各项微服务都会进行<strong>通信检测</strong>，如果有异常则可以帮助用户定位异常日志和原因</li>
+</ul>
+<ol start="5">
+<li><strong>安装默认Appconn</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换目录到dss，正常情况下dss目录就在xx/dss_linkis目录下，cd xx/dss_linkis/dss/bin# 执行启动默认Appconn脚本sh install-default-appconn.sh</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>该命令执行一次即可，除非用户想重新安装整个应用</em></li>
+</ul>
+<ol start="6">
+<li><strong>查看验证是否成功</strong></li>
+</ol>
+<ul>
+<li>用户可以在Eureka界面查看 Linkis &amp; DSS 后台各微服务的启动情况，默认情况下DSS有6个微服务，Linkis有6个微服务 <strong>（Eureka地址默认端口号9600，服务完整启动时可以看到地址）</strong></li>
+</ul>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=YzJlZGJmZjIxOGU0YTM4YWU1NDBhNzNkYTU5YTZjZjVfRHR0RlU4UDZCOFZqc2xyUnZndXplTkp0amlQVDRLTkJfVG9rZW46Ym94Y250blY5V0VuTkNXV1dFQWhRVG1tUVBlXzE2NzcwNzk1ODE6MTY3NzA4MzE4MV9WNA"></p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=MWVhNjY2NDNhMjMwMTA3NzM0ZmRlODQ0YWI0NGUyNzFfZ3RRZHVJcno4OVBtVEVnQ1pQOXpHS2czS0NzUWVRYzRfVG9rZW46Ym94Y25GQVZLbHVwRUxQMHkyV1lmVHZ3WmJiXzE2NzcwNzk1ODE6MTY3NzA4MzE4MV9WNA"></p>
+<ul>
+<li>用户可以使用<strong>谷歌浏览器</strong>访问以下前端地址：<code>http://DSS_NGINX_IP:DSS_WEB_PORT</code> <strong>启动日志会打印此访问地址（在xx/dss_linkis/conf/config.sh中也配置了此地址）</strong>。登陆时默认管理员的用户名和密码均为部署用户为hadoop（用户若想修改密码，可以通过修改 xx/dss_linkis/linkis/conf/linkis-mg-gateway.properties 文件中的 wds.linkis.admin.password 参数)</li>
+</ul>
+<ol start="7">
+<li><strong>停止服务</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh stop-all.sh</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>若用户需要停止所有服务可执行该命令<code>sh stop-all.sh</code>，重新启动所有服务就执行<code>sh start-all.sh</code>，这两条命令均在xx/dss_linkis/bin目录下执行</li>
+</ul>
+<h1 id="六、补充说明"><a href="#六、补充说明" class="headerlink" title="六、补充说明"></a><strong>六、补充说明</strong></h1><ul>
+<li><p>考虑到安装包过于大的问题，Linkis默认仅提供Hive, Python, Shell, Spark引擎插件，用户若想使用其他引擎，可参考文档: <a target="_blank" rel="noopener" href="https://linkis.apache.org/zh-CN/docs/1.1.1/deployment/engine-conn-plugin-installation">Linkis引擎的安装</a></p>
+</li>
+<li><p>DSS默认未安装调度系统，用户可以选择安装 Schedulis 或者 DolphinScheduler，具体安装方式见下面表格</p>
+</li>
+<li><p>DSS默认仅安装DateChecker, EventSender, EventReceiver AppConn，用户可参考文档安装其他AppConn，如Visualis, Exchangis, Qualitis, Prophecis, Streamis。调度系统可使用Schedulis或DolphinScheduler</p>
+</li>
+</ul>
+<style> td {white-space:pre-wrap;border:1px solid #dee0e3;}</style>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>组件名</td>
+<td>组件版本要求</td>
+<td>组件部署链接</td>
+<td>AppConn部署链接</td>
+</tr>
+<tr>
+<td>Schedulis</td>
+<td>Schedulis0.7.0</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/Schedulis/blob/master/docs/schedulis_deploy_cn.md">Schedulis部署</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/DataSphereStudio-Doc/blob/main/zh_CN/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/SchedulisAppConn%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85%E6%96%87%E6%A1%A3.md">Schedulis AppConn安装</a></td>
+</tr>
+<tr>
+<td>Visualis</td>
+<td>Visualis1.0.0</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/Visualis/blob/master/visualis_docs/zh_CN/Visualis_deploy_doc_cn.md">Visualis部署</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/Visualis/blob/master/visualis_docs/zh_CN/Visualis_appconn_install_cn.md">Visualis AppConn安装</a></td>
+</tr>
+<tr>
+<td>Exchangis</td>
+<td>Exchangis1.0.0</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/Exchangis/blob/master/docs/zh_CN/ch1/exchangis_deploy_cn.md">Exchangis部署</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/Exchangis/blob/master/docs/zh_CN/ch1/exchangis_appconn_deploy_cn.md">Exchangis AppConn安装</a></td>
+</tr>
+<tr>
+<td>Qualitis</td>
+<td>Qualitis0.9.2</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/Qualitis/blob/master/docs/zh_CN/ch1/%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C%E2%80%94%E2%80%94%E5%8D%95%E6%9C%BA%E7%89%88.md">Qualitis部署</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/Qualitis/blob/master/docs/zh_CN/ch1/%E6%8E%A5%E5%85%A5%E5%B7%A5%E4%BD%9C%E6%B5%81%E6%8C%87%E5%8D%97.md">Qualitis AppConn安装</a></td>
+</tr>
+<tr>
+<td>Prophecis</td>
+<td>Prophecis0.3.2</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/Prophecis/blob/master/docs/zh_CN/QuickStartGuide.md">Prophecis部署</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/Prophecis/blob/master/docs/zh_CN/Deployment_Documents/Prophecis%20Appconn%E5%AE%89%E8%A3%85%E6%96%87%E6%A1%A3.md">Prophecis AppConn安装</a></td>
+</tr>
+<tr>
+<td>Streamis</td>
+<td>Streamis0.2.0</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/Streamis/blob/main/docs/zh_CN/0.2.0/Streamis%E5%AE%89%E8%A3%85%E6%96%87%E6%A1%A3.md">Streamis部署</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/Streamis/blob/main/docs/zh_CN/0.2.0/development/StreamisAppConn%E5%AE%89%E8%A3%85%E6%96%87%E6%A1%A3.md">Streamis AppConn安装</a></td>
+</tr>
+<tr>
+<td>DolphinScheduler</td>
+<td>DolphinScheduler1.3.x</td>
+<td><a target="_blank" rel="noopener" href="https://dolphinscheduler.apache.org/zh-cn/docs/1.3.8/user_doc/standalone-deployment.html">DolphinScheduler部署</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/DataSphereStudio-Doc/blob/main/zh_CN/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/DolphinScheduler%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85%E6%96%87%E6%A1%A3.md">DolphinScheduler AppConn安装</a></td>
+</tr>
+</tbody></table>
+<h1 id="七、问题处理"><a href="#七、问题处理" class="headerlink" title="七、问题处理"></a>七、问题处理</h1><ul>
+<li>部署时提示上传资源错误</li>
+</ul>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=YTQ2ZmEzNjU2ZDk4ZjFhZDFiNjI3NTE2Y2RkNGQzMjJfZHUydlZFQUJ5dXlzYUdTQWdHa3VTaURtZWJJRnMya1JfVG9rZW46Ym94Y242RHdqcE81dmt6UHRzTThPRFJMSWtoXzE2NzcwNzk1ODE6MTY3NzA4MzE4MV9WNA"></p>
+<blockquote>
+<p>可以查看<code>xx/dss-links/links/logs/links-ps-publishservice.log</code>看具体的错误信息，来确定具体的错误</p>
+</blockquote>
+<h1 id="八、参考链接"><a href="#八、参考链接" class="headerlink" title="八、参考链接"></a>八、参考链接</h1><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/DataSphereStudio-Doc/blob/main/zh_CN/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/DSS%26Linkis%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E6%96%87%E6%A1%A3%E5%8D%95%E6%9C%BA%E7%89%88.md">DSS单机部署</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/apache/linkis/discussions/3628">DSS部署</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/433878383">安装pip</a></p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/02/22/bigdata/hive/install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/02/22/bigdata/hive/install/" class="post-title-link" itemprop="url">单机部署Hive</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-02-22 22:06:58 / 修改时间：23:13:18" itemprop="dateCreated datePublished" datetime="2023-02-22T22:06:58+08:00">2023-02-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index"><span itemprop="name">大数据</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/hive/" itemprop="url" rel="index"><span itemprop="name">hive</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/hive/course/" itemprop="url" rel="index"><span itemprop="name">course</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/hive/course/dds/" itemprop="url" rel="index"><span itemprop="name">dds</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>需要部署大数据治理平台，查看了一些开源版本之后发现微众银行的<a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/DataSphereStudio">DataSphereStudio</a>(DSS)比较符合我们的预期，于是着手部署该数据平台。</p>
+<p>因为DSS默认支持的是Hive2.3.3，但官网没找到对应版本，使用的是<a target="_blank" rel="noopener" href="https://dlcdn.apache.org/hive/hive-2.3.9/apache-hive-2.3.9-bin.tar.gz">2.3.9</a>。</p>
+<p>参考安装文档<a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/Hive/GettingStarted">GettingStarted - Apache Hive - Apache Software Foundation</a>。</p>
+<h1 id="基础软件"><a href="#基础软件" class="headerlink" title="基础软件"></a>基础软件</h1><ul>
+<li><p>CentOS7</p>
+</li>
+<li><p>Hadoop2.7.2</p>
+</li>
+<li><p>MySQL5.6+</p>
+</li>
+</ul>
+<h1 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h1><ul>
+<li>安装MySQL，下载的是5.7.40版本</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">yum installm -y ./*.rpm</span><br><span class="line"></span><br><span class="line">systemctl start mysqld &amp;&amp; systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">grep <span class="string">&#x27;temporary password&#x27;</span> /var/<span class="built_in">log</span>/mysqld.log</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql -uroot -ppassword</span><br><span class="line"></span><br><span class="line">alter user root@localhost identified by <span class="string">&#x27;Hadoop.2023&#x27;</span>;</span><br><span class="line">flush privileges;</span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1></li>
+<li><p>解压</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf apache-hive-2.3.9-bin.tar.gz</span><br><span class="line">mv apache-hive-2.3.9-bin /home/hive</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>增加PATH</li>
+</ul>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">vi</span> <span class="string">~/.bashrc</span></span><br><span class="line"></span><br><span class="line"><span class="attr">epxort</span> <span class="string">HIVE_HOME=/home/hive</span></span><br><span class="line"><span class="attr">export</span> <span class="string">PATH=$PATH:/home/hadoop/bin:$HIVE_HOME/bin</span></span><br><span class="line"></span><br><span class="line"><span class="attr">source</span> <span class="string">~/.bashrc</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建hdfs的hive目录</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hdfs dfs -mkdir -p /user/hive</span><br><span class="line">hdfs dfs -chmod -R 777 /user/hive</span><br><span class="line">hdfs dfs -mkdir -p /tmp/hive</span><br><span class="line">hdfs dfs -chmod -R 777 /tmp/hive</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置hive本地临时目录</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir /home/tmp/hive</span><br><span class="line">chmod -R 777 /home/tmp/hive</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置hive-site.xml</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/hive/conf</span><br><span class="line"></span><br><span class="line">cp hive-default.xml.template hive-site.xml</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li> 使用vim模式替换</li>
+</ul>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 替换临时目录</span><br><span class="line">:%s#$&#123;<span class="built_in">system</span>:java.io.tmpdir&#125;#/home/temp/hive#g</span><br><span class="line"></span><br><span class="line"># 替换目录用户</span><br><span class="line">:%s#$&#123;<span class="built_in">system</span>:user.name&#125;#root#g</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>修改hive数据库配置</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionDriverName<span class="tag">&lt;/<span class="name">nae</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>Driver class name for a JDBC metastore<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionUserName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>root<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>Username to use against metastore database<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>jdbc:mysql://172.18.23.219:3306/hive?createDatabaseIfNoExist=true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span></span><br><span class="line">    JDBC connect string for a JDBC metastore.</span><br><span class="line">    To use SSL to encrypt/authenticate the connection, provide database-specific SSL flag in the connection URL.</span><br><span class="line">    For example, jdbc:postgresql://myhost/db?ssl=true for postgres database.</span><br><span class="line">  <span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionPassword<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>Hadoop.2023<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>password to use against metastore database<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>下载jdbc驱动，上传到<code>/home/hive/lib</code>目录下。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install -y wget </span><br><span class="line">wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.48/mysql-connector-java-5.1.48.jar</span><br></pre></td></tr></table></figure>
+
+<h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><ul>
+<li>初始化</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd /home/hive/bin</span><br><span class="line">schematool -initSchema -dbType mysql</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 如果没有自动创建hive数据库，需要自己手动创建，后重新执行上述语句。</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>启动Hive</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./hive</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/02/22/bigdata/spark/install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/02/22/bigdata/spark/install/" class="post-title-link" itemprop="url">单机部署Spark On Yarn</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-02-22 22:04:31 / 修改时间：23:13:29" itemprop="dateCreated datePublished" datetime="2023-02-22T22:04:31+08:00">2023-02-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index"><span itemprop="name">大数据</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/course/" itemprop="url" rel="index"><span itemprop="name">course</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/course/dds/" itemprop="url" rel="index"><span itemprop="name">dds</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>需要部署大数据治理平台，查看了一些开源版本之后发现微众银行的<a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/DataSphereStudio">DataSphereStudio</a>(DSS)比较符合我们的预期，于是着手部署该数据平台。</p>
+<p>因为DSS默认支持的Spark2.0以上版本，于是本次的安装也用<a target="_blank" rel="noopener" href="https://dlcdn.apache.org/spark/spark-3.3.2/spark-3.3.2-bin-hadoop2.tgz">3.3.2-hadoop2</a>版本。</p>
+<p>参考安装文档<a target="_blank" rel="noopener" href="https://spark.apache.org/docs/2.4.3/running-on-yarn.html">Running Spark on YARN - Spark 2.4.3 Documentation (apache.org)</a>。</p>
+<h1 id="基础软件"><a href="#基础软件" class="headerlink" title="基础软件"></a>基础软件</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://downloads.lightbend.com/scala/2.12.17/scala-2.12.17.rpm">Scala2.12.17</a></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y scala-2.12.17.rpm</span><br></pre></td></tr></table></figure>
+
+<h1 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h1><ul>
+<li>设置</li>
+</ul>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><ul>
+<li>解压</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf spark-3.3.2-bin-hadoop2.tgz</span><br><span class="line">mv spark-3.3.2-bin-hadoop2 /home/spark</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置spark-env.sh</li>
+</ul>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Options read in any cluster manager using HDFS</span></span><br><span class="line"><span class="comment"># - HADOOP_CONF_DIR, to point Spark towards Hadoop configuration files</span></span><br><span class="line"><span class="attr">HADOOP_CONF_DIR</span>=<span class="string">/home/bigdata/hadoop/etc/hadoop</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># Options read in YARN client/cluster mode</span></span><br><span class="line"><span class="comment"># - YARN_CONF_DIR, to point Spark towards YARN configuration files when you use YARN</span></span><br><span class="line"><span class="attr">YARN_CONF_DIR</span>=<span class="string">/home/bigdata/hadoop/etc/hadoo</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>编辑<code>/home/hadoop/etc/hadoop/yarn-site.xml</code></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.nodemanager.pmem-check-enabled<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>false<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.nodemanager.vmem-check-enabled<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>false<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><ul>
+<li>启动dfs</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">start-dfs.sh</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>启动yarn</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">start-yarn.sh</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>运行sprk-shell</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spark-shell --master yarn --deploy-mode client</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>验证yarn</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://hadoop0:8088/cluster</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/02/22/bigdata/hadoop/hadoop/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/02/22/bigdata/hadoop/hadoop/" class="post-title-link" itemprop="url">单机部署Hadoop</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-02-22 20:04:43 / 修改时间：22:13:18" itemprop="dateCreated datePublished" datetime="2023-02-22T20:04:43+08:00">2023-02-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index"><span itemprop="name">大数据</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/course/" itemprop="url" rel="index"><span itemprop="name">course</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/course/dds/" itemprop="url" rel="index"><span itemprop="name">dds</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>需要部署大数据治理平台，查看了一些开源版本之后发现微众银行的<a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/DataSphereStudio">DataSphereStudio</a>(DSS)比较符合我们的预期，于是着手部署该数据平台。</p>
+<p>因为DSS默认支持的是Hadoop2.7.2，于是本次的安装也用<a target="_blank" rel="noopener" href="https://archive.apache.org/dist/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz">2.7.2</a>版本。</p>
+<p>参考安装文档<a target="_blank" rel="noopener" href="https://hadoop.apache.org/docs/r2.7.2/hadoop-project-dist/hadoop-common/SingleCluster.html">Apache Hadoop 2.7.2 – Hadoop: Setting up a Single Node Cluster.</a>。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/02/22/bigdata/hadoop/hadoop/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/01/26/bigdata/tdengine/tdengine-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/01/26/bigdata/tdengine/tdengine-2/" class="post-title-link" itemprop="url">引入tdengine流计算</a>
         </h2>
 
         <div class="post-meta">
@@ -238,7 +1127,7 @@
 <h2 id="创建原始数据表"><a href="#创建原始数据表" class="headerlink" title="创建原始数据表"></a>创建原始数据表</h2><p>虽然程序中支持使用动态创建原始数据表，但在创建流计算时需要原始数据表的信息，因此先创建，此处省略其他字段。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/01/26/tdengine/tdengine-2/#more" rel="contents">
+              <a class="btn" href="/2023/01/26/bigdata/tdengine/tdengine-2/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -285,10 +1174,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-01-26 09:41:38 / 修改时间：10:19:00" itemprop="dateCreated datePublished" datetime="2023-01-26T09:41:38+08:00">2023-01-26</time>
+              <time title="创建时间：2023-01-26 09:41:38" itemprop="dateCreated datePublished" datetime="2023-01-26T09:41:38+08:00">2023-01-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-19 15:38:03" itemprop="dateModified" datetime="2023-02-19T15:38:03+08:00">2023-02-19</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -309,7 +1204,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
+              <span>2.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -643,7 +1538,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2022/10/30/tdengine/tdengine-1/">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2022/10/30/bigdata/tdengine/tdengine-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -657,7 +1552,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/10/30/tdengine/tdengine-1/" class="post-title-link" itemprop="url">系统升级TDengine3.0</a>
+            <a href="/2022/10/30/bigdata/tdengine/tdengine-1/" class="post-title-link" itemprop="url">系统升级TDengine3.0</a>
         </h2>
 
         <div class="post-meta">
@@ -720,578 +1615,7 @@
 <p>系统一直运行相对比较平稳，直到产品对日志增加了事件分组的要求，即当日志事件产生时，需要根据一定的规则判断是否当前日志与前一条日志是否未同一组事件。因为需要实时的判断事件的分组，在数据入库ES时，增加了大量的聚合运算。此时ES开始占用大量内存，整体响应慢，造成日志数据入库延时，和分析查询业务无法正常返回数据。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/10/30/tdengine/tdengine-1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2022/06/02/homework/129/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/06/02/homework/129/" class="post-title-link" itemprop="url">《原则2：应对变化中的世界秩序》读书笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-06-02 09:00:49" itemprop="dateCreated datePublished" datetime="2022-06-02T09:00:49+08:00">2022-06-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E5%8E%9F%E5%88%99/" itemprop="url" rel="index"><span itemprop="name">原则</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>4月定投课堂读书会的书目是《原则2：应对变化中的世界秩序》。知道如何应对我所不知道的东西。</p>
-<h1 id="第一周"><a href="#第一周" class="headerlink" title="第一周"></a>第一周</h1><h2 id="在作者看来，三个最重要的周期分别是什么？"><a href="#在作者看来，三个最重要的周期分别是什么？" class="headerlink" title="在作者看来，三个最重要的周期分别是什么？"></a>在作者看来，三个最重要的周期分别是什么？</h2><p>长期债务和资本市场周期、内部秩序和混乱周期、外部秩序和混乱周期</p>
-<h2 id="典型的大周期分为几个阶段？你所在的国家正处在哪个阶段？"><a href="#典型的大周期分为几个阶段？你所在的国家正处在哪个阶段？" class="headerlink" title="典型的大周期分为几个阶段？你所在的国家正处在哪个阶段？"></a>典型的大周期分为几个阶段？你所在的国家正处在哪个阶段？</h2><p>上升阶段、顶部阶段和下跌阶段。目前处于上升阶段阶段。</p>
-<h2 id="三大周期、国家及其货币兴衰的3、5、8和18个决定因素是什么？"><a href="#三大周期、国家及其货币兴衰的3、5、8和18个决定因素是什么？" class="headerlink" title="三大周期、国家及其货币兴衰的3、5、8和18个决定因素是什么？"></a>三大周期、国家及其货币兴衰的3、5、8和18个决定因素是什么？</h2><p>3个决定因素：有利和不利的金融周期、内部秩序和混乱的周期、外部秩序和混乱周期</p>
-<p>5个决定因素：有利和不利的金融周期、内部秩序和混乱的周期、外部秩序和混乱周期、创新和技术、天灾</p>
-<p>8个决定因素：教育，竞争力，创新和技术、经济产出、世界贸易份额、军事实力、金融中心实力、储备货币地位。</p>
-<p>18个决定因素：3大周期（经济大周期、内部秩序和混乱周期、外部秩序和混乱周期），8个实力指标（教育、创新和技术、成本竞争力、军事实力、贸易、经济产出、市场和金融中心、储备货币地位），7个额外因素（地质、资源分配效率、自然现象、基础设施和投资、品格/教养/决心，国家治理/法规，财富机会和价值观差距）</p>
-<h2 id="长期债务周期包括几个阶段？各个阶段特点是什么？央行和政府在其中扮演着什么角色？思考为什么不应该依靠政府保护你的钱财？"><a href="#长期债务周期包括几个阶段？各个阶段特点是什么？央行和政府在其中扮演着什么角色？思考为什么不应该依靠政府保护你的钱财？" class="headerlink" title="长期债务周期包括几个阶段？各个阶段特点是什么？央行和政府在其中扮演着什么角色？思考为什么不应该依靠政府保护你的钱财？"></a>长期债务周期包括几个阶段？各个阶段特点是什么？央行和政府在其中扮演着什么角色？思考为什么不应该依靠政府保护你的钱财？</h2><p>6个阶段：</p>
-<p>1.最初a）并不存在债务，或者债务很少，b）人们使用硬通货；</p>
-<p>2.后来出现了硬通货债券票据；</p>
-<p>3）后来是债务增加；</p>
-<p>4）然后会发生债务危机、违约和货币贬值，导致印钞和与硬通货脱钩；</p>
-<p>5）然后是法定货币，最终导致贬值；</p>
-<p>6）回归硬通货。</p>
-<p>大多数政府会滥用它们作为货币和信贷创造者与使用者的特权；没有任何一个决策者能够掌控整个长期债务周期。</p>
-<h2 id="三种类型的货币体系分别是什么？彼此之间是如何转换的？"><a href="#三种类型的货币体系分别是什么？彼此之间是如何转换的？" class="headerlink" title="三种类型的货币体系分别是什么？彼此之间是如何转换的？"></a>三种类型的货币体系分别是什么？彼此之间是如何转换的？</h2><p>三种类型的货币体系是硬通货，纸币，法定货币。</p>
-<p>当信誉度最大化，信贷创造最小化的时，从第一类（硬通货）转向第二类（纸币）。</p>
-<p>当信贷创造扩大，信誉度下降时，从第二类（纸币）转向第三类（法定货币）。</p>
-<p>当信贷创造最大化，信誉度最小化时，从第三类（法定货币）回归第一类（硬通货）。</p>
-<h1 id="第二周"><a href="#第二周" class="headerlink" title="第二周"></a>第二周</h1><h2 id="所有货币都出现过贬值，货币贬值具有哪些共性？"><a href="#所有货币都出现过贬值，货币贬值具有哪些共性？" class="headerlink" title="所有货币都出现过贬值，货币贬值具有哪些共性？"></a>所有货币都出现过贬值，货币贬值具有哪些共性？</h2><ul>
-<li>所有经济体出现过典型的挤兑现象，即央行发行的债券票据总额超过可提取的硬通货总额。</li>
-<li>央行的的净储备在实际贬值前就已开始减少，在某些央行，甚至在货币贬值前几年就开始减少。</li>
-<li>货币挤兑和贬值的出现通常伴随着严重的债务问题。</li>
-<li>通常来说，央行最初的反应是，提高短期利率，但从经济角度看，这种做法过于痛苦，因此央行很快会放弃这种做法，转而增加货币供应。</li>
-<li>不同国家的结果截然不同，一个重要变量是，该国在货币贬值是保存了多少经济和军事实力</li>
-</ul>
-<h2 id="作者发现，在大多数国家，虽然人们会在意识形态和宗教方面发生争斗，但影响大多数人的最重要因素是？"><a href="#作者发现，在大多数国家，虽然人们会在意识形态和宗教方面发生争斗，但影响大多数人的最重要因素是？" class="headerlink" title="作者发现，在大多数国家，虽然人们会在意识形态和宗教方面发生争斗，但影响大多数人的最重要因素是？"></a>作者发现，在大多数国家，虽然人们会在意识形态和宗教方面发生争斗，但影响大多数人的最重要因素是？</h2><p>影响大多数人的最主要因素是人们如何创造、获取和分配财富与权力。</p>
-<h2 id="内部秩序和混乱大周期包括几个阶段？哪些信号表明美国处于第五个阶段（财政状况糟糕、冲突激烈）？"><a href="#内部秩序和混乱大周期包括几个阶段？哪些信号表明美国处于第五个阶段（财政状况糟糕、冲突激烈）？" class="headerlink" title="内部秩序和混乱大周期包括几个阶段？哪些信号表明美国处于第五个阶段（财政状况糟糕、冲突激烈）？"></a>内部秩序和混乱大周期包括几个阶段？哪些信号表明美国处于第五个阶段（财政状况糟糕、冲突激烈）？</h2><p>第一阶段，新秩序开始，新领导巩固权力</p>
-<p>第二阶段，资源配置体系与政府官僚机构建立和完善。</p>
-<p>第三阶段，出现和平与繁荣。</p>
-<p>第四阶段，支出和债务严重过度，贫富差距和政治分歧扩大。</p>
-<p>第五阶段，财政状况糟糕，冲突激烈</p>
-<p>第六阶段，出现内战/革命。</p>
-<p>在今天的美国，联邦政府及许多州和城市的政府面临着巨额赤字、巨额债务和巨大的贫富差距，美联储正在大规模增印货币，购买大量联邦政府债券，为联邦政府支出提供资金，而目前联邦政府的支出远大于收入。</p>
-<h2 id="外部秩序变化背后的永恒普适力量是什么？"><a href="#外部秩序变化背后的永恒普适力量是什么？" class="headerlink" title="外部秩序变化背后的永恒普适力量是什么？"></a>外部秩序变化背后的永恒普适力量是什么？</h2><p>国内实力和军事实力密切相关。</p>
-<p>在财力上超过对手是一个国家能够拥有的最大优势之一。</p>
-<p>在以下两种情况下，爆发军事战争的风险最大：1）双方的军事实力旗鼓相当，2）双方在生存问题上存在不可调和的分歧。</p>
-<p>要想获取更多的双赢结果，双方必须进行良好的协商，既考虑到对方也考虑到自身的优先关注点，并懂得妥善的在二者之间进行权衡。</p>
-<p>获胜意味着在不失去最重要的东西的前提下，得到最重要的东西。所以，如果丧失的生命和金钱超过带来的益处，这样的战争就是愚蠢的。</p>
-<p>获取权力，尊重权利，并明智的运用权力。</p>
-<h2 id="从投资者的角度来看大周期的整体格局，大多数投资者面临的三大风险是什么？"><a href="#从投资者的角度来看大周期的整体格局，大多数投资者面临的三大风险是什么？" class="headerlink" title="从投资者的角度来看大周期的整体格局，大多数投资者面临的三大风险是什么？"></a>从投资者的角度来看大周期的整体格局，大多数投资者面临的三大风险是什么？</h2><p>大多数投资者面临的三大风险是，投资组合将无法提供支出所需的回报，投资组合将面临破产，以及很大一部分财富会被收走。</p>
-<h1 id="第三周"><a href="#第三周" class="headerlink" title="第三周"></a>第三周</h1><h2 id="荷兰帝国兴起的过程中，两个最重要的发明是什么？为何衰退？"><a href="#荷兰帝国兴起的过程中，两个最重要的发明是什么？为何衰退？" class="headerlink" title="荷兰帝国兴起的过程中，两个最重要的发明是什么？为何衰退？"></a>荷兰帝国兴起的过程中，两个最重要的发明是什么？为何衰退？</h2><p>荷兰人的两个最重要的发明是：1）效能及其优异的帆船，使他们能在世界各地航行，这一点再加上他们从欧洲战事中获得的军事能力，使他们能收集巨大的财富；2）为这些行动提供推动力的资本主义。</p>
-<p>负债过多，国内发生许多财富争斗，军事实力衰落，受到英国的挑战，荷兰盾贬值，失去储备货币地位。</p>
-<h2 id="大英帝国是如何取代荷兰帝国，成为新兴帝国的？如何衰退？"><a href="#大英帝国是如何取代荷兰帝国，成为新兴帝国的？如何衰退？" class="headerlink" title="大英帝国是如何取代荷兰帝国，成为新兴帝国的？如何衰退？"></a>大英帝国是如何取代荷兰帝国，成为新兴帝国的？如何衰退？</h2><p>对法制的尊重，有力的教育，为英国在商业和创新方面取得竞争优势奠定了基础。受过良好教育的人口，重视发明创造的文化，新想法的发展能够得到资本的经济支持，这些因素创造了一大波竞争力提升与繁荣。英国的军事实力，特别是海军、帮助它建立殖民地，多去其他欧洲国家的殖民地，并确保对全球贸易路线的控制。伦敦成为世界金融中心，英镑成为世界储备货币。</p>
-<p>竞争力下降，不平等和冲突加剧，新的竞争对手崛起，特别是德国和美国。二战后英国背负沉重债务，维持帝国的代价高于盈利，英镑贬值，失去国际储备货币地位。</p>
-<h2 id="美帝国是如何兴起并走向顶峰取代大英帝国，成为新兴帝国的？"><a href="#美帝国是如何兴起并走向顶峰取代大英帝国，成为新兴帝国的？" class="headerlink" title="美帝国是如何兴起并走向顶峰取代大英帝国，成为新兴帝国的？"></a>美帝国是如何兴起并走向顶峰取代大英帝国，成为新兴帝国的？</h2><p>美国通过革命建立了一个新的国内秩序，第二次工业革命创造了收入、技术和财富的巨大收益。二次世界大战美国都是大赢家。</p>
-<h2 id="美国在自身大周期中所处的位置是？哪些典型的标志和信号？"><a href="#美国在自身大周期中所处的位置是？哪些典型的标志和信号？" class="headerlink" title="美国在自身大周期中所处的位置是？哪些典型的标志和信号？"></a>美国在自身大周期中所处的位置是？哪些典型的标志和信号？</h2><p>作者分析美国在自身大周期中处于第五阶段（约处于大周期70%的位置，误差范围为10个百分点）。</p>
-<p>三个重要的标志：1）规则被无视，2）双方相互的情绪化攻击，3）发生流血事件。</p>
-<h2 id="为什么帝国的衰退不可避免？（无论荷兰、英国还是美国）"><a href="#为什么帝国的衰退不可避免？（无论荷兰、英国还是美国）" class="headerlink" title="为什么帝国的衰退不可避免？（无论荷兰、英国还是美国）"></a>为什么帝国的衰退不可避免？（无论荷兰、英国还是美国）</h2><p>让帝国强大的力量减弱，敌对力量出现。</p>
-<h1 id="第四周"><a href="#第四周" class="headerlink" title="第四周"></a>第四周</h1><h2 id="从1949到现在的崛起，可以把中国发展分为几个阶段？"><a href="#从1949到现在的崛起，可以把中国发展分为几个阶段？" class="headerlink" title="从1949到现在的崛起，可以把中国发展分为几个阶段？"></a>从1949到现在的崛起，可以把中国发展分为几个阶段？</h2><p>可以分为三个阶段，1949～1976，1978～2008，2008年至今</p>
-<h2 id="中美关系为何从共生关系走向冲突？"><a href="#中美关系为何从共生关系走向冲突？" class="headerlink" title="中美关系为何从共生关系走向冲突？"></a>中美关系为何从共生关系走向冲突？</h2><p>美国由债务增长支撑的繁荣时期引发了债务泡沫，造成贫富差距，中国实力不断加强，两国从互惠互利的关系变成激烈的竞争关系，冲突加剧。</p>
-<h2 id="美国和中国的现状分别是？有几种类型的战争？"><a href="#美国和中国的现状分别是？有几种类型的战争？" class="headerlink" title="美国和中国的现状分别是？有几种类型的战争？"></a>美国和中国的现状分别是？有几种类型的战争？</h2><p>因为打周期的规律，美国正在衰弱（周期的第五阶段），中国正在崛起（周期的第三阶段）。</p>
-<p>有七大类型的战争：1）贸易/经济战；2）技术战；3）地缘政治战；4）资本战；5）军事战；6）文化战；7）自我交战的战争</p>
-<h2 id="作者对于未来的观点是基于作者对进化、周期、指标三点的想法，分别是？"><a href="#作者对于未来的观点是基于作者对进化、周期、指标三点的想法，分别是？" class="headerlink" title="作者对于未来的观点是基于作者对进化、周期、指标三点的想法，分别是？"></a>作者对于未来的观点是基于作者对进化、周期、指标三点的想法，分别是？</h2><p>人类的创造性可能会带来更大的进步，但同时债务/经济周期、内部秩序和混乱周期、外部秩序和混乱周期与不断恶化的自然灾害，几乎可以肯定会构成问题。换言之，人类的创造性和这些其他挑战，将存在一场斗争。</p>
-<p>各国内部和各国之间情况极为不同，这将决定哪些国家将以何种方式崛起，哪些国家将以何种方式衰弱。</p>
-<h2 id="基于对过去的分析和未来的预测，达利欧建议应该如何应对已知和未知？有哪几条原则？"><a href="#基于对过去的分析和未来的预测，达利欧建议应该如何应对已知和未知？有哪几条原则？" class="headerlink" title="基于对过去的分析和未来的预测，达利欧建议应该如何应对已知和未知？有哪几条原则？"></a>基于对过去的分析和未来的预测，达利欧建议应该如何应对已知和未知？有哪几条原则？</h2><p>了解所有的可能性，考虑最坏的情况，然后想办法消除无法忍受的情况。</p>
-<p>分散风险。</p>
-<p>首先考虑延迟满足而不是当下满足，这样你将来会过得更好。</p>
-<p>与最聪明的人反复沟通。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2022/05/01/homework/128/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/05/01/homework/128/" class="post-title-link" itemprop="url">《原则》读书笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-05-01 10:36:09" itemprop="dateCreated datePublished" datetime="2022-05-01T10:36:09+08:00">2022-05-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E5%8E%9F%E5%88%99/" itemprop="url" rel="index"><span itemprop="name">原则</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>4月定投课堂读书会的书目是《原则》。由自己决定希望从生活中得到什么和给予什么。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/05/01/homework/128/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2022/04/01/homework/127/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/04/01/homework/127/" class="post-title-link" itemprop="url">《文明 现代化 价值投资与中国》读书笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-04-01 20:35:02" itemprop="dateCreated datePublished" datetime="2022-04-01T20:35:02+08:00">2022-04-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E4%BB%B7%E5%80%BC%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">价值投资</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>3月定投课堂读书会的书目是《文明 现代化 价值投资与中国》。价值投资理论不难，但真正做到的人不多，如果你能做到的话能就是世界前5%的人。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/04/01/homework/127/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2022/03/04/homework/126/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/04/homework/126/" class="post-title-link" itemprop="url">《定投改变命运》读书笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-03-04 21:23:19" itemprop="dateCreated datePublished" datetime="2022-03-04T21:23:19+08:00">2022-03-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E5%AE%9A%E6%8A%95/" itemprop="url" rel="index"><span itemprop="name">定投</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E5%AE%9A%E6%8A%95/%E5%AE%9A%E6%8A%95%E6%94%B9%E5%8F%98%E5%91%BD%E8%BF%90/" itemprop="url" rel="index"><span itemprop="name">定投改变命运</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>2月定投课堂读书会的书目是《定投改变命运》的中英文版本。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/03/04/homework/126/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2022/02/12/git/git-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/02/12/git/git-2/" class="post-title-link" itemprop="url">免密登录GitHub</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-02-12 12:43:06" itemprop="dateCreated datePublished" datetime="2022-02-12T12:43:06+08:00">2022-02-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/git/GitHub/" itemprop="url" rel="index"><span itemprop="name">GitHub</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/git/GitHub/ssh/" itemprop="url" rel="index"><span itemprop="name">ssh</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>本文算是对「<a href="http://l4qiang.me/2018/09/19/git/git-1/">管理多个Github帐号</a>」的重新整理，在查看该文档重新配置GitHub免密登录时，发现不是很顺畅，于是按步骤的方式进行重新整理。而「管理多个Github账号」是对配置多个GitHub不成的问题分析。</p>
-<p>本文基于macOS Monterey（v12.0.1）环境，不同版本可能会有所差异。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/02/12/git/git-2/#more" rel="contents">
+              <a class="btn" href="/2022/10/30/bigdata/tdengine/tdengine-1/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1314,7 +1638,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1380,20 +1704,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">240</span>
+          <span class="site-state-item-count">245</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-count">91</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">91</span>
+        <span class="site-state-item-count">96</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1451,12 +1775,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">488k</span>
+    <span title="站点总字数">504k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:24</span>
+    <span title="站点阅读时长">7:38</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

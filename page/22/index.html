@@ -172,6 +172,822 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/bigdata/hbase-indexer/home/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/05/bigdata/hbase-indexer/home/" class="post-title-link" itemprop="url">Hbase Index - 首页</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-05 12:20:00" itemprop="dateCreated datePublished" datetime="2018-12-05T12:20:00+08:00">2018-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="简介（Introduction）"><a href="#简介（Introduction）" class="headerlink" title="简介（Introduction）"></a>简介（Introduction）</h2><p>The HBase Indexer project provides indexing (via <a target="_blank" rel="noopener" href="http://lucene.apache.org/solr/">Solr</a>) for content stored in <a target="_blank" rel="noopener" href="http://hbase.apache.org/">HBase</a>. It provides a flexible and extensible way of defining indexing rules, and is designed to scale.</p>
+<p>Hbase Indexer项目可以为存储在HBase中的内容提供<a target="_blank" rel="noopener" href="http://lucene.apache.org/solr/">Solr</a>索引。它提供灵活的可扩展的方式来定义索引规则，且为大规模而生。</p>
+<p>Indexing is performed asynchronously, so it does not impact write throughput on HBase. SolrCloud is used for storing the actual index in order to ensure scalability of the indexing.</p>
+<p>索引是异步的，所以不会影响Hbase的写入吞吐量。SolrCloud用于存储实际的索引，以确保索引的可伸缩性。</p>
+<h2 id="开始使用Hbase-Indexer（Getting-started-with-the-HBase-Indexer）"><a href="#开始使用Hbase-Indexer（Getting-started-with-the-HBase-Indexer）" class="headerlink" title="开始使用Hbase Indexer（Getting started with the HBase Indexer）"></a>开始使用Hbase Indexer（Getting started with the HBase Indexer）</h2><ol>
+<li><p>Make sure you’ve got the required software installed, as detailed on the <a target="_blank" rel="noopener" href="https://github.com/NGDATA/hbase-indexer/wiki/Requirements">Requirements</a> page.</p>
+</li>
+<li><p>Follow the Tutorial to get a feel for how to use the HBase Indexer.</p>
+</li>
+<li><p>Customize your indexing setup as needed using the other reference documentation provided here.</p>
+</li>
+<li><p>确认所有要求的软件已经安装，具体内容在[要求]页。</p>
+</li>
+<li><p>按照教程来体验下如何使用Hbase Indexer。</p>
+</li>
+<li><p>通过提供的文档来调整索引的配置。</p>
+</li>
+</ol>
+<h2 id="工作原理（How-it-works）"><a href="#工作原理（How-it-works）" class="headerlink" title="工作原理（How it works）"></a>工作原理（How it works）</h2><p>The HBase Indexer works by acting as an HBase replication sink. As updates are written to HBase region servers, they are “replicated” asynchronously to the HBase Indexer processes.</p>
+<p>Hbase Indxer扮演了Hbase复制集的角色。当数据写入Hbase的分区时，数据被异步的“复制”给Hbase Indexer处理器。</p>
+<p>The indexer analyzes incoming HBase mutation events, and where applicable it creates Solr documents and pushes them to SolrCloud servers.</p>
+<p>Hbase Indexer分析从Hbase发送过来的变化事件，当合适的时候创建Solr文档并发送给SolrCloud服务器。</p>
+<p>The indexed documents in Solr contain enough information to uniquely identify the HBase row that they are based on, allowing you to use Solr to search for content that is stored in HBase.</p>
+<p>Solr文档维护了足够多的信息用于唯一标识一条Hbase记录，这样允许你可能通过Solr来检索Hbase内容。</p>
+<p>HBase replication is based on reading the HBase log files, which are the precise source of truth of the what is stored in HBase: there are no missing or no extra events. In various cases, the log also contains all the information needed to index, so that no expensive random-read on HBase is necessary (see the <code>read-row</code>attribute in the <a target="_blank" rel="noopener" href="https://github.com/NGDATA/hbase-indexer/wiki/Indexer-configuration">Indexer Configuration</a>).</p>
+<p>HBase复制集是通过读取Hbase的日志文件，这些日志文件是HBASE中存储内容的精确来源：没有遗漏也没有额外的事件。在大多数情况下，日志含了索引需要的全部信息，因此不需要对Hbase进行昂贵的随机读取。（在[Indexer配置]中可查看<code>read-row</code>属性）。</p>
+<p>HBase replication delivers (small) batches of events. HBase-indexer exploits this by avoiding double-indexing of the same row if it would have been updated twice in a short time frame, and as well will batch/buffer the updates towards Solr, which gives important performance gains. The updates are applied to Solr before confirming the processing of the events to HBase, so that no event loss is possible.</p>
+<p>Hbase复制集（小规模）批量分发事件。Hbase indexer利用这一特性用于避免在一个很小的时间窗口期一条记录被更新两次而引起重复索引，也通过批量/缓存的方式来更新Solr，这样可以获得更好的性能。所有的更新会在Hbase处理确认之前更新到Solr中，因此不会出现丢失数据的情况。</p>
+<h2 id="横向扩展（Horizontal-scalability）"><a href="#横向扩展（Horizontal-scalability）" class="headerlink" title="横向扩展（Horizontal scalability）"></a>横向扩展（Horizontal scalability）</h2><p>All information about indexers is stored in ZooKeeper. New indexer hosts can always be added to a cluster, in the same way that HBase regionservers can be added to to an HBase cluster.</p>
+<p>所有的索引信息都是保存在ZooKeeper中的。新的Indexer主机可以被添加为一个集群中，就像Hbase的分区服务器被添加到Hbase集群一样。</p>
+<p>All indexing work for a single configured indexer is shared over all machines in the cluster. In this way, adding additional indexer nodes allows horizontal scaling.</p>
+<p>同一索引配置的所有索引工作被分配给集群中的所有机器。这样说来，添加额外的索引节点就可以横向扩展。</p>
+<h2 id="自动的错误处理（Automatic-failure-handling）"><a href="#自动的错误处理（Automatic-failure-handling）" class="headerlink" title="自动的错误处理（Automatic failure handling）"></a>自动的错误处理（Automatic failure handling）</h2><p>The HBase replication system upon which the HBase Indexer is based is designed to handle hardware failures. Because the HBase Indexer is based on this system, it also benefits from the same ability to handle failures.</p>
+<p>Hbase复制集系统为硬件错误处理做了设计。Hbase Indexer其于此系统，因此也从中获得了错误处理的能力。</p>
+<p>In general, indexing nodes going down or Solr nodes going down will not result in any lost data in the HBase Indexer.</p>
+<p>通常情况，索引节点或者Solr宕机不会导致Hbase Indexer中的数据丢失。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/29/bigdata/hbase-indexer/loss-data/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/29/bigdata/hbase-indexer/loss-data/" class="post-title-link" itemprop="url">Hbase同步Solr数据缺失问题验证</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-29 13:30:00" itemprop="dateCreated datePublished" datetime="2018-11-29T13:30:00+08:00">2018-11-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>公司使用Hbase indexer做二级索引，最近在做数据统计时发现，数据存在有缺失的情况。在网上查找时发现可能是Hbase Indexer的一个BUG，详情看<a target="_blank" rel="noopener" href="https://www.cnblogs.com/kekukekro/p/6340922.htm">这里</a>。大意是说修改read-row=”never”或者修改源码。我们使用的组件不是完全开源的Hbase Indexer，有被提供商做了部分调整，为了保险起见，自己还是做了一次测试。同时也是进一步了解Hbase和Habse Indexer的机会。</p>
+<h1 id="验证方案"><a href="#验证方案" class="headerlink" title="验证方案"></a>验证方案</h1><ol>
+<li>把ES的qc索引做为数据来源，数据量比较大</li>
+<li>写测试程序从ES拉数据，100万条。</li>
+<li>调整不同的read-row方式</li>
+<li>修改程序验证部分更新。<h1 id="验证准备"><a href="#验证准备" class="headerlink" title="验证准备"></a>验证准备</h1><h2 id="创建Hbase表"><a href="#创建Hbase表" class="headerlink" title="创建Hbase表"></a>创建Hbase表</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create <span class="string">&#x27;qc&#x27;</span>,&#123;NAME =&gt;<span class="string">&#x27;d&#x27;</span>, REPLICATION_SCOPE =&gt;1&#125;</span><br></pre></td></tr></table></figure>
+此处需要，注意设置REPLICATION_SCOPE为1，第一次验证时未开启。如果未开启的情况，可以进行如下操作：<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">disable</span> <span class="string">&#x27;qc&#x27;</span></span><br><span class="line">alter <span class="string">&#x27;qc&#x27;</span>,&#123;NAME =&gt;<span class="string">&#x27;d&#x27;</span>, REPLICATION_SCOPE =&gt;1&#125;</span><br><span class="line"><span class="built_in">enable</span> <span class="string">&#x27;qc&#x27;</span></span><br></pre></td></tr></table></figure>
+<h2 id="配置Hbase-Indexer"><a href="#配置Hbase-Indexer" class="headerlink" title="配置Hbase Indexer"></a>配置Hbase Indexer</h2>之前已经有配置，拷贝一份及可<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span>  /opt/morphline_config</span><br><span class="line">cp -a xyz.xml qc.xml</span><br><span class="line">cp -a xyz.conf qc.conf</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="修改qc-xml"><a href="#修改qc-xml" class="headerlink" title="修改qc.xml"></a>修改qc.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">indexer</span> <span class="attr">table</span>=<span class="string">&quot;qc&quot;</span> <span class="attr">unique-key-field</span>=<span class="string">&quot;rowkey&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">unique-key-formatter</span>=<span class="string">&quot;com.ngdata.hbaseindexer.uniquekey.StringUniqueKeyFormatter&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">mapper</span>=<span class="string">&quot;com.ngdata.hbaseindexer.morphline.MorphlineResultToSolrMapper&quot;</span> <span class="attr">read-row</span>=<span class="string">&quot;never&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">&quot;morphlineFile&quot;</span> <span class="attr">value</span>=<span class="string">&quot;/opt/morphline_config/qc.conf&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">indexer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="修改qc-conf"><a href="#修改qc-conf" class="headerlink" title="修改qc.conf"></a>修改qc.conf</h3><p>可以把文件下载回来修改</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sz qc.conf</span><br></pre></td></tr></table></figure>
+<p>通过’rz’可以上传修改后的配置文件。</p>
+<h4 id="调整后的qc-conf"><a href="#调整后的qc-conf" class="headerlink" title="调整后的qc.conf"></a>调整后的qc.conf</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line">morphlines : [</span><br><span class="line">  &#123;</span><br><span class="line">    id : morphline1</span><br><span class="line">    importCommands : [<span class="string">&quot;org.kitesdk.morphline.**&quot;</span>, <span class="string">&quot;com.ngdata.**&quot;</span>]</span><br><span class="line"></span><br><span class="line">    commands : [</span><br><span class="line">        &#123;</span><br><span class="line">                extractHBaseCells &#123;</span><br><span class="line">                  mappings : [</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:_id&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;_id&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;,</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:code&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;code&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;,</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:errorCode&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;errorCode&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;,</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:errorMsg&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;errorMsg&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;,</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:eventNo&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;eventNo&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;,</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:eventTime&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;eventTime&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;,</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:orgCode&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;orgCode&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;,</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:patientId&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;patientId&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;,</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:receiveTime&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;receiveTime&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;,</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:rowKey&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;rowKey&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;,</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:table&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;table&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;,</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:value&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;value&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;,</span><br><span class="line">                        &#123;</span><br><span class="line">                                inputColumn : <span class="string">&quot;d:version&quot;</span></span><br><span class="line">                                outputField : <span class="string">&quot;version&quot;</span></span><br><span class="line">                                type : string</span><br><span class="line">                                isAllowEmpty : <span class="literal">true</span></span><br><span class="line">                                source : value</span><br><span class="line">                        &#125;                                          </span><br><span class="line">                        ]		</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        &#123; logTrace &#123; format : <span class="string">&quot;output record: &#123;&#125;&quot;</span>, args : [<span class="string">&quot;@&#123;&#125;&quot;</span>] &#125; &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加映射"><a href="#添加映射" class="headerlink" title="添加映射"></a>添加映射</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hbase-indexer add-indexer -c qc.xml -n qc -z node1,node3,node2  -cp solr.zk=node1:2181,node3:2181,node2:2181/solr -cp solr.collection=qc</span><br></pre></td></tr></table></figure>
+<h3 id="检查配置是否生效"><a href="#检查配置是否生效" class="headerlink" title="检查配置是否生效"></a>检查配置是否生效</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hbase-indexer list-indexers -dump</span><br></pre></td></tr></table></figure>
+<h3 id="删除映射"><a href="#删除映射" class="headerlink" title="删除映射"></a>删除映射</h3><p>如果配置没有生效的情况，最好先删掉映射后重新添加。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hbase-indexer delete-indexer --name &#x27;qc&#x27;</span><br></pre></td></tr></table></figure>
+
+<h3 id="重新拉取Hbase数据"><a href="#重新拉取Hbase数据" class="headerlink" title="重新拉取Hbase数据"></a>重新拉取Hbase数据</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup hadoop jar /opt/hbase-indexer/latest/tools/hbase-indexer-mr-1.6-ngdata-job.jar  --conf /etc/hbase/conf/hbase-site.xml -D &#x27;mapred.child.java.opts=-Xmx500m&#x27; --hbase-indexer-file /opt/morphline_config/qc.xml --zk-host node1/solr --collection qc  --reduce 0 &amp;</span><br></pre></td></tr></table></figure>
+<h2 id="配置Solr"><a href="#配置Solr" class="headerlink" title="配置Solr"></a>配置Solr</h2><h3 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h3><p>之前有配置的，可直接拷贝一份开始配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /root</span><br><span class="line">cp -a xyz qc</span><br></pre></td></tr></table></figure>
+<h4 id="修改后的scheme-xml"><a href="#修改后的scheme-xml" class="headerlink" title="修改后的scheme.xml"></a>修改后的scheme.xml</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xmlversion=&quot;1.0&quot;encoding=&quot;UTF-8&quot;standalone=&quot;no&quot;?&gt;</span></span><br><span class="line">&lt;schemaname=&quot;qc&quot;version=&quot;1.5&quot;&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;_version_&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;long&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span><span class="attr">name</span>=<span class="string">&quot;_root_&quot;</span><span class="attr">stored</span>=<span class="string">&quot;false&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span><span class="attr">multiValued</span>=<span class="string">&quot;false&quot;</span><span class="attr">name</span>=<span class="string">&quot;_id&quot;</span><span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">multiValued</span>=<span class="string">&quot;false&quot;</span> <span class="attr">name</span>=<span class="string">&quot;rowkey&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;code&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;false&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;errorCode&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;errorMsg&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;eventNo&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;eventTime&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;orgCode&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;patientId&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;receiveTime&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;false&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;rowKey&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;table&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;value&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">name</span>=<span class="string">&quot;version&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">uniqueKey</span>&gt;</span>rowkey<span class="tag">&lt;/<span class="name">uniqueKey</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">schema</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>此处注意配置rowkey字段，之前一就因为rowkey没有导致创建索引失败</p>
+<h2 id="上传配置"><a href="#上传配置" class="headerlink" title="上传配置"></a>上传配置</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/solr/latest/server/scripts/cloud-scripts/zkcli.sh -zkhost node1:2181/solr -cmd upconfig --confdir /root/qc/conf/ --confname qc</span><br></pre></td></tr></table></figure>
+<h2 id="创建索引"><a href="#创建索引" class="headerlink" title="创建索引"></a>创建索引</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/solr/latest/bin/solr create_collection -c qc -d /root/qc/conf/ -n qc</span><br></pre></td></tr></table></figure>
+<h2 id="修改ES配置"><a href="#修改ES配置" class="headerlink" title="修改ES配置"></a>修改ES配置</h2><p>拉取测试数据时，提示只有10000的窗口数据，需要设计max_result_window，修改方法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -XPOST &#x27;http://xx:9200/qc/_close&#x27;</span><br><span class="line">curl -XPUT &#x27;http://xx:9200/qc/_settings?preserve_existing=true&#x27; -d &#x27;&#123;&quot;max_result_window&quot; : &quot;1000000&quot;&#125;&#x27;</span><br><span class="line">curl -XGET &#x27;http://xx:9200/qc/_settings?preserve_existing=true&#x27;</span><br><span class="line">curl -XPOST &#x27;http://xx:9200/qc/_open&#x27; </span><br></pre></td></tr></table></figure>
+
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><h2 id="read-row为never"><a href="#read-row为never" class="headerlink" title="read-row为never"></a>read-row为never</h2><ol>
+<li>测试数据为100万条，全量数据更新。<br>数据测试，导入数据时出现服务连接问题，中间出现Hbase Indexer异常停止，重启后，数据能对上。</li>
+<li>测试数据为100万条，部分数据更新。<br>数据字段出现丢失情况，</li>
+<li>验证配置字段顺序问题。<h2 id="清理Hbase数据"><a href="#清理Hbase数据" class="headerlink" title="清理Hbase数据"></a>清理Hbase数据</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">truncate &#x27;qc&#x27;</span><br></pre></td></tr></table></figure>
+<h2 id="清理Solr数据"><a href="#清理Solr数据" class="headerlink" title="清理Solr数据"></a>清理Solr数据</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hdfs dfs -rm -r /solr/qc</span><br><span class="line">hdfs dfs -ls /solr</span><br></pre></td></tr></table></figure>
+验证的情况，与配置文件的顺序无关</li>
+</ol>
+<h2 id="验证重跑MapRedurce"><a href="#验证重跑MapRedurce" class="headerlink" title="验证重跑MapRedurce"></a>验证重跑MapRedurce</h2><h3 id="删除solr中qc的记录"><a href="#删除solr中qc的记录" class="headerlink" title="删除solr中qc的记录"></a>删除solr中qc的记录</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">delete</span>&gt;</span><span class="tag">&lt;<span class="name">query</span>&gt;</span>*:*<span class="tag">&lt;/<span class="name">query</span>&gt;</span><span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">commit</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="重跑"><a href="#重跑" class="headerlink" title="重跑"></a>重跑</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup hadoop jar /opt/hbase-indexer/latest/tools/hbase-indexer-mr-1.6-ngdata-job.jar  --conf /etc/hbase/conf/hbase-site.xml -D <span class="string">&#x27;mapred.child.java.opts=-Xmx500m&#x27;</span> --hbase-indexer-file /opt/morphline_config/qc.xml --zk-host node1/solr --collection qc  --reduce 0 &amp;</span><br></pre></td></tr></table></figure>
+<p>测试时发现可以正常拉取数据，正式线发现不能拉取到之前遗漏的数据。</p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><ol>
+<li>修改read-row为never</li>
+<li>重新检查写入Hbase相关代码，确保数据是整条记录更新（即需要合并旧数据的方式进行更新）</li>
+</ol>
+<p><strong>注意事项</strong>，采用read-row为never时，只会从WAL中获取数据去更新Solr，也就是说如果，数据只更新部分，Solr也只会有最后更新的那部分数据。<br>3. 通过写程序将缺失数据提取出来重新更新Hbase，该工作已让郑维协助处理，保持跟进。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kekukekro/p/6340922.html">Lily HBase Indexer同步HBase二级索引到Solr丢失数据的问题分析</a> </p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/27/misc/notepad-plus/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/27/misc/notepad-plus/" class="post-title-link" itemprop="url">notepad++添加插件管理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-27 15:07:40" itemprop="dateCreated datePublished" datetime="2018-11-27T15:07:40+08:00">2018-11-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/misc/" itemprop="url" rel="index"><span itemprop="name">misc</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>424</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>使用Notepad++有挺长一段时间了。因为打开速度快，经常会用它来编绎有一些小文本，或者文件的格式化。在一次升级后发现Json Viwer插件不见了。<br>当时也没太在意，换了一台电脑用了。最近因为查问题需要格式化的JSON也多了起来，就想查查到底是怎么回事，顺便记录下处理方式。</p>
+<p>网上一搜还有不少碰到这个问题的人<a target="_blank" rel="noopener" href="https://www.cnblogs.com/holab/p/8593359.html">notepad++64位添加Plugin Manager</a>。大意是64位已经不提供plugin manager了。可以通过<a target="_blank" rel="noopener" href="https://github.com/bruderstein/nppPluginManager/releases">https://github.com/bruderstein/nppPluginManager/releases</a>下载Plugin Manager。下载之后，用覆盖的方式粘贴plugins和updater文件夹，重新启动就可以。</p>
+<p>启动之后提示，32位Notepad++不能运行64位插件。索性重新下载了个新版本的Notepad++64位，plugin manager已经改名为Plugin Admin了。下载我自己需要的插件，一切正常。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/22/go/go-little-book/chapter-6/" class="post-title-link" itemprop="url">Go Little Book - 第六章 - 并发</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-22 10:45:44" itemprop="dateCreated datePublished" datetime="2018-11-22T10:45:44+08:00">2018-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>21k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>19 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="第六章-并发-Chapter-6-Concurrency"><a href="#第六章-并发-Chapter-6-Concurrency" class="headerlink" title="第六章 - 并发(Chapter 6 - Concurrency)"></a>第六章 - 并发(Chapter 6 - Concurrency)</h1><p>Go is often described as a concurrent-friendly language. The reason for this is that it provides a simple syntax over two powerful mechanisms: goroutines and channels.</p>
+<p>Go常被描述为是一种适用于并发的语言。是因为它在两个强大的机制提供了简法的语法支持：<code>go协程</code>和<code>通道</code>。</p>
+<h2 id="Go协程-Goroutines"><a href="#Go协程-Goroutines" class="headerlink" title="Go协程(Goroutines)"></a>Go协程(Goroutines)</h2><p>A goroutine is similar to a thread, but it is scheduled by Go, not the OS. Code that runs in a goroutine can run concurrently with other code. Let’s look at an example:</p>
+<p>一个Go协程和一个线程类似，只不这它是由Go,而不是系统来调度的。在协程中的代码可以和其他代码并发执行。让我们看一个例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(<span class="string">&quot;start&quot;</span>)</span><br><span class="line">  <span class="keyword">go</span> process()</span><br><span class="line">  time.Sleep(time.Millisecond * <span class="number">10</span>) <span class="comment">// this is bad, don&#x27;t do this! 这样不好，不能这么做！</span></span><br><span class="line">  fmt.Println(<span class="string">&quot;done&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(<span class="string">&quot;processing&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>There are a few interesting things going on here, but the most important is how we start a goroutine. We simply use the <code>go</code> keyword followed by the function we want to execute. If we just want to run a bit of code, such as the above, we can use an anonymous function. Do note that anonymous functions aren’t only used with goroutines, however.</p>
+<p>这里有几个有趣的地方，但最重要的是我们如何开启一个Go协程。我们只是简单的使用了<code>go</code>关键字后紧跟我们需的执行的函数。如果我们只是要运行一小段代码，比如上面的例子，我们可以使用匿名函数。但是记住，匿名函数不只适用于Go协程。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(<span class="string">&quot;processing&quot;</span>)</span><br><span class="line">&#125;()</span><br></pre></td></tr></table></figure>
+
+<p>Goroutines are easy to create and have little overhead. Multiple goroutines will end up running on the same underlying OS thread. This is often called an M:N threading model because we have M application threads (goroutines) running on N OS threads. The result is that a goroutine has a fraction of overhead (a few KB) than OS threads. On modern hardware, it’s possible to have millions of goroutines.</p>
+<p>Go协程创建简单和开销小。多个Go协程最终会运行在一个系统线程中。这通常称为<code>M:N</code>线程模型，因为我们有<code>M</code>个应用线程（Go协程）运行在<code>N</code>个系统线程上。结果就是，一个Go协程的开销比系统线程小（一般都是几KB）。在现代的硬件上，有可能创建成千上万个Go协程。</p>
+<p>Furthermore, the complexity of mapping and scheduling is hidden. We just say <em>this code should run concurrently</em> and let Go worry about making it happen.</p>
+<p>此外，因为隐藏了映射和调度的复杂性。我们只需要说<em>这段代码需要并发执行</em>，然后让Go自己来运行它。</p>
+<p>If we go back to our example, you’ll notice that we had to <code>Sleep</code> for a few milliseconds. That’s because the main process exits before the goroutine gets a chance to execute (the process doesn’t wait until all goroutines are finished before exiting). To solve this, we need to coordinate our code.</p>
+<p>回到我们的例子中，你将会注意到我们使用了<code>Sleep</code>让程序等待了几毫秒。这是让主进程在退出前有机会去执行协程（主进程退出时不会等待所有协程都执行结束）。为了解决这个问题，我们必须让代码协同。</p>
+<h2 id="同步-Synchronization"><a href="#同步-Synchronization" class="headerlink" title="同步(Synchronization)"></a>同步(Synchronization)</h2><p>Creating goroutines is trivial, and they are so cheap that we can start many; however, concurrent code needs to be coordinated. To help with this problem, Go provides <code>channels</code>. Before we look at <code>channels</code>, I think it’s important to understand a little bit about the basics of concurrent programming.</p>
+<p>创建Go协程是容易的，而且他们的开销很小，所以我们可以开启很多Go协程；但是并发代码需要协同。为了帮助我们解决这个问题，Go提供了<code>通道</code>。在我们继续<code>通道</code>之前，我觉得有必要先了解一些并发编程的基础知识。</p>
+<p>Writing concurrent code requires that you pay specific attention to where and how you read and write values. In some ways, it’s like programming without a garbage collector – it requires that you think about your data from a new angle, always watchful for possible danger. Consider:</p>
+<p>在编写并发执行的代码时，你需要特别的注意在哪里和如何读写一个值。出于某些原因，例如没有垃圾回收的语言，需要你从一个新的角度去考虑你的数据，总是警惕着可能存在的危险。例如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> counter = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">2</span>; i++ &#123;</span><br><span class="line">    <span class="keyword">go</span> incr()</span><br><span class="line">  &#125;</span><br><span class="line">  time.Sleep(time.Millisecond * <span class="number">10</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">incr</span><span class="params">()</span></span> &#123;</span><br><span class="line">  counter++</span><br><span class="line">  fmt.Println(counter)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>What do you think the output will be?</p>
+<p>你觉得输出的会是什么呢？</p>
+<p>If you think the output is <code>1, 2</code> you’re both right and wrong. It’s true that if you run the above code, you’ll very likely get that output. However, the reality is that the behavior is undefined. Why? Because we potentially have multiple (two in this case) goroutines writing to the same variable, <code>counter</code>, at the same time. Or, just as bad, one goroutine would be reading <code>counter</code> while another writes to it.</p>
+<p>如果你觉得输出是<code>1</code>和<code>2</code>，不能说你对或者错。如果你运行上面的代码，你很有可能得到那样的输出。但是，实际上这个输出是不确定的。为什么？因为我们可能有多个（这里是2个）Go协程同时写同一个变量<code>counter</code>。或者更糟的情况是一个协程正在读<code>counter</code>，而另一个协程正在写<code>counter</code>。</p>
+<p>Is that really a danger? Yes, absolutely. <code>counter++</code> might seem like a simple line of code, but it actually gets broken down into multiple assembly statements – the exact nature is dependent on the platform that you’re running. It’s true that, in this example, the most likely case is things will run just fine. However, another possible outcome would be that they both see <code>counter</code> when its equal to <code>0</code> and you get an output of <code>1, 1</code>. There are worse possibilities, such as system crashes or accessing an arbitrary piece of data and incrementing it!</p>
+<p>这很危险吗？是的，绝对的。<code>counter++</code>似乎看起来只是一行简单的代码，但是实际上它被拆分为很多汇编指令————具体依赖于你运行的软件和硬件平台。是的，在上面的例子中，确实在大多数情况下运行良好。但是，其他一些平台可能的输出结果是<code>1, 1</code>，因为两个协程看到的<code>counter</code>都是<code>0</code>。还有更糟的情况是，比如系统崩溃或者访问到一个随机值并递增它。</p>
+<p>The only concurrent thing you can safely do to a variable is to read from it. You can have as many readers as you want, but writes need to be synchronized. There are various ways to do this, including using some truly atomic operations that rely on special CPU instructions. However, the most common approach is to use a mutex:</p>
+<p>在并发编程中维一安全的事情就是读一个变量。无论你想读多少次都可以，但是写变量时必须是同步的。有几种方式来实现，包括一些在特定CPU架构上真正的原子操作。但是，最常见的方式就是用互斥锁：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;time&quot;</span></span><br><span class="line">  <span class="string">&quot;sync&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">  counter = <span class="number">0</span></span><br><span class="line">  lock sync.Mutex</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">2</span>; i++ &#123;</span><br><span class="line">    <span class="keyword">go</span> incr()</span><br><span class="line">  &#125;</span><br><span class="line">  time.Sleep(time.Millisecond * <span class="number">10</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">incr</span><span class="params">()</span></span> &#123;</span><br><span class="line">  lock.Lock()</span><br><span class="line">  <span class="keyword">defer</span> lock.Unlock()</span><br><span class="line">  counter++</span><br><span class="line">  fmt.Println(counter)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>A mutex serializes access to the code under lock. The reason we simply define our lock as <code>lock sync.Mutex</code> is because the default value of a <code>sync.Mutex</code> is unlocked.</p>
+<p>互斥锁会顺序化有锁的代码的访问。因为<code>sync.Mutex</code>默认值是未锁状态，所以我们简单的定义了一个锁<code>lock sync.Mutex</code>。</p>
+<p>Seems simple enough? The example above is deceptive. There’s a whole class of serious bugs that can arise when doing concurrent programming. First of all, it isn’t always so obvious what code needs to be protected. While it might be tempting to use coarse locks (locks that cover a large amount of code), that undermines the very reason we’re doing concurrent programming in the first place. We generally want fine locks; else, we end up with a ten-lane highway that suddenly turns into a one-lane road.</p>
+<p>看起来足够简单？上面的例子有欺骗性。在并发编程时，会碰到一系列很严重的bug。首先，那些需要被保护代码通常都不是这么明显。虽然它可能是想使用一个粗锁（涵盖了大量代码的锁），但这破坏了并发编程首要原则。我们需要适度的锁，或者说，我们最终由一个10快车道的突然转变成一个单车道。</p>
+<p>The other problem has to do with deadlocks. With a single lock, this isn’t a problem, but if you’re using two or more locks around the same code, it’s dangerously easy to have situations where goroutineA holds lockA but needs access to lockB, while goroutineB holds lockB but needs access to lockA.</p>
+<p>另一个问题是如何处理死锁。只有一个锁的时候，这不是问题，但是如果你在相同的代码中使用2个或者更多的锁，就很容易出现一种危险的情况，即协程A拥有锁<code>lockA</code>，想去访问锁<code>lockB</code>，同时协程B拥有<code>lockB</code>并需要访问锁<code>lockA</code>。</p>
+<p>It actually <em>is</em> possible to deadlock with a single lock, if we forget to release it. This isn’t as dangerous as a multi-lock deadlock (because those are <em>really</em> tough to spot), but just so you can see what happens, try running:</p>
+<p>实际上使用一个锁<em>也有</em>可能发生死锁，如果我们忘记释放它时。但是这和多个锁引起的死锁为比起来，危害性不大（因为这<em>真的</em>很少出现），但只是想让你看会发生什么，试试下面的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;time&quot;</span></span><br><span class="line">  <span class="string">&quot;sync&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">  lock sync.Mutex</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; lock.Lock() &#125;()</span><br><span class="line">  time.Sleep(time.Millisecond * <span class="number">10</span>)</span><br><span class="line">  lock.Lock()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>There’s more to concurrent programming than what we’ve seen so far. For one thing, there’s another common mutex called a read-write mutex. This exposes two locking functions: one to lock for reading and one to lock for writing. This distinction allows multiple simultaneous readers while ensuring that writing is exclusive. In Go, <code>sync.RWMutex</code> is such a lock. In addition to the <code>Lock</code> and <code>Unlock</code> methods of a <code>sync.Mutex</code>, it also exposes <code>RLock</code> and <code>RUnlock</code> methods; where <code>R</code> stands for <em>Read</em>. While read-write mutexes are commonly used, they place an additional burden on developers: we must now pay attention to not only when we’re accessing data, but also how.</p>
+<p>接下来我们会介绍更多的并发编程。一方面，另一个常见的互斥锁叫读写互斥锁。它主要提供2中锁功能：一个读锁定和一个写锁定。在Go中，<code>sync.RWMutex</code>就是这种锁。另外<code>sync.Mutex</code>结构不但提供了<code>Lock</code>和<code>Unlock</code>方法，也提供了<code>RLock</code>和<code>RLock</code>方法，这里的<code>R</code>代表<em>读</em>。虽然读写锁很常用，但是他们也给开发者带来一些额外的负担：我们不但要关注我们何时访问数据，而且也要关注如何访问。</p>
+<p>Furthermore, part of concurrent programming isn’t so much about serializing access across the narrowest possible piece of code; it’s also about coordinating multiple goroutines. For example, sleeping for 10 milliseconds isn’t a particularly elegant solution. What if a goroutine takes more than 10 milliseconds? What if it takes less and we’re just wasting cycles? Also, what if instead of just waiting for goroutines to finish, we want to tell one <em>hey, I have new data for you to process!</em>?</p>
+<p>此外，部分并发编程不只是通过为数不多代码按顺序的访问变量，也需要协调多个go协程。例如，休眠10毫秒不是一种优雅的方法。如果一个Go协程运行的时间超过10毫秒呢？如果Go协程运行时间少于10毫秒，我们只是浪费了cpu？又或者可以等待Go协程运行完毕，我们告诉另外一个Go协程<em>嗨，我有一些新数据给你处理？</em></p>
+<p>These are all things that are doable without <code>channels</code>. Certainly for simpler cases, I believe you <strong>should</strong> use primitives such as <code>sync.Mutex</code> and <code>sync.RWMutex</code>, but as we’ll see in the next section, <code>channels</code> aim at making concurrent programming cleaner and less error-prone.</p>
+<p>所有的这些事在不使用通道的情况下也都是可以实现的。当然，对于更简单的例子，我认为你应该使用基本的功能例如<code>sync.Mutex</code>和<code>sync.RWMutex</code>，但是在下一节我们将看到，通道的目的是为了使并发编程更清晰和不易出错。</p>
+<h2 id="通道-Channels"><a href="#通道-Channels" class="headerlink" title="通道(Channels)"></a>通道(Channels)</h2><p>The challenge with concurrent programming stems from sharing data. If your goroutines share no data, you needn’t worry about synchronizing them. That isn’t an option for all systems, however. In fact, many systems are built with the exact opposite goal in mind: to share data across multiple requests. An in-memory cache or a database, are good examples of this. This is becoming an increasingly common reality.</p>
+<p>并发编程的最在挑战来自共享数据。如果你的Go协程没有共享数据，你不需要担心他们之间的同步。但是这不是所有系统的选择。事实上，许多系统的构建就是为了：在多个请求中共享数据。内存缓存或者数据库，都是很好的例子。这也成为越来越普遍的事实。</p>
+<p>Channels help make concurrent programming saner by taking shared data out of the picture. A channel is a communication pipe between goroutines which is used to pass data. In other words, a goroutine that has data can pass it to another goroutine via a channel. The result is that, at any point in time, only one goroutine has access to the data.</p>
+<p>通过共享数据规划，通道使并发编程更清晰。一个通道是一个通信管道用于Go协程之间的数据传递。换一句话来说。一个Go协程可以通过通道来把数据传递给另一个Go协程。这样做的结果就是，无论什么时间节点，都只有一个Go协程可以访问共享数据。</p>
+<p>A channel, like everything else, has a type. This is the type of data that we’ll be passing through our channel. For example, to create a channel which can be used to pass an integer around, we’d do:</p>
+<p>通道和其他类型一样有类型。这个类型就是我们将在通道中传递的数据类型。例如，创建一个用来传递整数的通道，我们这样做：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br></pre></td></tr></table></figure>
+
+<p>The type of this channel is <code>chan int</code>. Therefore, to pass this channel to a function, our signature looks like:</p>
+<p>这个通道的类型是<code>chan int</code>。因此，将这个通道传递给一个函数是，可以这样声明：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(c <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Channels support two operations: receiving and sending. We send to a channel by doing:</p>
+<p>通道支持2种操作：接收和发送。我们可以使用下面方式往通道发送数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CHANNEL &lt;- DATA</span><br></pre></td></tr></table></figure>
+
+<p>and receive from one by doing</p>
+<p>然后可以使用下面方式从通道接收数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VAR := &lt;-CHANNEL</span><br></pre></td></tr></table></figure>
+
+<p>The arrow points in the direction that data flows. When sending, the data flows into the channel. When receiving, the data flows out of the channel.</p>
+<p>箭头的方向就是数据的流动方向。当发送数据时，数据流入通道。当发送数据时，数据是流出通道。</p>
+<p>The final thing to know before we look at our first example is that receiving and sending to and from a channel is blocking. That is, when we receive from a channel, execution of the goroutine won’t continue until data is available. Similarly, when we send to a channel, execution won’t continue until the data is received.</p>
+<p>最后，在看我们的第一个例子之前，从一个通道接收或者发送数据时会阻塞。也就是说，当我们从一个通道接收数据时，直到数据可用Go协程才会继续执行。类似的，往一个通道发送数据时，在数据被接收之前Go协程也不会继续执行。</p>
+<p>Consider a system with incoming data that we want to handle in separate goroutines. This is a common requirement. If we did our data-intensive processing on the goroutine which accepts the incoming data, we’d risk timing out clients. First, we’ll write our worker. This could be a simple function, but I’ll make it part of a structure since we haven’t seen goroutines used like this before:</p>
+<p>假设这样的一个系统，我们想通过不同的协程来处理输入数据。这是一个常见的需求。如果通过Go协程接收输入的数据并进行数据密集型处理，那么在客户端会有超时风险。首先，我们将写出我们的处理器。这是一个简单的函数，但是我会让它变成一个结构体的部分，因为我们之前从来没有这样使用过Go协程：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Worker <span class="keyword">struct</span> &#123;</span><br><span class="line">  id <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w Worker)</span> <span class="title">process</span><span class="params">(c <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">  <span class="keyword">for</span> &#123;</span><br><span class="line">    data := &lt;-c</span><br><span class="line">    fmt.Printf(<span class="string">&quot;worker %d got %d\n&quot;</span>, w.id, data)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Our worker is simple. It waits until data is available then “processes” it. Dutifully, it does this in a loop, forever waiting for more data to process.</p>
+<p>我们的处理器很简单。它会一直等待直到数据可用并“处理”它。它通过一个循环来实现，永久等待更多的数据来处理。</p>
+<p>To use this, the first thing we’d do is start some workers:</p>
+<p>为了使用上面的代码，我们首先要做的是启动一些处理器：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">4</span>; i++ &#123;</span><br><span class="line">  worker := Worker&#123;id: i&#125;</span><br><span class="line">  <span class="keyword">go</span> worker.process(c)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>And then we can give them some work:</p>
+<p>然后我们可以给他们一些工作：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  c &lt;- rand.Int()</span><br><span class="line">  time.Sleep(time.Millisecond * <span class="number">50</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here’s the complete code to make it run:</p>
+<p>下面是完整的可执行代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;time&quot;</span></span><br><span class="line">  <span class="string">&quot;math/rand&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">  <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5</span>; i++ &#123;</span><br><span class="line">    worker := &amp;Worker&#123;id: i&#125;</span><br><span class="line">    <span class="keyword">go</span> worker.process(c)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> &#123;</span><br><span class="line">    c &lt;- rand.Int()</span><br><span class="line">    time.Sleep(time.Millisecond * <span class="number">50</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Worker <span class="keyword">struct</span> &#123;</span><br><span class="line">  id <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *Worker)</span> <span class="title">process</span><span class="params">(c <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">  <span class="keyword">for</span> &#123;</span><br><span class="line">    data := &lt;-c</span><br><span class="line">    fmt.Printf(<span class="string">&quot;worker %d got %d\n&quot;</span>, w.id, data)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>We don’t know which worker is going to get what data. What we do know, what Go guarantees, is that the data we send to a channel will only be received by a single receiver.</p>
+<p>我们不知道哪个处理器将获得数据。我们所知道的是，Go确保了往一个通道发送数据时，仅有一个单独的接收器可以接受。</p>
+<p>Notice that the only shared state is the channel, which we can safely receive from and send to concurrently. Channels provide all of the synchronization code we need and also ensure that, at any given time, only one goroutine has access to a specific piece of data.</p>
+<p>需要指出的是通道是唯一的共享方式，通过通道我们可以并发安全的发送和接收数据。通道提供了我们需要的所有同步代码，并且也确保在任意的特定时刻只有一个Go协程可以访问一个特定的数据。</p>
+<h3 id="带缓存的通道-Buffered-Channels"><a href="#带缓存的通道-Buffered-Channels" class="headerlink" title="带缓存的通道(Buffered Channels)"></a>带缓存的通道(Buffered Channels)</h3><p>Given the above code, what happens if we have more data coming in than we can handle? You can simulate this by changing the worker to sleep after it has received data:</p>
+<p>在上面的代码中，如果输入的数据超过我们可以处理的数据会发生什么？你可以模拟这种场景，在处理器收到数据后执行<code>time.Sleep</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  data := &lt;-c</span><br><span class="line">  fmt.Printf(<span class="string">&quot;worker %d got %d\n&quot;</span>, w.id, data)</span><br><span class="line">  time.Sleep(time.Millisecond * <span class="number">500</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>What’s happening is that our main code, the one that accepts the user’s incoming data (which we just simulated with a random number generator) is blocking as it sends to the channel because no receiver is available.</p>
+<p>在<code>main</code>函数中会发什么呢？接收用户的输入数据（这里通过一个随机的数字生成器模拟）会被阻塞，因为往通道发送数据时没有可用的接收者。</p>
+<p>In cases where you need high guarantees that the data is being processed, you probably will want to start blocking the client. In other cases, you might be willing to loosen those guarantees. There are a few popular strategies to do this. The first is to buffer the data. If no worker is available, we want to temporarily store the data in some sort of queue. Channels have this buffering capability built-in. When we created our channel with <code>make</code>, we can give our channel a length:</p>
+<p>在这种情况下，你需要确保数据被处理，你可能想要让客户端阻塞。在其他情况下，你可能愿意不确保数据被处理。这里有一些流行的策略能完成此事。首先是将数据缓存起来。如果没有处理器可用，我们想将数据暂时存放在一个有序的队列中。通道内置缓存能力。当我们使用<code>make</code>创建一个通道时，我们可以指定通道的长度：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+
+<p>You can make this change, but you’ll notice that the processing is still choppy. Buffered channels don’t add more capacity; they merely provide a queue for pending work and a good way to deal with a sudden spike. In our example, we’re continuously pushing more data than our workers can handle.</p>
+<p>你可以做这样的修改，但是你将注意到处理过程仍然震荡。缓冲通道没有增加处理能力，他们只是为挂起的工作提供了一个队列和应对突发尖峰的好方法。在我们示例中，我们持续不断的发送超出我们处理器可以处理的数据。</p>
+<p>Nevertheless, we can get a sense that the buffered channel is, in fact, buffering by looking at the channel’s <code>len</code>:</p>
+<p>尽管如此，事实上，我们可以查看通道的<code>len</code>,来了解到带缓存的通道的缓冲情况：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  c &lt;- rand.Int()</span><br><span class="line">  fmt.Println(<span class="built_in">len</span>(c))</span><br><span class="line">  time.Sleep(time.Millisecond * <span class="number">50</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You can see that it grows and grows until it fills up, at which point sending to our channel start to block again.</p>
+<p>你可以看到它的长度在不断增大，直到装满为止，此时，往通道发送的数据又开始被阻塞。</p>
+<h3 id="选择-Select"><a href="#选择-Select" class="headerlink" title="选择(Select)"></a>选择(Select)</h3><p>Even with buffering, there comes a point where we need to start dropping messages. We can’t use up an infinite amount of memory hoping a worker frees up. For this, we use Go’s <code>select</code>.</p>
+<p>即使借助缓存，有一点需要指出的是，我们需要开始丢弃一些消息，我们不能使用一个无限大的内存，并指望人工的释放它。所以我们使用Go的<code>select</code>。</p>
+<p>Syntactically, <code>select</code> looks a bit like a switch. With it, we can provide code for when the channel isn’t available to send to. First, let’s remove our channel’s buffering so that we can clearly see how <code>select</code> works:</p>
+<p>在语法结构上，<code>select</code>看起来有点类似<code>switch</code>。通过<code>select</code>，我们能写出一些针对通道不可写情况下的代码。首先，让我们去掉我们通道的缓存，这样可以更清晰的看到<code>select</code>是如何工作的。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Next, we change our <code>for</code> loop:</p>
+<p>接下来，我们修改<code>for</code>循环：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  <span class="keyword">select</span> &#123;</span><br><span class="line">  <span class="keyword">case</span> c &lt;- rand.Int():</span><br><span class="line">    <span class="comment">//optional code here</span></span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line">    <span class="comment">//this can be left empty to silently drop the data</span></span><br><span class="line">    fmt.Println(<span class="string">&quot;dropped&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  time.Sleep(time.Millisecond * <span class="number">50</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>We’re pushing out 20 messages per second, but our workers can only handle 10 per second; thus, half the messages get dropped.</p>
+<p>我们每秒往通道中发送20个信息，但是我们的处理器每秒只能处理10个信息；因此，有一半的信息被丢弃。</p>
+<p>This is only the start of what we can accomplish with <code>select</code>. A main purpose of select is to manage multiple channels. Given multiple channels, <code>select</code> will block until the first one becomes available. If no channel is available, <code>default</code> is executed if one is provided. A channel is randomly picked when multiple are available.</p>
+<p>这仅仅只是我们使用<code>select</code>完成一些事的开始。使用<code>select</code>的最主要目的是通过它管理多个通道。给定多个通道，<code>select</code>将阻塞直到有一个通道可用。如果没有可用的通道，当提供了<code>default</code>语句时，执行该分支。当多个通道都可用时，选择其中的一个通道是随机的。</p>
+<p>It’s hard to come up with a simple example that demonstrates this behavior as it’s a fairly advanced feature. The next section might help illustrate this though.</p>
+<p>很难想出一个简单的例子来证明这种行为，因为这是一种高级特性。在下一小节可能有助于说明这个问题。</p>
+<h3 id="超时-Timeout"><a href="#超时-Timeout" class="headerlink" title="超时(Timeout)"></a>超时(Timeout)</h3><p>We’ve looked at buffering messages as well as simply dropping them. Another popular option is to timeout. We’re willing to block for some time, but not forever. This is also something easy to achieve in Go. Admittedly, the syntax might be hard to follow but it’s such a neat and useful feature that I couldn’t leave it out.</p>
+<p>我们已经学习了缓存消息和简单丢弃消息。另外一种比较流行的做法是使用超时。我们将阻塞一段时间，但不是一直阻塞。在Go中这很容易实现。老实说，这个语法有点难于接受，但是它是比较灵活和有用的特性，我基本不能没有它。</p>
+<p>To block for a maximum amount of time, we can use the <code>time.After</code> function. Let’s look at it then try to peek beyond the magic. To use this, our sender becomes:</p>
+<p>为了达到阻塞的最大时限，我们可以使用<code>time.After</code>函数。让我们看看它，并试着看出其中的魔法。为了使用这种方式，我们的发送器需要修改为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  <span class="keyword">select</span> &#123;</span><br><span class="line">  <span class="keyword">case</span> c &lt;- rand.Int():</span><br><span class="line">  <span class="keyword">case</span> &lt;-time.After(time.Millisecond * <span class="number">100</span>):</span><br><span class="line">    fmt.Println(<span class="string">&quot;timed out&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  time.Sleep(time.Millisecond * <span class="number">50</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>time.After</code> returns a channel, so we can <code>select</code> from it. The channel is written to after the specified time expires. That’s it. There’s nothing more magical than that. If you’re curious, here’s what an implementation of <code>after</code> could look like:</p>
+<p><code>time.After</code>返回一个通道，所以我们可以对它使用<code>select</code>语法。当指定的时间到期时这个通道被写入。就是如此。没有其他更多的魔法了。如果你还是好奇，这里有一个<code>after</code>的实现：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">after</span><span class="params">(d time.Duration)</span> <span class="title">chan</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">  c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>)</span><br><span class="line">  <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">    time.Sleep(d)</span><br><span class="line">    c &lt;- <span class="literal">true</span></span><br><span class="line">  &#125;()</span><br><span class="line">  <span class="keyword">return</span> c</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Back to our <code>select</code>, there are a couple of things to play with. First, what happens if you add the <code>default</code> case back? Can you guess? Try it. If you aren’t sure what’s going on, remember that <code>default</code> fires immediately if no channel is available.</p>
+<p>回到我们的<code>select</code>中来，还一些内容可以研究。首先，如果添加了<code>default</code>条件会发生会什么呢？你可以猜猜？试试。如果你不确定会发生什么，记住如果没有可用的通道<code>default</code>会立即被触发。</p>
+<p>Also, <code>time.After</code> is a channel of type <code>chan time.Time</code>. In the above example, we simply discard the value that was sent to the channel. If you want though, you can receive it:</p>
+<p>同时，<code>time.After</code>的通道类型是<code>chan time.Time</code>。上面的例子中，我们简单的丢弃了发送给通道的值。如果你相要，你可以这样接收它：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> t := &lt;-time.After(time.Millisecond * <span class="number">100</span>):</span><br><span class="line">  fmt.Println(<span class="string">&quot;timed out at&quot;</span>, t)</span><br></pre></td></tr></table></figure>
+
+<p>Pay close attention to our <code>select</code>. Notice that we’re sending to <code>c</code> but receiving from <code>time.After</code>. <code>select</code> works the same regardless of whether we’re receiving from, sending to, or any combination of channels:</p>
+<p>更近一步的看我们的<code>select</code>。注意我们向<code>c</code>发送数据，但是从<code>time.After</code>接收数据。<code>select</code>对无论是接收数据，发送数据，还是其他通道的组合，都是一样对待的：</p>
+<ul>
+<li><p>The first available channel is chosen.</p>
+</li>
+<li><p>If multiple channels are available, one is randomly picked.</p>
+</li>
+<li><p>If no channel is available, the default case is executed.</p>
+</li>
+<li><p>If there’s no default, select blocks.</p>
+</li>
+<li><p>第一个可用的通道被选择。</p>
+</li>
+<li><p>如果有多个通道可用，随机选择一个。</p>
+</li>
+<li><p>如果没有通道可用，默认条件被执行。</p>
+</li>
+<li><p>如果没有默认条件，选择阻塞。</p>
+</li>
+</ul>
+<p>Finally, it’s common to see a <code>select</code> inside a <code>for</code>. Consider:</p>
+<p>最后，<code>select</code>通常在<code>for</code>循环中使用。例如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  <span class="keyword">select</span> &#123;</span><br><span class="line">  <span class="keyword">case</span> data := &lt;-c:</span><br><span class="line">    fmt.Printf(<span class="string">&quot;worker %d got %d\n&quot;</span>, w.id, data)</span><br><span class="line">  <span class="keyword">case</span> &lt;-time.After(time.Millisecond * <span class="number">10</span>):</span><br><span class="line">    fmt.Println(<span class="string">&quot;Break time&quot;</span>)</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="继续之前-Before-You-Continue"><a href="#继续之前-Before-You-Continue" class="headerlink" title="继续之前(Before You Continue)"></a>继续之前(Before You Continue)</h2><p>If you’re new to the world of concurrent programming, it might all seem rather overwhelming. It categorically demands considerably more attention and care. Go aims to make it easier.</p>
+<p>如果你是并发编程的新手，它可能显得相当庞大。它绝对是需要相当多的重视和关注。 Go的目标就是使其更容易。</p>
+<p>Goroutines effectively abstract what’s needed to run concurrent code. Channels help eliminate some serious bugs that can happen when data is shared by eliminating the sharing of data. This doesn’t just eliminate bugs, but it changes how one approaches concurrent programming. You start to think about concurrency with respect to message passing, rather than dangerous areas of code.</p>
+<p>Go协程有效的抽象了需要并发执行的代码。通道协助消除了可能在数据共享时的严重Bug。这不只是消除了Bug,更是改变了并发编程的开发方式。你开始使用消息传递的方式来考虑并发，而不是危险的共享代码。</p>
+<p>Having said that, I still make extensive use of the various synchronization primitives found in the <code>sync</code> and <code>sync/atomic</code> packages. I think it’s important to be comfortable with both. I encourage you to first focus on channels, but when you see a simple example that needs a short-lived lock, consider using a mutex or read-write mutex.</p>
+<p>虽然这么说，我仍然广泛使用的各种同步原语中发现的<code>sync</code>和<code>sync/atomic</code>包。我觉得这两种情况都要适应是很重要的。我鼓励你先聚焦在通道上，但是如果你碰到只是需要短暂的多锁，建议你使用互斥锁或者读写互斥锁。</p>
+<h1 id="结论-Conclusion"><a href="#结论-Conclusion" class="headerlink" title="结论(Conclusion)"></a>结论(Conclusion)</h1><p>I recently heard Go described as a <em>boring</em> language. Boring because it’s easy to learn, easy to write and, most importantly, easy to read. Perhaps, I did this reality a disservice. We <em>did</em> spend three chapters talking about types and how to declare variables after all.</p>
+<p>我最近听说Go被描述为一门<em>单调的</em>语言。单调是因为它很容易学习，很容易编写，最为重要的是，很容易读。也许，我这是在帮倒忙，我确实花了三个章节来介绍类型和如何申请变量。</p>
+<p>If you have a background in a statically typed language, much of what we saw was probably, at best, a refresher. That Go makes pointers visible and that slices are thin wrappers around arrays probably isn’t overwhelming to seasoned Java or C# developers.</p>
+<p>如果你在静态类型语言的背景，大多数我们看到的，充其量只是复习。同时Go的指针可见性和切片的轻量封装对经验丰富的Java的C＃开发人员来说不算什么。</p>
+<p>If you’ve mostly been making use of dynamic languages, you might feel a little different. It <em>is</em> a fair bit to learn. Not least of which is the various syntax around declaration and initialization. Despite being a fan of Go, I find that for all the progress towards simplicity, there’s something less than simple about it. Still, it comes down to some basic rules (like you can only declare variable once and <code>:=</code> does declare the variable) and fundamental understanding (like <code>new(X)</code> or <code>&amp;X&#123;&#125;</code> only allocate memory, but slices, maps and channels require more initialization and thus, <code>make</code>).</p>
+<p>如果你更多的是使用动态语言，你可能会觉得有点不同。这<em>是</em>一点公平的学习。不过其中最重要的是各种声明和初始化的语法。虽然是一个Go粉，我发现所有的努力都是为了简单，还有一些致简的东西。仍然，它也有一些基本的规则（比如变量申明一次和<code>:=</code>已经申明了变量）和基本的了解（比如<code>new(X)</code> 或 <code>&amp;X&#123;&#125;</code>只是分配了内存，但切片，字典和通道就需要使用<code>make</code>来分配内存和初始化）。</p>
+<p>Beyond this, Go gives us a simple but effective way to organize our code. Interfaces, return-based error handling, <code>defer</code> for resource management and a simple way to achieve composition.</p>
+<p>除此之外，Go提供了一个简洁但又高效的方式来组织我们的代码。接口，基于返回值的错误处理，用于资源管理的<code>defer</code>和简单的实现组合。</p>
+<p>Last but not least is the built-in support for concurrency. There’s little to say about goroutines other than they’re effective and simple (simple to use anyway). It’s a good abstraction. Channels are more complicated. I always think it’s important to understand basics before using high-level wrappers. I <em>do</em> think learning about concurrent programming without channels is useful. Still, channels are implemented in a way that, to me, doesn’t feel quite like a simple abstraction. They are almost their own fundamental building block. I say this because they change how you write and think about concurrent programming. Given how hard concurrent programming can be, that is definitely a good thing.</p>
+<p>最后但是最重要的是它内置了对并发的支持。还有一点关于Go协程的要说就是它们高效和简单（反正使用简单）。这是很好的抽象。通道会更复杂一点。我一直认为在学习高级封装之前要掌握好基础。我<em>确认</em>认为不使用通道来进行并发编程是有益的。但是，通道的实现方式，对我来说，不太像是一个简单的抽象。它们有自己的基础构建。我这么说是因为它们改变了你对并发编程的思考和书写方式。鉴于并发编程的难度，这绝对是一个好事。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/22/go/go-little-book/chapter-5/" class="post-title-link" itemprop="url">Go Little Book - 第五章 - 特点</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-22 10:45:32" itemprop="dateCreated datePublished" datetime="2018-11-22T10:45:32+08:00">2018-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="第五章-特点（珍品？）（Chapter-5-Tidbits）"><a href="#第五章-特点（珍品？）（Chapter-5-Tidbits）" class="headerlink" title="第五章 - 特点（珍品？）（Chapter 5 - Tidbits）"></a>第五章 - 特点（珍品？）（Chapter 5 - Tidbits）</h1><p>In this chapter, we’ll talk about a miscellany of Go’s feature which didn’t quite fit anywhere else.</p>
+<p>在这一章是，我们会来介绍一些Go的特性的杂烩，这些内容不太适合放在其他章节中。</p>
+<h2 id="错误处理-Error-Handling"><a href="#错误处理-Error-Handling" class="headerlink" title="错误处理(Error Handling)"></a>错误处理(Error Handling)</h2><p>Go’s preferred way to deal with errors is through return values, not exceptions. Consider the <code>strconv.Atoi</code> function which takes a string and tries to convert it to an integer:</p>
+<p>Go更喜欢用返回值而不是异常的方式来处理错误。例如<code>strconv.Atoi</code>函数将一个字符串转换成一个整数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">  <span class="string">&quot;strconv&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">if</span> <span class="built_in">len</span>(os.Args) != <span class="number">2</span> &#123;</span><br><span class="line">    os.Exit(<span class="number">1</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  n, err := strconv.Atoi(os.Args[<span class="number">1</span>])</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;not a valid number&quot;</span>)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    fmt.Println(n)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You can create your own error type; the only requirement is that it fulfills the contract of the built-in <code>error</code> interface, which is:</p>
+<p>你可以创建你自己的错误类型；唯一的要求就是需要实现内置接口<code>error</code>:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> error <span class="keyword">interface</span> &#123;</span><br><span class="line">  Error() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>More commonly, we can create our own errors by importing the <code>errors</code> package and using it in the <code>New</code> function:</p>
+<p>更为常见的是，我们可以通过导入<code>errors</code>包，并通过它的<code>New</code>函数来创建自己的错误：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;errors&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(count <span class="keyword">int</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">  <span class="keyword">if</span> count &lt; <span class="number">1</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> errors.New(<span class="string">&quot;Invalid count&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>There’s a common pattern in Go’s standard library of using error variables. For example, the <code>io</code> package has an <code>EOF</code> variable which is defined as:</p>
+<p>在GO的标准库中，使用错误变量是一个常用的模式。例如， 在<code>io</code>包中有一个<code>EOF</code>变量是这样定义的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> EOF = errors.New(<span class="string">&quot;EOF&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>This is a package variable (it’s defined outside of a function) which is publicly accessible (upper-case first letter). Various functions can return this error, say when we’re reading from a file or STDIN. If it makes contextual sense, you should use this error, too. As consumers, we can use this singleton:</p>
+<p>这是一个公共（大写字母开关）的包变量（它定义有函数之外）。如果我们从文件或者标准输入时失败时，我们可以返回这个错误。为了更容易理解，你也应该用这个错误。作为使用者，我们可以用这个单件：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;io&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">var</span> input <span class="keyword">int</span></span><br><span class="line">  _, err := fmt.Scan(&amp;input)</span><br><span class="line">  <span class="keyword">if</span> err == io.EOF &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;no more input!&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>As a final note, Go does have <code>panic</code> and <code>recover</code> functions. <code>panic</code> is like throwing an exception while <code>recover</code> is like <code>catch</code>; they are rarely used.</p>
+<p>最后要注意的是，Go有<code>panic</code>和<code>recover</code>函数。<code>panic</code>像是抛出异常，而<code>recover</code>是捕获异常；它们不常使用。</p>
+<h2 id="Defer-Defer"><a href="#Defer-Defer" class="headerlink" title="Defer(Defer)"></a>Defer(Defer)</h2><p>Even though Go has a garbage collector, some resources require that we explicitly release them. For example, we need to <code>Close()</code> files after we’re done with them. This sort of code is always dangerous. For one thing, as we’re writing a function, it’s easy to forget to <code>Close</code> something that we declared 10 lines up. For another, a function might have multiple return points. Go’s solution is the <code>defer</code> keyword:</p>
+<p>虽然Go有垃圾回收机制，但是有些资源需要显示的释放它们。比如，当我们使用文件完了之后，需要调用<code>Close()</code>来关闭它们。这类代码总是很危险。其一，我们写一下函数的时候，如果申请一个资源超过10行，就很容易忘记<code>Close</code>。其二，一个函数可能会有多个返回点。Go的解决方案是使用<code>defer</code>关键字：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  file, err := os.Open(<span class="string">&quot;a_file_to_read&quot;</span>)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(err)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">defer</span> file.Close()</span><br><span class="line">  <span class="comment">// read the file</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>If you try to run the above code, you’ll probably get an error (the file doesn’t exist). The point is to show how <code>defer</code> works. Whatever you <code>defer</code> will be executed after the method returns, even if it does so violently. This lets you release resources near where it’s initialized and takes care of multiple return points.</p>
+<p>如果你尝试运行上面的代码，你可能收到一个错误（文件不存在）。这里展示的是<code>defer</code>是如何工作的。无论如何在函数返回时<code>defer</code>都会被执行，虽然这样有点极端。但这可以让你在初始化附近释放资源和不要操心多个返回点的问题。</p>
+<h2 id="go-fmt-go-fmt"><a href="#go-fmt-go-fmt" class="headerlink" title="go fmt(go fmt)"></a>go fmt(go fmt)</h2><p>Most programs written in Go follow the same formatting rules, namely, a tab is used to indent and braces go on the same line as their statement.</p>
+<p>绝大多数Go写的代码遵守有一个相同的格式化规则，也就是说，使用Tab来缩进和花括号与语句同一行。</p>
+<p>I know, you have your own style and you want to stick to it. That’s what I did for a long time, but I’m glad I eventually gave in. A big reason for this is the <code>go fmt</code> command. It’s easy to use and authoritative (so no one argues over meaningless preferences).</p>
+<p>我知道你有自己的代码风格并且严格遵守它。我一直以来也是这么做的，但是我最终还是放弃了。一个最在的原因就是<code>go fmt</code>命令。它很容用且权威（所以没有人会为了毫无意义的偏好而争论） </p>
+<p>When you’re inside a project, you can apply the formatting rule to it and all sub-projects via:</p>
+<p>当你在一个工程目录下，你可以通过下面的命令将工程下所有文件使用相同的格式化规则：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go fmt ./...</span><br></pre></td></tr></table></figure>
+
+<p>Give it a try. It does more than indent your code; it also aligns field declarations and alphabetically orders imports.</p>
+<p>尝试一下吧。除了缩进代码，它还会自动对齐你的声明语句并将包导入按字母顺序排序。</p>
+<h2 id="If初始化-Initialized-If"><a href="#If初始化-Initialized-If" class="headerlink" title="If初始化(Initialized If)"></a>If初始化(Initialized If)</h2><p>Go supports a slightly modified if-statement, one where a value can be initiated prior to the condition being evaluated:<br>Go提供了一种稍有不同的if声明，一个可以在条件执行之前声明和初始化：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> x := <span class="number">10</span>; count &gt; x &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>That’s a pretty silly example. More realistically, you might do something like:</p>
+<p>这是一个非常简单的例子。更实际的例子是，你可能是这样做的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err := process(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Interestingly, while the values aren’t available outside the if-statement, they are available inside any <code>else if</code> or <code>else</code>.</p>
+<p>有趣的是，<code>if</code>语句中定义并初始化的值在<code>if</code>语句之外是不可用的，仅可以在<code>else if</code>和<code>else</code>语句中使用。</p>
+<h2 id="空接口和转换-Empty-Interface-and-Conversions"><a href="#空接口和转换-Empty-Interface-and-Conversions" class="headerlink" title="空接口和转换(Empty Interface and Conversions)"></a>空接口和转换(Empty Interface and Conversions)</h2><p>In most object-oriented languages, a built-in base class, often named <code>object</code>, is the superclass for all other classes. Go, having no inheritance, doesn’t have such a superclass. What it does have is an empty interface with no methods: <code>interface&#123;&#125;</code>. Since every type implements all 0 of the empty interface’s methods, and since interfaces are implicitly implemented, every type fulfills the contract of the empty interface.</p>
+<p>在大多数面向对象语言中，都有一种内置的基类，叫<code>object</code>，它是所有其他类的超类。但是go语言不支持继承，所以没有类似的超类。Go确实有一个没有任何方法的空接口：<code>interface&#123;&#125;</code>。因为接口都是隐式实现，每种类型都实现了空接口的0个方法，所以每种类型都实现了空接口的协议。</p>
+<p> If we wanted to, we could write an <code>add</code> function with the following signature:</p>
+<p>如果我们愿意，我们可以通过下面声明方式写一个<code>add</code>函数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(a <span class="keyword">interface</span>&#123;&#125;, b <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To convert an interface variable to an explicit type, you use <code>.(TYPE)</code>:</p>
+<p>将一个空接口变量转换成一个指定的类型，你可以使用<code>.(TYPE)</code>:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> a.(<span class="keyword">int</span>) + b.(<span class="keyword">int</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Note that if the underlying type is not <code>int</code>, the above will result in an error.</p>
+<p>需要注意如果底层类型示是一个<code>int</code>，上面的代码会导致一个错误。</p>
+<p>You also have access to a powerful type switch:</p>
+<p>你也可以通过switch使用强大的类型转换：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> a.(<span class="keyword">type</span>) &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="keyword">int</span>:</span><br><span class="line">    fmt.Printf(<span class="string">&quot;a is now an int and equals %d\n&quot;</span>, a)</span><br><span class="line">  <span class="keyword">case</span> <span class="keyword">bool</span>, <span class="keyword">string</span>:</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You’ll see and probably use the empty interface more than you might first expect. Admittedly, it won’t result in clean code. Converting values back and forth is ugly and dangerous but sometimes, in a static language, it’s the only choice.</p>
+<p>你会发现，空接口的使用会超出你的预期。诚然，这不会让代码变得简洁。来回转换值是丑陋和危险的，但有时候在静态类型语言中，这是唯一的选择。</p>
+<h2 id="字符串和字节数组-Strings-and-Byte-Arrays"><a href="#字符串和字节数组-Strings-and-Byte-Arrays" class="headerlink" title="字符串和字节数组(Strings and Byte Arrays)"></a>字符串和字节数组(Strings and Byte Arrays)</h2><p>Strings and byte arrays are closely related. We can easily convert one to the other:</p>
+<p>字符串和字节数组有密切关系，我们可以轻易的将它们转换成对方：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">stra := <span class="string">&quot;the spice must flow&quot;</span></span><br><span class="line">byts := []<span class="keyword">byte</span>(stra)</span><br><span class="line">strb := <span class="keyword">string</span>(byts)</span><br></pre></td></tr></table></figure>
+
+<p>In fact, this way of converting is common across various types as well. Some functions explicitly expect an <code>int32</code> or an <code>int64</code> or their unsigned counterparts. You might find yourself having to do things like:</p>
+<p>事实上，这也是大多数类型的转换方式。一些函数明确指定一个<code>int32</code>或者<code>int64</code>或者相应的无符号类型。你可能会发现你自己不得不像下面这样做：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int64</span>(count)</span><br></pre></td></tr></table></figure>
+
+<p>Still, when it comes to bytes and strings, it’s probably something you’ll end up doing often. Do note that when you use <code>[]byte(X)</code> or <code>string(X)</code>, you’re creating a copy of the data. This is necessary because strings are immutable.</p>
+<p>然而，当涉及到字节和字符串时，这可能是你会经常做的事。当你使用<code>[]byte(X)</code>或者<code>string(X)</code>时务必注意，你创建了数据的拷贝。这是因为字符串的不可变性。</p>
+<p>Strings are made of <code>runes</code> which are unicode code points. If you take the length of a string, you might not get what you expect. The following prints 3:</p>
+<p>当字符串有由<code>unicode</code>字符码<code>runes</code>组成时。如果你计算字符串的长度时，可能得到的结果和你期待的不同。下面结果是输出3：</p>
+<pre><code>fmt.Println(len(&quot;椒&quot;))
+</code></pre>
+<p>If you iterate over a string using <code>range</code>, you’ll get runes, not bytes. Of course, when you turn a string into a <code>[]byte</code> you’ll get the correct data.</p>
+<p>如果你使用<code>range</code>迭代一个字符串，你得到的是<code>runes</code>,而不是<code>bytes</code>。当然，你将一个字符串转换为<code>[]byte</code>时，你得到的数据还是正确的。</p>
+<h2 id="函数类型-Function-Type"><a href="#函数类型-Function-Type" class="headerlink" title="函数类型(Function Type)"></a>函数类型(Function Type)</h2><p>Functions are first-class types:<br>函数是第一类类型：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Add <span class="function"><span class="keyword">func</span><span class="params">(a <span class="keyword">int</span>, b <span class="keyword">int</span>)</span> <span class="title">int</span></span></span><br></pre></td></tr></table></figure>
+
+<p>which can then be used anywhere – as a field type, as a parameter, as a return value.</p>
+<p>可以在任何地方使用————可以做为一个字段，参数，返回值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Add <span class="function"><span class="keyword">func</span><span class="params">(a <span class="keyword">int</span>, b <span class="keyword">int</span>)</span> <span class="title">int</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(process(<span class="function"><span class="keyword">func</span><span class="params">(a <span class="keyword">int</span>, b <span class="keyword">int</span>)</span> <span class="title">int</span></span>&#123;</span><br><span class="line">      <span class="keyword">return</span> a + b</span><br><span class="line">  &#125;))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(adder Add)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> adder(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Using functions like this can help decouple code from specific implementations much like we achieve with interfaces.</p>
+<p>像这样使用函数可以使你在一些特定实现时减少代码的耦合性，就像使用接口实现那样。</p>
+<h2 id="继续之前-Before-You-Continue"><a href="#继续之前-Before-You-Continue" class="headerlink" title="继续之前(Before You Continue)"></a>继续之前(Before You Continue)</h2><p>We looked at various aspects of programming with Go. Most notably, we saw how error handling behaves and how to release resources such as connections and open files. Many people dislike Go’s approach to error handling. It can feel like a step backwards. Sometimes, I agree. Yet, I also find that it results in code that’s easier to follow. <code>defer</code> is an unusual but practical approach to resource management. In fact, it isn’t tied to resource management only. You can use <code>defer</code> for any purpose, such as logging when a function exits.</p>
+<p>我们已经学习了Go编程的很多内容。显而易见，我们看见了错误处理的行为和资源释放如连接或者打开文件。很多人不喜欢Go的错误处理方式。它让人觉得这是一种退步。有些时候，我同意这种说法。然而，我也发现这会导致代码更易读。<code>defer</code>是一种不常见但很实用的资源管理手段。事实上，它不仅仅可以进行资源管理。你可以使用<code>defer</code>完成任何目的，例如当一个函数退出时打印日志记录。</p>
+<p>Certainly, we haven’t looked at all of the tidbits Go has to offer. But you should be feeling comfortable enough to tackle whatever you come across.</p>
+<p>当然，我们还没有学习Go提供的所有花絮。但是无论你遇到什么你应该可以轻松应对。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1230,651 +2046,10 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/introduction/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/22/go/go-little-book/introduction/" class="post-title-link" itemprop="url">Go Little Book - 引言</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-22 10:01:11" itemprop="dateCreated datePublished" datetime="2018-11-22T10:01:11+08:00">2018-11-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>每当我学习一门新语言的时候总是爱恨交加。一方面，语言是如此的重要，以至于一点小的变化对我们产生的不可估量的影响。在你的程序和可以重新定义你对其他语言的期望的时候，你会有一个持久的效果。同时，语言的设计是增量的。学习新的关键字、类型体系、编码方式以及新类库、通讯和范式需要很多工作，但又很难评估。相对学习其他必学的东西，学习新语言让我们常常感觉是对时间的投入很大。</p>
-<p>也就是说，我们要进步。我们必须愿意采用渐进的方式，又一次因为，语言是我们的基础。虽然变化是增量的，但它们往往范围很广，它们影响效率，可读性、性能、可测试性、依赖管理、错误处理、文档、分析（监控？）、通讯、标准库等等。除了说千刀万剐我们还能说什么？</p>
-<p>这留给我们一个重要的问题：为什么选Go？对我来说，有两个令人信服的理由。首先它是一门相对简单的语言，还自带相对简单的标准库。在很多方面，Go的增量本质简化了我们已经看到的在过去几十年引入的语言的复杂性。另一个原因对于很多开发者来说，它会完善你的军火库。</p>
-<p>Go被构建为一个系统语言（比如操作系统、设备驱动）并且面向C和C++开发人员。纵观Go的社群，我非常确信，应用开发者，而非系统开发者已经成为Go的主要使用者。为什么？我不能代表系统开发者，但是我们建设的网站、服务、桌面应用等等，这些面向新兴需求可归结为一类介于低层次的系统应用程序和更高级别的应用程序之间的系统。</p>
-<p>也许它是一个消息，缓存，大数据分析，命令行接口，日志或监控。我不知如何标记它，但是在我的职业身涯中，由于系统的复杂性不断和频繁并发数以万计的增长，定制的基础设施类系统成为一个不断增长的需求。你可以用Ruby或Python或别的东西（确实很多人这么做）来构建这样的系统，如果使用Go，这些系统可以有一个更严格的类型系统和更高的性能优势。同样，您可以使用Go建立网站（确实很多人这样做），但，为了更大的回旋余地，我还是喜欢使用Node或Ruby的来构建这类系统。</p>
-<p>还有一些Go的长处。比如，运行Go程序时没有依赖。你不需要担心你的用户是否已经安装了Ruby或者JVM和它们的版本。因为这个原因，Go作为命令行程序或者需要分发的其他类型的实用程序（比如日志收集器）开发语言，越来越流行了。</p>
-<p>简单地说，学习Go是一种有效利用你的时间。你将不必花费很长时间来学习甚至掌握go，你可以通过一些实践来达成。</p>
-<h2 id="关于作者"><a href="#关于作者" class="headerlink" title="关于作者"></a>关于作者</h2><p>我曾犹豫写这本小册子有几个原因。首先Go有自已的文档，特别是高效Go，它很实在（实用？）。</p>
-<p>另一个原因是我写一本关于语言的书时的不适。当我写MongoDB小册子的时候，你可以假设很多读者理解基本的关系型数据库和模型。写Redis小册子的时候，你可以假设从一个熟悉的键值存储开始。</p>
-<p>当想到摆在面前的段落和章节的时候，我知道我不能做这样的假设。你要花多少时间来讲解接口，因为对于一些人来说这是一个新概念，而另个一些人已经不需用再了解了。最终，我会感到欣慰如果你让我知道有些部分是太浅或过于详细。考虑一下这本书的价格。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/about/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/22/go/go-little-book/about/" class="post-title-link" itemprop="url">Go Little Book - 关于本书</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-22 10:00:00" itemprop="dateCreated datePublished" datetime="2018-11-22T10:00:00+08:00">2018-11-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>289</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="关于本书"><a href="#关于本书" class="headerlink" title="关于本书"></a>关于本书</h1><h2 id="许可"><a href="#许可" class="headerlink" title="许可"></a>许可</h2><p>本书使用<a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享4.0</a>许可。你不需要为本书付费。你可以自由的拷贝、发布、修改或展示本书。但是，我要求本书必须用我本人（Karl Seguin）的署名，同时不能作为经济用途。</p>
-<p>你可在以下链接中查看到该许可的所有内容：</p>
-<p><a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">http://creativecommons.org/licenses/by-nc-sa/4.0/</a></p>
-<h2 id="最新版本"><a href="#最新版本" class="headerlink" title="最新版本"></a>最新版本</h2><p>本书最新源码的放在：<a target="_blank" rel="noopener" href="http://github.com/karlseguin/the-little-go-book">http://github.com/karlseguin/the-little-go-book</a></p>
-<p>中文译本最新源码的放在：<a target="_blank" rel="noopener" href="http://github.com/enderjo/the-little-go-book">http://github.com/enderjo/the-little-go-book</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/21/frontend/nodejs/yarn/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/21/frontend/nodejs/yarn/" class="post-title-link" itemprop="url">YARN命令</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-21 17:14:33" itemprop="dateCreated datePublished" datetime="2018-11-21T17:14:33+08:00">2018-11-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/frentend/" itemprop="url" rel="index"><span itemprop="name">frentend</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/frentend/nodejs/" itemprop="url" rel="index"><span itemprop="name">nodejs</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="为什么"><a href="#为什么" class="headerlink" title="为什么"></a>为什么</h2><p>自己用Hexo来做博客而用到了nodejs和npm。但npm生成的<code>node-modules</code>层次过深，时常打开文件夹时会很慢。</p>
-<p>后来了解到了yarn，在yarn发布之前，所有Nodejs开发者用的都是npm包管理工具，而npm工具存在挺多难以忍受的诟病，包括安装速度慢、每次都要在线重新安装等问题，而yarn也是为了解决npm当前所存在的问题而出现的。</p>
-<p>为了方便自己使用，整理了下安装和基本操作。</p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
-<li>如果原先有npm工具的话，安装yarn很简单，只需要一行命令即可：</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g yarn</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>如果没有npm工具，安装yarn可参照<a target="_blank" rel="noopener" href="https://yarnpkg.com/en/docs/install">各平台下yarn工具安装方式</a>。</li>
-</ul>
-<h2 id="更换安装源"><a href="#更换安装源" class="headerlink" title="更换安装源"></a>更换安装源</h2><p>安装yarn之后默认的包安装源是<a target="_blank" rel="noopener" href="https://registry.yarnpkg.com,可用查看命令/">https://registry.yarnpkg.com，可用查看命令</a></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn config get registry </span><br></pre></td></tr></table></figure>
-
-<p>若想提高yarn安装的速度，可将包安装源修改为cnpm的安装源，执行以下命令即可</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">yarn config set registry https://registry.npm.taobao.org --global </span><br><span class="line">yarn config set disturl https://npm.taobao.org/dist --global</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="操作及对比"><a href="#操作及对比" class="headerlink" title="操作及对比"></a>操作及对比</h2><table>
-<thead>
-<tr>
-<th>操作</th>
-<th>npm</th>
-<th>yarn</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>初始化项目</td>
-<td>npm init</td>
-<td>yarn init</td>
-</tr>
-<tr>
-<td>安装依赖操作</td>
-<td>npm install/link</td>
-<td>yarn install/link</td>
-</tr>
-<tr>
-<td>安装某个依赖，并且默认保存到package</td>
-<td>npm install xxx —save</td>
-<td>yarn add xxx</td>
-</tr>
-<tr>
-<td>移除某个依赖项目</td>
-<td>npm uninstall xxx   —save</td>
-<td>yarn remove xxx</td>
-</tr>
-<tr>
-<td>安装某个开发时依赖项目</td>
-<td>npm install –save   -dev xxx</td>
-<td>yarn add xxx —dev</td>
-</tr>
-<tr>
-<td>更新某个依赖项目</td>
-<td>npm update –save xxx</td>
-<td>yarn upgrade xxx</td>
-</tr>
-<tr>
-<td>安装某个全局依赖项目</td>
-<td>npm install -g xxx</td>
-<td>yarn global add xxx</td>
-</tr>
-<tr>
-<td>发布/登录/登出，一系列NPM   Registry操作</td>
-<td>npm   publish/login/logout</td>
-<td>yarn   publish/login/logout</td>
-</tr>
-<tr>
-<td>运行某个命令</td>
-<td>npm run/test</td>
-<td>yarn run/test</td>
-</tr>
-<tr>
-<td>查看帮助</td>
-<td>npm -h</td>
-<td>yarn -h</td>
-</tr>
-</tbody></table>
-<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><h3 id="yarn-global"><a href="#yarn-global" class="headerlink" title="yarn global"></a>yarn global</h3><p>yarn 的全局安装并不是加 -g 或者 –global 这样的参数，它使用 <a target="_blank" rel="noopener" href="https://yarnpkg.com/en/docs/cli/global">yarn global</a> 命令。用 yarn global –help 可以看到子命令列表</p>
-<p>这些子命令的用法和非 global 的同名命令用法差不多。</p>
-<h3 id="指定bin目录"><a href="#指定bin目录" class="headerlink" title="指定bin目录"></a>指定bin目录</h3><p>对于一些带 CLI 的模块，通过 yarn global add 可能会出问题，yarn global bin查看目录，并把该目录添加到Path中。</p>
-<h3 id="指定registry但没有效果"><a href="#指定registry但没有效果" class="headerlink" title="指定registry但没有效果"></a>指定registry但没有效果</h3><ol>
-<li>yarn.lock中包含的registry信息与设置的registry不同，删除yarn.lock重新生成即可。</li>
-</ol>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000007189426">yarn —— Nodejs包新管理工具</a></p>
-<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000008489881">使用 yarn global 代替 npm -g</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/yarnpkg/yarn/issues/4862">“yarn config set registry” is not work · Issue #4862 · yarnpkg/yarn (github.com)</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/02/misc/tunnel/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/02/misc/tunnel/" class="post-title-link" itemprop="url">打造自己的HTTPS安全遂道</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-02 08:27:18" itemprop="dateCreated datePublished" datetime="2018-11-02T08:27:18+08:00">2018-11-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/misc/" itemprop="url" rel="index"><span itemprop="name">misc</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>最近刚好在做小程序的开发，需要用到本地调试，刚开始时使用<code>Natapp</code>的免费遂道，勉强能开发（域免），后面买了付费遂道，域名不变开发顺畅起来。但要真机调试时还是不行，微信不认三级域名，需要购买他的二级域名服务。转念一想还不如自己搭建一个呢，成本可控，也只要折腾一次就好，反正也能学东西。于是也就有了本文。</p>
-<h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><ul>
-<li>一台云主机，可在购买<a target="_blank" rel="noopener" href="https://promotion.aliyun.com/ntms/act/qwbk.html#share_box?spm=5176.11533457.1089570.36.15da77e3g6I8CL&aliyunapp_auto_login=true&userCode=l7irb6oi">阿里云</a>，开放对应端口。</li>
-<li>一个已经备案的域名（备案过程真是个痛苦的过程，各种资料，各种步骤，还可能审不过），并且做了二级域名泛解析。（本文假设你已经会域名解析配置）</li>
-<li><code>Go http tunnel</code>，可在这里下载(<a target="_blank" rel="noopener" href="https://github.com/mmatczuk/go-http-tunnel/releases">https://github.com/mmatczuk/go-http-tunnel/releases</a>)</li>
-<li>Let’s Encrypt工具。</li>
-</ul>
-<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><h2 id="https证书"><a href="#https证书" class="headerlink" title="https证书"></a>https证书</h2><p>可参看<a target="_blank" rel="noopener" href="http://www.infoq.com/cn/news/2018/03/lets-encrypt-wildcard-https">这里</a>或<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c5c9d071e395">这里</a><br>此处唯一要注意的就是有个域名解析的交互过程，这个在上述资料中也有说明。</p>
-<p>记录下证书的生成位置如上文是<code>/etc/letsencrypt/archive/newyingyong.cn</code>，自动的生成路径可能不现。</p>
-<h2 id="http-tunnel服务器"><a href="#http-tunnel服务器" class="headerlink" title="http tunnel服务器"></a>http tunnel服务器</h2><ul>
-<li>服务器需要开放80,443,5223端口。</li>
-<li>根据自己的服务器系统下载对应版本。</li>
-<li>解压就可以了，进入目录。</li>
-<li>执行如下命令，以https证书参考资料证书地址为例。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tunneld -tlsCrt /etc/letsencrypt/archive/goldsyear.com/fullchain.pem -tlsKey /etc/letsencrypt/archive/goldsyear.com/privkey.pem</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h2 id="http-tunnel客户端"><a href="#http-tunnel客户端" class="headerlink" title="http tunnel客户端"></a>http tunnel客户端</h2><ul>
-<li>根据自己的服务器系统下载对应版本</li>
-<li>解压就可以了，进入目录。</li>
-<li>生成客户端证书<code>openssl req -x509 -nodes -newkey rsa:2048 -sha256 -keyout client.key -out client.crt</code>,并将证书放到解压目录</li>
-<li>创建<code>tunnel.yml</code>，默认读当前路径配置。</li>
-<li>参考样例：<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server_addr:</span> <span class="string">SERVER_IP:5223</span></span><br><span class="line"><span class="attr">tunnels:</span></span><br><span class="line">    <span class="attr">webui:</span></span><br><span class="line">        <span class="attr">proto:</span> <span class="string">http</span></span><br><span class="line">        <span class="attr">addr:</span> <span class="string">localhost:8080</span></span><br><span class="line">        <span class="attr">auth:</span> <span class="string">user:password</span></span><br><span class="line">        <span class="attr">host:</span> <span class="string">goldsyear.com</span></span><br></pre></td></tr></table></figure>
-其中,<code>server_addr</code>为服务器地址，<code>tunnels</code>为开启的遂道列表，<code>webui</code>为实际的遂道名，正常可去掉<code>auth</code>配置，<code>host</code>中的域名与遂道名无直接关系。更多配置信息参看<a target="_blank" rel="noopener" href="https://github.com/mmatczuk/go-http-tunnel">官网</a>。</li>
-<li>启动<code>tunnel start-all</code>。</li>
-</ul>
-<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>在客户端启动最简单http服务，使用客户端配置的域名进行访问，如果正常访问，恭喜你。如果还有问题，请核查服务器或客户端配置。</p>
-<h1 id="推广"><a href="#推广" class="headerlink" title="推广"></a>推广</h1><p>如果你觉得以上配置过于复杂。有以下两种方式供你选择，当然你可能有更好的选择。</p>
-<ol>
-<li>可以使用<a target="_blank" rel="noopener" href="https://natapp.cn/">Natapp</a>，他提供免费的HTTPS的遂道，但提供的免费域名会一直变化。最好购买遂道和域名服务，付费时可以使用我的推广优惠码<code>ADBE2C5C</code>。</li>
-<li>如果你恰好刚起步，希望用于本地调试，可以加我微信号，也可提供相关服务支持。申请时请备注<code>https tunnel技术支持</code>。<img src="https://l4qiang.me/images/wechat.png" alt="微信"></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/09/28/es/olap-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/09/28/es/olap-1/" class="post-title-link" itemprop="url">基于ElasticSearch的OLAP框架思路</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-09-28 11:22:43" itemprop="dateCreated datePublished" datetime="2018-09-28T11:22:43+08:00">2018-09-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ElasticSearch/OLAP/" itemprop="url" rel="index"><span itemprop="name">OLAP</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="OLAP基本概念"><a href="#OLAP基本概念" class="headerlink" title="OLAP基本概念"></a>OLAP基本概念</h1><h2 id="联机分析处理（On-Line-Analytical-Processing，OLAP）"><a href="#联机分析处理（On-Line-Analytical-Processing，OLAP）" class="headerlink" title="联机分析处理（On-Line Analytical Processing，OLAP）"></a>联机分析处理（On-Line Analytical Processing，OLAP）</h2><p>联机分析处理的概念最早是由关系数据库之父爱德华·库德（E·F·Codd）博士于1993年提出的，是一种用于组织大型商务数据库和支持商务智能的技术。OLAP 数据库分为一个或多个多维数据集，每个多维数据集都由多维数据集管理员组织和设计以适应用户检索和分析数据的方式，从而更易于创建和使用所需的数据透视表和数据透视图。</p>
-<h2 id="维（Dimension）"><a href="#维（Dimension）" class="headerlink" title="维（Dimension）"></a>维（Dimension）</h2><p>是人们观察数据的特定角度，是考虑问题时的一类属性，属性集合构成一个维（时间维、地理维等）。</p>
-<h2 id="维的层次（Level）"><a href="#维的层次（Level）" class="headerlink" title="维的层次（Level）"></a>维的层次（Level）</h2><p>人们观察数据的某个特定角度（即某个维）还可以存在细节程度不同的各个描述方面（时间维：日期、月份、季度、年）。</p>
-<h2 id="维的成员（Member）"><a href="#维的成员（Member）" class="headerlink" title="维的成员（Member）"></a>维的成员（Member）</h2><p>维的一个取值，是数据项在某维中位置的描述。（“某年某月某日”是在时间维上位置的描述）。</p>
-<h2 id="度量（Measure）"><a href="#度量（Measure）" class="headerlink" title="度量（Measure）"></a>度量（Measure）</h2><p>多维数组的取值。（2000年1月，上海，笔记本电脑，$100000）。</p>
-<h2 id="指标（Quota），补充"><a href="#指标（Quota），补充" class="headerlink" title="指标（Quota），补充"></a>指标（Quota），补充</h2><p>可度量的属性。一般为某种值，如费用，入院人次。</p>
-<h2 id="典型操作"><a href="#典型操作" class="headerlink" title="典型操作"></a>典型操作</h2><p>OLAP的基本多维分析操作有钻取（Drill-up和Drill-down）、切片（Slice）和切块（Dice）、以及旋转（Pivot）等。</p>
-<h3 id="钻取"><a href="#钻取" class="headerlink" title="钻取"></a>钻取</h3><p>是改变维的层次，变换分析的粒度。它包括向下钻取（Drill-down）和向上钻取（Drill-up）/上卷(Roll-up)。Drill- up是在某一维上将低层次的细节数据概括到高层次的汇总数据，或者减少维数；而Drill-down则相反，它从汇总数据深入到细节数据进行观察或增加新维。</p>
-<h3 id="切片和切块"><a href="#切片和切块" class="headerlink" title="切片和切块"></a>切片和切块</h3><p>是在一部分维上选定值后，关心度量数据在剩余维上的分布。如果剩余的维只有两个，则是切片；如果有三个或以上，则是切块。</p>
-<h3 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h3><p>是变换维的方向，即在表格中重新安排维的放置（例如行列互换）。</p>
-<h1 id="ElasticSearch"><a href="#ElasticSearch" class="headerlink" title="ElasticSearch"></a>ElasticSearch</h1><p>Apache Lucene™可能是目前存在的，不论开源还是私有的，拥有最先进，高性能和全功能搜索引擎功能的库。但Lucene是很复杂的。 Elasticsearch是一个使用Java编写的开源的搜索引擎，它的内部使用 Lucene 做索引与搜索，但是它的目标是使全文检索变得简单， 通过隐藏 Lucene 的复杂性，取而代之的提供一套简单一致的 RESTful API。</p>
-<p>然而，Elasticsearch不仅仅是 Lucene，并且也不仅仅只是一个全文搜索引擎。 它可以被下面这样准确的形容：</p>
-<ul>
-<li>一个分布式的实时文档存储，每个字段可以被索引与搜索</li>
-<li>一个分布式实时分析搜索引擎</li>
-<li>能胜任上百个服务节点的扩展，并支持PB级别的结构化或者非结构化数据</li>
-</ul>
-<p>Elasticsearch将所有的功能打包成一个单独的服务，这样你可以通过程序去访问它提供的简单的RESTful API服务， 不论你是使用自己喜欢的编程语言还是直接使用命令行。</p>
-<p>Elasticsearch是一个实时的分布式搜索分析引擎， 它能让你以一个之前从未有过的速度和规模，去探索你的数据。 它被用作全文检索、结构化搜索、分析以及这三个功能的组合：</p>
-<ul>
-<li>Wikipedia 使用 Elasticsearch 提供带有高亮片段的全文搜索，还有 search-as-you-type 和 did-you-mean 的建议。</li>
-<li>卫报 使用 Elasticsearch 将网络社交数据结合到访客日志中，实时的给它的编辑们提供公众对于新文章的反馈。</li>
-<li>Stack Overflow 将地理位置查询融入全文检索中去，并且使用 more-like-this 接口去查找相关的问题与答案。</li>
-<li>GitHub 使用 Elasticsearch 对1300亿行代码进行查询。</li>
-</ul>
-<h2 id="ES文档和多维数据集"><a href="#ES文档和多维数据集" class="headerlink" title="ES文档和多维数据集"></a>ES文档和多维数据集</h2><h3 id="ES的存储结构"><a href="#ES的存储结构" class="headerlink" title="ES的存储结构"></a>ES的存储结构</h3><p>ES文档通过JSON格式来表示。文档是可以被索引的基本单元，文档需要索引需要指定类型。ES能支持索引的数据类型有，其中的数组类型，对象类型和内嵌类型的支持，使得ES能存储更复杂的文档。</p>
-<h3 id="多维联机分析处理（MOLAP）"><a href="#多维联机分析处理（MOLAP）" class="headerlink" title="多维联机分析处理（MOLAP）"></a>多维联机分析处理（MOLAP）</h3><p>MOLAP将OLAP分析所用到的多维数据物理上存储为多维数组的形式，形成“立方体”的结构。维的属性值被映射成多维数组的下标值或下标的范围，而总结数据作为多维数组的值存储在数组的单元中。由于MOLAP采用了新的存储结构，从物理层实现起，因此又称为物理OLAP（PhysicalOLAP）；而 ROLAP主要通过一些软件工具或中间软件实现，物理层仍采用关系数据库的存储结构，因此称为虚拟OLAP（VirtualOLAP）。</p>
-<p>我们可以看到基于复杂数据类型（Complex datatypes）构建的ES文档与MOLAP的概念是非常接近的，利用ElasticSearch的聚合的能力，我们能相对简单的实现OLAP框架。</p>
-<h1 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h1><p>要实现整个OLAP框架主要需要处理以下几个环节</p>
-<ol>
-<li>数据建模</li>
-<li>数据ETL</li>
-<li>数据分析</li>
-<li>数据展示</li>
-</ol>
-<p>大致思路如下：<br><img src="olap.png" alt="OLAP"></p>
-<h2 id="数据建模"><a href="#数据建模" class="headerlink" title="数据建模"></a>数据建模</h2><p>数据建模就是建立多维数据集的过程，同时为了能更有效的利用ES的索引，不建议过深的JSON层次，所以对应到维度建模时采用的是星形模式。</p>
-<p>正常情况，是先进行数据建模，之后才能进行数据ETL，首先需要知道抽取的源数据的结构，即数据元数据之后，才能进一步分析数据模型。对于ES来说，实际上就是建立Index/Type的过程。</p>
-<h3 id="维度管理"><a href="#维度管理" class="headerlink" title="维度管理"></a>维度管理</h3><h3 id="元数据管理"><a href="#元数据管理" class="headerlink" title="元数据管理"></a>元数据管理</h3><p>元数据管理维护了原始数据的元数据结构，简单来说就是原始数据有哪些库，哪些表，表之间有什么关系。</p>
-<h3 id="映射管理"><a href="#映射管理" class="headerlink" title="映射管理"></a>映射管理</h3><p>映射管理是指定了需要抽取的数据范围及方法和确定了多维数据集的模型。</p>
-<h2 id="数据ETL"><a href="#数据ETL" class="headerlink" title="数据ETL"></a>数据ETL</h2><p>正常情况，是先进行数据建模，之后才能进行数据ETL，而实际过程中，是一般需要知道源数据的结构，即数据元数据之后，才能进一步分析数据模型。</p>
-<p>数据ETL，实质就是从各个数据源提取数据，对数据进行转换，并最终加载填充数据到数据仓库维度建模后的表中。只有当多维数据集被填充好，ETL工作才算完成。</p>
-<p>数据加载主要分为两种，一种是首次加载，一种是刷新加载（增量加载）。当前产品中主要涉及两种数据库，Mysql和Hbase。</p>
-<h3 id="首次加载"><a href="#首次加载" class="headerlink" title="首次加载"></a>首次加载</h3><p>通过Quartz Job或MapRedurce Job将数据转换为Kafka消息，由数据加载组件来进行数据处理。</p>
-<h3 id="刷新加载"><a href="#刷新加载" class="headerlink" title="刷新加载"></a>刷新加载</h3><p>通过扩展mysql-binlog-connector-java和HBase Side-Effect Processor，可以实现数据的实时增量更新。本方案中通过Kafka消息中间件来统一转发不同类型的数据更新，此处需要定义好Kafka的消息格式，以便数据加载组件能较简单的处理数据。</p>
-<h3 id="数据转换"><a href="#数据转换" class="headerlink" title="数据转换"></a>数据转换</h3><p>转换步骤主要是指对提取好了的数据的结构进行转换，以满足目标数据仓库模型的过程。此外，转换过程也负责数据质量工作，这部分也被称为数据清洗(data cleaning)。转换过程可以通过逐步实现转换算法，动态上线的方式进行。</p>
-<h2 id="统计分析"><a href="#统计分析" class="headerlink" title="统计分析"></a>统计分析</h2><p>统计分析其实就是从事实表中统计任意组合维度的指标，也就是过滤、分组、聚合，其中，聚合除了一般的SUM、COUNT、AVG、MAX、MIN等，还有一个重要的COUNT(DISTINCT)。ElasticSearch本来就是做实时搜索的，过滤自然不是问题，现在也支持各种聚合以及Pipeline aggregations（相当于SQL子查询的功能）。</p>
-<p>统计分析是根据模板配置和页面操作时的条件生成ES语法，执行语法，返回结果数据的过程。从表面看，该过程不难，然而为了生成的ES语法的准确性，ES语法的生成引擎是非常重要的一个环节，通过在模板管理来增加一些配置来辅助ES的语法生成，如行维度，列维度，维的层次等等。</p>
-<h2 id="数据展示"><a href="#数据展示" class="headerlink" title="数据展示"></a>数据展示</h2><p>通过模板的动态配置，利用Echart和Vue可以实现，动态布局和各种仪表盘的展示，这部分内容也可参看Kibana。</p>
-<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>ES的文档结构符合MOLAP的概念，它提供的聚合功能可以实现OLAP的各种操作，基于Lucene和分布式架构在性能上也能得到保障。通过定义一定的规则和开发一系列的辅助功能，可比较容易的实现一套通用的实时OLAP的框架。本文主要讲解的是基于ES构建OLAP框架的思路，而非完整的构建方案。</p>
-<h2 id="参考连接"><a href="#参考连接" class="headerlink" title="参考连接"></a>参考连接</h2><ul>
-<li>联机分析处理</li>
-<li>Elasticsearch Basic Concepts</li>
-<li><a target="_blank" rel="noopener" href="https://www.elastic.co/products/hadoop">https://www.elastic.co/products/hadoop</a></li>
-<li>Hbase Indexer SEP</li>
-<li>使用ElasticSearch作为大数据平台的实时OLAP框架</li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/fighting_one_piece/article/details/51765383">https://blog.csdn.net/fighting_one_piece/article/details/51765383</a></li>
-<li><a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/575991">https://yq.aliyun.com/articles/575991</a></li>
-<li>Mapping Types</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/21/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/23/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/21/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/23/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1940,20 +2115,20 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">240</span>
+          <span class="site-state-item-count">245</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-count">91</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">91</span>
+        <span class="site-state-item-count">96</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -2011,12 +2186,12 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">488k</span>
+    <span title="站点总字数">504k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:24</span>
+    <span title="站点阅读时长">7:38</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
