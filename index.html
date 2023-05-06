@@ -172,6 +172,103 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/05/06/course100/010/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/05/06/course100/010/" class="post-title-link" itemprop="url">定投搜索的一点小更新</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-05-06 19:27:48 / 修改时间：19:31:02" itemprop="dateCreated datePublished" datetime="2023-05-06T19:27:48+08:00">2023-05-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/" itemprop="url" rel="index"><span itemprop="name">定投人生课堂</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/%E5%AE%9A%E6%8A%95%E6%90%9C%E7%B4%A2/" itemprop="url" rel="index"><span itemprop="name">定投搜索</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>370</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>对定投搜索来说，每接收到一条消息（输入），实际上是一条命令，因此对接收的消息做了一个格式化：所有输入将格式化成 <code>/命令 参数</code> (<code>/command args</code> )的格式。</p>
+<p>目前支持的 <code>command</code> 有：</p>
+<ul>
+<li><code>/s</code>，检索课程并返回课程清单。</li>
+<li><code>/d</code>，检索课程并返回课程卡片。</li>
+<li><code>/thx</code>，返回感谢列表，感谢列表是不定期更新的。</li>
+</ul>
+<p>当发送的消息不包含命令时，会默认加上 <code>/s</code> 命令，这样可以减少输入，如发送的消息是「极客」时，等同于发送「/s 极客」。</p>
+<p>命令的先后顺序无关，如发送以下消息，效果是一样的：「/s 极客 测试」，「极客 /s 测试」，「极客 测试 /s」。</p>
+<p>如果发送了不支持的命令格式，不会返回任何消息，只会将消息设置为已读状态。</p>
+<p>以下是一些命令截图：</p>
+<p><a target="_blank" rel="noopener" href="https://assets.quill.im/5hfvkbqezcwletv35bo7uac7xa9d"><img src="https://assets.quill.im/5hfvkbqezcwletv35bo7uac7xa9d" alt="image.png"></a><br><a target="_blank" rel="noopener" href="https://assets.quill.im/lioaqbdg1wp2nvbcdhqumbtr4l2l"><img src="https://assets.quill.im/lioaqbdg1wp2nvbcdhqumbtr4l2l" alt="WechatIMG244.png"></a><br>战友们可以自行尝试，如果发现工具的问题，可以添加我的微信「Crazy_Airhead」，或Mixin号「1091586」，进行反馈，谢谢。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/05/01/course100/009/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -203,8 +300,21 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-02 16:25:00" itemprop="dateModified" datetime="2023-05-02T16:25:00+08:00">2023-05-02</time>
+                <time title="修改时间：2023-05-06 19:26:57" itemprop="dateModified" datetime="2023-05-06T19:26:57+08:00">2023-05-06</time>
               </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/" itemprop="url" rel="index"><span itemprop="name">定投人生课堂</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/%E5%AE%9A%E6%8A%95%E6%90%9C%E7%B4%A2/" itemprop="url" rel="index"><span itemprop="name">定投搜索</span></a>
+                </span>
+            </span>
 
           <br>
             <span class="post-meta-item" title="本文字数">
@@ -1534,107 +1644,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2022/10/30/bigdata/tdengine/tdengine-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/10/30/bigdata/tdengine/tdengine-1/" class="post-title-link" itemprop="url">系统升级TDengine3.0</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-10-30 21:25:42" itemprop="dateCreated datePublished" datetime="2022-10-30T21:25:42+08:00">2022-10-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-31 11:22:29" itemprop="dateModified" datetime="2022-10-31T11:22:29+08:00">2022-10-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tdengine/" itemprop="url" rel="index"><span itemprop="name">tdengine</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tdengine/elasticsearch/" itemprop="url" rel="index"><span itemprop="name">elasticsearch</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>公司的一款产品是面向中小企业的内网安全日志采集与分析产品，使用Spring Boot &amp; Spring Cloud框架搭建，使用ElasticSearch进行存储，采用一体机的服务器（配置为4核CPU，32G，1T硬盘），使用CentOS7.8+Docker方式部署应用。</p>
-<p>该产品的主要业务流程是，通过探针（探针会部署在多个工控机上）采集触发安全引擎的扫描，产生日志，之后探针采集这些日志并将其推送Kafka，平台端消费Kafka，解析和分析日志并存储到ElasticSearch，之后通过分析查询服务提供最终数据展示。</p>
-<p>系统一直运行相对比较平稳，直到产品对日志增加了事件分组的要求，即当日志事件产生时，需要根据一定的规则判断是否当前日志与前一条日志是否未同一组事件。因为需要实时的判断事件的分组，在数据入库ES时，增加了大量的聚合运算。此时ES开始占用大量内存，整体响应慢，造成日志数据入库延时，和分析查询业务无法正常返回数据。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/10/30/bigdata/tdengine/tdengine-1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1704,20 +1713,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">245</span>
+          <span class="site-state-item-count">246</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">91</span>
+        <span class="site-state-item-count">93</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
