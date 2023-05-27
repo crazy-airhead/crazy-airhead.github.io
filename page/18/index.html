@@ -172,6 +172,150 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/02/22/java/cors/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/02/22/java/cors/" class="post-title-link" itemprop="url">Jfinal前后端分离项目CORS问题处理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-22 10:11:09" itemprop="dateCreated datePublished" datetime="2020-02-22T10:11:09+08:00">2020-02-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/jfinal/" itemprop="url" rel="index"><span itemprop="name">jfinal</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/jfinal/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/jfinal/vue/cors/" itemprop="url" rel="index"><span itemprop="name">cors</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h2><p>对于前后端分离的项目，无论是开发还是部署，可能都会碰到CORS问题。采用Jfinal-undertow方式发布的应用来说，通常是不需要考虑CORS的，因为前端与后端是一起发布的，但在开发时或采用分离部署时，还是会碰到的这个问题，因此在这里按开发和部署两部分讲解如何解决CORS问题。</p>
+<p>首先我们简单的了解下什么是CORS，完整的资料可以自己查看<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">wikipedia</a>。</p>
+<h2 id="CORS"><a href="#CORS" class="headerlink" title="CORS"></a>CORS</h2><p>跨域资源共享（<strong>CORS，Cross-origin resource sharing</strong>），它是一种允许<strong>受限的访问第一个访问资源域</strong>以外的资源（如字体）的机制。一张网页通常包含了很多跨域的图片，样式，脚本，iframes，或者视频，但一些跨域请求，尤其是Ajax请求，会因为默认的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Same-origin_policy">同源安全策略</a>（简单来说就是绝对路径，需要是协议，域名，端口号三者与第一个访问的资源（浏览器中输入的URL）相同，才被认为是同源）而被禁止访问。</p>
+<p>CORS定义了浏览器和服务器如何来决定一个跨域请求是安全的。它比完全同源请求有更多的自由和功能，但不要只是简单地允许所有跨源请求。CORS规范最初是作为W3C推荐标准发布的，但该文档已经过时。 <a target="_blank" rel="noopener" href="https://fetch.spec.whatwg.org/">Fetch Living Standard</a>是当前维护活跃的规范。</p>
+<p>对于程序开发来说，可能知道与CORS相关的请求头与响应头，已经够用了。如果需要更细的控制，可以进一步的阅读文档。</p>
+<h3 id="请求头"><a href="#请求头" class="headerlink" title="请求头"></a>请求头</h3><ul>
+<li><p>Origin</p>
+</li>
+<li><p>Access-Control-Request-Method</p>
+</li>
+<li><p>Access-Control-Request-Headers</p>
+</li>
+</ul>
+<h3 id="响应头"><a href="#响应头" class="headerlink" title="响应头"></a>响应头</h3><ul>
+<li><p>Access-Control-Allow-Origin</p>
+</li>
+<li><p>Access-Control-Allow-Credentials</p>
+</li>
+<li><p>Access-Control-Expose-Headers</p>
+</li>
+<li><p>Access-Control-Max-Age</p>
+</li>
+<li><p>Access-Control-Allow-Methods</p>
+</li>
+<li><p>Access-Control-Allow-Headers</p>
+</li>
+</ul>
+<p>我们通常使用的是<code>Access-Control-Allow-Origin: *</code>。</p>
+<h2 id="开发阶段"><a href="#开发阶段" class="headerlink" title="开发阶段"></a>开发阶段</h2><h3 id="前端处理"><a href="#前端处理" class="headerlink" title="前端处理"></a>前端处理</h3><p>如果后端没有做任何处理的情况，前端通常使用设置Chrome跨域选项和配置vue-cli代理模式这两种方式。推荐使用配置vue-cli代理模式，因为测试人员就可以不需要修改选项了。</p>
+<h4 id="修改Chrome跨域选项"><a href="#修改Chrome跨域选项" class="headerlink" title="修改Chrome跨域选项"></a>修改Chrome跨域选项</h4><p>对于Windows用户来说，创建个Chrome的快捷方式，target后中增加<code>--disable-web-security --user-data-dir=</code>即可，如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;...\chrome.exe&quot;</span> --disable-web-security --user-data-dir=</span><br></pre></td></tr></table></figure>
+
+<p>对于MacOS用户来说，需要创建好用户数据目录，否则可能无法打开。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open -n /Applications/Google\ Chrome.app/ --args --disable-web-security --user-data-dir=/Users/work/ChromeDevUserData</span><br></pre></td></tr></table></figure>
+
+<h4 id="vue-cli修改代理模式"><a href="#vue-cli修改代理模式" class="headerlink" title="vue-cli修改代理模式"></a>vue-cli修改代理模式</h4><p>参照vue-cli3的文档中的<a target="_blank" rel="noopener" href="https://cli.vuejs.org/zh/config/#devserver-proxy">devServer.proxy</a>配置即可。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * vue-cli3跨域的全配置！</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="attr">devServer</span>: &#123;</span><br><span class="line">     <span class="attr">proxy</span>:  <span class="string">&#x27;http://172.26.0.252:8881&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="后端处理"><a href="#后端处理" class="headerlink" title="后端处理"></a>后端处理</h3><p>当然我们是希望前端不需要做任何配置，此时后端需要做些开发。实现的方式有很多，这里只展示一种方式简单的实现方式，通过扩展<code>Interceptor</code>实现<code>CorsInterceptor</code>，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CorsInterceptor</span> <span class="keyword">implements</span> <span class="title">Interceptor</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">intercept</span><span class="params">(Invocation inv)</span> </span>&#123;</span><br><span class="line">    inv.invoke();</span><br><span class="line">    addCorsHead(inv.getController().getResponse());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addCorsHead</span><span class="params">(HttpServletResponse response)</span> </span>&#123;</span><br><span class="line">    response.setHeader(<span class="string">&quot;Access-Control-Allow-Origin&quot;</span>, <span class="string">&quot;*&quot;</span>);</span><br><span class="line">    response.setHeader(<span class="string">&quot;Access-Control-Allow-Methods&quot;</span>, <span class="string">&quot;POST, GET&quot;</span>);</span><br><span class="line">    response.setHeader(<span class="string">&quot;Access-Control-Max-Age&quot;</span>, <span class="string">&quot;3600&quot;</span>);</span><br><span class="line">    response.setHeader(</span><br><span class="line">        <span class="string">&quot;Access-Control-Allow-Headers&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//针对性的提供Cors支持</span></span><br><span class="line"><span class="meta">@Before(CorsInterceptor.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">index</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    renderJson(Ret.ok());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span> <span class="keyword">extends</span> <span class="title">JFinalConfig</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configInterceptor</span><span class="params">(Interceptors me)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//此处可以加个参数判断，是否加载CorsInterceptor</span></span><br><span class="line">    me.addGlobalActionInterceptor(<span class="keyword">new</span> CorsInterceptor());</span><br><span class="line">  &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h2 id="部署阶段"><a href="#部署阶段" class="headerlink" title="部署阶段"></a>部署阶段</h2><h3 id="Jfinal-undertow部署目录结构"><a href="#Jfinal-undertow部署目录结构" class="headerlink" title="Jfinal-undertow部署目录结构"></a>Jfinal-undertow部署目录结构</h3><p>jfinal-undertow推荐采用目录结构部署系统，当然也支持<code>fatjar</code>打包，可以参看<a target="_blank" rel="noopener" href="https://jfinal.com/doc/1-3">jfinal-undertow 下部署</a>。以下是就打包好后的目录格式。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.app</span><br><span class="line">├──config</span><br><span class="line">├──lib</span><br><span class="line">├──webapp</span><br><span class="line">|  └──index.html</span><br><span class="line">└──jfinal.sh</span><br></pre></td></tr></table></figure>
+
+<p>采用这种方式部署是没有跨域问题的。</p>
+<h3 id="Nginx部署"><a href="#Nginx部署" class="headerlink" title="Nginx部署"></a>Nginx部署</h3><p>正式环境更多的可能会用Nginx来做反向代理，将不同域名整一起。以下是简单示例，仅供参考：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">  <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">  <span class="attribute">server_name</span> demo.com;</span><br><span class="line">  <span class="attribute">client_max_body_size</span> <span class="number">50m</span>;</span><br><span class="line"></span><br><span class="line">  <span class="attribute">location</span> / &#123;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://172.17.0.1:80;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="attribute">location</span> /api &#123;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://172.17.0.1:81/api;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://l4qiang.me/2018/05/12/frontend/security/cors/">CORS 跨域资源共享</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/02/18/java/frontend/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1250,100 +1394,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/06/13/java/fastjson/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/06/13/java/fastjson/" class="post-title-link" itemprop="url">FastJson使用整理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-06-13 09:37:29" itemprop="dateCreated datePublished" datetime="2019-06-13T09:37:29+08:00">2019-06-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/fastjson/" itemprop="url" rel="index"><span itemprop="name">fastjson</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>139</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li>将对象序列化为String时出现<code>$ref</code>对象。<br>可能通过禁用，DisableCircularReferenceDetect来解决。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSON.toJSONString(object, SerializerFeature.DisableCircularReferenceDetect)</span><br></pre></td></tr></table></figure></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1413,20 +1463,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">246</span>
+          <span class="site-state-item-count">247</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">93</span>
+        <span class="site-state-item-count">96</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-count">100</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1489,7 +1539,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:38</span>
+    <span title="站点阅读时长">7:39</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
