@@ -4,10 +4,10 @@ toc: true
 p: spring/springboot-4
 date: 2019-05-14 11:06:14
 categories:
-- SpringBoot
+- Spring Boot
 - Jfinal
 tags:
-- SpringBoot
+- Spring Boot
 - Jfinal
 ---
 ## 概要
