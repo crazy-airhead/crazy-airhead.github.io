@@ -3,7 +3,8 @@ title: Springboot创建war发布包
 toc: true
 // cover: springbootshutdown.png
 date: 2016-10-23 14:50
-tags: [springboot]
+tags: 
+- Spring Boot
 ---
 ![](http://of73u2ed9.bkt.clouddn.com/blogspringbootwardeploy.png)
 ## 说明

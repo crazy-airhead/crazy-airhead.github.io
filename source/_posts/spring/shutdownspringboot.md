@@ -3,7 +3,8 @@ title: 正确关闭Springboot的方法
 toc: true
 cover: springbootshutdown.png
 date: 2016-10-11 19:11
-tags: [springboot]
+tags: 
+- Spring Boot
 ---
 ![](/springbootshutdown.png)
 ## 说明

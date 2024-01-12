@@ -4,11 +4,11 @@ toc: true
 p: spring/springboot-2
 date: 2019-03-12 14:54:27
 categories:
-- SpringBoot
+- Spring Boot
 - Jfinal
 - Kotlin
 tags:
-- SpringBoot
+- Spring Boot
 - Jfinal
 - Kotlin
 ---
