@@ -100,8 +100,6 @@ public class DemoConfig extends JFinalConfig {
     me.add(new FakeIndexHandler("/web", "/web/index.html"));
   }
 } 
-
-
 ```
 
 ## 小结
@@ -113,4 +111,3 @@ Jfinal-undertow可以轻松应对HTML5 History的不同模式，如果是hash模
 ## 参考链接
 
 [波总您好，jfinal-undertow下前后端分离项目合并部署访问不到页面](http://www.jfinal.com/feedback/5623)
-

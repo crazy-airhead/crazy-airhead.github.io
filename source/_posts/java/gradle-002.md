@@ -47,11 +47,11 @@ dependencies {
 
 默认情况下，constraions只是申明了版本关系，并不是依赖关系，如果需要引入为依赖关系，需要做如下的指定：
 
- ```
- javaPlatform {
-     allowDependencies()
- }
- ```
+```
+javaPlatform {
+    allowDependencies()
+}
+```
 
 ### 使用第三方BOM
 
@@ -60,8 +60,6 @@ dependencies {
     api platform('com.fasterxml.jackson:jackson-bom:2.9.8')
 }
 ```
-
-
 
 ### 发布
 
@@ -74,8 +72,6 @@ publishing {
     }
 }
 ```
-
-
 
 ### 引入BOM
 
@@ -103,4 +99,3 @@ Mixin ID :  1091586
 李笑来写作课邀请码：38MDGFYZK8
 
 水龙头邀请码：FDJQHJ
-
