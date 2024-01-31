@@ -1,5 +1,5 @@
 ---
-title: Gradle 实现类 Maven 的 profile功能
+title: Gradle 实现类 Maven 的 profile 功能
 toc: true
 date: 2024-01-21 11:22:32
 categories:
@@ -73,7 +73,7 @@ processResources {
 
 保留使用`@...@`的占位符，调整`build.gradle`，并只处理app.yml文件。
 
-```groovy
+```html
 import org.apache.tools.ant.filters.ReplaceTokens
 processResources {
     filesMatching('app.yml') {
