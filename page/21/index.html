@@ -172,6 +172,144 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/03/02/spring/springboot-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/03/02/spring/springboot-3/" class="post-title-link" itemprop="url">SpringCloud-配置中心</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-03-02 14:24:45" itemprop="dateCreated datePublished" datetime="2019-03-02T14:24:45+08:00">2019-03-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringCloud/" itemprop="url" rel="index"><span itemprop="name">SpringCloud</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>之前采用Sping Config Server做为配置中心，使用Git做为数据存储和版本控制。整体来说问题不太，可用，便不够商用，或者要做很多拓展。比如更新参数时，需要推送Git，重启服务。如果需要动态更新，需要配置Git服务器的WebHook，设置服务的RefreshScope，同时为了减少WebHook的配置，需要加上Spring Cloud Bus（同时引及RabbitMQ或者Kafka）。另外对不同环境的配置不友好，能过Profile来配置，但配置杂乱，虽然后面通过Git分支加环境变量解决，但管理还是不方便。带着这样的一些问题，碰到了Apollo配置中心，Apollo的很多功能直接就解开了我之前的一些疑惑，那还说什么呢？拿来用就好了。</p>
+<h2 id="Apollo配置中心"><a href="#Apollo配置中心" class="headerlink" title="Apollo配置中心"></a>Apollo配置中心</h2><p>Apollo配置中心文档丰富，直接看官方文档就好，看了之后你也会喜欢上他。以下是官网的功能说明：</p>
+<ul>
+<li>统一管理不同环境、不同集群的配置<ul>
+<li>Apollo提供了一个统一界面集中式管理不同环境（environment）、不同集群（cluster）、不同命名空间（namespace）的配置。</li>
+<li>同一份代码部署在不同的集群，可以有不同的配置，比如zk的地址等</li>
+<li>通过命名空间（namespace）可以很方便的支持多个不同应用共享同一份配置，同时还允许应用对共享的配置进行覆盖</li>
+</ul>
+</li>
+<li>配置修改实时生效（热发布）<ul>
+<li>用户在Apollo修改完配置并发布后，客户端能实时（1秒）接收到最新的配置，并通知到应用程序。</li>
+</ul>
+</li>
+<li>版本发布管理<ul>
+<li>所有的配置发布都有版本概念，从而可以方便的支持配置的回滚。</li>
+</ul>
+</li>
+<li>灰度发布<ul>
+<li>支持配置的灰度发布，比如点了发布后，只对部分应用实例生效，等观察一段时间没问题后再推给所有应用实例。</li>
+</ul>
+</li>
+<li>权限管理、发布审核、操作审计<ul>
+<li>应用和配置的管理都有完善的权限管理机制，对配置的管理还分为了编辑和发布两个环节，从而减少人为的错误。</li>
+<li>所有的操作都有审计日志，可以方便的追踪问题。</li>
+</ul>
+</li>
+<li>客户端配置信息监控<ul>
+<li>可以方便的看到配置在被哪些实例使用</li>
+</ul>
+</li>
+<li>提供Java和.Net原生客户端<ul>
+<li>提供了Java和.Net的原生客户端，方便应用集成</li>
+<li>支持Spring Placeholder, Annotation和Spring Boot的ConfigurationProperties，方便应用使用（需要Spring 3.1.1+）</li>
+<li>同时提供了Http接口，非Java和.Net应用也可以方便的使用</li>
+</ul>
+</li>
+<li>提供开放平台API<ul>
+<li>Apollo自身提供了比较完善的统一配置管理界面，支持多环境、多数据中心配置管理、权限、流程治理等特性。</li>
+<li>不过Apollo出于通用性考虑，对配置的修改不会做过多限制，只要符合基本的格式就能够保存。</li>
+<li>在我们的调研中发现，对于有些使用方，它们的配置可能会有比较复杂的格式，如xml, json，需要对格式做校验。</li>
+<li>还有一些使用方如DAL，不仅有特定的格式，而且对输入的值也需要进行校验后方可保存，如检查数据库、用户名和密码是否匹配。</li>
+<li>对于这类应用，Apollo支持应用方通过开放接口在Apollo进行配置的修改和发布，并且具备完善的授权和权限控制</li>
+</ul>
+</li>
+<li>部署简单<ul>
+<li>配置中心作为基础服务，可用性要求非常高，这就要求Apollo对外部依赖尽可能地少</li>
+<li>目前唯一的外部依赖是MySQL，所以部署非常简单，只要安装好Java和MySQL就可以让Apollo跑起来</li>
+<li>Apollo还提供了打包脚本，一键就可以生成所有需要的安装包，并且支持自定义运行时参数<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2>通过Apollo配置中心改进了原有Spring Config Server的使用不便。同时如果你的团队使用灰度发布的话，会加深开关驱动开发的了解。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/01/28/misc/three-factors-of-manage/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1132,205 +1270,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/bigdata/hbase-indexer/indexer-configuration/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/12/05/bigdata/hbase-indexer/indexer-configuration/" class="post-title-link" itemprop="url">Hbase Indexer - 索引器配置</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-12-05 12:34:00" itemprop="dateCreated datePublished" datetime="2018-12-05T12:34:00+08:00">2018-12-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>9.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>The most basic indexer configuration only requires a table name and a single field. However, there are many configuration settings that can be used in an indexer configuration file to customize behavior.</p>
-<p>最基础索引器配置只需要一个表名和一个字段名就可以。但是，有很多配置可以用于配置可以自定义解析器的行为。</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">indexer</span> <span class="attr">table</span>=<span class="string">&quot;mytable&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;fieldname&quot;</span> <span class="attr">value</span>=<span class="string">&quot;columnfamily:qualifier&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">indexer</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h2 id="全局索引器属性（Global-indexer-attributes）"><a href="#全局索引器属性（Global-indexer-attributes）" class="headerlink" title="全局索引器属性（Global indexer attributes）"></a>全局索引器属性（Global indexer attributes）</h2><p>The following is a list of attributes that can be set on the top-level <indexer> element in an indexer configuration.</p>
-<p>以下列出的属性可以在顶层<code>&lt;indexer&gt;</code>节点中配置。</p>
-<h3 id="table"><a href="#table" class="headerlink" title="table"></a>table</h3><p>The table attribute specifies the name of the HBase table to be indexed by the indexer. It is the only mandatory attribute in the indexer element.</p>
-<p>table属性用于指定HBase需要索引器索引的表名。这个indexer节点中强制要求的属性。</p>
-<h3 id="mapping-type"><a href="#mapping-type" class="headerlink" title="mapping-type"></a>mapping-type</h3><p>The mapping-type attribute has two possible values: row, or column. This attribute specifies whether row-based or column-based indexing is to be performed.</p>
-<p>mapping-type属性有两种值：row和column。这个属性用于指定是基于行还是基于列的索引方式。</p>
-<p>Row-based indexing treats all data within a single HBase row as input for a single document in Solr. This is the kind of indexing that would be used for an HBase table that contains a separate entity in each row, e.g. a table containing users.</p>
-<p>基于行索引方式把Hbase一行当中的所有数据当成Solr的一个文档输入。这种方式用于索引一行就表示一个独立的实体的Hbase表，比如包含用户的表。</p>
-<p>Column-based indexing treats each HBase cell as input for a single document in Solr. This approach could be used for example in a messaging platform where a single user’s messages are all stored in a single row, with each message being stored in a separate cell.</p>
-<p>基于列索引方式把Hbase的一个列当作Solr的一个文档输入。这种处理可以用于消息平台，一个用户的所有消息存在同一行中，而每条消息存在一个单独的列上。</p>
-<p>The default mapping-type value is row.</p>
-<p>默认的mapping-type是row。</p>
-<h3 id="read-row"><a href="#read-row" class="headerlink" title="read-row"></a>read-row</h3><p>The read-row attribute has two possible values: dynamic, or never.</p>
-<p>read-row属性有两种值：dyamic和never。</p>
-<p>This attribute is only important when using row-based indexing. It specifies whether or not the indexer should re-read data from HBase in order to perform indexing.</p>
-<p>这个属性中对基于行索引的方式才是重要的。它指定索引器为了进行索引是否需要从Hbase重新读取数据。</p>
-<p>When set to “dynamic”, the indexer will read the necessary data from a row if a partial update to the row is performed in HBase. In dynamic mode, the row will not be re-read if all data needed to perform indexing is included in the row update.</p>
-<p>当被设置为“dynamic”时，如果HBase是一行数据的部分数据更新时，索引器会读取这一行中需要的数据。dynamic模式下，如果是一行的全部数据的更新，索引器不会重新读取Hbase的数据。</p>
-<p>If this attribute is set to never, a row will never be re-read by the indexer.</p>
-<p>如果这个属性被设置为never，索引器不会重读行数据。</p>
-<p>The default setting is “dynamic”.</p>
-<p>默认的设置是“dynamic”。</p>
-<h3 id="mapper"><a href="#mapper" class="headerlink" title="mapper"></a>mapper</h3><p>The mapper attribute allows the user to specify a custom mapper class that will create a Solr document from a HBase Result object. The mapper class must implement the com.ngdata.hbaseindexer.parse.ResultToSolrMapper interface.</p>
-<p>mapper属性允许用户指定一个自定义的类通过Hbase结果对象来创建Solr文档。但这个mapper类必需实现<code>com.ngdata.hbaseindexer.parse.ResultToSolrMapper</code>接口。</p>
-<p>By default, the built-in com.ngdata.hbaseindexer.parse.DefaultResultToSolrMapper is used.</p>
-<p>默认情况，使用的是内署的<code>com.ngdata.hbaseindexer.parse.DefaultResultToSolrMapper</code>。</p>
-<h3 id="unique-key-formatter"><a href="#unique-key-formatter" class="headerlink" title="unique-key-formatter"></a>unique-key-formatter</h3><p>The unique-key-formatter attribute specifies the name of the class used to format HBase row keys (as well as column families and column qualifiers) as text. A textual representation of these pieces of information is needed for indexing in Solr, as all data in Solr is textual, but row keys, column families, and column qualifiers are byte arrays.</p>
-<p>unique-key-formatter指定了用于格式化Hbase rowkeys（列簇和列限定符也一样）为文本的类名。在Solr中索引需要这些信息的文本表示，因为Solr中的所有数据都是文本数据，但是行键、列族和列限定符是字节数组。</p>
-<p>A unique-key-formatter class must implement the com.ngdata.hbaseindexer.uniquekey.UniqueKeyFormatter interface.</p>
-<p>一个unique-key-formatter类必须实现<code>com.ngdata.hbaseindexer.uniquekey.UniqueKeyFormatter</code>接口。</p>
-<p>The default value of this attribute is com.ngdata.hbaseindexer.uniquekey.StringUniqueKeyFormatter. The StringUniqueKey formatter simply treats row keys and other byte arrays as strings.</p>
-<p>这个属性的默认值是<code>com.ngdata.hbaseindexer.uniquekey.StringUniqueKeyFormatter</code>。StringUniqueKeyFormatter只是简单的把rowkey或者其他字节数据当成字符串。</p>
-<p>If your row keys, column families, or qualifiers can’t simply be used as strings, consider using the com.ngdata.hbaseindexer.uniquekey.HexUniqueKeyFormatter.</p>
-<p>如果你的rowkey，列簇，或者限定符不能简单的用字符串表示，就你需要考虑使用<code>com.ngdata.hbaseindexer.uniquekey.HexUniqueKeyFormatter</code>。</p>
-<h3 id="unique-key-field"><a href="#unique-key-field" class="headerlink" title="unique-key-field"></a>unique-key-field</h3><p>This attribute specifies the name of the document identifier field used in Solr.</p>
-<p>这个属性指定Solr中文档的标识字段。</p>
-<p>The default value for this field is “id”.</p>
-<p>默认值是“id”。</p>
-<h3 id="row-field"><a href="#row-field" class="headerlink" title="row-field"></a>row-field</h3><p>The row-field attribute specifies the name of the Solr field to be used for storing an HBase row key.</p>
-<p>row-field属性指定了Solr中用于存储Hbase rowkey的安段名。</p>
-<p>This field is only important when doing column-based indexing. In order for the indexer to be able to delete all documents for a single row from the index, it needs to be able to find all documents for the row in Solr. When this attribute is populated in the indexer definition, it’s value is used as the name of a field in Solr to store the encoded row key.</p>
-<p>这个字段对于基于列索引方式才很重要。索引器为了能够从索引中删除一行的所有文档，它一个字段能在Solr中找到该行的所有文档。在索引器定义中设置这个属性时，它的值将用作Solr中字段的名称，以存储编码的行键。</p>
-<p>By default, this attribute is empty, meaning that the row key is not stored in Solr. The consequence of this is that deleting a complete row or complete column family in HBase will not delete the indexed documents in Solr.</p>
-<p>默认情况，这个属性为空，这意味着rowkey不会被存储在Solr里面。这样的结果就是在Hbase中删除一个完整的行或者列并不删除Solr中的已经索引的文档。</p>
-<h3 id="column-family-field"><a href="#column-family-field" class="headerlink" title="column-family-field"></a>column-family-field</h3><p>The column-family-field specifies the name of the Solr field to be used for storing the HBase column family name.</p>
-<p>column-family-field指定Solr中用于存储HBase列簇名的字段名。</p>
-<p>See the description of the row-field attribute for more information.</p>
-<p>查看row-field属性查看更多的信息。</p>
-<p>By default, this attribute is empty, so the column-family name is not saved in Solr.</p>
-<p>默认情况，这个属性为空，也就是说，列簇不会被Solr存储。</p>
-<h3 id="table-name-field"><a href="#table-name-field" class="headerlink" title="table-name-field"></a>table-name-field</h3><p>The table-name-field specifies the name of the Solr field to be used for storing the name of the HBase table where a record is stored.</p>
-<p>table-name-field指定Solr中用于存储Hbase表名的字段名。</p>
-<p>By default, this attribute is empty, so the name of the HBase table is not stored unless this setting is explicitly set in the indexer config.</p>
-<p>默认情况，这个属性是空，也就是说Hbase的表名不会被存储除非在indexer节点中明确指定。</p>
-<h2 id="indxer内定义的节点（Elements-within-the-indexer-definition）"><a href="#indxer内定义的节点（Elements-within-the-indexer-definition）" class="headerlink" title="indxer内定义的节点（Elements within the indexer definition）"></a>indxer内定义的节点（Elements within the indexer definition）</h2><p>There are three types of elements that can be used within an indexer configuration: <field>, <extract>, and <param>.</p>
-<p>在indexer节点有三种类型的节点：<field>, <extract>和<param></p>
-<h3 id=""><a href="#" class="headerlink" title=""></a><field></h3><p>The field element defines a single field to be indexed in Solr, as well as where its contents are to be taken from and interpreted from HBase. There are typically one or more fields listed in an indexer configuration – one for each Solr field to be stored.</p>
-<p>field节点定义了要在Solr中索引的单个字段，以及要从Hbase获取和解析的内容。索引器配置中通常列出一个或多个字段——每个Solr字段都要存储一个字段。</p>
-<p>The field attribute has four attributes, listed below.</p>
-<p>field有如下的四个属性。</p>
-<h4 id="name"><a href="#name" class="headerlink" title="name"></a>name</h4><p>The name attribute specifies the name of a Solr field in which to store data. A field with a matching name should be defined in the Solr schema.</p>
-<p>name属性指定了Solr的中存储数据的字段名。这个字段需要在Solr的Schema中有匹配的字段名。</p>
-<p>The name attribute is mandatory.</p>
-<p>name属性是必须的。</p>
-<h4 id="value"><a href="#value" class="headerlink" title="value"></a>value</h4><p>The value attribute specifies the data to be used from HBase for populating the field in Solr. It takes the form of a column family name and qualifier, separated by a colon.</p>
-<p>value属性指定了Hase用于填充Solr字段的数据。它采用列族名和限定符的形式，用冒号分隔。</p>
-<p>The qualifier portion can end in an asterisk, which is interpreted as a wildcard. In this case, all matching column-family and qualifier expressions will be used.</p>
-<p>限定符部分可以星号结尾，该星号被解释为通配符。在这种情况下，将使用所有匹配的列族表达式和限定符表达式。</p>
-<p>The following are examples of valid value attributes:</p>
-<p>以下是有效值属性的示例：</p>
-<ul>
-<li>mycolumnfamily:myqualifier</li>
-<li>mycolumnfamily:my*</li>
-<li>mycolumnfamily:*</li>
-</ul>
-<h4 id="source"><a href="#source" class="headerlink" title="source"></a>source</h4><p>The source attribute determines what portion of an HBase KeyValue will be used as indexing content.</p>
-<p>Source属性确定HBASE KeyValue的哪个部分将用作索引内容。</p>
-<p>It has two possible values: value and qualifier.、</p>
-<p>它有两个可能的值：value和qualifier。</p>
-<p>When value is specified (which is the case by default), then the cell value is used as input for indexing.</p>
-<p>当指定值时(默认情况下是这种情况)，则使用单元格值作为索引的输入。</p>
-<p>When qualifier is specified, then the column qualifier is used as input for indexing.</p>
-<p>当指定限定符时，列限定符将用作索引的输入。</p>
-<h4 id="type"><a href="#type" class="headerlink" title="type"></a>type</h4><p>The type attribute defines the datatype of the content in HBase.</p>
-<p>type属性定义HBASE中内容的数据类型。</p>
-<p>Because all data is stored in HBase as byte arrays, but all content in Solr is indexed as text, a method for converting from byte arrays to the actual datatype is needed.</p>
-<p>因为所有数据都以字节数组的形式存储在HBASE中，但是Solr中的所有内容都被索引为文本，所以需要一个方法将字节数组转换为实际的数据类型。</p>
-<p>The value of this field can be one of any of the datatypes supported by the HBase Bytes class: int, long, string, boolean, float, double, short, or bigdecimal.</p>
-<p>该字段的值可以是HBASE Bytes类支持的任何数据类型之一：int、long、string、boole、Float、Double、Short或Big十进制。</p>
-<p>If the Bytes-based representation has not been used for storing data in HBase, the name of a custom class can be specified for this attribute. The custom class must implement the com.ngdata.hbaseindexer.parse.ByteArrayValueMapper interface.</p>
-<p>如果没有使用基于Bytes的表示形式在HBASE中存储数据，则可以为该属性指定自定义类的名称。自定义类必须实现com.ngdata.hbaseindexer.parse.ByteArrayValueMapper接口。</p>
-<h3 id="-1"><a href="#-1" class="headerlink" title=""></a><param></h3><p>The <param> element defines a key-value pair that will be supplied to custom classes that implement the com.ngdata.hbaseindexer.Configurable interface.</p>
-<param>节点定义了一个键值对，它将提供给实现com.ngdata.hbase indexer.Configable接口的自定义类。
-
-<param> elements can also be nested in a <field> element.
-
-<param>元素也可以嵌套在<field>元素中。
-
-<p>The element has two attributes: name and value. Both are mandatory.</p>
-<p>访节点有两个属性：name和value。两者都是必须的。</p>
-<h2 id="配置样例（Example-configuration）"><a href="#配置样例（Example-configuration）" class="headerlink" title="配置样例（Example configuration）"></a>配置样例（Example configuration）</h2><p>The example configuration below demonstrates all elements and attributes that can be used to configure an indexer.</p>
-<p>下面的示例配置演示了可用于配置索引器的所有元素和属性。</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">   Do row-based indexing on table &quot;table1&quot;, never re-reading updated content.</span></span><br><span class="line"><span class="comment">   Store the unique document id in Solr field called &quot;custom-id&quot;.</span></span><br><span class="line"><span class="comment">   Additionally store the row key in a Solr field called &quot;custom-row&quot;, and store the </span></span><br><span class="line"><span class="comment">   column family in a Solr field called &quot;custom-family&quot;.</span></span><br><span class="line"><span class="comment">  </span></span><br><span class="line"><span class="comment">   Perform conversion of byte array keys using the class &quot;com.mycompany.MyKeyFormatter&quot;.</span></span><br><span class="line"><span class="comment">--&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">indexer</span></span></span><br><span class="line"><span class="tag">    <span class="attr">table</span>=<span class="string">&quot;table1&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">mapping-type</span>=<span class="string">&quot;row&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">read-row</span>=<span class="string">&quot;never&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">unique-key-field</span>=<span class="string">&quot;custom-id&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">row-field</span>=<span class="string">&quot;custom-row&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">column-family-field</span>=<span class="string">&quot;custom-family&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">table-name-field</span>=<span class="string">&quot;custom-table&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">unique-key-formatter</span>=<span class="string">&quot;com.mycompany.MyKeyFormatter&quot;</span></span></span><br><span class="line"><span class="tag">    &gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- A float-based field taken from any qualifier in the column family &quot;colfam&quot; --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;field1&quot;</span> <span class="attr">value</span>=<span class="string">&quot;colfam:*&quot;</span> <span class="attr">source</span>=<span class="string">&quot;qualifier&quot;</span> <span class="attr">type</span>=<span class="string">&quot;float&quot;</span>/&gt;</span></span><br><span class="line">  </span><br><span class="line">  <span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">&quot;globalKeyA&quot;</span> <span class="attr">value</span>=<span class="string">&quot;globalValueA&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">&quot;globalKeyB&quot;</span> <span class="attr">value</span>=<span class="string">&quot;globalValueB&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">indexer</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="http://cloudera.github.io/cdk/docs/0.8.0/cdk-morphlines/index.html">morphlines</a><br><img src="http://cloudera.github.io/cdk/docs/0.8.0/cdk-morphlines/images/morphlines-architecture.jpg" alt="morphlines-architecture"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1400,20 +1339,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">249</span>
+          <span class="site-state-item-count">250</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-count">96</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">99</span>
+        <span class="site-state-item-count">100</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1471,12 +1410,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">509k</span>
+    <span title="站点总字数">511k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:43</span>
+    <span title="站点阅读时长">7:45</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

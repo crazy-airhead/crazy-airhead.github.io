@@ -172,6 +172,144 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/09/19/git/git-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/09/19/git/git-1/" class="post-title-link" itemprop="url">管理多个Github帐号</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-09-19 08:15:40" itemprop="dateCreated datePublished" datetime="2018-09-19T08:15:40+08:00">2018-09-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/git/GitHub/" itemprop="url" rel="index"><span itemprop="name">GitHub</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/git/GitHub/ssh/" itemprop="url" rel="index"><span itemprop="name">ssh</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>之前通过GithubPages和Hexo搭建了个人博客，在<a href="https://l4qiang.me/2016/10/05/hexo/">这里</a>可看到搭建的方法。现在呢，希望用另一个帐号，管理一个不同内容的<a target="_blank" rel="noopener" href="http://goldyear.info/">博客</a>。有了之前的经验，整个搭建的过程还是比较顺利，主要碰到的问题就是代码发布。之前github帐号，是通过Windows的<a target="_blank" rel="noopener" href="https://www.howto-connect.com/how-to-use-credential-manager-windows-10/">凭证管理</a>来实现的，按理说Github配置了多个帐号也是可以管理的。如图：</p>
+<p><img src="crdential.png" alt="crdential.png"></p>
+<p>但是两套博客在发布代码的时候都出现了问题。</p>
+<h2 id="初步方案"><a href="#初步方案" class="headerlink" title="初步方案"></a>初步方案</h2><p>将用户名和密码配置在Hexo的<code>_config.yml</code>的配置项中，形如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://enderjo:xyz@github.com/enderjo/enderjo.github.io</span><br></pre></td></tr></table></figure>
+
+<p>虽然这样配置是解决了发布问题，但密码安全问题就暴露出来了，想想之前有了解到Github有ssh功能，但也没用过，初步试了下一样发现两个帐号配置的问题，github不支持同一个公钥用于不同的帐号，会提示公钥已经被使用了，请教了下前同事事了解到ssh有个config的配置。</p>
+<h2 id="最终方案"><a href="#最终方案" class="headerlink" title="最终方案"></a>最终方案</h2><p>基于同事的提示刚开始创建的config如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Host github:enderjo</span><br><span class="line"> Hostname github.com</span><br><span class="line"> User git</span><br><span class="line"> PreferredAuthentications publickey</span><br><span class="line"> IdentityFile ~/.ssh/github-enderjo/id_rsa</span><br></pre></td></tr></table></figure>
+
+<p>Window中在用户目录<code>%USERPROFILE%</code>下。之后使用ssh测试也是通的。<br>如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh -T github.com:enderjo</span></span><br><span class="line">Hi enderjo! You&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span><br></pre></td></tr></table></figure>
+
+<p>但测试Git Clone的时候提示无法</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">clone</span> git@github.com:enderjo/enderjo.github.io.git</span></span><br><span class="line">Cloning into &#x27;enderjo.github.io&#x27;...</span><br><span class="line">git@github.com: Permission denied (publickey).</span><br><span class="line">fatal: Could not read from remote repository.</span><br><span class="line"></span><br><span class="line">Please make sure you have the correct access rights</span><br><span class="line">and the repository exists.</span><br></pre></td></tr></table></figure>
+
+<p>参考<a target="_blank" rel="noopener" href="https://help.github.com/articles/error-permission-denied-publickey/">Error: Permission denied (publickey)</a>通过ssh-add证书的方式，能正常git clone。此时已可初步判断，git clone没有正常取到config的配置。<br>接着同事发来这篇文章<br><a target="_blank" rel="noopener" href="https://gitlab.com/gitlab-org/gitlab-ce/issues/45593">https://gitlab.com/gitlab-org/gitlab-ce/issues/45593</a><br>其中提到，可通过如下命令查看git clone的实际执行过程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GIT_TRACE=1 GIT_SSH_COMMAND=&quot;ssh -vvv&quot; git clone git@gitlab.example.com:my-group/my-project.git</span><br></pre></td></tr></table></figure>
+
+<p>测试后的部分代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ GIT_TRACE=1 GIT_SSH_COMMAND=&quot;ssh -vvv&quot; git clone git@github.com:enderjo/enderjo.github.io.git</span><br><span class="line">14:03:51.164492 exec-cmd.c:236          trace: resolved executable dir: C:/Program Files/Git/mingw64/bin</span><br><span class="line">14:03:51.165492 git.c:415               trace: built-in: git clone git@github.com:enderjo/enderjo.github.io.git</span><br><span class="line">Cloning into &#x27;enderjo.github.io&#x27;...</span><br><span class="line">14:03:51.225463 run-command.c:637       trace: run_command: unset GIT_DIR; &#x27;ssh -vvv&#x27; git@github.com &#x27;git-upload-pack &#x27;\&#x27;&#x27;enderjo/enderjo.github.io.git&#x27;\&#x27;&#x27;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>此时我们可以看到，实际执行的地址和测试的地址是不一样的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -T git@github.com:enderjo</span><br><span class="line">$ ssh -vvv git@github.com</span><br></pre></td></tr></table></figure>
+
+<p>ssh命令是根据config文件中Host记录与ssh命令时所输入的主机名来进行匹配的，而git clone因为使用<code>:</code>分隔用户名。</p>
+<p>之后查到<a target="_blank" rel="noopener" href="https://blog.csdn.net/huasonl88/article/details/52166876">这篇</a>文章。config文件中的Host就是一个别名。</p>
+<p>调整config</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Host gh-enderjo</span><br><span class="line"> Hostname github.com</span><br><span class="line"> User git</span><br><span class="line"> PreferredAuthentications publickey</span><br><span class="line"> IdentityFile ~/.ssh/github-enderjo/id_rsa</span><br></pre></td></tr></table></figure>
+
+<p>修改git clone命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git clone gh-enderjo:enderjo/enderjo.github.io.git</span><br><span class="line">Cloning into &#x27;enderjo.github.io&#x27;...</span><br><span class="line">remote: Counting objects: 4822, done.</span><br><span class="line">remote: Compressing objects: 100% (386/386), done.</span><br><span class="line">remote: Total 4822 (delta 873), reused 2292 (delta 846), pack-reused 2496</span><br><span class="line">Receiving objects: 100% (4822/4822), 5.20 MiB | 215.00 KiB/s, done.</span><br><span class="line">Resolving deltas: 100% (1686/1686), done.</span><br></pre></td></tr></table></figure>
+
+<p>测试正常，修改Hexo的_config.yml也能正常发布代码了。</p>
+<h2 id="增加Mac的配置"><a href="#增加Mac的配置" class="headerlink" title="增加Mac的配置"></a>增加Mac的配置</h2><p>因为之前配置过了Windows，这里我需要把Windows中的ssh配置先拷贝到Mac上（~/.ssh）。<br>测试，此时会提示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Permissions 0755 for &#x27;/Users/airhead/.ssh/github-enderjo/id_rsa&#x27; are too open.</span><br><span class="line">It is required that your private key files are NOT accessible by others.</span><br><span class="line">This private key will be ignored.</span><br><span class="line">Load key &quot;/Users/airhead/.ssh/github-enderjo/id_rsa&quot;: bad permissions</span><br><span class="line">git@github.com: Permission denied (publickey).</span><br><span class="line">fatal: Could not read from remote repository.</span><br><span class="line"></span><br><span class="line">Please make sure you have the correct access rights</span><br></pre></td></tr></table></figure>
+
+<p>需要修改权限为400（600也可以），注意修改路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 400 /Users/airhead/.ssh/github-enderjo/id_rsa</span><br></pre></td></tr></table></figure>
+
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>利用ssh的config功能可以很好的管理Git的多帐号问题，但需要注意修改Git仓库的获取地址。</p>
+<p>虽然一直有使用Git，但对于Git和ssh还是有很多不了解的地方。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://help.github.com/articles/error-permission-denied-publickey/">Error: Permission denied (publickey)</a><br><a target="_blank" rel="noopener" href="https://gitlab.com/gitlab-org/gitlab-ce/issues/45593">https://gitlab.com/gitlab-org/gitlab-ce/issues/45593</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/huasonl88/article/details/52166876">ssh-config配置</a><br><a target="_blank" rel="noopener" href="https://deepzz.com/post/how-to-setup-ssh-config.html">SSH Config 那些你所知道和不知道的事</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/09/08/frontend/news/news-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1928,99 +2066,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2017/12/26/zeronet/zeronet-5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/12/26/zeronet/zeronet-5/" class="post-title-link" itemprop="url">站点开发入门</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-12-26 20:55:53" itemprop="dateCreated datePublished" datetime="2017-12-26T20:55:53+08:00">2017-12-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zeronet/" itemprop="url" rel="index"><span itemprop="name">zeronet</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>249</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>你可以在ZeroNet上发布静态和动态的网站。<br>虽然ZeroNet不能运行像PHP或者Ruby这样的脚本语言，你可以通过ZeroNet的API（叫做ZeroFrame），和JavaScript（或者CoffeScript）及内置的SQL数据库来创建动态网站。</p>
-<h2 id="ZeroChat教程"><a href="#ZeroChat教程" class="headerlink" title="ZeroChat教程"></a>ZeroChat教程</h2><p>在这个教程中，我们会通过不到100行的代码创建一个P2P的，去中心化，无服务器的聊天站点</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://127.0.0.1:43110/Blog.ZeroNetwork.bit/?Post:99:ZeroChat+tutorial">在ZeroBlog上查看</a></li>
-<li><a target="_blank" rel="noopener" href="https://decentralize.today/decentralized-p2p-chat-in-100-lines-of-code-d6e496034cd4">在Medium.com上查看</a><h2 id="ZeroNet调试模式"><a href="#ZeroNet调试模式" class="headerlink" title="ZeroNet调试模式"></a>ZeroNet调试模式</h2>ZeroNet有个<code>--debug</code>参数可以更容易开发站点。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2090,20 +2135,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">249</span>
+          <span class="site-state-item-count">250</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-count">96</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">99</span>
+        <span class="site-state-item-count">100</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -2161,12 +2206,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">509k</span>
+    <span title="站点总字数">511k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:43</span>
+    <span title="站点阅读时长">7:45</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
