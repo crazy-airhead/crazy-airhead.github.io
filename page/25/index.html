@@ -172,6 +172,119 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/05/12/frontend/security/cors/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/05/12/frontend/security/cors/" class="post-title-link" itemprop="url">CORS 跨域资源共享</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-05-12 11:09:50" itemprop="dateCreated datePublished" datetime="2018-05-12T11:09:50+08:00">2018-05-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/frontend/" itemprop="url" rel="index"><span itemprop="name">frontend</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/frontend/security/" itemprop="url" rel="index"><span itemprop="name">security</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h1><p>因为使用Angular来调用ipfs的API时出现403禁止访问错误，首先判断的是跨域问题，尝试如下内容：直接在浏览器中输入URL访问可以，通过代理或浏览器的允许跨域设置依然是403错误。<br>通过查看ipfs的文档（<a target="_blank" rel="noopener" href="https://github.com/ipfs/js-ipfs-api%EF%BC%89%EF%BC%8CIPFS%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%BB%98%E8%AE%A4%E4%B8%8D%E6%94%AF%E6%8C%81%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82%EF%BC%8C%E9%9C%80%E8%A6%81%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E3%80%82">https://github.com/ipfs/js-ipfs-api），IPFS服务器默认不支持跨域请求，需要修改配置文件。</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin <span class="string">&quot;[\&quot;http://example.com\&quot;]&quot;</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials <span class="string">&quot;[\&quot;true\&quot;]&quot;</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods <span class="string">&quot;[\&quot;PUT\&quot;, \&quot;POST\&quot;, \&quot;GET\&quot;]&quot;</span></span></span><br></pre></td></tr></table></figure>
+<p>修改配置，重启IPFS之后正常访问IPFS的API。</p>
+<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>对于CORS没有理解，通过查看Wiki整理下对CORS，加深理解。为什么浏览器中可以访问而前端调用不行？<br>直接在浏览器中可以直接访问是因为他是第一下资源地址，是一个GET请求，不是跨域请求。<br>Angular中请求时，是一个XHR请求，且与第一个资源地址不同，是跨域请求。</p>
+<h1 id="跨域资源共享"><a href="#跨域资源共享" class="headerlink" title="跨域资源共享"></a>跨域资源共享</h1><p>跨域资源共享是一种机制，它允许受限的访问第一个访问资源域以外的资源（如字体）的机制。一张网页通常包含了很多跨域的图片，样式，脚本，iframes，或者视频。一些跨域请求，尤其是Ajax请求，会因为默认的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Same-origin_policy">同源安全策略</a>而被禁止访问。</p>
+<p>CORS定义了浏览器和服务器如何来决定一个跨域请求是安全的。它比完全同源请求有更多的自由和功能，但不要只是简单地允许所有跨源请求。CORS规范最初是作为W3C推荐标准发布的，但该文档已经过时。 <a target="_blank" rel="noopener" href="https://fetch.spec.whatwg.org/">Fetch Living Standard</a>是当前维护活跃的规范。</p>
+<h2 id="同源判断规则"><a href="#同源判断规则" class="headerlink" title="同源判断规则"></a>同源判断规则</h2><p>绝对路径，需要是协议，域名，端口号三者与第一个访问的资源（浏览器中输入的URL）相同，才被认为是同源。</p>
+<h2 id="CORS工作机制"><a href="#CORS工作机制" class="headerlink" title="CORS工作机制"></a>CORS工作机制</h2><p>CORS标准新增了一组HTTP消息头，它为浏览器和服务器之间提供了一种有权限时才请求远程URL的方法。虽然服务器可以执行一些验证和授权，但浏览器通常有责任支持这些消息头并执行相关限制。</p>
+<p>对于可以修改数据的Ajax和HTTP请求方法(通常是GET以外的HTTP方法，或者用于某些MIME类型的POST使用)，规范要求浏览器“预先执行”请求，使用HTTP的OPTIONS方法从服务器请求受支持的方法，然后在服务器“批准”后，使用实际的HTTP请求方法发送实际请求。服务器还可以通知客户端是否应该通过请求发送“凭据”(包括Cookies和HTTP身份验证数据)。<br><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/File:Flowchart_showing_Simple_and_Preflight_XHR.svg">cors</a></p>
+<h2 id="CORS相关消息头"><a href="#CORS相关消息头" class="headerlink" title="CORS相关消息头"></a>CORS相关消息头</h2><h3 id="请求头"><a href="#请求头" class="headerlink" title="请求头"></a>请求头</h3><ul>
+<li>Origin</li>
+<li>Access-Control-Request-Method</li>
+<li>Access-Control-Request-Headers<h3 id="响应头"><a href="#响应头" class="headerlink" title="响应头"></a>响应头</h3></li>
+<li>Access-Control-Allow-Origin</li>
+<li>Access-Control-Allow-Credentials</li>
+<li>Access-Control-Expose-Headers</li>
+<li>Access-Control-Max-Age</li>
+<li>Access-Control-Allow-Methods</li>
+<li>Access-Control-Allow-Headers</li>
+</ul>
+<p>Access-Control-Allow-Origin: *</p>
+<p>“*”的值是特殊的，因为它不允许请求提供凭据，这意味着不允许发送HTTP身份验证、客户端SSL证书和Cookie等原因。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2017/12/26/zeronet/zeronet-5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1193,163 +1306,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2016/10/05/misc/hexo/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/10/05/misc/hexo/" class="post-title-link" itemprop="url">使用Github Pages和Hexo搭建个人博客</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-10-05 22:36:00" itemprop="dateCreated datePublished" datetime="2016-10-05T22:36:00+08:00">2016-10-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/misc/" itemprop="url" rel="index"><span itemprop="name">misc</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>本文是自己在使用Github Pages和Hexo搭建个人博客时的一些经验记录和总结，并非手把手搭建的过程。</p>
-<h2 id="为什么"><a href="#为什么" class="headerlink" title="为什么"></a>为什么</h2><p>之前在博客大巴上是有写一些博客的，不过因为己写作能力的一些原因，实际上写的也不多，后面也基本上就断了。最近跳槽到一家互联网公司，语言也转了Java，又学习了一些Web知识，所以也就想多试一些东西。</p>
-<p>选Github Pages呢，是因为自己在搜索一些资料时时常会到Github上，当时也不知道这是Github Pages，虽然有使用Github，是有点Out了。后面又机缘巧合的看到了一些使用Github Pages搭建个人博客的文章，也就来了兴趣。</p>
-<blockquote>
-<p>GitHub Pages sites are subject to the following usage limits:</p>
-<p>GitHub Pages source repositories have a recommended limit of 1GB .<br>Published GitHub Pages sites may be no larger than 1 GB.</p>
-<p>GitHub Pages sites have a bandwidth limit of 100GB or 100,000 requests per month.</p>
-<p>GitHub Pages sites have a limit of 10 builds per hour.</p>
-</blockquote>
-<p>这些限制对我来说，都不是大问题，没有这么大的访问量。</p>
-<h2 id="创建Github-Pages仓库"><a href="#创建Github-Pages仓库" class="headerlink" title="创建Github Pages仓库"></a>创建Github Pages仓库</h2><p>因为本身有使用过Github，所以直接从创建仓库开始，如果是完全的新手建议看这篇<a target="_blank" rel="noopener" href="http://www.jianshu.com/p/05289a4bc8b2">如何搭建一个独立博客——简明Github Pages与Hexo教程</a>，我也基本上是参考这篇来搭建的。创建以<code>&lt;username&gt;.github.io</code>为名的仓库，对于我来说是<em>enderjo.github.io</em>。一开始看博文是没看懂，以为是用户名的仓库。后面也多搜了几篇，多看了几遍才明白，也可以直接看<a target="_blank" rel="noopener" href="https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/">Configuring a publishing source for GitHub Pages</a><br>除了仓库名，也就没有什么特别的注意点了，从推荐的几个模板中选择一个模板。要不了几分钟，就可以使用<a target="_blank" rel="noopener" href="https://enderjo.github.io/">https://enderjo.github.io</a>来访问页面了。</p>
-<p><strong>注意</strong>如果用户名包含大小写时，需要按用户名的全部小写来创建仓库名。</p>
-<h2 id="绑定域名"><a href="#绑定域名" class="headerlink" title="绑定域名"></a>绑定域名</h2><p>在没有配置CNAME之前可以之接填写<em>enderjo.github.io</em>的域名，会自动解析。<br>对于Github来说，绑定域名是非常简单的。创建一个<code>CNAME</code>的文件，写上域名，上传就可以了。可以在<code>blog</code>的<code>source</code>放置该文件，生成发布时会被生成到<code>pubic</code>目录下，避免因<code>hexo clean</code>重新生成文件时引起域名不可解析问题。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">l4qiang.me</span><br></pre></td></tr></table></figure>
-
-<h3 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h3><p>我是在阿里云买的<code>l4qiang.me</code>域名，也就可以使用阿里云的域名解析服务。<br>简要的说，就是自定义域名解析增加如下4条A记录中的一个就自动开启了。参考文档<a target="_blank" rel="noopener" href="https://docs.github.com/en/github/working-with-github-pages/managing-a-custom-domain-for-your-github-pages-site">Managing a custom domain for your GitHub Pages site</a></p>
-<ul>
-<li>185.199.108.153</li>
-<li>185.199.109.153</li>
-<li>185.199.110.153</li>
-<li>185.199.111.153</li>
-</ul>
-<h3 id="开启HTTPS"><a href="#开启HTTPS" class="headerlink" title="开启HTTPS"></a>开启HTTPS</h3><p>参考<a target="_blank" rel="noopener" href="https://blog.github.com/2018-05-01-github-pages-custom-domains-https/">这里</a>，[Securing your GitHub Pages site with HTTPS](<a target="_blank" rel="noopener" href="https://docs.github.com/en/github/working-with-github-pages/securing-your-github-pages-site-with-https%E5%BC%80%E5%90%AFHTTPS%E3%80%82">https://docs.github.com/en/github/working-with-github-pages/securing-your-github-pages-site-with-https开启HTTPS。</a></p>
-<p>以上已经能通过域名正常访问博客了。</p>
-<h2 id="使用Hexo"><a href="#使用Hexo" class="headerlink" title="使用Hexo"></a>使用Hexo</h2><p>Github推荐使用的是Jekyll做为静态网站生成器，但是因为用的是Ruby，没怎么接触，就找到了<a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/">Hexo</a>做为替代。</p>
-<h3 id="安装Nodejs"><a href="#安装Nodejs" class="headerlink" title="安装Nodejs"></a>安装Nodejs</h3><p>下载<a target="_blank" rel="noopener" href="https://nodejs.org/dist/v6.7.0/node-v6.7.0-x64.msi">Nodejs 6.7</a>，默认安装就可以了。</p>
-<h3 id="安装hexo"><a href="#安装hexo" class="headerlink" title="安装hexo"></a>安装hexo</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">hexo init blog</span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<h3 id="Hexo配置"><a href="#Hexo配置" class="headerlink" title="Hexo配置"></a>Hexo配置</h3><p>在blog的根目录可以看到Hexo配置文件<code>_config.yml</code>，基本上的配置都是修改这个文件。</p>
-<p>需要修改内容如下，其他内容可以不修改：</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Site</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">CrazyAirhead</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">疯狂的傻瓜，傻瓜也疯狂————傻方能执著，疯狂才专注!</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">记录点滴，注重积累。</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">L4qiang</span></span><br><span class="line"><span class="attr">email:</span> <span class="string">L4qiang@gmail.com</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> </span><br><span class="line"></span><br><span class="line"><span class="comment"># URL</span></span><br><span class="line"><span class="comment">## If your site is put in a subdirectory, set url as &#x27;http://yoursite.com/child&#x27; and root as &#x27;/child/&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">http://l4qiang.me</span></span><br><span class="line"><span class="attr">root:</span> <span class="string">/</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Extensions</span></span><br><span class="line"><span class="comment">## Plugins: https://hexo.io/plugins/</span></span><br><span class="line"><span class="comment">## Themes: https://hexo.io/themes/</span></span><br><span class="line"><span class="attr">theme:</span> <span class="string">gstyle</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/deployment.html</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">https://github.com/enderjo/enderjo.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="选择模板与配置"><a href="#选择模板与配置" class="headerlink" title="选择模板与配置"></a>选择模板与配置</h3><p>根据选择的模板，修改配置。我选择了<a target="_blank" rel="noopener" href="https://github.com/wayou/hexo-theme-gstyle">gstyle</a>，下载后解压到themes文件夹下（一般文件名比较长，需重命名）。</p>
-<p>需要修改Hexo<code>_config.yml</code>的内容有:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># add caption for iamges</span><br><span class="line">image_caption:</span><br><span class="line">  enable: true</span><br><span class="line">  class_name:</span><br><span class="line"></span><br><span class="line">prism_plugin:</span><br><span class="line">  mode: &#x27;preprocess&#x27;    # realtime/preprocess </span><br><span class="line">  theme: &#x27;default&#x27;</span><br><span class="line"></span><br><span class="line">active_nav: false</span><br></pre></td></tr></table></figure>
-
-<p>需要修改themes配置文件，在对应的模板目录下，也是<code>_config.yml</code>。</p>
-<h4 id="修改评论"><a href="#修改评论" class="headerlink" title="修改评论"></a>修改评论</h4><p>这里使用了多说，需要修改配置</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">duoshuo_shortname: enderjo</span><br></pre></td></tr></table></figure>
-
-<p>需要注册并<a target="_blank" rel="noopener" href="http://duoshuo.com/create-site/">创建站点</a>，<code>duoshuo_shortname</code>中填写的就是多说站点的二级域名需要填写的部分。</p>
-<p>因为多说停服务，所以这部分内容需要更新，暂时未更新。</p>
-<h3 id="hexo基本操作"><a href="#hexo基本操作" class="headerlink" title="hexo基本操作"></a>hexo基本操作</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">hexo help</span><br><span class="line">Usage: hexo &lt;command&gt;</span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">  clean     Removed generated files and cache.</span><br><span class="line">  config    Get or set configurations.</span><br><span class="line">  deploy    Deploy your website.</span><br><span class="line">  generate  Generate static files.</span><br><span class="line">  help      Get help on a command.</span><br><span class="line">  init      Create a new Hexo folder.</span><br><span class="line">  list      List the information of the site</span><br><span class="line">  migrate   Migrate your site from other system to Hexo.</span><br><span class="line">  new       Create a new post.</span><br><span class="line">  publish   Moves a draft post from _drafts to _posts folder.</span><br><span class="line">  render    Render files with renderer plugins.</span><br><span class="line">  server    Start the server.</span><br><span class="line">  version   Display version information.</span><br><span class="line"></span><br><span class="line">Global Options:</span><br><span class="line">  --config  Specify config file instead of using _config.yml</span><br><span class="line">  --cwd     Specify the CWD</span><br><span class="line">  --debug   Display all verbose messages in the terminal</span><br><span class="line">  --draft   Display draft posts</span><br><span class="line">  --safe    Disable all plugins and scripts</span><br><span class="line">  --silent  Hide output on console</span><br><span class="line"></span><br><span class="line">For more help, you can use &#x27;hexo help [command]&#x27; for the detailed information</span><br><span class="line">or you can check the docs: http://hexo.io/docs/</span><br></pre></td></tr></table></figure>
-
-<h4 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new [layout] &lt;title&gt;</span><br></pre></td></tr></table></figure>
-<p>如果需要更好的进行写作的管理可以使用-p参数</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new -p zeronet/zernet-1 zeronet-1</span><br></pre></td></tr></table></figure>
-
-<h4 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new page categroies</span><br></pre></td></tr></table></figure>
-<p>在生成的index.md文件下增加type: categroies</p>
-<h4 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new page tags</span><br></pre></td></tr></table></figure>
-<p>在生成的index.md文件下增加</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">type: tags</span><br><span class="line">comments: false</span><br></pre></td></tr></table></figure>
-<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br><span class="line">$ hexo s</span><br></pre></td></tr></table></figure>
-<p>如果运行时浏览器无法打开，可能是默认端口（4000）被占用了，换个端口试试。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo s -p 5000</span><br></pre></td></tr></table></figure>
-<p>可以通过<code>netstat -ano</code>来查看占用端口的进程。本机是被Foxit Service给占用了，禁用该进程。</p>
-<h4 id="生成与发布"><a href="#生成与发布" class="headerlink" title="生成与发布"></a>生成与发布</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate --deploy</span><br><span class="line">$ hexo deploy --generate</span><br></pre></td></tr></table></figure>
-
-<p>简写</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo g -d</span><br><span class="line">$ hexo d -g</span><br></pre></td></tr></table></figure>
-
-<p>生成发布时可能会出现找不到用户名的问题，可以修改git配置</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global credential.helper wincred</span><br></pre></td></tr></table></figure>
-
-<h3 id="图床"><a href="#图床" class="headerlink" title="图床"></a>图床</h3><p>使用了<a target="_blank" rel="noopener" href="https://www.qiniu.com/">七牛</a>的空间，使用<code>qrsbox</code>进行同步。</p>
-<h3 id="源码托管"><a href="#源码托管" class="headerlink" title="源码托管"></a>源码托管</h3><p>使用了<a target="_blank" rel="noopener" href="https://gitee.com/">Gitee</a>的私有库，Gitee个人开发者可免费创建 1000 个项目（不限公有、私有），提供最多5G的免费代码存储空间。这样将整个博客的源码按版本管理起来。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>对于使用Github Pages和Hexo搭建个人博客，整体配置下来是难度不会大，主要是因为有些东西没有接触过会多花一些时间来理解。另外就是一些博文不一定会有及时的更新，一些操作也是会不一样的，所有对自己来说，能找到原始出处的就尽量用原始内容。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/24/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><span class="page-number current">25</span>
+    <a class="extend prev" rel="prev" href="/page/24/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><span class="page-number current">25</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/26/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1415,20 +1375,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">250</span>
+          <span class="site-state-item-count">251</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">100</span>
+        <span class="site-state-item-count">101</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1486,12 +1446,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">511k</span>
+    <span title="站点总字数">513k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:45</span>
+    <span title="站点阅读时长">7:46</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

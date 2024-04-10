@@ -172,6 +172,193 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/22/go/go-little-book/chapter-5/" class="post-title-link" itemprop="url">Go Little Book - 第五章 - 特点</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-22 10:45:32" itemprop="dateCreated datePublished" datetime="2018-11-22T10:45:32+08:00">2018-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="第五章-特点（珍品？）（Chapter-5-Tidbits）"><a href="#第五章-特点（珍品？）（Chapter-5-Tidbits）" class="headerlink" title="第五章 - 特点（珍品？）（Chapter 5 - Tidbits）"></a>第五章 - 特点（珍品？）（Chapter 5 - Tidbits）</h1><p>In this chapter, we’ll talk about a miscellany of Go’s feature which didn’t quite fit anywhere else.</p>
+<p>在这一章是，我们会来介绍一些Go的特性的杂烩，这些内容不太适合放在其他章节中。</p>
+<h2 id="错误处理-Error-Handling"><a href="#错误处理-Error-Handling" class="headerlink" title="错误处理(Error Handling)"></a>错误处理(Error Handling)</h2><p>Go’s preferred way to deal with errors is through return values, not exceptions. Consider the <code>strconv.Atoi</code> function which takes a string and tries to convert it to an integer:</p>
+<p>Go更喜欢用返回值而不是异常的方式来处理错误。例如<code>strconv.Atoi</code>函数将一个字符串转换成一个整数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">  <span class="string">&quot;strconv&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">if</span> <span class="built_in">len</span>(os.Args) != <span class="number">2</span> &#123;</span><br><span class="line">    os.Exit(<span class="number">1</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  n, err := strconv.Atoi(os.Args[<span class="number">1</span>])</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;not a valid number&quot;</span>)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    fmt.Println(n)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You can create your own error type; the only requirement is that it fulfills the contract of the built-in <code>error</code> interface, which is:</p>
+<p>你可以创建你自己的错误类型；唯一的要求就是需要实现内置接口<code>error</code>:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> error <span class="keyword">interface</span> &#123;</span><br><span class="line">  Error() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>More commonly, we can create our own errors by importing the <code>errors</code> package and using it in the <code>New</code> function:</p>
+<p>更为常见的是，我们可以通过导入<code>errors</code>包，并通过它的<code>New</code>函数来创建自己的错误：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;errors&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(count <span class="keyword">int</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">  <span class="keyword">if</span> count &lt; <span class="number">1</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> errors.New(<span class="string">&quot;Invalid count&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>There’s a common pattern in Go’s standard library of using error variables. For example, the <code>io</code> package has an <code>EOF</code> variable which is defined as:</p>
+<p>在GO的标准库中，使用错误变量是一个常用的模式。例如， 在<code>io</code>包中有一个<code>EOF</code>变量是这样定义的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> EOF = errors.New(<span class="string">&quot;EOF&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>This is a package variable (it’s defined outside of a function) which is publicly accessible (upper-case first letter). Various functions can return this error, say when we’re reading from a file or STDIN. If it makes contextual sense, you should use this error, too. As consumers, we can use this singleton:</p>
+<p>这是一个公共（大写字母开关）的包变量（它定义有函数之外）。如果我们从文件或者标准输入时失败时，我们可以返回这个错误。为了更容易理解，你也应该用这个错误。作为使用者，我们可以用这个单件：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;io&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">var</span> input <span class="keyword">int</span></span><br><span class="line">  _, err := fmt.Scan(&amp;input)</span><br><span class="line">  <span class="keyword">if</span> err == io.EOF &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;no more input!&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>As a final note, Go does have <code>panic</code> and <code>recover</code> functions. <code>panic</code> is like throwing an exception while <code>recover</code> is like <code>catch</code>; they are rarely used.</p>
+<p>最后要注意的是，Go有<code>panic</code>和<code>recover</code>函数。<code>panic</code>像是抛出异常，而<code>recover</code>是捕获异常；它们不常使用。</p>
+<h2 id="Defer-Defer"><a href="#Defer-Defer" class="headerlink" title="Defer(Defer)"></a>Defer(Defer)</h2><p>Even though Go has a garbage collector, some resources require that we explicitly release them. For example, we need to <code>Close()</code> files after we’re done with them. This sort of code is always dangerous. For one thing, as we’re writing a function, it’s easy to forget to <code>Close</code> something that we declared 10 lines up. For another, a function might have multiple return points. Go’s solution is the <code>defer</code> keyword:</p>
+<p>虽然Go有垃圾回收机制，但是有些资源需要显示的释放它们。比如，当我们使用文件完了之后，需要调用<code>Close()</code>来关闭它们。这类代码总是很危险。其一，我们写一下函数的时候，如果申请一个资源超过10行，就很容易忘记<code>Close</code>。其二，一个函数可能会有多个返回点。Go的解决方案是使用<code>defer</code>关键字：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  file, err := os.Open(<span class="string">&quot;a_file_to_read&quot;</span>)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(err)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">defer</span> file.Close()</span><br><span class="line">  <span class="comment">// read the file</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>If you try to run the above code, you’ll probably get an error (the file doesn’t exist). The point is to show how <code>defer</code> works. Whatever you <code>defer</code> will be executed after the method returns, even if it does so violently. This lets you release resources near where it’s initialized and takes care of multiple return points.</p>
+<p>如果你尝试运行上面的代码，你可能收到一个错误（文件不存在）。这里展示的是<code>defer</code>是如何工作的。无论如何在函数返回时<code>defer</code>都会被执行，虽然这样有点极端。但这可以让你在初始化附近释放资源和不要操心多个返回点的问题。</p>
+<h2 id="go-fmt-go-fmt"><a href="#go-fmt-go-fmt" class="headerlink" title="go fmt(go fmt)"></a>go fmt(go fmt)</h2><p>Most programs written in Go follow the same formatting rules, namely, a tab is used to indent and braces go on the same line as their statement.</p>
+<p>绝大多数Go写的代码遵守有一个相同的格式化规则，也就是说，使用Tab来缩进和花括号与语句同一行。</p>
+<p>I know, you have your own style and you want to stick to it. That’s what I did for a long time, but I’m glad I eventually gave in. A big reason for this is the <code>go fmt</code> command. It’s easy to use and authoritative (so no one argues over meaningless preferences).</p>
+<p>我知道你有自己的代码风格并且严格遵守它。我一直以来也是这么做的，但是我最终还是放弃了。一个最在的原因就是<code>go fmt</code>命令。它很容用且权威（所以没有人会为了毫无意义的偏好而争论） </p>
+<p>When you’re inside a project, you can apply the formatting rule to it and all sub-projects via:</p>
+<p>当你在一个工程目录下，你可以通过下面的命令将工程下所有文件使用相同的格式化规则：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go fmt ./...</span><br></pre></td></tr></table></figure>
+
+<p>Give it a try. It does more than indent your code; it also aligns field declarations and alphabetically orders imports.</p>
+<p>尝试一下吧。除了缩进代码，它还会自动对齐你的声明语句并将包导入按字母顺序排序。</p>
+<h2 id="If初始化-Initialized-If"><a href="#If初始化-Initialized-If" class="headerlink" title="If初始化(Initialized If)"></a>If初始化(Initialized If)</h2><p>Go supports a slightly modified if-statement, one where a value can be initiated prior to the condition being evaluated:<br>Go提供了一种稍有不同的if声明，一个可以在条件执行之前声明和初始化：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> x := <span class="number">10</span>; count &gt; x &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>That’s a pretty silly example. More realistically, you might do something like:</p>
+<p>这是一个非常简单的例子。更实际的例子是，你可能是这样做的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err := process(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Interestingly, while the values aren’t available outside the if-statement, they are available inside any <code>else if</code> or <code>else</code>.</p>
+<p>有趣的是，<code>if</code>语句中定义并初始化的值在<code>if</code>语句之外是不可用的，仅可以在<code>else if</code>和<code>else</code>语句中使用。</p>
+<h2 id="空接口和转换-Empty-Interface-and-Conversions"><a href="#空接口和转换-Empty-Interface-and-Conversions" class="headerlink" title="空接口和转换(Empty Interface and Conversions)"></a>空接口和转换(Empty Interface and Conversions)</h2><p>In most object-oriented languages, a built-in base class, often named <code>object</code>, is the superclass for all other classes. Go, having no inheritance, doesn’t have such a superclass. What it does have is an empty interface with no methods: <code>interface&#123;&#125;</code>. Since every type implements all 0 of the empty interface’s methods, and since interfaces are implicitly implemented, every type fulfills the contract of the empty interface.</p>
+<p>在大多数面向对象语言中，都有一种内置的基类，叫<code>object</code>，它是所有其他类的超类。但是go语言不支持继承，所以没有类似的超类。Go确实有一个没有任何方法的空接口：<code>interface&#123;&#125;</code>。因为接口都是隐式实现，每种类型都实现了空接口的0个方法，所以每种类型都实现了空接口的协议。</p>
+<p> If we wanted to, we could write an <code>add</code> function with the following signature:</p>
+<p>如果我们愿意，我们可以通过下面声明方式写一个<code>add</code>函数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(a <span class="keyword">interface</span>&#123;&#125;, b <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To convert an interface variable to an explicit type, you use <code>.(TYPE)</code>:</p>
+<p>将一个空接口变量转换成一个指定的类型，你可以使用<code>.(TYPE)</code>:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> a.(<span class="keyword">int</span>) + b.(<span class="keyword">int</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Note that if the underlying type is not <code>int</code>, the above will result in an error.</p>
+<p>需要注意如果底层类型示是一个<code>int</code>，上面的代码会导致一个错误。</p>
+<p>You also have access to a powerful type switch:</p>
+<p>你也可以通过switch使用强大的类型转换：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> a.(<span class="keyword">type</span>) &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="keyword">int</span>:</span><br><span class="line">    fmt.Printf(<span class="string">&quot;a is now an int and equals %d\n&quot;</span>, a)</span><br><span class="line">  <span class="keyword">case</span> <span class="keyword">bool</span>, <span class="keyword">string</span>:</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You’ll see and probably use the empty interface more than you might first expect. Admittedly, it won’t result in clean code. Converting values back and forth is ugly and dangerous but sometimes, in a static language, it’s the only choice.</p>
+<p>你会发现，空接口的使用会超出你的预期。诚然，这不会让代码变得简洁。来回转换值是丑陋和危险的，但有时候在静态类型语言中，这是唯一的选择。</p>
+<h2 id="字符串和字节数组-Strings-and-Byte-Arrays"><a href="#字符串和字节数组-Strings-and-Byte-Arrays" class="headerlink" title="字符串和字节数组(Strings and Byte Arrays)"></a>字符串和字节数组(Strings and Byte Arrays)</h2><p>Strings and byte arrays are closely related. We can easily convert one to the other:</p>
+<p>字符串和字节数组有密切关系，我们可以轻易的将它们转换成对方：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">stra := <span class="string">&quot;the spice must flow&quot;</span></span><br><span class="line">byts := []<span class="keyword">byte</span>(stra)</span><br><span class="line">strb := <span class="keyword">string</span>(byts)</span><br></pre></td></tr></table></figure>
+
+<p>In fact, this way of converting is common across various types as well. Some functions explicitly expect an <code>int32</code> or an <code>int64</code> or their unsigned counterparts. You might find yourself having to do things like:</p>
+<p>事实上，这也是大多数类型的转换方式。一些函数明确指定一个<code>int32</code>或者<code>int64</code>或者相应的无符号类型。你可能会发现你自己不得不像下面这样做：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int64</span>(count)</span><br></pre></td></tr></table></figure>
+
+<p>Still, when it comes to bytes and strings, it’s probably something you’ll end up doing often. Do note that when you use <code>[]byte(X)</code> or <code>string(X)</code>, you’re creating a copy of the data. This is necessary because strings are immutable.</p>
+<p>然而，当涉及到字节和字符串时，这可能是你会经常做的事。当你使用<code>[]byte(X)</code>或者<code>string(X)</code>时务必注意，你创建了数据的拷贝。这是因为字符串的不可变性。</p>
+<p>Strings are made of <code>runes</code> which are unicode code points. If you take the length of a string, you might not get what you expect. The following prints 3:</p>
+<p>当字符串有由<code>unicode</code>字符码<code>runes</code>组成时。如果你计算字符串的长度时，可能得到的结果和你期待的不同。下面结果是输出3：</p>
+<pre><code>fmt.Println(len(&quot;椒&quot;))
+</code></pre>
+<p>If you iterate over a string using <code>range</code>, you’ll get runes, not bytes. Of course, when you turn a string into a <code>[]byte</code> you’ll get the correct data.</p>
+<p>如果你使用<code>range</code>迭代一个字符串，你得到的是<code>runes</code>,而不是<code>bytes</code>。当然，你将一个字符串转换为<code>[]byte</code>时，你得到的数据还是正确的。</p>
+<h2 id="函数类型-Function-Type"><a href="#函数类型-Function-Type" class="headerlink" title="函数类型(Function Type)"></a>函数类型(Function Type)</h2><p>Functions are first-class types:<br>函数是第一类类型：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Add <span class="function"><span class="keyword">func</span><span class="params">(a <span class="keyword">int</span>, b <span class="keyword">int</span>)</span> <span class="title">int</span></span></span><br></pre></td></tr></table></figure>
+
+<p>which can then be used anywhere – as a field type, as a parameter, as a return value.</p>
+<p>可以在任何地方使用————可以做为一个字段，参数，返回值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Add <span class="function"><span class="keyword">func</span><span class="params">(a <span class="keyword">int</span>, b <span class="keyword">int</span>)</span> <span class="title">int</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(process(<span class="function"><span class="keyword">func</span><span class="params">(a <span class="keyword">int</span>, b <span class="keyword">int</span>)</span> <span class="title">int</span></span>&#123;</span><br><span class="line">      <span class="keyword">return</span> a + b</span><br><span class="line">  &#125;))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(adder Add)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> adder(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Using functions like this can help decouple code from specific implementations much like we achieve with interfaces.</p>
+<p>像这样使用函数可以使你在一些特定实现时减少代码的耦合性，就像使用接口实现那样。</p>
+<h2 id="继续之前-Before-You-Continue"><a href="#继续之前-Before-You-Continue" class="headerlink" title="继续之前(Before You Continue)"></a>继续之前(Before You Continue)</h2><p>We looked at various aspects of programming with Go. Most notably, we saw how error handling behaves and how to release resources such as connections and open files. Many people dislike Go’s approach to error handling. It can feel like a step backwards. Sometimes, I agree. Yet, I also find that it results in code that’s easier to follow. <code>defer</code> is an unusual but practical approach to resource management. In fact, it isn’t tied to resource management only. You can use <code>defer</code> for any purpose, such as logging when a function exits.</p>
+<p>我们已经学习了Go编程的很多内容。显而易见，我们看见了错误处理的行为和资源释放如连接或者打开文件。很多人不喜欢Go的错误处理方式。它让人觉得这是一种退步。有些时候，我同意这种说法。然而，我也发现这会导致代码更易读。<code>defer</code>是一种不常见但很实用的资源管理手段。事实上，它不仅仅可以进行资源管理。你可以使用<code>defer</code>完成任何目的，例如当一个函数退出时打印日志记录。</p>
+<p>Certainly, we haven’t looked at all of the tidbits Go has to offer. But you should be feeling comfortable enough to tackle whatever you come across.</p>
+<p>当然，我们还没有学习Go提供的所有花絮。但是无论你遇到什么你应该可以轻松应对。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1720,161 +1907,10 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/09/28/bigdata/es/olap-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/09/28/bigdata/es/olap-1/" class="post-title-link" itemprop="url">基于ElasticSearch的OLAP框架思路</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-09-28 11:22:43" itemprop="dateCreated datePublished" datetime="2018-09-28T11:22:43+08:00">2018-09-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ElasticSearch/OLAP/" itemprop="url" rel="index"><span itemprop="name">OLAP</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="OLAP基本概念"><a href="#OLAP基本概念" class="headerlink" title="OLAP基本概念"></a>OLAP基本概念</h1><h2 id="联机分析处理（On-Line-Analytical-Processing，OLAP）"><a href="#联机分析处理（On-Line-Analytical-Processing，OLAP）" class="headerlink" title="联机分析处理（On-Line Analytical Processing，OLAP）"></a>联机分析处理（On-Line Analytical Processing，OLAP）</h2><p>联机分析处理的概念最早是由关系数据库之父爱德华·库德（E·F·Codd）博士于1993年提出的，是一种用于组织大型商务数据库和支持商务智能的技术。OLAP 数据库分为一个或多个多维数据集，每个多维数据集都由多维数据集管理员组织和设计以适应用户检索和分析数据的方式，从而更易于创建和使用所需的数据透视表和数据透视图。</p>
-<h2 id="维（Dimension）"><a href="#维（Dimension）" class="headerlink" title="维（Dimension）"></a>维（Dimension）</h2><p>是人们观察数据的特定角度，是考虑问题时的一类属性，属性集合构成一个维（时间维、地理维等）。</p>
-<h2 id="维的层次（Level）"><a href="#维的层次（Level）" class="headerlink" title="维的层次（Level）"></a>维的层次（Level）</h2><p>人们观察数据的某个特定角度（即某个维）还可以存在细节程度不同的各个描述方面（时间维：日期、月份、季度、年）。</p>
-<h2 id="维的成员（Member）"><a href="#维的成员（Member）" class="headerlink" title="维的成员（Member）"></a>维的成员（Member）</h2><p>维的一个取值，是数据项在某维中位置的描述。（“某年某月某日”是在时间维上位置的描述）。</p>
-<h2 id="度量（Measure）"><a href="#度量（Measure）" class="headerlink" title="度量（Measure）"></a>度量（Measure）</h2><p>多维数组的取值。（2000年1月，上海，笔记本电脑，$100000）。</p>
-<h2 id="指标（Quota），补充"><a href="#指标（Quota），补充" class="headerlink" title="指标（Quota），补充"></a>指标（Quota），补充</h2><p>可度量的属性。一般为某种值，如费用，入院人次。</p>
-<h2 id="典型操作"><a href="#典型操作" class="headerlink" title="典型操作"></a>典型操作</h2><p>OLAP的基本多维分析操作有钻取（Drill-up和Drill-down）、切片（Slice）和切块（Dice）、以及旋转（Pivot）等。</p>
-<h3 id="钻取"><a href="#钻取" class="headerlink" title="钻取"></a>钻取</h3><p>是改变维的层次，变换分析的粒度。它包括向下钻取（Drill-down）和向上钻取（Drill-up）/上卷(Roll-up)。Drill- up是在某一维上将低层次的细节数据概括到高层次的汇总数据，或者减少维数；而Drill-down则相反，它从汇总数据深入到细节数据进行观察或增加新维。</p>
-<h3 id="切片和切块"><a href="#切片和切块" class="headerlink" title="切片和切块"></a>切片和切块</h3><p>是在一部分维上选定值后，关心度量数据在剩余维上的分布。如果剩余的维只有两个，则是切片；如果有三个或以上，则是切块。</p>
-<h3 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h3><p>是变换维的方向，即在表格中重新安排维的放置（例如行列互换）。</p>
-<h1 id="ElasticSearch"><a href="#ElasticSearch" class="headerlink" title="ElasticSearch"></a>ElasticSearch</h1><p>Apache Lucene™可能是目前存在的，不论开源还是私有的，拥有最先进，高性能和全功能搜索引擎功能的库。但Lucene是很复杂的。 Elasticsearch是一个使用Java编写的开源的搜索引擎，它的内部使用 Lucene 做索引与搜索，但是它的目标是使全文检索变得简单， 通过隐藏 Lucene 的复杂性，取而代之的提供一套简单一致的 RESTful API。</p>
-<p>然而，Elasticsearch不仅仅是 Lucene，并且也不仅仅只是一个全文搜索引擎。 它可以被下面这样准确的形容：</p>
-<ul>
-<li>一个分布式的实时文档存储，每个字段可以被索引与搜索</li>
-<li>一个分布式实时分析搜索引擎</li>
-<li>能胜任上百个服务节点的扩展，并支持PB级别的结构化或者非结构化数据</li>
-</ul>
-<p>Elasticsearch将所有的功能打包成一个单独的服务，这样你可以通过程序去访问它提供的简单的RESTful API服务， 不论你是使用自己喜欢的编程语言还是直接使用命令行。</p>
-<p>Elasticsearch是一个实时的分布式搜索分析引擎， 它能让你以一个之前从未有过的速度和规模，去探索你的数据。 它被用作全文检索、结构化搜索、分析以及这三个功能的组合：</p>
-<ul>
-<li>Wikipedia 使用 Elasticsearch 提供带有高亮片段的全文搜索，还有 search-as-you-type 和 did-you-mean 的建议。</li>
-<li>卫报 使用 Elasticsearch 将网络社交数据结合到访客日志中，实时的给它的编辑们提供公众对于新文章的反馈。</li>
-<li>Stack Overflow 将地理位置查询融入全文检索中去，并且使用 more-like-this 接口去查找相关的问题与答案。</li>
-<li>GitHub 使用 Elasticsearch 对1300亿行代码进行查询。</li>
-</ul>
-<h2 id="ES文档和多维数据集"><a href="#ES文档和多维数据集" class="headerlink" title="ES文档和多维数据集"></a>ES文档和多维数据集</h2><h3 id="ES的存储结构"><a href="#ES的存储结构" class="headerlink" title="ES的存储结构"></a>ES的存储结构</h3><p>ES文档通过JSON格式来表示。文档是可以被索引的基本单元，文档需要索引需要指定类型。ES能支持索引的数据类型有，其中的数组类型，对象类型和内嵌类型的支持，使得ES能存储更复杂的文档。</p>
-<h3 id="多维联机分析处理（MOLAP）"><a href="#多维联机分析处理（MOLAP）" class="headerlink" title="多维联机分析处理（MOLAP）"></a>多维联机分析处理（MOLAP）</h3><p>MOLAP将OLAP分析所用到的多维数据物理上存储为多维数组的形式，形成“立方体”的结构。维的属性值被映射成多维数组的下标值或下标的范围，而总结数据作为多维数组的值存储在数组的单元中。由于MOLAP采用了新的存储结构，从物理层实现起，因此又称为物理OLAP（PhysicalOLAP）；而 ROLAP主要通过一些软件工具或中间软件实现，物理层仍采用关系数据库的存储结构，因此称为虚拟OLAP（VirtualOLAP）。</p>
-<p>我们可以看到基于复杂数据类型（Complex datatypes）构建的ES文档与MOLAP的概念是非常接近的，利用ElasticSearch的聚合的能力，我们能相对简单的实现OLAP框架。</p>
-<h1 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h1><p>要实现整个OLAP框架主要需要处理以下几个环节</p>
-<ol>
-<li>数据建模</li>
-<li>数据ETL</li>
-<li>数据分析</li>
-<li>数据展示</li>
-</ol>
-<p>大致思路如下：<br><img src="olap.png" alt="OLAP"></p>
-<h2 id="数据建模"><a href="#数据建模" class="headerlink" title="数据建模"></a>数据建模</h2><p>数据建模就是建立多维数据集的过程，同时为了能更有效的利用ES的索引，不建议过深的JSON层次，所以对应到维度建模时采用的是星形模式。</p>
-<p>正常情况，是先进行数据建模，之后才能进行数据ETL，首先需要知道抽取的源数据的结构，即数据元数据之后，才能进一步分析数据模型。对于ES来说，实际上就是建立Index/Type的过程。</p>
-<h3 id="维度管理"><a href="#维度管理" class="headerlink" title="维度管理"></a>维度管理</h3><h3 id="元数据管理"><a href="#元数据管理" class="headerlink" title="元数据管理"></a>元数据管理</h3><p>元数据管理维护了原始数据的元数据结构，简单来说就是原始数据有哪些库，哪些表，表之间有什么关系。</p>
-<h3 id="映射管理"><a href="#映射管理" class="headerlink" title="映射管理"></a>映射管理</h3><p>映射管理是指定了需要抽取的数据范围及方法和确定了多维数据集的模型。</p>
-<h2 id="数据ETL"><a href="#数据ETL" class="headerlink" title="数据ETL"></a>数据ETL</h2><p>正常情况，是先进行数据建模，之后才能进行数据ETL，而实际过程中，是一般需要知道源数据的结构，即数据元数据之后，才能进一步分析数据模型。</p>
-<p>数据ETL，实质就是从各个数据源提取数据，对数据进行转换，并最终加载填充数据到数据仓库维度建模后的表中。只有当多维数据集被填充好，ETL工作才算完成。</p>
-<p>数据加载主要分为两种，一种是首次加载，一种是刷新加载（增量加载）。当前产品中主要涉及两种数据库，Mysql和Hbase。</p>
-<h3 id="首次加载"><a href="#首次加载" class="headerlink" title="首次加载"></a>首次加载</h3><p>通过Quartz Job或MapRedurce Job将数据转换为Kafka消息，由数据加载组件来进行数据处理。</p>
-<h3 id="刷新加载"><a href="#刷新加载" class="headerlink" title="刷新加载"></a>刷新加载</h3><p>通过扩展mysql-binlog-connector-java和HBase Side-Effect Processor，可以实现数据的实时增量更新。本方案中通过Kafka消息中间件来统一转发不同类型的数据更新，此处需要定义好Kafka的消息格式，以便数据加载组件能较简单的处理数据。</p>
-<h3 id="数据转换"><a href="#数据转换" class="headerlink" title="数据转换"></a>数据转换</h3><p>转换步骤主要是指对提取好了的数据的结构进行转换，以满足目标数据仓库模型的过程。此外，转换过程也负责数据质量工作，这部分也被称为数据清洗(data cleaning)。转换过程可以通过逐步实现转换算法，动态上线的方式进行。</p>
-<h2 id="统计分析"><a href="#统计分析" class="headerlink" title="统计分析"></a>统计分析</h2><p>统计分析其实就是从事实表中统计任意组合维度的指标，也就是过滤、分组、聚合，其中，聚合除了一般的SUM、COUNT、AVG、MAX、MIN等，还有一个重要的COUNT(DISTINCT)。ElasticSearch本来就是做实时搜索的，过滤自然不是问题，现在也支持各种聚合以及Pipeline aggregations（相当于SQL子查询的功能）。</p>
-<p>统计分析是根据模板配置和页面操作时的条件生成ES语法，执行语法，返回结果数据的过程。从表面看，该过程不难，然而为了生成的ES语法的准确性，ES语法的生成引擎是非常重要的一个环节，通过在模板管理来增加一些配置来辅助ES的语法生成，如行维度，列维度，维的层次等等。</p>
-<h2 id="数据展示"><a href="#数据展示" class="headerlink" title="数据展示"></a>数据展示</h2><p>通过模板的动态配置，利用Echart和Vue可以实现，动态布局和各种仪表盘的展示，这部分内容也可参看Kibana。</p>
-<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>ES的文档结构符合MOLAP的概念，它提供的聚合功能可以实现OLAP的各种操作，基于Lucene和分布式架构在性能上也能得到保障。通过定义一定的规则和开发一系列的辅助功能，可比较容易的实现一套通用的实时OLAP的框架。本文主要讲解的是基于ES构建OLAP框架的思路，而非完整的构建方案。</p>
-<h2 id="参考连接"><a href="#参考连接" class="headerlink" title="参考连接"></a>参考连接</h2><ul>
-<li>联机分析处理</li>
-<li>Elasticsearch Basic Concepts</li>
-<li><a target="_blank" rel="noopener" href="https://www.elastic.co/products/hadoop">https://www.elastic.co/products/hadoop</a></li>
-<li>Hbase Indexer SEP</li>
-<li>使用ElasticSearch作为大数据平台的实时OLAP框架</li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/fighting_one_piece/article/details/51765383">https://blog.csdn.net/fighting_one_piece/article/details/51765383</a></li>
-<li><a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/575991">https://yq.aliyun.com/articles/575991</a></li>
-<li>Mapping Types</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/22/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><span class="page-number current">23</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/24/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/22/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><span class="page-number current">23</span><a class="page-number" href="/page/24/">24</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/24/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1940,20 +1976,20 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">250</span>
+          <span class="site-state-item-count">251</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">100</span>
+        <span class="site-state-item-count">101</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -2011,12 +2047,12 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">511k</span>
+    <span title="站点总字数">513k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:45</span>
+    <span title="站点阅读时长">7:46</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
