@@ -30,7 +30,7 @@
 <meta property="og:description" content="本文是自己在使用Github Pages和Hexo搭建个人博客时的一些经验记录和总结，并非手把手搭建的过程。 为什么之前在博客大巴上是有写一些博客的，不过因为己写作能力的一些原因，实际上写的也不多，后面也基本上就断了。最近跳槽到一家互联网公司，语言也转了Java，又学习了一些Web知识，所以也就想多试一些东西。 选Github Pages呢，是因为自己在搜索一些资料时时常会到Github上，当时也">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2016-10-05T14:36:00.000Z">
-<meta property="article:modified_time" content="2022-10-30T13:23:05.374Z">
+<meta property="article:modified_time" content="2024-05-17T00:46:26.524Z">
 <meta property="article:author" content="L4qiang">
 <meta property="article:tag" content="Github Pages">
 <meta property="article:tag" content="hexo">
@@ -207,7 +207,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+                <time title="修改时间：2024-05-17 08:46:26" itemprop="dateModified" datetime="2024-05-17T08:46:26+08:00">2024-05-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -256,7 +256,7 @@
 <p>这些限制对我来说，都不是大问题，没有这么大的访问量。</p>
 <h2 id="创建Github-Pages仓库"><a href="#创建Github-Pages仓库" class="headerlink" title="创建Github Pages仓库"></a>创建Github Pages仓库</h2><p>因为本身有使用过Github，所以直接从创建仓库开始，如果是完全的新手建议看这篇<a target="_blank" rel="noopener" href="http://www.jianshu.com/p/05289a4bc8b2">如何搭建一个独立博客——简明Github Pages与Hexo教程</a>，我也基本上是参考这篇来搭建的。创建以<code>&lt;username&gt;.github.io</code>为名的仓库，对于我来说是<em>enderjo.github.io</em>。一开始看博文是没看懂，以为是用户名的仓库。后面也多搜了几篇，多看了几遍才明白，也可以直接看<a target="_blank" rel="noopener" href="https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/">Configuring a publishing source for GitHub Pages</a><br>除了仓库名，也就没有什么特别的注意点了，从推荐的几个模板中选择一个模板。要不了几分钟，就可以使用<a target="_blank" rel="noopener" href="https://enderjo.github.io/">https://enderjo.github.io</a>来访问页面了。</p>
 <p><strong>注意</strong>如果用户名包含大小写时，需要按用户名的全部小写来创建仓库名。</p>
-<h2 id="绑定域名"><a href="#绑定域名" class="headerlink" title="绑定域名"></a>绑定域名</h2><p>在没有配置CNAME之前可以之接填写<em>enderjo.github.io</em>的域名，会自动解析。<br>对于Github来说，绑定域名是非常简单的。创建一个<code>CNAME</code>的文件，写上域名，上传就可以了。可以在<code>blog</code>的<code>source</code>放置该文件，生成发布时会被生成到<code>pubic</code>目录下，避免因<code>hexo clean</code>重新生成文件时引起域名不可解析问题。</p>
+<h2 id="绑定域名"><a href="#绑定域名" class="headerlink" title="绑定域名"></a>绑定域名</h2><p>在没有配置CNAME之前可直接填写<em>enderjo.github.io</em>的域名，会自动解析。<br>对于Github来说，绑定域名是非常简单的。创建一个<code>CNAME</code>的文件，写上域名，上传就可以了。可以在<code>blog</code>的<code>source</code>放置该文件，生成发布时会被生成到<code>pubic</code>目录下，避免因<code>hexo clean</code>重新生成文件时引起域名不可解析问题。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">l4qiang.me</span><br></pre></td></tr></table></figure>
 
 <h3 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h3><p>我是在阿里云买的<code>l4qiang.me</code>域名，也就可以使用阿里云的域名解析服务。<br>简要的说，就是自定义域名解析增加如下4条A记录中的一个就自动开启了。参考文档<a target="_blank" rel="noopener" href="https://docs.github.com/en/github/working-with-github-pages/managing-a-custom-domain-for-your-github-pages-site">Managing a custom domain for your GitHub Pages site</a></p>
