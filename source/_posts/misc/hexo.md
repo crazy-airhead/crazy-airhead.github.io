@@ -33,7 +33,7 @@ Published GitHub Pages sites may be no larger than 1 GB.
 **注意**如果用户名包含大小写时，需要按用户名的全部小写来创建仓库名。
 
 ## 绑定域名
-在没有配置CNAME之前可以之接填写*enderjo.github.io*的域名，会自动解析。
+在没有配置CNAME之前可直接填写*enderjo.github.io*的域名，会自动解析。
 对于Github来说，绑定域名是非常简单的。创建一个`CNAME`的文件，写上域名，上传就可以了。可以在`blog`的`source`放置该文件，生成发布时会被生成到`pubic`目录下，避免因`hexo clean`重新生成文件时引起域名不可解析问题。
 
 ``` bash
