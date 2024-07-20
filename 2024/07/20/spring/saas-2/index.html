@@ -22,16 +22,22 @@
     var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="tags:  Spring Boot Mybatis Plus Redis ElasticSearch Job Kafka   背景基于Mybatis的多租户实现方法对Spring Boot使用 Mybatis Plus实现Db层的数据隔离，但在实际的实现过程中，除了涉及Db层的数据隔离，还会涉及租户的识别，缓存的数据隔离，ElasticSearch的数据隔离，任务的数据隔离、消息队列的隔离，同时">
+  <meta name="description" content="背景基于Mybatis的多租户实现方法对Spring Boot使用 Mybatis Plus实现Db层的数据隔离，但在实际的实现过程中，除了涉及Db层的数据隔离，还会涉及租户的识别，缓存的数据隔离，ElasticSearch的数据隔离，任务的数据隔离、消息队列的隔离，同时也包括租户的切换与忽略租户等。 因此在上次的基础上，这次尝试把多租户的技术实现写得更完整些，如有不足支持欢迎指正。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="多租户的技术实现">
 <meta property="og:url" content="http://l4qiang.me/2024/07/20/spring/saas-2/index.html">
 <meta property="og:site_name" content="CrazyAirhead">
-<meta property="og:description" content="tags:  Spring Boot Mybatis Plus Redis ElasticSearch Job Kafka   背景基于Mybatis的多租户实现方法对Spring Boot使用 Mybatis Plus实现Db层的数据隔离，但在实际的实现过程中，除了涉及Db层的数据隔离，还会涉及租户的识别，缓存的数据隔离，ElasticSearch的数据隔离，任务的数据隔离、消息队列的隔离，同时">
+<meta property="og:description" content="背景基于Mybatis的多租户实现方法对Spring Boot使用 Mybatis Plus实现Db层的数据隔离，但在实际的实现过程中，除了涉及Db层的数据隔离，还会涉及租户的识别，缓存的数据隔离，ElasticSearch的数据隔离，任务的数据隔离、消息队列的隔离，同时也包括租户的切换与忽略租户等。 因此在上次的基础上，这次尝试把多租户的技术实现写得更完整些，如有不足支持欢迎指正。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-07-20T12:52:14.000Z">
-<meta property="article:modified_time" content="2024-07-20T13:43:43.114Z">
+<meta property="article:modified_time" content="2024-07-20T13:44:11.873Z">
 <meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="ElasticSearch">
+<meta property="article:tag" content="Mybatis Plus">
+<meta property="article:tag" content="Redis">
+<meta property="article:tag" content="Job">
+<meta property="article:tag" content="Kafka">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://l4qiang.me/2024/07/20/spring/saas-2/">
@@ -199,7 +205,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2024-07-20 20:52:14 / 修改时间：21:43:43" itemprop="dateCreated datePublished" datetime="2024-07-20T20:52:14+08:00">2024-07-20</time>
+              <time title="创建时间：2024-07-20 20:52:14 / 修改时间：21:44:11" itemprop="dateCreated datePublished" datetime="2024-07-20T20:52:14+08:00">2024-07-20</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -244,7 +250,7 @@
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>14 分钟</span>
+              <span>13 分钟</span>
             </span>
 
         </div>
@@ -256,17 +262,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>tags:</p>
-<ul>
-<li>Spring Boot</li>
-<li>Mybatis Plus</li>
-<li>Redis</li>
-<li>ElasticSearch</li>
-<li>Job</li>
-<li>Kafka</li>
-</ul>
-<hr>
-<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p><a target="_blank" rel="noopener" href="https://l4qiang.goldsyear.com/2021/07/30/spring/saas/">基于Mybatis的多租户实现方法</a>对Spring Boot使用 Mybatis Plus实现Db层的数据隔离，但在实际的实现过程中，除了涉及Db层的数据隔离，还会涉及租户的识别，缓存的数据隔离，ElasticSearch的数据隔离，任务的数据隔离、消息队列的隔离，同时也包括租户的切换与忽略租户等。</p>
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p><a target="_blank" rel="noopener" href="https://l4qiang.goldsyear.com/2021/07/30/spring/saas/">基于Mybatis的多租户实现方法</a>对Spring Boot使用 Mybatis Plus实现Db层的数据隔离，但在实际的实现过程中，除了涉及Db层的数据隔离，还会涉及租户的识别，缓存的数据隔离，ElasticSearch的数据隔离，任务的数据隔离、消息队列的隔离，同时也包括租户的切换与忽略租户等。</p>
 <p>因此在上次的基础上，这次尝试把多租户的技术实现写得更完整些，如有不足支持欢迎指正。</p>
 <span id="more"></span>
 
@@ -276,7 +272,7 @@
 <h1 id="实现方法"><a href="#实现方法" class="headerlink" title="实现方法"></a>实现方法</h1><p>如背景中介绍，要完整的实现多租户涉及到系统使用到的多个技术组件，因此需要对相应的技术组件进行封装，减少租户对开发的干扰，从而尽可能只关注业务的实现。</p>
 <h2 id="租户识别"><a href="#租户识别" class="headerlink" title="租户识别"></a>租户识别</h2><p>通常情况下，不同的租户有独立的二级域名或域名，此时可以通过域名来识别租户，需要管理后台创建租户时维护好租户的域名。</p>
 <p>前端调用接口获取对应的租户id，之后的请求中增加tenant-id的请求头（请求头名称可根据自己的实际情况定）。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@GetMapping(&quot;/getTenantIdByDomain&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ApiResponses&lt;SimpleOrgRes&gt; <span class="title">getOrgByDomain</span><span class="params">(<span class="meta">@RequestParam</span> String domain)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> ApiResponses.success(authService.getTenantIdByDomain(domain));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/getTenantIdByDomain&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ApiResponses&lt;SimpleOrgRes&gt; <span class="title">getOrgByDomain</span><span class="params">(<span class="meta">@RequestParam</span> String domain)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> ApiResponses.success(authService.getTenantIdByDomain(domain));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>当然也可以采用在Filter中对域名进行解析，从而获取租户ID。</p>
 <p>我们公司侧重企业内部的观察，暂时不需要分配域名，因此不能根据域名获取租户ID。根据这个情况，我们把用户做成全局表，这样在用户登录是可以根据用户信息来确定租户ID，另外通过JWT Token的方式进行租户ID的前后端传递，而没有使用tenant-id。</p>
@@ -304,9 +300,7 @@
 
 <h3 id="任务调度"><a href="#任务调度" class="headerlink" title="任务调度"></a>任务调度</h3><p>任务调度时因为是从后台启动，此时无法传入租户id，因为MySQL、ES、Redis的租户隔离处理，要么是无法取到数据，要么取到全部数据，导出无法实际的进行租户隔离。</p>
 <p>因此需要先获取所有的租户信息，然后利用AOP的方式针对每个租户执行任务的调度。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 多租户 Job 注解</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> TenantJob &#123;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 多租户 Job 注解</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> TenantJob &#123;&#125;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TenantJobAspect</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Around(&quot;@annotation(tenantJob)&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">around</span><span class="params">(ProceedingJoinPoint joinPoint, TenantJob tenantJob)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 获得租户列表</span></span><br><span class="line">    List&lt;String&gt; tenantIds = TenantUtils.getTenantIds();</span><br><span class="line">    <span class="keyword">if</span> (CollUtil.isEmpty(tenantIds)) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 逐个租户，执行 Job</span></span><br><span class="line">    Map&lt;String, String&gt; results = <span class="keyword">new</span> ConcurrentHashMap&lt;&gt;();</span><br><span class="line">    tenantIds.parallelStream()</span><br><span class="line">        .forEach(</span><br><span class="line">            tenantId -&gt; &#123;</span><br><span class="line">              TenantUtils.execute(</span><br><span class="line">                  tenantId,</span><br><span class="line">                  () -&gt; &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                      joinPoint.proceed();</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">                      results.put(tenantId, ExceptionUtil.getRootCauseMessage(e));</span><br><span class="line">                    &#125;</span><br><span class="line">                  &#125;);</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> JSON.toJSONString(results);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -322,8 +316,6 @@
 
 <p>通过注解方式使用AOP方式忽略租户</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> TenantIgnore &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TenantIgnoreAspect</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Around(&quot;@annotation(tenantIgnore)&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">around</span><span class="params">(ProceedingJoinPoint joinPoint, TenantIgnore tenantIgnore)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        Boolean oldIgnore = TenantContextHolder.isIgnore();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            TenantContextHolder.setIgnore(<span class="keyword">true</span>);</span><br><span class="line">            <span class="comment">// 执行逻辑</span></span><br><span class="line">            <span class="keyword">return</span> joinPoint.proceed();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            TenantContextHolder.setIgnore(oldIgnore);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -375,6 +367,15 @@
 
 
       <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/ElasticSearch/" rel="tag"><i class="fa fa-tag"></i> ElasticSearch</a>
+              <a href="/tags/Mybatis-Plus/" rel="tag"><i class="fa fa-tag"></i> Mybatis Plus</a>
+              <a href="/tags/Redis/" rel="tag"><i class="fa fa-tag"></i> Redis</a>
+              <a href="/tags/Job/" rel="tag"><i class="fa fa-tag"></i> Job</a>
+              <a href="/tags/Kafka/" rel="tag"><i class="fa fa-tag"></i> Kafka</a>
+          </div>
 
         
 
@@ -472,7 +473,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">101</span>
+        <span class="site-state-item-count">105</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
