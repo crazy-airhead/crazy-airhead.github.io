@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景公司的数字安全运营平台是基于 Spring Boot 和 Spring Cloud 进行构建的。考虑到公司有企事业单位的客户，陆续对产品提国产信创的要求。虽然当前信创可能只要求硬件，操作系统和数据库是国产化即可，但底层框架也是国产化的，可以给客户提供更多的国产化保证。 Solon 就是这样的一个选择，Solon 的官网介绍说，Solon 是 Java 「新式」应用开发框架，从零开始构建，有自主">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用国产化框架 Solon 的一些开发经验">
+<meta property="og:url" content="http://l4qiang.me/2024/08/31/solon/solon-1/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="背景公司的数字安全运营平台是基于 Spring Boot 和 Spring Cloud 进行构建的。考虑到公司有企事业单位的客户，陆续对产品提国产信创的要求。虽然当前信创可能只要求硬件，操作系统和数据库是国产化即可，但底层框架也是国产化的，可以给客户提供更多的国产化保证。 Solon 就是这样的一个选择，Solon 的官网介绍说，Solon 是 Java 「新式」应用开发框架，从零开始构建，有自主">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://solon.noear.org/img/369a9093918747df8ab0a5ccc314306a.png">
+<meta property="og:image" content="https://solon.noear.org/img/131eb0de975b43fcb1c5cd55bc0da888.png">
+<meta property="article:published_time" content="2024-08-31T07:00:14.000Z">
+<meta property="article:modified_time" content="2024-08-31T09:38:29.066Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="solon">
+<meta property="article:tag" content="cmdb">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://solon.noear.org/img/369a9093918747df8ab0a5ccc314306a.png">
+
+<link rel="canonical" href="http://l4qiang.me/2024/08/31/solon/solon-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用国产化框架 Solon 的一些开发经验 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?3e0344e2cb00f51bf76efa000dca7d75";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/08/31/solon/solon-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用国产化框架 Solon 的一些开发经验
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-08-31 15:00:14 / 修改时间：17:38:29" itemprop="dateCreated datePublished" datetime="2024-08-31T15:00:14+08:00">2024-08-31</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/solon/" itemprop="url" rel="index"><span itemprop="name">solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/solon/cmdb/" itemprop="url" rel="index"><span itemprop="name">cmdb</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>公司的数字安全运营平台是基于 Spring Boot 和 Spring Cloud 进行构建的。考虑到公司有企事业单位的客户，陆续对产品提国产信创的要求。虽然当前信创可能只要求硬件，操作系统和数据库是国产化即可，但底层框架也是国产化的，可以给客户提供更多的国产化保证。</p>
+<p>Solon 就是这样的一个选择，Solon 的官网介绍说，Solon 是 Java 「新式」应用开发框架，从零开始构建，有自主的标准规范与开放生态。追求更快、更小、更简单； 提倡克制、简洁、高效、开放、生态；是信通院可信开源社区成员、可信开源项目。Solon 有以下的特色：拥有更高的计算性价比，并发高 2～3 倍，内存省 50%；更快的开发效率：内核小，入门快，调试重启可快至 10 倍；更好的生成和部署体验：打包最多缩小 90%； 更大的兼容范围：非 java-ee 框架，同时支持 java8～java22，graalvm native image。</p>
+<p>Solon 生态图谱</p>
+<p><img src="https://solon.noear.org/img/369a9093918747df8ab0a5ccc314306a.png"></p>
+<p>Solon Cloud 生态图谱</p>
+<p><img src="https://solon.noear.org/img/131eb0de975b43fcb1c5cd55bc0da888.png"></p>
+<p>Water 是 Solon 作者的另一个作品，Water 是 Java 服务开发和治理的一站式解决方案（可以理解为微服务架构基础套件）。基于 Solon 框架开发，并支持完整的 Solon Cloud 规范。功能相当于：consul + rabbitmq + elk + prometheus + openFaas + quartz + 等等，并有机结合在一起。对 k8s 友好，支持 ip 漂移、支持 k8s svc 映射。也就是说 Water 在功能上包含了：服务注册与发现，配置服务，消息服务，定时任务，健康检测，数据监视等。</p>
+<p>如果基于 Water 构建应用平台，整个平台将更加一体化和统一，而且 Water 采用 Apache 2.0 协议开源，对修改代码友好。此外作者在 Water 的基础上构建了Marsh的微服务开发脚手架，虽然不是前后端分离方式构建，但依然可以参考其代码。结合 Solon 的特点，整体构建一个更轻量的融合平台是可能的。</p>
+<p>作者介绍 Water 时说水孕育万物，于是有了将新平台命名为Ficus（榕树是福州市树）的想法，水生木，而榕树有独木成林的说法，除了可以理解为技术的框架统一，也可理解为平台不断长出新的服务。</p>
+<p>以上算是基础的背景说明，经过初步的技术验证后，开始整合我们的公司内部的技术框架。原本计划使用 Water 整个平台性的替换，最终考虑到公司的资源情况及替换成本，没有选择 Water，然后从微服务开始逐个替换，此次优先从我们需要改造的资源管理系统出发进行改造。</p>
+<h1 id="整体开发体验"><a href="#整体开发体验" class="headerlink" title="整体开发体验"></a>整体开发体验</h1><p>Solon 的学习成本，对于有 Spring Boot 开发经验的开发人员来说，把官网的「学习」章节看完，基本就能上手。Solon 的概念少，注解也少，而且不少注解与Spring Boot 的名称一致，整体上来说，切换 Solon 没有太多迁移的成本。</p>
+<p>在开发资源管理系统时，我是先基于 Solon 搭建了公司的技术框架，定义项目结构，封装基础组件，简化（或约定）配置，提供代码生成工具（也是遵守代码规范的一致方式）。从开发人员的角度，在生成代码之后，编写业务代码基本和原来 Spring Boot 中一致，可以说是直接上手。</p>
+<p>Solon 的生态相对是完整的，平台有使用的中间件都有对应的集成的组件，比如redis，kafka，mysql，nacos，swagger等，只需要做部分的配置即可使用。</p>
+<p>我们的系统有探针模块，用来采集数据，需要通过WebSocket进行通信。Solon 的能轻松提供 WebSocket 服务，Solon 的 「三源合一」也是一个特色。</p>
+<p>因为系统是混合了 Spring Cloud 和 Solon，因此需要提供 FeinClient 和 Nami Client，这个算是开发过程当中多增加的一点工作量。</p>
+<p>Solon 的本地Gateway，实现路由分组是一个很好的功能，不同的分组可以提供不同的拦截器，相对Spring的配置就容易多了。这个和Jfinal的route功能很像，方便。</p>
+<p>但作为一款比较新的框架，也是会碰到一些问题，比如说，集成的组件配置的参数说明不足，部分组件需要查看源码才知道有哪些配置；插件的优先级没有明确标出，可能导致集成时一些依赖类找不到的问题，虽然可以通过修改插件优先级解决，但也是增加了部分心智负担。有些集成的功能不够细致，开始时Swagger文档功能比较弱。此次碰到比较大的一个问题是从 Gateway 发消息到具体的微服务时，参数解析错误，接口无法正确返回，提示 404 或者 500 等错误。后面通过切换为 undertow 组件解决。当然作者后续提供了新版本。</p>
+<p>Solon 框架作者跟进问题积极，发版快，及时修复问题。</p>
+<h1 id="开发过程"><a href="#开发过程" class="headerlink" title="开发过程"></a>开发过程</h1><p>为了使新开发的资源管理顺利的接入原有的平台中，需要解决处理发现服务、配置中心，服务网关、数据接入、SQL 版本管理、消息总线、任务调度、日志服务、日志审计等技术或业务组件。开发过程中统一使用 Gradle （Groove）进行编译。</p>
+<h2 id="注册与发现服务和配置中心"><a href="#注册与发现服务和配置中心" class="headerlink" title="注册与发现服务和配置中心"></a>注册与发现服务和配置中心</h2><p>原平台使用使用 Nacos2 作为服务发现和配置中心，Ficus 需要接入Nacos2 即可。引入Solon Cloud 的nacos2 插件进行配置即可。</p>
+<h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">implementation(<span class="string">&quot;org.noear:nacos2-solon-cloud-plugin&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">solon:</span></span><br><span class="line">  <span class="attr">app:</span></span><br><span class="line">   <span class="comment"># 注册的服务名</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">ficus-facilty</span></span><br><span class="line">    <span class="comment"># 分组名，可以不用填写，此处只是示例，方便理解。</span></span><br><span class="line">    <span class="attr">group:</span> <span class="string">DEFAULT_GROUP</span> </span><br><span class="line">    </span><br><span class="line"><span class="attr">solon.cloud.nacos:</span></span><br><span class="line">  <span class="attr">server:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:8848</span></span><br><span class="line">  <span class="attr">config:</span></span><br><span class="line">    <span class="comment"># 可以是多个文件，多个文件用逗号（,）分割</span></span><br><span class="line">    <span class="attr">load:</span> <span class="string">ficus-cmdb.yml</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="网关服务"><a href="#网关服务" class="headerlink" title="网关服务"></a>网关服务</h2><p>因为暂时没有对平台进行完整的完整的替换，此处说的并非应用网关，而是服务内网关，提供统一的异常处理，统一的租户拦截，统一的鉴权处理。</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/admin-api/**&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AdminGateway</span> <span class="keyword">extends</span> <span class="title">Gateway</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> TenantProperties tenantProperties;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> SecurityProperties securityProperties;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> WebProperties webProperties;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** index 越小优先级越高 */</span></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">register</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    filter(-<span class="number">1</span>, <span class="keyword">new</span> FicusTraceFilter());</span><br><span class="line">    filter(<span class="number">0</span>, <span class="keyword">new</span> FicusExceptionFilter());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (tenantProperties.getEnabled()) &#123;</span><br><span class="line">      filter(<span class="number">2</span>, <span class="keyword">new</span> FicusTenantFilter(tenantProperties));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    filter(<span class="number">3</span>, <span class="keyword">new</span> FicusJwtFilter(securityProperties));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 增加性能统计</span></span><br><span class="line">    <span class="keyword">if</span> (webProperties.getEnabledMonitor()) &#123;</span><br><span class="line">      before(<span class="keyword">new</span> StartHandler());</span><br><span class="line">      after(<span class="keyword">new</span> EndHandler());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 添加Bean</span></span><br><span class="line">    addBeans(bw -&gt; <span class="string">&quot;adminApi&quot;</span>.equals(bw.tag()));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据接入"><a href="#数据接入" class="headerlink" title="数据接入"></a>数据接入</h2><p>我们主要使用了MySQL，Redis 和 ElasticSearch的数据中间件。</p>
+<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><p>原系统使用Mybatis-plus组件，Solon 也提供了对应的组件，引入对应的配置即可。</p>
+<h4 id="依赖-1"><a href="#依赖-1" class="headerlink" title="依赖"></a>依赖</h4><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">api(<span class="string">&quot;org.noear:mybatis-plus-extension-solon-plugin&quot;</span>)</span><br><span class="line">api(<span class="string">&quot;com.zaxxer:HikariCP&quot;</span>)</span><br><span class="line">api(<span class="string">&quot;mysql:mysql-connector-java&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FicusMybatisPlusConfig</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Bean(name = MasterDb.DB, typed = true)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> DataSource <span class="title">db</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;ficus.db.master&#125;&quot;)</span> HikariDataSource dataSource)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> dataSource;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h4><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ficus:</span></span><br><span class="line">  <span class="attr">db:</span></span><br><span class="line">    <span class="attr">master:</span></span><br><span class="line">      <span class="attr">jdbcUrl:</span> <span class="string">jdbc:mysql://127.0.0.1:3307/top_cmdb</span></span><br><span class="line">      <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">      <span class="attr">password:</span> <span class="string">passord</span></span><br><span class="line">      </span><br><span class="line"><span class="comment">#默认</span></span><br><span class="line"><span class="attr">mybatis:</span></span><br><span class="line">  <span class="comment"># 注意这里是dataSource的bean name</span></span><br><span class="line">  <span class="attr">masterDb:</span></span><br><span class="line">    <span class="attr">typeAliases:</span> <span class="comment">#支持包名 或 类名 //支持 ** 和 *</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;com.jishunetwork.ficus.**.model&quot;</span></span><br><span class="line">    <span class="attr">mappers:</span> <span class="comment">#支持包名 或 类名 或 xml（.xml结尾）//支持 ** 和 *</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;classpath:/mapper/**/*.xml&quot;</span></span><br><span class="line">    <span class="attr">configuration:</span></span><br><span class="line">      <span class="attr">cacheEnabled:</span> <span class="literal">false</span></span><br><span class="line">      <span class="attr">mapperVerifyEnabled:</span> <span class="literal">false</span></span><br><span class="line">      <span class="attr">mapUnderscoreToCamelCase:</span> <span class="literal">true</span></span><br><span class="line">      <span class="comment">#      logImpl: org.apache.ibatis.logging.nologging.NoLoggingImpl</span></span><br><span class="line">      <span class="attr">logImpl:</span> <span class="string">org.apache.ibatis.logging.stdout.StdOutImpl</span></span><br><span class="line">    <span class="attr">globalConfig:</span></span><br><span class="line">      <span class="attr">banner:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>引入配置即可。</p>
+<h4 id="依赖-2"><a href="#依赖-2" class="headerlink" title="依赖"></a>依赖</h4><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">api(<span class="string">&quot;org.noear:jedis-solon-cloud-plugin&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a>代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FicusRedisConfig</span> </span>&#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * // typed 表示可类型注入, 即默认</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> cache</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="meta">@Bean(typed = true)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CacheService <span class="title">cache</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;ficus.redis&#125;&quot;)</span> RedisCacheService cache)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> cache;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * typed 表示可类型注入, 使用与cache不同的对象</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> client</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="meta">@Bean(typed = true)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> RedisClient <span class="title">redis</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;ficus.redis&#125;&quot;)</span> RedisClient client)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> client;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置-2"><a href="#配置-2" class="headerlink" title="配置"></a>配置</h4><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ficus:</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">    <span class="attr">driverType:</span> <span class="string">redis</span> <span class="comment">#驱动类型</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:6666</span></span><br><span class="line">    <span class="attr">db:</span> <span class="number">0</span> <span class="comment">#默认为 0，可不配置</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">password</span></span><br><span class="line">    <span class="attr">defSeconds:</span> <span class="number">30</span> <span class="comment">#默认为 30，可不配置</span></span><br><span class="line">    <span class="attr">idleConnectionTimeout:</span> <span class="number">10000</span></span><br><span class="line">    <span class="attr">connectTimeout:</span> <span class="number">10000</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="ElasticSearch"><a href="#ElasticSearch" class="headerlink" title="ElasticSearch"></a>ElasticSearch</h3><p>原系统使用的是ElasticSearh的RestHighLevelClient，大家也比较习惯相关的api，虽然引入了 esearchx 但系统中使用不多。</p>
+<h3 id="依赖-3"><a href="#依赖-3" class="headerlink" title="依赖"></a>依赖</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">api(<span class="string">&quot;org.elasticsearch.client:elasticsearch-rest-high-level-client&quot;</span>)</span><br><span class="line">api(<span class="string">&quot;org.noear:esearchx&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="代码-3"><a href="#代码-3" class="headerlink" title="代码"></a>代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FicusElasticsearchConfig</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> RestHighLevelClient <span class="title">client</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;ficus.es&#125;&quot;)</span> EsProperties properties)</span> </span>&#123;</span><br><span class="line">    RestHighLevelClient restHighLevelClient =</span><br><span class="line">        <span class="keyword">new</span> LifecycleRestHighLevelClient(clientBuilder(properties));</span><br><span class="line"></span><br><span class="line">    EsClientKit.init(restHighLevelClient);</span><br><span class="line">    TenantEsClientKit.init(restHighLevelClient);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> restHighLevelClient;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> EsContext <span class="title">esContext</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;ficus.es&#125;&quot;)</span> EsProperties properties)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> EsContext(properties.getUrl(), properties.getUsername(), properties.getPassword());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置-3"><a href="#配置-3" class="headerlink" title="配置"></a>配置</h4><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ficus:</span></span><br><span class="line">  <span class="attr">es:</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">9200</span></span><br><span class="line">    <span class="attr">scheme:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">jishu</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">password</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="SQL-版本管理"><a href="#SQL-版本管理" class="headerlink" title="SQL 版本管理"></a>SQL 版本管理</h2><p>使用 Flyway 做SQL 版本管理，Solon 没有集成，自己实现一个。</p>
+<h3 id="代码-4"><a href="#代码-4" class="headerlink" title="代码"></a>代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">XPluginImp</span> <span class="keyword">implements</span> <span class="title">Plugin</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">(AppContext context)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    Props props = context.cfg();</span><br><span class="line"></span><br><span class="line">    context.subWrapsOfType(</span><br><span class="line">        DataSource.class,</span><br><span class="line">        (bw) -&gt; &#123;</span><br><span class="line">          String named = bw.name();</span><br><span class="line">          log.info(<span class="string">&quot;异步订阅 DataSource(&#123;&#125;), 执行 flyway 动作&quot;</span>, named);</span><br><span class="line"></span><br><span class="line">          String keyStarts = <span class="string">&quot;flyway.&quot;</span> + named;</span><br><span class="line">          <span class="keyword">boolean</span> isEnabled = props.getBool(keyStarts + <span class="string">&quot;.enabled&quot;</span>, <span class="keyword">true</span>);</span><br><span class="line">          <span class="keyword">if</span> (isEnabled) &#123;</span><br><span class="line">            Properties properties = <span class="keyword">new</span> Properties();</span><br><span class="line">            Props flayWayProps = Solon.cfg().getProp(keyStarts);</span><br><span class="line">            <span class="keyword">for</span> (Map.Entry&lt;Object, Object&gt; objectObjectEntry : flayWayProps.entrySet()) &#123;</span><br><span class="line">              String key = (String) objectObjectEntry.getKey();</span><br><span class="line">              Object value = objectObjectEntry.getValue();</span><br><span class="line">              <span class="comment">// 配置不处理 -</span></span><br><span class="line">              <span class="keyword">if</span> (!StrUtil.containsAnyIgnoreCase(key, <span class="string">&quot;-&quot;</span>)) &#123;</span><br><span class="line">                properties.put(<span class="string">&quot;flyway.&quot;</span> + key, value);</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            FluentConfiguration fluentConfiguration = <span class="keyword">new</span> FluentConfiguration();</span><br><span class="line">            fluentConfiguration.configuration(properties);</span><br><span class="line">            fluentConfiguration.dataSource(bw.raw());</span><br><span class="line">            fluentConfiguration.callbacks(<span class="keyword">new</span> FicusFlywayCallback());</span><br><span class="line"></span><br><span class="line">            Flyway flyway = fluentConfiguration.load();</span><br><span class="line">            flyway.migrate();</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    context.beanScan(XPluginImp.class);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stop</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    Plugin.<span class="keyword">super</span>.stop();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-4"><a href="#配置-4" class="headerlink" title="配置"></a>配置</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">flyway:</span></span><br><span class="line">  <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">dbMaster:</span></span><br><span class="line">    <span class="attr">encoding:</span> <span class="string">UTF-8</span></span><br><span class="line">    <span class="attr">cleanDisabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">baselineOnMigrate:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">locations:</span> <span class="string">classpath:db/migration</span></span><br><span class="line">    <span class="attr">sqlMigrationPrefix:</span> <span class="string">v</span></span><br><span class="line">    <span class="attr">sqlMigrationSeparator:</span> <span class="string">__</span></span><br><span class="line">    <span class="attr">sqlMigrationSuffixes:</span> <span class="string">.sql</span></span><br><span class="line">    <span class="attr">validateOnMigrate:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">baselineVersion:</span> <span class="number">1.0</span><span class="number">.0</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="消息总线"><a href="#消息总线" class="headerlink" title="消息总线"></a>消息总线</h2><p>Ficus中消息总线分成两个部分：</p>
+<ul>
+<li><p>服务间的消息总线，通过kafka实现，用于微服务间的事件处理。</p>
+</li>
+<li><p>服务内的消息总线，通过dami实现，用于服务内的事件处理。</p>
+</li>
+</ul>
+<h3 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h3><p>提供了一些常用的消息格式和消息发送类。</p>
+<h4 id="依赖-4"><a href="#依赖-4" class="headerlink" title="依赖"></a>依赖</h4><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">api(<span class="string">&quot;org.noear:kafka-solon-cloud-plugin&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置-5"><a href="#配置-5" class="headerlink" title="配置"></a>配置</h4><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">solon.cloud:</span></span><br><span class="line">  <span class="attr">kafka:</span></span><br><span class="line">    <span class="attr">event:</span></span><br><span class="line">    <span class="attr">server:</span> <span class="string">&quot;172.18.22.21:9092&quot;</span></span><br><span class="line">    <span class="attr">publishTimeout:</span> <span class="number">3000</span> <span class="comment">#单位：ms</span></span><br><span class="line">    <span class="attr">producer:</span> <span class="comment">#生产者属性（参考 org.apache.kafka.clients.producer.ProducerConfig 里的配置项）</span></span><br><span class="line">      <span class="attr">acks:</span> <span class="string">&quot;all&quot;</span></span><br><span class="line">      <span class="attr">retries:</span> <span class="number">0</span></span><br><span class="line">      <span class="attr">batch.size:</span> <span class="number">16384</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Nami"><a href="#Nami" class="headerlink" title="Nami"></a>Nami</h3><p>通过统一的消息和发送类。</p>
+<h4 id="代码-5"><a href="#代码-5" class="headerlink" title="代码"></a>代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EventUtils</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> DamiBus&lt;Kv, Ret&gt; BUS = Dami.bus();</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">send</span><span class="params">(<span class="keyword">final</span> String topic, <span class="keyword">final</span> Kv event)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sendAndSubscribe(topic, event, ret -&gt; &#123;&#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">sendAndSubscribe</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">      <span class="keyword">final</span> String topic, <span class="keyword">final</span> Kv ev, <span class="keyword">final</span> Consumer&lt;Ret&gt; consumer)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> BUS.sendAndSubscribe(topic, ev, consumer);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Ret <span class="title">sendAndRequest</span><span class="params">(<span class="keyword">final</span> String topic, <span class="keyword">final</span> Kv event)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sendAndRequest(topic, event, <span class="number">3000L</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Ret <span class="title">sendAndRequest</span><span class="params">(<span class="keyword">final</span> String topic, <span class="keyword">final</span> Kv event, <span class="keyword">long</span> timeout)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> BUS.sendAndRequest(topic, event, timeout);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">listen</span><span class="params">(<span class="keyword">final</span> String topic, <span class="keyword">final</span> TopicListener&lt;Payload&lt;Kv, Ret&gt;&gt; listener)</span> </span>&#123;</span><br><span class="line">    listen(topic, <span class="number">0</span>, listener);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">listen</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">      <span class="keyword">final</span> String topic, <span class="keyword">final</span> <span class="keyword">int</span> index, <span class="keyword">final</span> TopicListener&lt;Payload&lt;Kv, Ret&gt;&gt; listener)</span> </span>&#123;</span><br><span class="line">    BUS.listen(topic, index, listener);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">unlisten</span><span class="params">(<span class="keyword">final</span> String topic, <span class="keyword">final</span> TopicListener&lt;Payload&lt;Kv, Ret&gt;&gt; listener)</span> </span>&#123;</span><br><span class="line">    BUS.unlisten(topic, listener);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">unlisten</span><span class="params">(<span class="keyword">final</span> String topic)</span> </span>&#123;</span><br><span class="line">    BUS.unlisten(topic);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ResourceConfig</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initListener</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    EventUtils.listen(ResourceConstant.TOPIC_RESOURCE, <span class="keyword">new</span> ResourceListener());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="任务调度"><a href="#任务调度" class="headerlink" title="任务调度"></a>任务调度</h2><p>平台使用 xxljob 进行调度。</p>
+<h3 id="依赖-5"><a href="#依赖-5" class="headerlink" title="依赖"></a>依赖</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">api(<span class="string">&quot;org.noear:xxl-job-solon-cloud-plugin&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-6"><a href="#配置-6" class="headerlink" title="配置"></a>配置</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">solon.cloud:</span></span><br><span class="line">  <span class="attr">xxljob:</span></span><br><span class="line">    <span class="attr">server:</span> <span class="string">http://127.0.0.1:1150/Job</span></span><br><span class="line">    <span class="attr">token:</span> <span class="string">default_token</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="日志服务"><a href="#日志服务" class="headerlink" title="日志服务"></a>日志服务</h3><p>日志服务主要参考了 Water 的实现，主要代码是实现AppenderBase。</p>
+<h4 id="代码-6"><a href="#代码-6" class="headerlink" title="代码"></a>代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CloudLogAppender</span> <span class="keyword">extends</span> <span class="title">AppenderBase</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Level <span class="title">getDefaultLevel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Level.INFO;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">append</span><span class="params">(LogEvent logEvent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (CloudClient.log() != <span class="keyword">null</span>) &#123;</span><br><span class="line">            CloudClient.log().append(logEvent);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="日志审计"><a href="#日志审计" class="headerlink" title="日志审计"></a>日志审计</h3><p>通过拦截器实现，去除了部分业务代码。</p>
+<h3 id="代码-7"><a href="#代码-7" class="headerlink" title="代码"></a>代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> AuditLog &#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 如果是模版是使用#(name??)的形式书写，避免报错</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function">String <span class="title">operation</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function">OperationType <span class="title">operationType</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function">LogType <span class="title">logType</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 应用id</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function">String <span class="title">appId</span><span class="params">()</span> <span class="keyword">default</span> &quot;$</span>&#123;ficus.id&#125;<span class="string">&quot;;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">@Component</span></span><br><span class="line"><span class="string">public class AuditLogInterceptor implements RouterInterceptor &#123;</span></span><br><span class="line"><span class="string">  @Inject private AuditLogProxyService proxyService;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  private static boolean isAuditLogEnable(Context ctx, AuditLog auditLog) &#123;</span></span><br><span class="line"><span class="string">    return auditLog != null;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  private static AuditLog getAuditLog(Context ctx) &#123;</span></span><br><span class="line"><span class="string">    Action action = ctx.action();</span></span><br><span class="line"><span class="string">    MethodWrap method = action.method();</span></span><br><span class="line"><span class="string">    return method.getAnnotation(AuditLog.class);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  @Override</span></span><br><span class="line"><span class="string">  public void doIntercept(Context ctx, Handler mainHandler, RouterInterceptorChain chain)</span></span><br><span class="line"><span class="string">      throws Throwable &#123;</span></span><br><span class="line"><span class="string">    chain.doIntercept(ctx, mainHandler);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  @Override</span></span><br><span class="line"><span class="string">  public Object postResult(Context ctx, Object result) throws Throwable &#123;</span></span><br><span class="line"><span class="string">    try &#123;</span></span><br><span class="line"><span class="string">      AuditLog auditLog = getAuditLog(ctx);</span></span><br><span class="line"><span class="string">      if (isAuditLogEnable(ctx, auditLog)) &#123;</span></span><br><span class="line"><span class="string">        OperateLog operateLog = buildLog(ctx, auditLog, result);</span></span><br><span class="line"><span class="string">        proxyService.log(operateLog);</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">      return result;</span></span><br><span class="line"><span class="string">    &#125; finally &#123;</span></span><br><span class="line"><span class="string">      AuditLogContext.clear();</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="关于公司"><a href="#关于公司" class="headerlink" title="关于公司"></a>关于公司</h1><p>福建极数网络科技有限公司是一家具有云计算、大数据、人工智能能力的高科技创新企业。公司从2016年9月创立至今，一直专注于数字经济时代下的数字安全运营管理、业务智能运营管理、多源异构大规模数据关联分析与挖掘分析等技术领域。我们用心扎根业务场景创新，为客户交付专而精的人工智能相关产品解决方案与专业贴心的数字化服务。</p>
+<p>公司已荣获国家与省级高新技术企业证书，通过ISO/IEC20000、ISO/IEC27001等多项体系认证，并取得100+资质证书，包括软件著作权、商标权、发明专利等。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/solon/" rel="tag"><i class="fa fa-tag"></i> solon</a>
+              <a href="/tags/cmdb/" rel="tag"><i class="fa fa-tag"></i> cmdb</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/07/20/spring/saas-2/" rel="prev" title="多租户的技术实现">
+      <i class="fa fa-chevron-left"></i> 多租户的技术实现
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E5%BC%80%E5%8F%91%E4%BD%93%E9%AA%8C"><span class="nav-number">2.</span> <span class="nav-text">整体开发体验</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">开发过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E4%B8%8E%E5%8F%91%E7%8E%B0%E6%9C%8D%E5%8A%A1%E5%92%8C%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83"><span class="nav-number">3.1.</span> <span class="nav-text">注册与发现服务和配置中心</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96"><span class="nav-number">3.1.1.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">3.1.2.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E5%85%B3%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.2.</span> <span class="nav-text">网关服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">3.2.1.</span> <span class="nav-text">代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%8E%A5%E5%85%A5"><span class="nav-number">3.3.</span> <span class="nav-text">数据接入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL"><span class="nav-number">3.3.1.</span> <span class="nav-text">MySQL</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96-1"><span class="nav-number">3.3.1.1.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-1"><span class="nav-number">3.3.1.2.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-1"><span class="nav-number">3.3.1.3.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis"><span class="nav-number">3.3.2.</span> <span class="nav-text">Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96-2"><span class="nav-number">3.3.2.1.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-2"><span class="nav-number">3.3.2.2.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-2"><span class="nav-number">3.3.2.3.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ElasticSearch"><span class="nav-number">3.3.3.</span> <span class="nav-text">ElasticSearch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96-3"><span class="nav-number">3.3.4.</span> <span class="nav-text">依赖</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-3"><span class="nav-number">3.3.4.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-3"><span class="nav-number">3.3.4.2.</span> <span class="nav-text">配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL-%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86"><span class="nav-number">3.4.</span> <span class="nav-text">SQL 版本管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-4"><span class="nav-number">3.4.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-4"><span class="nav-number">3.4.2.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E6%80%BB%E7%BA%BF"><span class="nav-number">3.5.</span> <span class="nav-text">消息总线</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka"><span class="nav-number">3.5.1.</span> <span class="nav-text">Kafka</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96-4"><span class="nav-number">3.5.1.1.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-5"><span class="nav-number">3.5.1.2.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nami"><span class="nav-number">3.5.2.</span> <span class="nav-text">Nami</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-5"><span class="nav-number">3.5.2.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.5.2.2.</span> <span class="nav-text">初始化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6"><span class="nav-number">3.6.</span> <span class="nav-text">任务调度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96-5"><span class="nav-number">3.6.1.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-6"><span class="nav-number">3.6.2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.6.3.</span> <span class="nav-text">日志服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-6"><span class="nav-number">3.6.3.1.</span> <span class="nav-text">代码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%AE%A1%E8%AE%A1"><span class="nav-number">3.6.4.</span> <span class="nav-text">日志审计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-7"><span class="nav-number">3.6.5.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%85%AC%E5%8F%B8"><span class="nav-number">4.</span> <span class="nav-text">关于公司</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">253</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">107</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">538k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">8:09</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '113569202f91af9159078276328fae80',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
