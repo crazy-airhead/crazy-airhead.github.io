@@ -172,6 +172,105 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/09/android/android-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/09/android/android-0/" class="post-title-link" itemprop="url">Android开发环境配置</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-09 21:25:26" itemprop="dateCreated datePublished" datetime="2018-08-09T21:25:26+08:00">2018-08-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>648</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Android Studio是Google基于IntelliJ IDEA Community版本开发的定制版本，下载Android Studio需要翻墙，下载后基本按默认方式安装基本可以完成Android的开发环境配置。</p>
+<p>IntelliJ IDEA包含了Android Studio中的所有功能，同时公司使用IntelliJ IDEA做为开发工具，所以使用IntelliJ IDEA作为开发工具就更好了。因为没有自动Android SDK，配置会繁琐一些。</p>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><ul>
+<li>安装Java 8 JDK</li>
+<li>安装IntelliJ IDEA 2018.2</li>
+</ul>
+<p>需要确保IDEA已经正常运行，已开发Java项目。</p>
+<h2 id="配置IntelliJ-IDEA"><a href="#配置IntelliJ-IDEA" class="headerlink" title="配置IntelliJ IDEA"></a>配置IntelliJ IDEA</h2><p>建议使用新版本（2018.2）支持页面中配置Android SDK。</p>
+<p>关闭所有项目，此时会打开欢迎界面，在configure&gt;settings或者在文件settings(Ctrl+Alt+S)打开系统配置，之后选择Appearenc&amp;Behavior&gt;system setting&gt;Android SDK。</p>
+<p>在Android SDK Location处点击Edit，选择相关SDK工具包，等待下载完成。<br><img src="http://of73u2ed9.bkt.clouddn.com/android%20sdk.png" alt="安装Android SDK"></p>
+<h2 id="创建Android项目"><a href="#创建Android项目" class="headerlink" title="创建Android项目"></a>创建Android项目</h2><p>• 在欢迎界面，创建新项目或者在File&gt;New Project菜单中选择。<br>• 在项目类型选Android，可以一路默认，也可以更加自己的实际需要设置应用名，最小支持的SDK和模板等内容。<br><img src="http://of73u2ed9.bkt.clouddn.com/android%20project.png" alt="创建Android项目"></p>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><p>因为模拟器的原因需要关闭Windows的hyper-v，这个在安装安装SDK时会提示。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/03/ide/idea/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1737,133 +1836,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2017/10/22/zeronet/zeronet-0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/10/22/zeronet/zeronet-0/" class="post-title-link" itemprop="url">ZeroNet介绍</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-10-22 15:33:19" itemprop="dateCreated datePublished" datetime="2017-10-22T15:33:19+08:00">2017-10-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-31 11:23:04" itemprop="dateModified" datetime="2022-10-31T11:23:04+08:00">2022-10-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zeronet/" itemprop="url" rel="index"><span itemprop="name">zeronet</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="ZeroNet是什么"><a href="#ZeroNet是什么" class="headerlink" title="ZeroNet是什么?"></a>ZeroNet是什么?</h2><p>ZeroNet是使用比特币加密技术和BitTorrent网络协议构建的一个去中心化的无审查网络。</p>
-<p>用户可以在ZeroNet上发布静态或者动态的站点。访问者可以决定是否成为服务节点。只要还有一个服务节点站点就会在线。</p>
-<p>当站点的所有者更新站点的时候，所有服务的节点（以前的访问者）就会增量更新站点内容。</p>
-<p>ZeroNet comes with a built-in SQL database. This makes content-heavy site development easy. The DB is also synced with hosting nodes with incremental updates.</p>
-<p>ZeroNet自带内置数据库，这使得重内容的站点的开发更容易。数据库也会在节点增量更新。</p>
-<h2 id="为什么？"><a href="#为什么？" class="headerlink" title="为什么？"></a>为什么？</h2><ul>
-<li>我们相信开放的，自由的，无审查的网络。</li>
-<li>去中心化：只要一发布就无法删除。</li>
-<li>无单点故障：只要还有一个服务节点，内容就会一直在线。</li>
-<li>不法关闭：无处不在。内容会被访问者进行托管。</li>
-<li>高速：ZeroNet使用BitTorrent技术比中心化服务器快。</li>
-<li>离线访问：在没有互联网连接的情况下也可以浏览保存过的站点。</li>
-<li>安全：使用与比特币钱包相同的加密方法来保护内容所有权。</li>
-</ul>
-<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ul>
-<li>简单，零配置。</li>
-<li>基于BIP32的无密码授权，使用与比特币钱包相同的加密方法来保护你的账户。</li>
-<li>实时更新</li>
-<li>支持Namecoin的.bit域名</li>
-<li>数据库支持：更简单的站点开发和更快的页面加载速度。</li>
-<li>匿名：全面支持Tor网络，支持通过.onion隐藏服务相互连接，而不是通过IPv4地址。</li>
-<li>TLS加密连接</li>
-<li>自动打开uPnP端口。</li>
-<li>插件和多用户 (开放式代理) 支持</li>
-<li>跨平台，支持任何浏览器和系统</li>
-</ul>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><ul>
-<li>在你运行ZeroNet后,你可以通过<code>http://127.0.0.1:43110/&#123;zeronet_site_address&#125;</code> (比如:<code>http://127.0.0.1:43110/1HeLLo4uzjaLetFx6NH3PMwFP3qbRbTf3D</code>)来访问网站。</li>
-<li>ZeroNet会通过BitTorrent网络来查找可用的节点，并下载需要的文件 (html, css, js…)。</li>
-<li>你会托管理每一个你访问过的网站。</li>
-<li>每个网站都有一个列表文件，存储了网站所有文件的SHA512哈希值和网站所有者的私钥生成的签名。</li>
-<li>如果站点的所有者 (拥有私钥的那个人) 修改了站点, 并且他/她签名了新的列表文件，然后推送给其他节点， 那么所有节点将会在验证列表的真实性(使用签名)后, 下载修改后的文件并推送给其他节点。</li>
-</ul>
-<h2 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h2><ul>
-<li>不支持大文件拆分</li>
-<li>文件传输未压缩</li>
-<li>不支持私有站点</li>
-</ul>
-<h2 id="赞助"><a href="#赞助" class="headerlink" title="赞助"></a>赞助</h2><p>Bitcoin: 1QDhxQ6PraUZa21ET5fYUCPgdrwBomnFgX</p>
-<p>谢谢！</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1933,20 +1905,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">253</span>
+          <span class="site-state-item-count">254</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">106</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">107</span>
+        <span class="site-state-item-count">108</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -2004,12 +1976,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">538k</span>
+    <span title="站点总字数">546k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:09</span>
+    <span title="站点阅读时长">8:17</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

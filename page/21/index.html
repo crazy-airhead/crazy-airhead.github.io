@@ -172,6 +172,119 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/04/16/bigdata/hbase-indexer/cli-tool/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/04/16/bigdata/hbase-indexer/cli-tool/" class="post-title-link" itemprop="url">cli-tool - 命令行工具</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-16 15:00:00" itemprop="dateCreated datePublished" datetime="2019-04-16T15:00:00+08:00">2019-04-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>The HBase Indexer includes a number of command line tools for adding, updating, listing, and deleting indexers. All of these tools are executed by supplying a command name to the hbase-indexer tool. For example, to use the list-indexers command, you would enter the following:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/hbase-indexer list-indexers</span><br></pre></td></tr></table></figure>
+<p>Running any of the commands below with the –help parameter will show a listing of possible command parameters.</p>
+<h2 id="add-indexer"><a href="#add-indexer" class="headerlink" title="add-indexer"></a>add-indexer</h2><p>The “add-indexer” command is used for configuring a new indexer.</p>
+<p>When adding an indexer, you need to supply at least the following:</p>
+<ul>
+<li>the name of the indexer</li>
+<li>the indexer’s definition (in the form of an xml file)</li>
+<li>connection information to the ZooKeeper used by Solr</li>
+</ul>
+<p>In order to add a basic indexer named “myindexer” whose definition is saved in a file called myindexer.xml, with ZooKeeper running on a server named myzkhost:2181/solr and a Solr collection named mycollection, you would execute the following:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">./bin/hbase-indexer add-indexer \</span><br><span class="line">                      --name myindexer \</span><br><span class="line">                      --indexer-conf myindexer.xml \</span><br><span class="line">                      --cp solr.zk=myzkhost:2181/solr \</span><br><span class="line">                      --cp solr.collection=mycollection</span><br></pre></td></tr></table></figure>
+<h2 id="update-indexer"><a href="#update-indexer" class="headerlink" title="update-indexer"></a>update-indexer</h2><p>The update-indexer command is used for updating the definition or the state of an indexer.</p>
+<p>This command is most typically used for updating the definition of an indexer – for example, changing the list of fields to be indexed.</p>
+<p>The parameters to the update-indexer tool are generally the same as those for the add-indexer tool, but none of them are mandatory except for the name field.</p>
+<p>To update the definition of the indexer that was created in the example for add-indexer, you would run the following:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/hbase-indexer update-indexer --name myindexer --indexer-conf myupdatedindexer.xml</span><br></pre></td></tr></table></figure>
+<p>Any parameters (other than the name parameter) that you supply to the update-indexer command will overwrite existing parameters for the indexer.</p>
+<h2 id="list-indexers"><a href="#list-indexers" class="headerlink" title="list-indexers"></a>list-indexers</h2><p>The list-indexer command lists all currently configured indexers, including various status information about them.</p>
+<p>This command can be run without any additional parameters.</p>
+<h2 id="delete-indexer"><a href="#delete-indexer" class="headerlink" title="delete-indexer"></a>delete-indexer</h2><p>The delete-indexer command removes an indexer and stops all indexing processes for that indexer.</p>
+<p>The –name parameter is mandatory for this command.</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/04/16/bigdata/es/sniff/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1137,138 +1250,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/21/geektime/xufei/hana/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/12/21/geektime/xufei/hana/" class="post-title-link" itemprop="url">SAP的HANA战略——成功的忽悠加成功的执行等于成功的产品——教科书级经典案例</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-12-21 16:51:10" itemprop="dateCreated datePublished" datetime="2018-12-21T16:51:10+08:00">2018-12-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/" itemprop="url" rel="index"><span itemprop="name">极客时间</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>以下内容是极客时间《技术与商业案例解读》专栏的摘录，本专栏由徐飞博士撰写。可以订购该专栏阅读更多精彩解读，开拓眼界，了解互联网发展历史和创业经验。</p>
-<blockquote>
-<p> SAP 是总部位于德国的全球最大的 ERP 公司。作为一家重量级的企业应用软件公司，SAP 曾经有过一段风光的日子。</p>
-<p>但是而后的日子也开始不好过起来。</p>
-<p>日子不好过的主要原因是 SAP 的软件需要跑在数据库上，而备选的数据库一般来说不是 IBM 的 DB2，就是 Oracle。本来两者和 SAP 的软件配合，相得益彰，曾经一度合作得很愉快。但随着 Oracle 开始进军企业级软件市场，把手伸到 SAP 的地盘来，SAP 的日子就开始不好过起来。</p>
-<p>Oracle 在 21 世纪初进行了一系列的并购，包括收购了 Siebel 和仁科等重要的企业级软件企业，把自己从底层数据库到企业级软件的体系补全了。这样一来，SAP 就麻烦了，因为自己的软件依赖于对方的数据库，而对方却还能够提供类似的企业级软件。</p>
-<p>好在还有一个 IBM 的 DB2 可以用。SAP 一度和 IBM 合作，希望两者的结合可以给自己带来所谓的强强联合。但是 IBM 的 DB2 却一直面临着诸多问题，比如本身就不是市场上最好的数据库，人才流失又很严重。所谓的合作开展起来，效果却非常有限。</p>
-<p>在这个背景下，SAP 开展了一场技术与忽悠并存的战略大跃进，也就是 SAP 著名的 HANA 战略。HANA 的出现对 SAP 和业界都产生了巨大的影响。其实施的过程可谓精彩绝伦，堪称一部大制作的“影片”。</p>
-<p>今天我就来讲一讲这个 SAP 的 HANA 战略。</p>
-<p>让我们先把时间倒回到 2009 年。这一年，数据库的两大顶级会议之一的 SIGMOD 在罗德岛召开。我最后一次以 PhD 的身份参加 SIGMOD，所以对这个会议印象深刻。这种会议一般都会有赞助商。出钱多的金主很多时候会给一个 Keynote 的讲座。</p>
-<p>2009 年的金主是 SAP。这多少有点让人大跌眼镜。一个做企业级软件的公司，来一个数据库顶级会议上大把撒钱，怎么看怎么怪。</p>
-<p>在这次大会上，SAP 董事会主席兼创始人之一的哈索·普拉特纳（Hasso Plattner）给了这样一个 Keynote：A Common Database Approach for OLTP and OLAP Using an In-memory Column Database。这个 Keynote 宣告了 SAP 要搞一个内存数据库，它的名字叫 HANA。</p>
-<p>SAP 要搞数据库，这可是一件大事情。一个做应用软件的要进军数据库市场，说明“兔子急了要咬人”了。但是企业级软件毕竟是应用软件，而数据库是基础架构软件。就像一个“做菜高手”突然说要开始“杀鸡”，先不说对方哪里来的底气，最起码外界对这个“做菜高手”的看法，肯定是见仁见智的。</p>
-<p>HANA 是 High-Performance Analytic Appliance 的简称。SAP 要做的这个数据库，作为一个“做菜高手”进军“杀鸡市场”的第一炮，打得很响亮。按照 SAP 的宣传，它有着市面上传统的数据库很多不具备的特性。</p>
-<p>下面我们可以一起了解一下这些特性，这很有必要。<br><strong>第一，HANA 选择了按列存储的同时支持事务处理。</strong>传统数据库是按行存储的，数据仓库近些年来才开始按照列式存储。按行存储对事务处理方便，但是不利于分析处理；按列存储则相反。但是这两者的不利于程度是有所不同的。</p>
-<p>通常来说，一个数据库如果同时支持事务处理和分析处理，那么数据库厂商会选择按行存储，因为按列存储的同时支持高效率的事务处理是非常难的。但是 HANA 却选择了按列存储的同时还支持事务处理，这个用数据库界“老司机”的话来说就是，要么是艺高人胆大，要么是无知者无畏。</p>
-<p><strong>第二，做出把所有的数据都放在内存里这个假设。</strong>今天来看，内存不是很贵了，但是在 2009 年敢做出那样的假设胆子就不是一般的大了。一个数据库一旦数据都在内存里，很多传统数据库的基本假设就都不一样了，做法当然也就很不一样。</p>
-<p>所以 HANA 在很多演示的时候，查询极快。一个在 Oracle 或者 DB2 上需要跑一天才能做出来的报表查询，在 HANA 那儿 3 秒钟搞定。对，就是这么快。当然，其实查询是精心挑选的，能够存储这么多数据的机器的配置是非常高的。</p>
-<p><strong>第三，因为 HANA 选择了在一个系统同时支持事务处理和分析查询，这就让 HANA 的数据不需要额外 ETL，企业也不需要为分析查询专门配备另外一份列存的数据。</strong>某种程度上，HANA 宣称自己节省了企业的消耗，也是对的。而且因为两者共享数据，分析查询的时候能够查询的数据就非常新了。这对企业来说也是非常有必要的。</p>
-<p><strong>第四，HANA 几乎完整地整合了 R 的功能，并且把 SAP 业务相关的很多功能直接在 HANA 内部实现了。</strong>这有点反计算机软件构架里面的封装。然而在内存数据库的环境下让数据离业务相关计算更近，无疑是一种效率上极其有效的策略。</p>
-<p><strong>第五，HANA 采用了现代数据库里常用的 Shared-nothing 的体系架构。</strong>这种体系架构数据被纵向按照某个主键切分，每台机器只需要负责自己的部分。这让 HANA 具备了非常灵活的资源配置，而且加了机器查询也就会变得更快，立竿见影。简而言之，HANA 的体系架构很新。</p>
-<p>综上所述，HANA 在技术上是很有创新的，而且单纯从 SAP 公布出来的这些技术细节来看，HANA 的确是具备了在很多方面对传统数据库发起挑战的能力。所以，一个“做菜”的，看起来“杀鸡”也杀得很漂亮。很多人不得不为 SAP 精彩的 HANA 数据库疯狂打 Call 了。</p>
-<p>由于 SAP 的这个举措，首先受到伤害的是和 SAP 合作的 IBM 的 DB2 组了。毕竟，本来是难兄难弟抱团取暖，现在变成了一个人冲锋陷阵，抛弃了老伙伴。</p>
-<p>其次受到威胁的当然是那个坐在数据库领域第一把交椅上的 Oracle。试想一下，原来用 SAP 的必须上 Oracle，而用 Oracle 的还可以搭自己家里的企业级软件。这让 Oracle 处于多有利的地位呀！但突然之间局势就变了，SAP 有自己的数据库了，而且还很快、很厉害、很先进。接下来 Oracle 的这个生意就不好做了。</p>
-<p>但是对 2009 年的 SAP 来说，HANA 这个吸引眼球的宣传，一下子让原本已经成为或者即将成为二流公司的 SAP 回到了聚光灯前，不管产品有没有做出来，最起码先把风头抢占了。SAP 公司 HANA 战略的实施，当得上商业教科书的经典案例。对于一个 2009 年就吹起来的、但是却没有实际产品的 HANA 数据库，SAP 的开发和商业化道路概括来说就是四个字：心黑胆肥。</p>
-<p>2010 年开始，SAP 在大力宣传 HANA 的时候，并没有大规模地卖 HANA，而是非常有重点地挑了几个人傻钱多的企业开始做内测。这些企业不但钱多，而且还愿意当小白鼠。2011 年以后，HANA 面向的对象稍微多了一点，但主要还是非常有钱的大型企业，比如德国电信、中石油、中石化这种。可以说一般没钱的企业是享受不到充当 HANA 小白鼠资格的。</p>
-<p>HANA 需要内存 64 GB 以上的机器，但是一般来说 64 GB 跑起来大数据还是不够快。所以通常需要更多的钱买非常贵的硬件。而 HANA 的软件的最低配置是 30 万美元起。所以软硬件一起更是耗资巨大。从 2011 年到 2014 年，SAP 一直对 HANA 相关的产品定以非常高的价格。基本上这个产品给人的感觉就是：只有有钱的公司才能用得起，没钱的就算了。</p>
-<p>所以市面上对 HANA 的各种抱怨，主要都集中在了 HANA 高昂的价格上了。然而这其实也是 SAP 想要的。<br>    • 一方面，SAP 的高价让大家把对 HANA 的关注都集中到了价格上；<br>    • 另外一方面，SAP 通过高价获得了不少优质客户和源源不断的金钱，更是从这个高价的过程里获得了对产品来说非常重要的形象问题：HANA 就是“高大上”的代表。</p>
-<p>另外，因为价格高，所以实际上真正使用 HANA 的用户并不多，而且这些用户的硬件多半都是高配版。这样，HANA 即使有这样或那样的问题，暴露在大众面前的机会也不多。所以在收获金钱的同时，SAP 也给 HANA 的逐步完善赢得了很多的时间。</p>
-<p>SAP 宣传的大胆还体现在对 HANA 的宣传上。SAP 宣传 HANA 的时候，把 HANA 和 Oracle 的产品做对比。SAP 表示，HANA 是基于最新硬件和研究的新一代数据库，代表着数据库的未来；而 Oracle 则是一个已经存在了很多年的老朽的东西，不代表未来。</p>
-<p>这个宣传，我们先不管是不是言过其实，但它的实际效果的确是非常好。那些不差钱的企业，比如中国石油，要的就是最新、最贵的东西。于是世界各地大量有钱的企业排队从 Oracle 转到 HANA 上。这些企业有中国的，有日本的，还有欧洲、美洲的。很多企业都是被 HANA 这种舍我其谁的势态给吸引过来的。</p>
-<p>说起来真的是一物降一物。这么多年来，HANA 的出现，第一次对 Oracle 的基本盘产生了动摇。在这之前不管是 DB2 还是 SQL Server，Oracle 都不屑一顾。在 Oracle 看来，那些无非是跟在后面吃点“残羹冷炙”，算不得威胁。而 HANA 不断抢占 Oracle 的用户，让 Oracle 也开始着急起来。Oracle 在商业上显得非常被动。</p>
-<p>并且后续 Oracle 一系列的发布：从 Timesten、Exalytics、Exadata 到 Oracle 12c In-Memory Option，简直是用实践再次证明了自己就是 HANA 的一个追随者，而 SAP 才是内存数据库的开拓者。所以很多人更懒得去理会那个亦步亦趋的 Oracle 了。Oracle 慌了，可能 Oracle 也没有想到，自己当初抢占 SAP 领地，SAP 这次也同样还回来了。</p>
-<p>SAP 宣传 HANA 的另外一个十分胆大的地方就是敢吹，什么都敢吹。每次都是新功能、新特性先做一个半成品，就发布出去给客户用。不但发布出去，还在客户文档里面大肆吹多牛多牛。而实际上呢？这些半成品的 Bug 一堆又一堆。举个例子，HANA 在 2011 年的时候连 High availability 都还不具备，居然就开吹 HANA 不需要 High availability。然后用户们竟然还真的信了。</p>
-<p>当然仅仅靠吹，牛皮总会有吹破的时候。所以 SAP 对 HANA 的商业实施的另外一举措就是疯狂地开发和发布新版本。在 SAP 把 HANA 推出市场以后，基本上开发团队做到了半个月到一个月一个新版本。每次新版本都会增加很多半成品的新功能，与此同时，也把前面几个版本里大的 Bug 都修复好。</p>
-<p>这个做法的好处是：一方面，用户当了小白鼠测试了新功能，减少了自己投入在测试上面的成本；另外一方面，修复得如此及时，用户体验非常好。客观一点说，4 年发布了 80 个新版本，而且每两个版本之间的差异还是很大的，也就是说半年后和半年前的 HANA，简直就不是同一个软件。这是非常不容易且难得的高效率开发。</p>
-<p>不仅如此，SAP 还在公司内部把 HANA 作为公司战略高度的产品来推广。具体来说，销售部门卖产品的业绩要重点看 HANA 卖了多少。开发团队各个产品组的新功能必须先支持 HANA 才可以去开发。至于没有 HANA 能不能跑起来，就不是必要条件了。总之，从宣传到销售到市场到研发一切以支持 HANA 为最高优先级。SAP 在那几年里，一直处于这样一种全力以赴的状态。</p>
-<p>当然 SAP 清楚地知道自己很“跛脚”：传统数据库相关的技术积累太过薄弱，所以 SAP 在大张旗鼓开发 HANA 的同时，做的另外一件偷偷摸摸的事情是收购一个数据库厂商。SAP 买下了日子不好过的老牌数据库公司 Sybase。Sybase 虽然这些年产品卖得不好，但是在数据库领域还是有数十年积累的。这些传统数据库的技术，对 SAP 就非常地重要。</p>
-<p>获得了 Sybase 的技术支持以后，SAP HANA 的体系立刻变得完整起来。举个例子，以前是所有数据全部在内存里才能用，但是总有人不是土豪，没那么有钱，买不起太高端大内存的机器，怎么办？HANA 后期的完整解决方案里面就有 cold data 存磁盘的办法，当然用的是 Sybase 那儿买的技术。</p>
-<p>另外一个特别重要的是实时备份技术，这在任何商用数据库里都很成熟，但是 HANA 一直是“裸奔”的。买了 Sybase 后，就迅速地集成了 Sybase Replication Server。</p>
-<p>SAP 偷偷地收购 Sybase，绝对是 SAP 下的一盘大棋里关键而又冒险的一步。成功了，一下子就获得了 Sybase 的技术，从而弥补了 SAP 的先天不足；失败了，HANA 的各种缺陷迟早会暴露出来的。那时 SAP 就会比较难往前走了。</p>
-<p>Sybase 到手，关键技术整合起来后，2015 年的 HANA 已经是一个各方面都非常领先的内存数据库，即便是 Oracle 这样的“大佬”也无法有任何的实力可以撼动了。这样一来 SAP 的战略转型就顺理成章了。</p>
-<p>对 SAP 来说，有和没有 HANA 是生死攸关的。HANA 战略的成功，无疑是技术和商业上的同时成功。这样的成功称得上是商业教科书的经典案例。</p>
-</blockquote>
-<p>SAP HANA 的故事精彩到可以拍成电影。SAP 的 HANA 战略很成功，徐飞老师说成功的忽悠和成功的执行，就是一个成功的产品，想知道老师是如何总结的，扫码订购该专栏。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1338,20 +1319,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">253</span>
+          <span class="site-state-item-count">254</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">106</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">107</span>
+        <span class="site-state-item-count">108</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1409,12 +1390,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">538k</span>
+    <span title="站点总字数">546k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:09</span>
+    <span title="站点阅读时长">8:17</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
