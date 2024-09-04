@@ -172,6 +172,133 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/bigdata/hbase-indexer/home/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/05/bigdata/hbase-indexer/home/" class="post-title-link" itemprop="url">Hbase Index - 首页</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-05 12:20:00" itemprop="dateCreated datePublished" datetime="2018-12-05T12:20:00+08:00">2018-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="简介（Introduction）"><a href="#简介（Introduction）" class="headerlink" title="简介（Introduction）"></a>简介（Introduction）</h2><p>The HBase Indexer project provides indexing (via <a target="_blank" rel="noopener" href="http://lucene.apache.org/solr/">Solr</a>) for content stored in <a target="_blank" rel="noopener" href="http://hbase.apache.org/">HBase</a>. It provides a flexible and extensible way of defining indexing rules, and is designed to scale.</p>
+<p>Hbase Indexer项目可以为存储在HBase中的内容提供<a target="_blank" rel="noopener" href="http://lucene.apache.org/solr/">Solr</a>索引。它提供灵活的可扩展的方式来定义索引规则，且为大规模而生。</p>
+<p>Indexing is performed asynchronously, so it does not impact write throughput on HBase. SolrCloud is used for storing the actual index in order to ensure scalability of the indexing.</p>
+<p>索引是异步的，所以不会影响Hbase的写入吞吐量。SolrCloud用于存储实际的索引，以确保索引的可伸缩性。</p>
+<h2 id="开始使用Hbase-Indexer（Getting-started-with-the-HBase-Indexer）"><a href="#开始使用Hbase-Indexer（Getting-started-with-the-HBase-Indexer）" class="headerlink" title="开始使用Hbase Indexer（Getting started with the HBase Indexer）"></a>开始使用Hbase Indexer（Getting started with the HBase Indexer）</h2><ol>
+<li><p>Make sure you’ve got the required software installed, as detailed on the <a target="_blank" rel="noopener" href="https://github.com/NGDATA/hbase-indexer/wiki/Requirements">Requirements</a> page.</p>
+</li>
+<li><p>Follow the Tutorial to get a feel for how to use the HBase Indexer.</p>
+</li>
+<li><p>Customize your indexing setup as needed using the other reference documentation provided here.</p>
+</li>
+<li><p>确认所有要求的软件已经安装，具体内容在[要求]页。</p>
+</li>
+<li><p>按照教程来体验下如何使用Hbase Indexer。</p>
+</li>
+<li><p>通过提供的文档来调整索引的配置。</p>
+</li>
+</ol>
+<h2 id="工作原理（How-it-works）"><a href="#工作原理（How-it-works）" class="headerlink" title="工作原理（How it works）"></a>工作原理（How it works）</h2><p>The HBase Indexer works by acting as an HBase replication sink. As updates are written to HBase region servers, they are “replicated” asynchronously to the HBase Indexer processes.</p>
+<p>Hbase Indxer扮演了Hbase复制集的角色。当数据写入Hbase的分区时，数据被异步的“复制”给Hbase Indexer处理器。</p>
+<p>The indexer analyzes incoming HBase mutation events, and where applicable it creates Solr documents and pushes them to SolrCloud servers.</p>
+<p>Hbase Indexer分析从Hbase发送过来的变化事件，当合适的时候创建Solr文档并发送给SolrCloud服务器。</p>
+<p>The indexed documents in Solr contain enough information to uniquely identify the HBase row that they are based on, allowing you to use Solr to search for content that is stored in HBase.</p>
+<p>Solr文档维护了足够多的信息用于唯一标识一条Hbase记录，这样允许你可能通过Solr来检索Hbase内容。</p>
+<p>HBase replication is based on reading the HBase log files, which are the precise source of truth of the what is stored in HBase: there are no missing or no extra events. In various cases, the log also contains all the information needed to index, so that no expensive random-read on HBase is necessary (see the <code>read-row</code>attribute in the <a target="_blank" rel="noopener" href="https://github.com/NGDATA/hbase-indexer/wiki/Indexer-configuration">Indexer Configuration</a>).</p>
+<p>HBase复制集是通过读取Hbase的日志文件，这些日志文件是HBASE中存储内容的精确来源：没有遗漏也没有额外的事件。在大多数情况下，日志含了索引需要的全部信息，因此不需要对Hbase进行昂贵的随机读取。（在[Indexer配置]中可查看<code>read-row</code>属性）。</p>
+<p>HBase replication delivers (small) batches of events. HBase-indexer exploits this by avoiding double-indexing of the same row if it would have been updated twice in a short time frame, and as well will batch/buffer the updates towards Solr, which gives important performance gains. The updates are applied to Solr before confirming the processing of the events to HBase, so that no event loss is possible.</p>
+<p>Hbase复制集（小规模）批量分发事件。Hbase indexer利用这一特性用于避免在一个很小的时间窗口期一条记录被更新两次而引起重复索引，也通过批量/缓存的方式来更新Solr，这样可以获得更好的性能。所有的更新会在Hbase处理确认之前更新到Solr中，因此不会出现丢失数据的情况。</p>
+<h2 id="横向扩展（Horizontal-scalability）"><a href="#横向扩展（Horizontal-scalability）" class="headerlink" title="横向扩展（Horizontal scalability）"></a>横向扩展（Horizontal scalability）</h2><p>All information about indexers is stored in ZooKeeper. New indexer hosts can always be added to a cluster, in the same way that HBase regionservers can be added to to an HBase cluster.</p>
+<p>所有的索引信息都是保存在ZooKeeper中的。新的Indexer主机可以被添加为一个集群中，就像Hbase的分区服务器被添加到Hbase集群一样。</p>
+<p>All indexing work for a single configured indexer is shared over all machines in the cluster. In this way, adding additional indexer nodes allows horizontal scaling.</p>
+<p>同一索引配置的所有索引工作被分配给集群中的所有机器。这样说来，添加额外的索引节点就可以横向扩展。</p>
+<h2 id="自动的错误处理（Automatic-failure-handling）"><a href="#自动的错误处理（Automatic-failure-handling）" class="headerlink" title="自动的错误处理（Automatic failure handling）"></a>自动的错误处理（Automatic failure handling）</h2><p>The HBase replication system upon which the HBase Indexer is based is designed to handle hardware failures. Because the HBase Indexer is based on this system, it also benefits from the same ability to handle failures.</p>
+<p>Hbase复制集系统为硬件错误处理做了设计。Hbase Indexer其于此系统，因此也从中获得了错误处理的能力。</p>
+<p>In general, indexing nodes going down or Solr nodes going down will not result in any lost data in the HBase Indexer.</p>
+<p>通常情况，索引节点或者Solr宕机不会导致Hbase Indexer中的数据丢失。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/29/bigdata/hbase-indexer/loss-data/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1919,107 +2046,6 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/introduction/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/22/go/go-little-book/introduction/" class="post-title-link" itemprop="url">Go Little Book - 引言</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-22 10:01:11" itemprop="dateCreated datePublished" datetime="2018-11-22T10:01:11+08:00">2018-11-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>每当我学习一门新语言的时候总是爱恨交加。一方面，语言是如此的重要，以至于一点小的变化对我们产生的不可估量的影响。在你的程序和可以重新定义你对其他语言的期望的时候，你会有一个持久的效果。同时，语言的设计是增量的。学习新的关键字、类型体系、编码方式以及新类库、通讯和范式需要很多工作，但又很难评估。相对学习其他必学的东西，学习新语言让我们常常感觉是对时间的投入很大。</p>
-<p>也就是说，我们要进步。我们必须愿意采用渐进的方式，又一次因为，语言是我们的基础。虽然变化是增量的，但它们往往范围很广，它们影响效率，可读性、性能、可测试性、依赖管理、错误处理、文档、分析（监控？）、通讯、标准库等等。除了说千刀万剐我们还能说什么？</p>
-<p>这留给我们一个重要的问题：为什么选Go？对我来说，有两个令人信服的理由。首先它是一门相对简单的语言，还自带相对简单的标准库。在很多方面，Go的增量本质简化了我们已经看到的在过去几十年引入的语言的复杂性。另一个原因对于很多开发者来说，它会完善你的军火库。</p>
-<p>Go被构建为一个系统语言（比如操作系统、设备驱动）并且面向C和C++开发人员。纵观Go的社群，我非常确信，应用开发者，而非系统开发者已经成为Go的主要使用者。为什么？我不能代表系统开发者，但是我们建设的网站、服务、桌面应用等等，这些面向新兴需求可归结为一类介于低层次的系统应用程序和更高级别的应用程序之间的系统。</p>
-<p>也许它是一个消息，缓存，大数据分析，命令行接口，日志或监控。我不知如何标记它，但是在我的职业身涯中，由于系统的复杂性不断和频繁并发数以万计的增长，定制的基础设施类系统成为一个不断增长的需求。你可以用Ruby或Python或别的东西（确实很多人这么做）来构建这样的系统，如果使用Go，这些系统可以有一个更严格的类型系统和更高的性能优势。同样，您可以使用Go建立网站（确实很多人这样做），但，为了更大的回旋余地，我还是喜欢使用Node或Ruby的来构建这类系统。</p>
-<p>还有一些Go的长处。比如，运行Go程序时没有依赖。你不需要担心你的用户是否已经安装了Ruby或者JVM和它们的版本。因为这个原因，Go作为命令行程序或者需要分发的其他类型的实用程序（比如日志收集器）开发语言，越来越流行了。</p>
-<p>简单地说，学习Go是一种有效利用你的时间。你将不必花费很长时间来学习甚至掌握go，你可以通过一些实践来达成。</p>
-<h2 id="关于作者"><a href="#关于作者" class="headerlink" title="关于作者"></a>关于作者</h2><p>我曾犹豫写这本小册子有几个原因。首先Go有自已的文档，特别是高效Go，它很实在（实用？）。</p>
-<p>另一个原因是我写一本关于语言的书时的不适。当我写MongoDB小册子的时候，你可以假设很多读者理解基本的关系型数据库和模型。写Redis小册子的时候，你可以假设从一个熟悉的键值存储开始。</p>
-<p>当想到摆在面前的段落和章节的时候，我知道我不能做这样的假设。你要花多少时间来讲解接口，因为对于一些人来说这是一个新概念，而另个一些人已经不需用再了解了。最终，我会感到欣慰如果你让我知道有些部分是太浅或过于详细。考虑一下这本书的价格。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2089,20 +2115,20 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">254</span>
+          <span class="site-state-item-count">255</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">106</span>
+        <span class="site-state-item-count">108</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-count">110</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -2160,12 +2186,12 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">546k</span>
+    <span title="站点总字数">550k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:17</span>
+    <span title="站点阅读时长">8:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

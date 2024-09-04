@@ -172,6 +172,106 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/24/java/list/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/24/java/list/" class="post-title-link" itemprop="url">List.addAll抛出UnsupportedOperationException</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-24 16:01:22" itemprop="dateCreated datePublished" datetime="2018-12-24T16:01:22+08:00">2018-12-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/list/" itemprop="url" rel="index"><span itemprop="name">list</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>558</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li>java</li>
+<li>list</li>
+</ul>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">String to = <span class="string">&quot;1;2;3&quot;</span>;</span><br><span class="line">String cc = <span class="string">&quot;1;2;3&quot;</span>;</span><br><span class="line">String[] toSplit = to.split(<span class="string">&quot;;&quot;</span>);</span><br><span class="line">List&lt;String&gt; list = Arrays.asList(toSplit);</span><br><span class="line">String[] ccSplit = cc.split(<span class="string">&quot;;&quot;</span>);</span><br><span class="line">List&lt;String&gt; temp = Arrays.asList(ccSplit);</span><br><span class="line">list.addAll(temp);</span><br></pre></td></tr></table></figure>
+<h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>List.addAll的文档中说，如果列表不支持时，抛出UnsupportedOperationException。</p>
+<p>Arrays.asList返回的是一个定长的列表，不能往这个列表添加数据。</p>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;(Arrays.asList(toSplit));</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考链接https-stackoverflow-com-questions-25624251-list-addall-throwing-unsupportedoperationexception-when-trying-to-add-another-li"><a href="#参考链接https-stackoverflow-com-questions-25624251-list-addall-throwing-unsupportedoperationexception-when-trying-to-add-another-li" class="headerlink" title="参考链接https://stackoverflow.com/questions/25624251/list-addall-throwing-unsupportedoperationexception-when-trying-to-add-another-li"></a>参考链接<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/25624251/list-addall-throwing-unsupportedoperationexception-when-trying-to-add-another-li">https://stackoverflow.com/questions/25624251/list-addall-throwing-unsupportedoperationexception-when-trying-to-add-another-li</a></h2>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/21/geektime/xufei/hana/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1303,133 +1403,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/bigdata/hbase-indexer/home/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/12/05/bigdata/hbase-indexer/home/" class="post-title-link" itemprop="url">Hbase Index - 首页</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-12-05 12:20:00" itemprop="dateCreated datePublished" datetime="2018-12-05T12:20:00+08:00">2018-12-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="简介（Introduction）"><a href="#简介（Introduction）" class="headerlink" title="简介（Introduction）"></a>简介（Introduction）</h2><p>The HBase Indexer project provides indexing (via <a target="_blank" rel="noopener" href="http://lucene.apache.org/solr/">Solr</a>) for content stored in <a target="_blank" rel="noopener" href="http://hbase.apache.org/">HBase</a>. It provides a flexible and extensible way of defining indexing rules, and is designed to scale.</p>
-<p>Hbase Indexer项目可以为存储在HBase中的内容提供<a target="_blank" rel="noopener" href="http://lucene.apache.org/solr/">Solr</a>索引。它提供灵活的可扩展的方式来定义索引规则，且为大规模而生。</p>
-<p>Indexing is performed asynchronously, so it does not impact write throughput on HBase. SolrCloud is used for storing the actual index in order to ensure scalability of the indexing.</p>
-<p>索引是异步的，所以不会影响Hbase的写入吞吐量。SolrCloud用于存储实际的索引，以确保索引的可伸缩性。</p>
-<h2 id="开始使用Hbase-Indexer（Getting-started-with-the-HBase-Indexer）"><a href="#开始使用Hbase-Indexer（Getting-started-with-the-HBase-Indexer）" class="headerlink" title="开始使用Hbase Indexer（Getting started with the HBase Indexer）"></a>开始使用Hbase Indexer（Getting started with the HBase Indexer）</h2><ol>
-<li><p>Make sure you’ve got the required software installed, as detailed on the <a target="_blank" rel="noopener" href="https://github.com/NGDATA/hbase-indexer/wiki/Requirements">Requirements</a> page.</p>
-</li>
-<li><p>Follow the Tutorial to get a feel for how to use the HBase Indexer.</p>
-</li>
-<li><p>Customize your indexing setup as needed using the other reference documentation provided here.</p>
-</li>
-<li><p>确认所有要求的软件已经安装，具体内容在[要求]页。</p>
-</li>
-<li><p>按照教程来体验下如何使用Hbase Indexer。</p>
-</li>
-<li><p>通过提供的文档来调整索引的配置。</p>
-</li>
-</ol>
-<h2 id="工作原理（How-it-works）"><a href="#工作原理（How-it-works）" class="headerlink" title="工作原理（How it works）"></a>工作原理（How it works）</h2><p>The HBase Indexer works by acting as an HBase replication sink. As updates are written to HBase region servers, they are “replicated” asynchronously to the HBase Indexer processes.</p>
-<p>Hbase Indxer扮演了Hbase复制集的角色。当数据写入Hbase的分区时，数据被异步的“复制”给Hbase Indexer处理器。</p>
-<p>The indexer analyzes incoming HBase mutation events, and where applicable it creates Solr documents and pushes them to SolrCloud servers.</p>
-<p>Hbase Indexer分析从Hbase发送过来的变化事件，当合适的时候创建Solr文档并发送给SolrCloud服务器。</p>
-<p>The indexed documents in Solr contain enough information to uniquely identify the HBase row that they are based on, allowing you to use Solr to search for content that is stored in HBase.</p>
-<p>Solr文档维护了足够多的信息用于唯一标识一条Hbase记录，这样允许你可能通过Solr来检索Hbase内容。</p>
-<p>HBase replication is based on reading the HBase log files, which are the precise source of truth of the what is stored in HBase: there are no missing or no extra events. In various cases, the log also contains all the information needed to index, so that no expensive random-read on HBase is necessary (see the <code>read-row</code>attribute in the <a target="_blank" rel="noopener" href="https://github.com/NGDATA/hbase-indexer/wiki/Indexer-configuration">Indexer Configuration</a>).</p>
-<p>HBase复制集是通过读取Hbase的日志文件，这些日志文件是HBASE中存储内容的精确来源：没有遗漏也没有额外的事件。在大多数情况下，日志含了索引需要的全部信息，因此不需要对Hbase进行昂贵的随机读取。（在[Indexer配置]中可查看<code>read-row</code>属性）。</p>
-<p>HBase replication delivers (small) batches of events. HBase-indexer exploits this by avoiding double-indexing of the same row if it would have been updated twice in a short time frame, and as well will batch/buffer the updates towards Solr, which gives important performance gains. The updates are applied to Solr before confirming the processing of the events to HBase, so that no event loss is possible.</p>
-<p>Hbase复制集（小规模）批量分发事件。Hbase indexer利用这一特性用于避免在一个很小的时间窗口期一条记录被更新两次而引起重复索引，也通过批量/缓存的方式来更新Solr，这样可以获得更好的性能。所有的更新会在Hbase处理确认之前更新到Solr中，因此不会出现丢失数据的情况。</p>
-<h2 id="横向扩展（Horizontal-scalability）"><a href="#横向扩展（Horizontal-scalability）" class="headerlink" title="横向扩展（Horizontal scalability）"></a>横向扩展（Horizontal scalability）</h2><p>All information about indexers is stored in ZooKeeper. New indexer hosts can always be added to a cluster, in the same way that HBase regionservers can be added to to an HBase cluster.</p>
-<p>所有的索引信息都是保存在ZooKeeper中的。新的Indexer主机可以被添加为一个集群中，就像Hbase的分区服务器被添加到Hbase集群一样。</p>
-<p>All indexing work for a single configured indexer is shared over all machines in the cluster. In this way, adding additional indexer nodes allows horizontal scaling.</p>
-<p>同一索引配置的所有索引工作被分配给集群中的所有机器。这样说来，添加额外的索引节点就可以横向扩展。</p>
-<h2 id="自动的错误处理（Automatic-failure-handling）"><a href="#自动的错误处理（Automatic-failure-handling）" class="headerlink" title="自动的错误处理（Automatic failure handling）"></a>自动的错误处理（Automatic failure handling）</h2><p>The HBase replication system upon which the HBase Indexer is based is designed to handle hardware failures. Because the HBase Indexer is based on this system, it also benefits from the same ability to handle failures.</p>
-<p>Hbase复制集系统为硬件错误处理做了设计。Hbase Indexer其于此系统，因此也从中获得了错误处理的能力。</p>
-<p>In general, indexing nodes going down or Solr nodes going down will not result in any lost data in the HBase Indexer.</p>
-<p>通常情况，索引节点或者Solr宕机不会导致Hbase Indexer中的数据丢失。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1499,20 +1472,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">254</span>
+          <span class="site-state-item-count">255</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">106</span>
+        <span class="site-state-item-count">108</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-count">110</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1570,12 +1543,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">546k</span>
+    <span title="站点总字数">550k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:17</span>
+    <span title="站点阅读时长">8:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

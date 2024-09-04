@@ -172,6 +172,107 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/introduction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/22/go/go-little-book/introduction/" class="post-title-link" itemprop="url">Go Little Book - 引言</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-22 10:01:11" itemprop="dateCreated datePublished" datetime="2018-11-22T10:01:11+08:00">2018-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>每当我学习一门新语言的时候总是爱恨交加。一方面，语言是如此的重要，以至于一点小的变化对我们产生的不可估量的影响。在你的程序和可以重新定义你对其他语言的期望的时候，你会有一个持久的效果。同时，语言的设计是增量的。学习新的关键字、类型体系、编码方式以及新类库、通讯和范式需要很多工作，但又很难评估。相对学习其他必学的东西，学习新语言让我们常常感觉是对时间的投入很大。</p>
+<p>也就是说，我们要进步。我们必须愿意采用渐进的方式，又一次因为，语言是我们的基础。虽然变化是增量的，但它们往往范围很广，它们影响效率，可读性、性能、可测试性、依赖管理、错误处理、文档、分析（监控？）、通讯、标准库等等。除了说千刀万剐我们还能说什么？</p>
+<p>这留给我们一个重要的问题：为什么选Go？对我来说，有两个令人信服的理由。首先它是一门相对简单的语言，还自带相对简单的标准库。在很多方面，Go的增量本质简化了我们已经看到的在过去几十年引入的语言的复杂性。另一个原因对于很多开发者来说，它会完善你的军火库。</p>
+<p>Go被构建为一个系统语言（比如操作系统、设备驱动）并且面向C和C++开发人员。纵观Go的社群，我非常确信，应用开发者，而非系统开发者已经成为Go的主要使用者。为什么？我不能代表系统开发者，但是我们建设的网站、服务、桌面应用等等，这些面向新兴需求可归结为一类介于低层次的系统应用程序和更高级别的应用程序之间的系统。</p>
+<p>也许它是一个消息，缓存，大数据分析，命令行接口，日志或监控。我不知如何标记它，但是在我的职业身涯中，由于系统的复杂性不断和频繁并发数以万计的增长，定制的基础设施类系统成为一个不断增长的需求。你可以用Ruby或Python或别的东西（确实很多人这么做）来构建这样的系统，如果使用Go，这些系统可以有一个更严格的类型系统和更高的性能优势。同样，您可以使用Go建立网站（确实很多人这样做），但，为了更大的回旋余地，我还是喜欢使用Node或Ruby的来构建这类系统。</p>
+<p>还有一些Go的长处。比如，运行Go程序时没有依赖。你不需要担心你的用户是否已经安装了Ruby或者JVM和它们的版本。因为这个原因，Go作为命令行程序或者需要分发的其他类型的实用程序（比如日志收集器）开发语言，越来越流行了。</p>
+<p>简单地说，学习Go是一种有效利用你的时间。你将不必花费很长时间来学习甚至掌握go，你可以通过一些实践来达成。</p>
+<h2 id="关于作者"><a href="#关于作者" class="headerlink" title="关于作者"></a>关于作者</h2><p>我曾犹豫写这本小册子有几个原因。首先Go有自已的文档，特别是高效Go，它很实在（实用？）。</p>
+<p>另一个原因是我写一本关于语言的书时的不适。当我写MongoDB小册子的时候，你可以假设很多读者理解基本的关系型数据库和模型。写Redis小册子的时候，你可以假设从一个熟悉的键值存储开始。</p>
+<p>当想到摆在面前的段落和章节的时候，我知道我不能做这样的假设。你要花多少时间来讲解接口，因为对于一些人来说这是一个新概念，而另个一些人已经不需用再了解了。最终，我会感到欣慰如果你让我知道有些部分是太浅或过于详细。考虑一下这本书的价格。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/about/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1489,193 +1590,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/09/android/android-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/08/09/android/android-1/" class="post-title-link" itemprop="url">Hbuilder 5+SDKAndroid原生工程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-09 21:32:12" itemprop="dateCreated datePublished" datetime="2018-08-09T21:32:12+08:00">2018-08-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>本文主要参考<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/13232">使用新版本5+SDK创建最简Android原生工程（Android studio）</a>和 <a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/38">Android离线打包</a>。如有未说明清楚之处，参看官方文档。</p>
-<p>下载最新版本5+SDK,<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/103">下载地址</a>， 将SDK解压到任意目录，目录结构如下，以下统称为5+SDK目录。</p>
-<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder12.png"></p>
-<h2 id="新建Android工程"><a href="#新建Android工程" class="headerlink" title="新建Android工程"></a>新建Android工程</h2><p>从欢迎界面或者文件&gt;新建工程，选择Android类型的项目，使用默认配置或者根据需要做相关调整。创建Anroid应用本身不是本文重点。如果有问题可以删了重来，建个一两次基本没问题了。<br><img src="http://of73u2ed9.bkt.clouddn.com/android%20project.png" alt="新建Android工程"></p>
-<h2 id="配置Hbuilder"><a href="#配置Hbuilder" class="headerlink" title="配置Hbuilder"></a>配置Hbuilder</h2><p><strong>注意将项目树使用Project方式显示，以便说明内容不引起误解</strong>。</p>
-<h3 id="删除原生文件"><a href="#删除原生文件" class="headerlink" title="删除原生文件"></a>删除原生文件</h3><p>删除原生工程中java目录下系统默认创建的源代码</p>
-<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder1.png"></p>
-<h3 id="复制aar文件"><a href="#复制aar文件" class="headerlink" title="复制aar文件"></a>复制aar文件</h3><p>复制5+SDK目录下的SDK-&gt;libs-&gt;lib.5plus.base-release.aar文件到原生工程工程的app-&gt;libs目录下</p>
-<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder2.png"></p>
-<h3 id="配置build-gradle"><a href="#配置build-gradle" class="headerlink" title="配置build.gradle"></a>配置build.gradle</h3><p>打开app下的build.gradle文件</p>
-<h4 id="添加aar文件引用到dependencies"><a href="#添加aar文件引用到dependencies" class="headerlink" title="添加aar文件引用到dependencies"></a>添加aar文件引用到dependencies</h4><p>添加aar文件引用到dependencies，如下代码。如过编译器有警告信息，根据提示信息修改成imlementation。</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile(name: &#x27;lib<span class="number">.5</span>plus.base-release&#x27;, ext: &#x27;aar&#x27;)</span><br></pre></td></tr></table></figure>
-<h4 id="添加aar文件搜索路径"><a href="#添加aar文件搜索路径" class="headerlink" title="添加aar文件搜索路径"></a>添加aar文件搜索路径</h4><p>添加aar文件搜索路径与dependencies同级, 代码如下</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    flatDir &#123;</span><br><span class="line">        dirs &#x27;libs&#x27;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="修改targetSdkVersion"><a href="#修改targetSdkVersion" class="headerlink" title="修改targetSdkVersion"></a>修改targetSdkVersion</h4><p>targetSdkVersion修改为21</p>
-<h4 id="设置multiDexEnabled"><a href="#设置multiDexEnabled" class="headerlink" title="设置multiDexEnabled"></a>设置multiDexEnabled</h4><p>multiDexEnabled设置成false</p>
-<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder4.png"></p>
-<h3 id="配置Androidmanifest-xml"><a href="#配置Androidmanifest-xml" class="headerlink" title="配置Androidmanifest.xml"></a>配置Androidmanifest.xml</h3><p>打开工程的Androidmanifest.xml文件,用以下内容替换原有application节点的内容</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">application</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:name</span>=<span class="string">&quot;io.dcloud.application.DCloudApplication&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:allowClearUserData</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:icon</span>=<span class="string">&quot;@drawable/icon&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:label</span>=<span class="string">&quot;@string/app_name&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:largeHeap</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">    &gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:name</span>=<span class="string">&quot;io.dcloud.PandoraEntry&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:configChanges</span>=<span class="string">&quot;orientation|keyboardHidden|keyboard|navigation&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:label</span>=<span class="string">&quot;@string/app_name&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:launchMode</span>=<span class="string">&quot;singleTask&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:hardwareAccelerated</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:theme</span>=<span class="string">&quot;@style/TranslucentTheme&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:screenOrientation</span>=<span class="string">&quot;user&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:windowSoftInputMode</span>=<span class="string">&quot;adjustResize&quot;</span> &gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.action.MAIN&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.category.LAUNCHER&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="增加icon-png"><a href="#增加icon-png" class="headerlink" title="增加icon.png"></a>增加icon.png</h3><p>在app-&gt;src-&gt;res-&gt;drawble目录下放应用的图标文件文件命名为icon.png，如果没有可从5+SDK目录下的HBuilder-Hello目录下找。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder5.png"></p>
-<h3 id="配置资源目录"><a href="#配置资源目录" class="headerlink" title="配置资源目录"></a>配置资源目录</h3><p>创建assets目录（app-&gt;src-&gt;main-&gt;assets），将5+SDK目录下的SDK-&gt;assets-&gt;data目录复制到新创建的assets目录下<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder6.png"></p>
-<h3 id="配置应用目录"><a href="#配置应用目录" class="headerlink" title="配置应用目录"></a>配置应用目录</h3><p>创建apps目录（app-&gt;src-&gt;main-&gt;assets-&gt;apps），将5+SDK目录下的HBuilder-Hello下的Apps(HBuilder-Hello-&gt;app-&gt;src-&gt;main-&gt;assets-&gt;apps)目录下内容复制到新创建的apps目录下。 注意： 应用资源的路径为[appid]-&gt;www, appid为应用资源manifest.json文件中id节点的值。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder7.png"></p>
-<h3 id="配置dcloud-control-xml"><a href="#配置dcloud-control-xml" class="headerlink" title="配置dcloud_control.xml"></a>配置dcloud_control.xml</h3><p>修改应用的assets-&gt;data-&gt;dcloud_control.xml文件的apps-&gt;app节点的appid属性的值改为manifest.json文件id节点的值，资源目录（app-&gt;[appid]）、manifest.json的id（id）和dcloud_control的appid，三者必须一致，否则应用无法正常启动。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder8.png"></p>
-<h3 id="编译运行。"><a href="#编译运行。" class="headerlink" title="编译运行。"></a>编译运行。</h3><h2 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h2><h3 id="配置应用的权限"><a href="#配置应用的权限" class="headerlink" title="配置应用的权限"></a>配置应用的权限</h3><p>参考5+SDK目录下“Feature列表.xls”文档，确定应用中使用到的扩展API，在AndroidManifest.json文件中调整API的权限。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder11.png"></p>
-<h3 id="配置应用的包名及版本号"><a href="#配置应用的包名及版本号" class="headerlink" title="配置应用的包名及版本号"></a>配置应用的包名及版本号</h3><p>打开AndroidManifest.xml文件，在代码视图中修改根节点的package属性值，如下：<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder9.png"><br>其中package为应用的包名，采用反向域名格式，为应用的标识；versionCode为应用的版本号（整数值），用于各应用市场的升级判断，建议与manifest.json中version -&gt; code值一致；versionName为应用的版本名称（字符串），在系统应用管理程序中显示的版本号，建议与manifest.json中version -&gt; name值一致。</p>
-<h3 id="配置应用名称"><a href="#配置应用名称" class="headerlink" title="配置应用名称"></a>配置应用名称</h3><p>打开res -&gt; values -&gt; strings.xml文件，修改“app_name”字段值，该值为安装到手机上桌面显示的应用名称。</p>
-<h3 id="配置应用图标和启动界面"><a href="#配置应用图标和启动界面" class="headerlink" title="配置应用图标和启动界面"></a>配置应用图标和启动界面</h3><p>将应用的图标（文件名为icon.png）和启动图片按照对应的尺寸拷贝到工程的res -&gt; drawable-XXX目录下。</p>
-<h4 id="应用图标"><a href="#应用图标" class="headerlink" title="应用图标"></a>应用图标</h4><p>指定各种分辨率设备上使用的应用图标（png格式）</p>
-<table>
-<thead>
-<tr>
-<th>节点名</th>
-<th>图标尺寸</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>mdpi</td>
-<td>48*48</td>
-<td>普通屏程序图标</td>
-</tr>
-<tr>
-<td>ldpi</td>
-<td>48*48</td>
-<td>大屏程序图标</td>
-</tr>
-<tr>
-<td>hdpi</td>
-<td>72*72</td>
-<td>高分屏程序图标</td>
-</tr>
-<tr>
-<td>xhdpi</td>
-<td>96*96</td>
-<td>20P高分屏程序图标</td>
-</tr>
-<tr>
-<td>xxhdpi</td>
-<td>144*144</td>
-<td>1080P高分屏程序图标</td>
-</tr>
-</tbody></table>
-<h4 id="启动图片"><a href="#启动图片" class="headerlink" title="启动图片"></a>启动图片</h4><p>指定各种分辨率设备上使用的启动图片（png格式）</p>
-<table>
-<thead>
-<tr>
-<th>节点名</th>
-<th>图标尺寸</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>mdpi</td>
-<td>240*282</td>
-<td>普通屏启动图片</td>
-</tr>
-<tr>
-<td>ldpi</td>
-<td>320*442</td>
-<td>大屏启动图片</td>
-</tr>
-<tr>
-<td>hdpi</td>
-<td>480*762</td>
-<td>高分屏启动图片</td>
-</tr>
-<tr>
-<td>xhdpi</td>
-<td>720*1242</td>
-<td>720高分屏幕启动图片</td>
-</tr>
-<tr>
-<td>xxhdpi</td>
-<td>1080*1882</td>
-<td>1080p高分屏启动图片</td>
-</tr>
-</tbody></table>
-<h3 id="更新应用资源"><a href="#更新应用资源" class="headerlink" title="更新应用资源"></a>更新应用资源</h3><p>打开assets -&gt; apps 目录，将下面“HelloH5”目录名称修改为应用manifest.json中的id名称（这步非常重要，否则会导致应用无法正常启动），并将所有应用资源拷贝到其下的www目录。</p>
-<h3 id="配置应用信息"><a href="#配置应用信息" class="headerlink" title="配置应用信息"></a>配置应用信息</h3><p>打开assets -&gt; data下的dcloud_control.xml文件：<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder11.png"><br>其中appid值为apps目录下的[appid]目录，appid决定运行哪个应用；appver为应用的版本号，用于应用资源的升级，必须保持与manifest.json中的version -&gt; name值完全一致；version值为应用基座版本号（plus.runtime.innerVersion返回的值），不要随意修改。</p>
-<h3 id="生成安装包"><a href="#生成安装包" class="headerlink" title="生成安装包"></a>生成安装包</h3><p>如果只是测试使用Build-&gt;build apks即可，如果用于正式环境，build-&gt;Generate Signed APK。按要求填写相关信息。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder10.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1745,20 +1659,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">254</span>
+          <span class="site-state-item-count">255</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">106</span>
+        <span class="site-state-item-count">108</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-count">110</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1816,12 +1730,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">546k</span>
+    <span title="站点总字数">550k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:17</span>
+    <span title="站点阅读时长">8:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

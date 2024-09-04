@@ -172,6 +172,193 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/09/android/android-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/09/android/android-1/" class="post-title-link" itemprop="url">Hbuilder 5+SDKAndroid原生工程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-09 21:32:12" itemprop="dateCreated datePublished" datetime="2018-08-09T21:32:12+08:00">2018-08-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>本文主要参考<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/13232">使用新版本5+SDK创建最简Android原生工程（Android studio）</a>和 <a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/38">Android离线打包</a>。如有未说明清楚之处，参看官方文档。</p>
+<p>下载最新版本5+SDK,<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/103">下载地址</a>， 将SDK解压到任意目录，目录结构如下，以下统称为5+SDK目录。</p>
+<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder12.png"></p>
+<h2 id="新建Android工程"><a href="#新建Android工程" class="headerlink" title="新建Android工程"></a>新建Android工程</h2><p>从欢迎界面或者文件&gt;新建工程，选择Android类型的项目，使用默认配置或者根据需要做相关调整。创建Anroid应用本身不是本文重点。如果有问题可以删了重来，建个一两次基本没问题了。<br><img src="http://of73u2ed9.bkt.clouddn.com/android%20project.png" alt="新建Android工程"></p>
+<h2 id="配置Hbuilder"><a href="#配置Hbuilder" class="headerlink" title="配置Hbuilder"></a>配置Hbuilder</h2><p><strong>注意将项目树使用Project方式显示，以便说明内容不引起误解</strong>。</p>
+<h3 id="删除原生文件"><a href="#删除原生文件" class="headerlink" title="删除原生文件"></a>删除原生文件</h3><p>删除原生工程中java目录下系统默认创建的源代码</p>
+<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder1.png"></p>
+<h3 id="复制aar文件"><a href="#复制aar文件" class="headerlink" title="复制aar文件"></a>复制aar文件</h3><p>复制5+SDK目录下的SDK-&gt;libs-&gt;lib.5plus.base-release.aar文件到原生工程工程的app-&gt;libs目录下</p>
+<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder2.png"></p>
+<h3 id="配置build-gradle"><a href="#配置build-gradle" class="headerlink" title="配置build.gradle"></a>配置build.gradle</h3><p>打开app下的build.gradle文件</p>
+<h4 id="添加aar文件引用到dependencies"><a href="#添加aar文件引用到dependencies" class="headerlink" title="添加aar文件引用到dependencies"></a>添加aar文件引用到dependencies</h4><p>添加aar文件引用到dependencies，如下代码。如过编译器有警告信息，根据提示信息修改成imlementation。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile(name: &#x27;lib<span class="number">.5</span>plus.base-release&#x27;, ext: &#x27;aar&#x27;)</span><br></pre></td></tr></table></figure>
+<h4 id="添加aar文件搜索路径"><a href="#添加aar文件搜索路径" class="headerlink" title="添加aar文件搜索路径"></a>添加aar文件搜索路径</h4><p>添加aar文件搜索路径与dependencies同级, 代码如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    flatDir &#123;</span><br><span class="line">        dirs &#x27;libs&#x27;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="修改targetSdkVersion"><a href="#修改targetSdkVersion" class="headerlink" title="修改targetSdkVersion"></a>修改targetSdkVersion</h4><p>targetSdkVersion修改为21</p>
+<h4 id="设置multiDexEnabled"><a href="#设置multiDexEnabled" class="headerlink" title="设置multiDexEnabled"></a>设置multiDexEnabled</h4><p>multiDexEnabled设置成false</p>
+<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder4.png"></p>
+<h3 id="配置Androidmanifest-xml"><a href="#配置Androidmanifest-xml" class="headerlink" title="配置Androidmanifest.xml"></a>配置Androidmanifest.xml</h3><p>打开工程的Androidmanifest.xml文件,用以下内容替换原有application节点的内容</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">application</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:name</span>=<span class="string">&quot;io.dcloud.application.DCloudApplication&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:allowClearUserData</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:icon</span>=<span class="string">&quot;@drawable/icon&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:label</span>=<span class="string">&quot;@string/app_name&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:largeHeap</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">    &gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:name</span>=<span class="string">&quot;io.dcloud.PandoraEntry&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:configChanges</span>=<span class="string">&quot;orientation|keyboardHidden|keyboard|navigation&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:label</span>=<span class="string">&quot;@string/app_name&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:launchMode</span>=<span class="string">&quot;singleTask&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:hardwareAccelerated</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:theme</span>=<span class="string">&quot;@style/TranslucentTheme&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:screenOrientation</span>=<span class="string">&quot;user&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:windowSoftInputMode</span>=<span class="string">&quot;adjustResize&quot;</span> &gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.action.MAIN&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.category.LAUNCHER&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="增加icon-png"><a href="#增加icon-png" class="headerlink" title="增加icon.png"></a>增加icon.png</h3><p>在app-&gt;src-&gt;res-&gt;drawble目录下放应用的图标文件文件命名为icon.png，如果没有可从5+SDK目录下的HBuilder-Hello目录下找。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder5.png"></p>
+<h3 id="配置资源目录"><a href="#配置资源目录" class="headerlink" title="配置资源目录"></a>配置资源目录</h3><p>创建assets目录（app-&gt;src-&gt;main-&gt;assets），将5+SDK目录下的SDK-&gt;assets-&gt;data目录复制到新创建的assets目录下<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder6.png"></p>
+<h3 id="配置应用目录"><a href="#配置应用目录" class="headerlink" title="配置应用目录"></a>配置应用目录</h3><p>创建apps目录（app-&gt;src-&gt;main-&gt;assets-&gt;apps），将5+SDK目录下的HBuilder-Hello下的Apps(HBuilder-Hello-&gt;app-&gt;src-&gt;main-&gt;assets-&gt;apps)目录下内容复制到新创建的apps目录下。 注意： 应用资源的路径为[appid]-&gt;www, appid为应用资源manifest.json文件中id节点的值。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder7.png"></p>
+<h3 id="配置dcloud-control-xml"><a href="#配置dcloud-control-xml" class="headerlink" title="配置dcloud_control.xml"></a>配置dcloud_control.xml</h3><p>修改应用的assets-&gt;data-&gt;dcloud_control.xml文件的apps-&gt;app节点的appid属性的值改为manifest.json文件id节点的值，资源目录（app-&gt;[appid]）、manifest.json的id（id）和dcloud_control的appid，三者必须一致，否则应用无法正常启动。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder8.png"></p>
+<h3 id="编译运行。"><a href="#编译运行。" class="headerlink" title="编译运行。"></a>编译运行。</h3><h2 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h2><h3 id="配置应用的权限"><a href="#配置应用的权限" class="headerlink" title="配置应用的权限"></a>配置应用的权限</h3><p>参考5+SDK目录下“Feature列表.xls”文档，确定应用中使用到的扩展API，在AndroidManifest.json文件中调整API的权限。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder11.png"></p>
+<h3 id="配置应用的包名及版本号"><a href="#配置应用的包名及版本号" class="headerlink" title="配置应用的包名及版本号"></a>配置应用的包名及版本号</h3><p>打开AndroidManifest.xml文件，在代码视图中修改根节点的package属性值，如下：<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder9.png"><br>其中package为应用的包名，采用反向域名格式，为应用的标识；versionCode为应用的版本号（整数值），用于各应用市场的升级判断，建议与manifest.json中version -&gt; code值一致；versionName为应用的版本名称（字符串），在系统应用管理程序中显示的版本号，建议与manifest.json中version -&gt; name值一致。</p>
+<h3 id="配置应用名称"><a href="#配置应用名称" class="headerlink" title="配置应用名称"></a>配置应用名称</h3><p>打开res -&gt; values -&gt; strings.xml文件，修改“app_name”字段值，该值为安装到手机上桌面显示的应用名称。</p>
+<h3 id="配置应用图标和启动界面"><a href="#配置应用图标和启动界面" class="headerlink" title="配置应用图标和启动界面"></a>配置应用图标和启动界面</h3><p>将应用的图标（文件名为icon.png）和启动图片按照对应的尺寸拷贝到工程的res -&gt; drawable-XXX目录下。</p>
+<h4 id="应用图标"><a href="#应用图标" class="headerlink" title="应用图标"></a>应用图标</h4><p>指定各种分辨率设备上使用的应用图标（png格式）</p>
+<table>
+<thead>
+<tr>
+<th>节点名</th>
+<th>图标尺寸</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mdpi</td>
+<td>48*48</td>
+<td>普通屏程序图标</td>
+</tr>
+<tr>
+<td>ldpi</td>
+<td>48*48</td>
+<td>大屏程序图标</td>
+</tr>
+<tr>
+<td>hdpi</td>
+<td>72*72</td>
+<td>高分屏程序图标</td>
+</tr>
+<tr>
+<td>xhdpi</td>
+<td>96*96</td>
+<td>20P高分屏程序图标</td>
+</tr>
+<tr>
+<td>xxhdpi</td>
+<td>144*144</td>
+<td>1080P高分屏程序图标</td>
+</tr>
+</tbody></table>
+<h4 id="启动图片"><a href="#启动图片" class="headerlink" title="启动图片"></a>启动图片</h4><p>指定各种分辨率设备上使用的启动图片（png格式）</p>
+<table>
+<thead>
+<tr>
+<th>节点名</th>
+<th>图标尺寸</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mdpi</td>
+<td>240*282</td>
+<td>普通屏启动图片</td>
+</tr>
+<tr>
+<td>ldpi</td>
+<td>320*442</td>
+<td>大屏启动图片</td>
+</tr>
+<tr>
+<td>hdpi</td>
+<td>480*762</td>
+<td>高分屏启动图片</td>
+</tr>
+<tr>
+<td>xhdpi</td>
+<td>720*1242</td>
+<td>720高分屏幕启动图片</td>
+</tr>
+<tr>
+<td>xxhdpi</td>
+<td>1080*1882</td>
+<td>1080p高分屏启动图片</td>
+</tr>
+</tbody></table>
+<h3 id="更新应用资源"><a href="#更新应用资源" class="headerlink" title="更新应用资源"></a>更新应用资源</h3><p>打开assets -&gt; apps 目录，将下面“HelloH5”目录名称修改为应用manifest.json中的id名称（这步非常重要，否则会导致应用无法正常启动），并将所有应用资源拷贝到其下的www目录。</p>
+<h3 id="配置应用信息"><a href="#配置应用信息" class="headerlink" title="配置应用信息"></a>配置应用信息</h3><p>打开assets -&gt; data下的dcloud_control.xml文件：<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder11.png"><br>其中appid值为apps目录下的[appid]目录，appid决定运行哪个应用；appver为应用的版本号，用于应用资源的升级，必须保持与manifest.json中的version -&gt; name值完全一致；version值为应用基座版本号（plus.runtime.innerVersion返回的值），不要随意修改。</p>
+<h3 id="生成安装包"><a href="#生成安装包" class="headerlink" title="生成安装包"></a>生成安装包</h3><p>如果只是测试使用Build-&gt;build apks即可，如果用于正式环境，build-&gt;Generate Signed APK。按要求填写相关信息。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder10.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/09/android/android-0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1677,165 +1864,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2017/10/26/zeronet/zeronet-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/10/26/zeronet/zeronet-1/" class="post-title-link" itemprop="url">ZeroNet常见问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-10-26 08:22:20" itemprop="dateCreated datePublished" datetime="2017-10-26T08:22:20+08:00">2017-10-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zeronet/" itemprop="url" rel="index"><span itemprop="name">zeronet</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="我需要开放端口么？"><a href="#我需要开放端口么？" class="headerlink" title="我需要开放端口么？"></a>我需要开放端口么？</h2><p>这个是可选的，如果你只是浏览和使用ZeroNet，你可以不需要开放端口。如果你要创建一个站点，强烈推荐你要开放一个端口。<br>ZeroNet在启动时会尝试用UPnP来打开一个端口，如果失败了，你需要手动开启：</p>
-<ul>
-<li>通过<code>http://192.168.1.1 </code>或者 <code>http://192.168.0.1</code>来访问你的路由器页面。</li>
-<li>查找<code>开启UPnP支持</code>的类似选项，然后重启ZeroNet。<br>如果还是不起作用，查看<code>端口转发</code>章节。不同的路由器各有不同。转发端口是15441。</li>
-</ul>
-<h2 id="ZeroNet是匿名的么？"><a href="#ZeroNet是匿名的么？" class="headerlink" title="ZeroNet是匿名的么？"></a>ZeroNet是匿名的么？</h2><p>ZeroNet没有比BitTorrent提供更多的匿名性，但随着节点的增加，隐私（找到评论或站点所有者）会变得严峻。<br>ZeroNet在匿名网络中也做了一些工作：你可以使用Tor网络轻松的隐藏你的IP。</p>
-<h2 id="在Tor浏览器中如何使用ZeroNet？"><a href="#在Tor浏览器中如何使用ZeroNet？" class="headerlink" title="在Tor浏览器中如何使用ZeroNet？"></a>在Tor浏览器中如何使用ZeroNet？</h2><p>推荐使用Tor浏览器来使用ZeroNet：</p>
-<ul>
-<li>启动Tor Browser</li>
-<li>打开<code>abaut:perferences#advanced</code></li>
-<li>点击<code>设置</code></li>
-<li>在不需要代理的输入框中填入<code>127.0.0.1</code></li>
-<li>在浏览器中打开<code>http://127.0.0.1:43110</code><br>如果你看到的是空白页面，点击工具栏上的无脚本按钮，选择临时允许所有页面，重新加载页面。</li>
-</ul>
-<h2 id="在ZeroNet中如何使用Tor"><a href="#在ZeroNet中如何使用Tor" class="headerlink" title="在ZeroNet中如何使用Tor?"></a>在ZeroNet中如何使用Tor?</h2><p>如果你希望隐藏你的IP，安装ZeroNet的最新版本然后点南Tor&gt;每个连接都启动Tor。</p>
-<p>在Windows上Tor和ZeroNet是打包在一起的，ZeroNet在第一次运行的时启尝试下载和解压Tor。如果因为某些情况安装失败了，可以根据<code>core\tools\tor\manual_install.txt</code>的说明来安装。</p>
-<p>其他操作系统根据<a target="_blank" rel="noopener" href="https://www.torproject.org/docs/installguide.html">安装说明</a>进行安装，修改你的torrc的配置文件，把<code># ControlPort 9051</code>的<code>#</code>去掉，然后重启你的Tor服务和ZeroNet。</p>
-<blockquote>
-<p>提示：你可以通过ZeroNet的<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/Stats">状态页</a>来验证你的IP。<br>提示：如果你连接时发生错误，请检查你是否安装了最新版本的Tor（需要0.2.7.5以上版本）</p>
-</blockquote>
-<h1 id="Linux系统中ZeroNet如何使用Tor？"><a href="#Linux系统中ZeroNet如何使用Tor？" class="headerlink" title="Linux系统中ZeroNet如何使用Tor？"></a>Linux系统中ZeroNet如何使用Tor？</h1><p>更新最新版本的Tor（我们需要0.2.7.5+版本），执行这些<a target="_blank" rel="noopener" href="https://www.torproject.org/docs/debian.html.en">操作</a>。以Debian为例：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &#x27;deb http://deb.torproject.org/torproject.org jessie main&#x27;&gt;&gt; /etc/apt/sources.list.d/tor.list</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --keyserver keys.gnupg.net --recv 886DDD89</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get update</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install tor</span><br></pre></td></tr></table></figure>
-<p>修改配置文件开启控制协议：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mcedit /etc/tor/torrc</span><br></pre></td></tr></table></figure>
-<p>删除<code>ControlPort 9051</code>和<code>CookieAuthentication 1</code>(大概在57行)的<code>#</code>字符。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/tor restart</span><br></pre></td></tr></table></figure>
-<p>通过<code>usermod -a -G debian-tor [yourlinuxuser]</code>来授权访问cookie。（如果不是使用Debian通过<code>ls -al /var/run/tor/control.authcookie</code>的查看文件的用户组）。<br>注销/登录来使修改生效。</p>
-<blockquote>
-<p>提示：可以通过<code>echo &#39;PROTOCALINFO&#39; | nc 127.0.0.1 9051</code>来验证Tor是否正常运行。<br>提示：你可以不修改Tor的配置，仅通过<code>zeronet.py --tor disabe --proxy 127.0.0.1:9050 --disable_udp</code>来使用Tor，但这样你会失去与其他.onion地址通话的能力。</p>
-</blockquote>
-<h2 id="能否使用一个配置文件？"><a href="#能否使用一个配置文件？" class="headerlink" title="能否使用一个配置文件？"></a>能否使用一个配置文件？</h2><p>你可以把选项配置在<code>zeronet.conf</code>文件中。比如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">data_dir = my-data-dir</span><br><span class="line">log_dir = my-log-dir</span><br><span class="line">ui_restrict =</span><br><span class="line"> 1.2.3.4</span><br><span class="line"> 2.3.4.5</span><br></pre></td></tr></table></figure>
-<p>使用<code>zeronet.py --help</code>命令查看所有的选项。</p>
-<h2 id="如果ISP和政府屏蔽了Tor如何使它工作？"><a href="#如果ISP和政府屏蔽了Tor如何使它工作？" class="headerlink" title="如果ISP和政府屏蔽了Tor如何使它工作？"></a>如果ISP和政府屏蔽了Tor如何使它工作？</h2><p>ZeroNet暂时未包含<a target="_blank" rel="noopener" href="https://www.torproject.org/docs/pluggable-transports.html.en">Tor pluggable transports</a>。访问Tor网络的最简单的方法就是使用Tor浏览器。修改它的配置开启可拨插传输，然后修改ZeroNet的配置，使用Tor浏览器代理和控制端口。<br>通过<code>--tor_controller 127.0.0.1:9151 --tor-proxy 127.0.0.1:9150</code>来启动ZeroNet或者在<code>zeronet.conf</code>中添加如下参数：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">tor_controller = 127.0.0.1:9151</span><br><span class="line">tor_proxy = 127.0.0.1:9150</span><br></pre></td></tr></table></figure>
-
-<h2 id="不同机器可以使用相同用户名么？"><a href="#不同机器可以使用相同用户名么？" class="headerlink" title="不同机器可以使用相同用户名么？"></a>不同机器可以使用相同用户名么？</h2><p>可以，只要你把<code>data/user.json</code>文件拷贝到时你的新机器就可以了。</p>
-<h2 id="如何创建一个“特殊”的网站地址？"><a href="#如何创建一个“特殊”的网站地址？" class="headerlink" title="如何创建一个“特殊”的网站地址？"></a>如何创建一个“特殊”的网站地址？</h2><p>通过<a target="_blank" rel="noopener" href="https://bitcointalk.org/index.php?topic=25804.0">vanitygen</a>来生成。一旦你生成了你的key,创建<code>data/你的key</code>目录。在这个目录下放一些文件。<br>然后访问<code>http://127.0.0.1:43110/你的key/</code>.将<code>0</code>按钮拖到左边，然后用侧边栏来注册你的网站。</p>
-<h2 id="如何注册一个-bit的域名。"><a href="#如何注册一个-bit的域名。" class="headerlink" title="如何注册一个.bit的域名。"></a>如何注册一个.bit的域名。</h2><p>你可以通过<a target="_blank" rel="noopener" href="https://namecoin.info/">Namacoin</a>来注册一个.bit域名。通过GUI客户端或者<a target="_blank" rel="noopener" href="http://www.christopherpoole.net/registering-a-bit-domain-with-namecoin.html">命令行接口</a>来管理你的域名。<br>一旦你注册完成，你需需增加一个<code>zeronet</code>节点来记录它。比如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">...</span><br><span class="line">    &quot;zeronet&quot;: &#123;</span><br><span class="line">        &quot;&quot;: &quot;1EU1tbG9oC1A8jz2ouVwGZyQ5asrNsE4Vr&quot;,</span><br><span class="line">        &quot;blog&quot;: &quot;1BLogC9LN4oPDcruNz3qo1ysa133E9AGg8&quot;,</span><br><span class="line">        &quot;talk&quot;: &quot;1TaLk3zM7ZRskJvrh3ZNCDVGXvkJusPKQ&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">...</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>“”是顶级域名，其他的是子域名。</p>
-<blockquote>
-<p>提示:你可以通过<a target="_blank" rel="noopener" href="https://shapeshift.io/">shapeshift.io</a>来购买比特币或者其他加密货币的Namecoin。<br>提示:一些可以注册.bit域名的站点：<a target="_blank" rel="noopener" href="https://domaincoin.net/">domaincoin.net</a>, <a target="_blank" rel="noopener" href="https://peername.com/">peername.com</a>, <a target="_blank" rel="noopener" href="https://dotbit.me/">dotbit.me</a><br>提示：你可以在<a target="_blank" rel="noopener" href="http://namecha.in/">namecha.in</a>中验证你的域名。比如:<code>zeorid.bit</code><br>提示：在域名中只能使用小写字母，数字和-。<br>提示：要让ZeroHello显示你的域名而不是比特币网址，你需要在<code>content.json</code>中增加<code>domain</code>键.比如：</p>
-</blockquote>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">&quot;address&quot;: &quot;1BLogC9LN4oPDcruNz3qo1ysa133E9AGg8&quot;,</span><br><span class="line"> &quot;background-color&quot;: &quot;white&quot;,</span><br><span class="line"> &quot;cloneable&quot;: true,</span><br><span class="line"> &quot;description&quot;: &quot;Blogging platform Demo&quot;,</span><br><span class="line"> &quot;domain&quot;: &quot;Blog.ZeroNetwork.bit&quot;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="我是否可以通过生成的网站地址-私钥来接收比特币支付？"><a href="#我是否可以通过生成的网站地址-私钥来接收比特币支付？" class="headerlink" title="我是否可以通过生成的网站地址/私钥来接收比特币支付？"></a>我是否可以通过生成的网站地址/私钥来接收比特币支付？</h2><p>是的，这个地址是一个标准的比特币地址。私钥也是WIF格式的，因此你可以把它导到大部分的客户端里。</p>
-<blockquote>
-<p>提示：建议不要在你的网站地址中放太多钱，因为每次更新你的网站的时候就需要使用你的私钥。</p>
-</blockquote>
-<h2 id="当有人托管恶意内容时会发生什么？"><a href="#当有人托管恶意内容时会发生什么？" class="headerlink" title="当有人托管恶意内容时会发生什么？"></a>当有人托管恶意内容时会发生什么？</h2><p>Zeronet的网站是沙箱化的，他们的拥有权限和你在互联网上访问的其他站点一样。你可以完全控制托管理的内容。如果你发现可疑内容，你随时都可以停止托管。</p>
-<h2 id="能否通过远程的方式来安装ZeroNet？"><a href="#能否通过远程的方式来安装ZeroNet？" class="headerlink" title="能否通过远程的方式来安装ZeroNet？"></a>能否通过远程的方式来安装ZeroNet？</h2><h2 id="有什么方式可以跟踪ZeroNet使用的带宽？"><a href="#有什么方式可以跟踪ZeroNet使用的带宽？" class="headerlink" title="有什么方式可以跟踪ZeroNet使用的带宽？"></a>有什么方式可以跟踪ZeroNet使用的带宽？</h2><p>ZeroNet的侧边栏会展示发送和接收的字节（将<code>0</code>按钮拖到左边打开侧边栏）。</p>
-<blockquote>
-<p>提示：所有连接的统计<code>http://127.0.0.1:43110/Stats</code></p>
-</blockquote>
-<h2 id="当两个人用相同的key来更新网站时会发生什么？"><a href="#当两个人用相同的key来更新网站时会发生什么？" class="headerlink" title="当两个人用相同的key来更新网站时会发生什么？"></a>当两个人用相同的key来更新网站时会发生什么？</h2><p>每个content.json是有时间戳的，所有的客户端只接收最新的那个。</p>
-<h2 id="ZeroNet是否使用了比特币的区块链？"><a href="#ZeroNet是否使用了比特币的区块链？" class="headerlink" title="ZeroNet是否使用了比特币的区块链？"></a>ZeroNet是否使用了比特币的区块链？</h2><p>没有，Zeronet只是使用了比特币的加密算法用于网站地址和内容签名和验证。用户的标识是基于比特币的<a target="_blank" rel="noopener" href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">BIP32</a>格式</p>
-<p>Namecoin的区块链用于域名注册。</p>
-<h2 id="ZeroNet是否只支持HTML和CSS的网站？"><a href="#ZeroNet是否只支持HTML和CSS的网站？" class="headerlink" title="ZeroNet是否只支持HTML和CSS的网站？"></a>ZeroNet是否只支持HTML和CSS的网站？</h2><p>ZeroNet is built for dynamic, real-time updated websites, but you can serve any kind of files using it. (VCS repositories, your own thin-client, database, etc.)</p>
-<p>ZeroNet用于构建动态和实时更新的站，或者任何的文件类型（VCS仓库，瘦客户端，数据库等等）</p>
-<h2 id="如何创建一个ZeroNet网站？"><a href="#如何创建一个ZeroNet网站？" class="headerlink" title="如何创建一个ZeroNet网站？"></a>如何创建一个ZeroNet网站？</h2><p>按<a target="_blank" rel="noopener" href="http://zeronet.readthedocs.io/en/latest/using_zeronet/create_new_site/">操作说明</a></p>
-<h2 id="运行的原理是什么？"><a href="#运行的原理是什么？" class="headerlink" title="运行的原理是什么？"></a>运行的原理是什么？</h2><ul>
-<li>当你打开一个新的站点，需要访问者在BitTorrent网络的IP地址。</li>
-<li>首先下载content.json文件，这个文件包含了所有的文件名，散列和网站所有者的加密签名。</li>
-<li>通过网站地址和文件中的网站所有者的签名来验证下载的content.json文件。</li>
-<li>下载其他文件（html，css，js……）并通过content.json中的SHA512散列值进行验证。</li>
-<li>你会托管所有你访问过的网站。</li>
-<li>如果网站的所有者（拥有网站私钥的人）修改了网站，然后他签名一个新的content.json并发布到各个节点。当节点验证了content.json的真实性（通过签名），下载修改的文件并发布给其他节点。<br>更多信息：<a target="_blank" rel="noopener" href="http://zeronet.readthedocs.io/en/latest/using_zeronet/sample_sites/">ZeroNet简单网站介绍</a>，<a target="_blank" rel="noopener" href="https://docs.google.com/presentation/d/1_2qK1IuOKJ51pgBvllZ9Yu7Au2l551t3XBgyTSvilew/pub">ZeroNet工作原理幻灯片</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1905,20 +1933,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">254</span>
+          <span class="site-state-item-count">255</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">106</span>
+        <span class="site-state-item-count">108</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-count">110</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1976,12 +2004,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">546k</span>
+    <span title="站点总字数">550k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:17</span>
+    <span title="站点阅读时长">8:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

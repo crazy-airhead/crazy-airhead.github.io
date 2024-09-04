@@ -172,6 +172,117 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/09/04/course100/012/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/04/course100/012/" class="post-title-link" itemprop="url">使用 GLM4-9B 修改语音识别文本错误</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-09-04 21:00:45 / 修改时间：21:38:03" itemprop="dateCreated datePublished" datetime="2024-09-04T21:00:45+08:00">2024-09-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/" itemprop="url" rel="index"><span itemprop="name">定投人生课堂</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/%E5%AE%9A%E6%8A%95%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">定投写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/%E5%AE%9A%E6%8A%95%E5%86%99%E4%BD%9C/GLM4/" itemprop="url" rel="index"><span itemprop="name">GLM4</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/%E5%AE%9A%E6%8A%95%E5%86%99%E4%BD%9C/GLM4/Ollama/" itemprop="url" rel="index"><span itemprop="name">Ollama</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>在「定投搜索」工具中有说到，通过 <code>whsiper.cpp </code> 识别的文本可能存在繁体中文，错误的同音字，没有标点符号，突然增加的一些版权信息和告别语。已经尝试使用 <code>Ollama</code> 不是glm4的方式进行文本的修改，从修改的效果来看还是不错。</p>
+<p>现在分享此次调整的内容。</p>
+<h1 id="安装Ollama"><a href="#安装Ollama" class="headerlink" title="安装Ollama"></a>安装Ollama</h1><p>Ollama 是一个开源项目，是在本地快速跑各种开源大模型的最优选择之一。它的安装过程非常简单。MacOS 和 Windows 都有一键安装包，<a target="_blank" rel="noopener" href="https://ollama.com/download">Download Ollama on macOS</a>，下载后直接安装即可。</p>
+<p>安装完成好，可以打开终端，能看到这些信息就说明Ollama已经安装成功。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">ollama</span><br><span class="line"></span><br><span class="line">Usage:</span><br><span class="line">  ollama [flags]</span><br><span class="line">  ollama [<span class="built_in">command</span>]</span><br><span class="line"></span><br><span class="line">Available Commands:</span><br><span class="line">  serve       Start ollama</span><br><span class="line">  create      Create a model from a Modelfile</span><br><span class="line">  show        Show information <span class="keyword">for</span> a model</span><br><span class="line">  run         Run a model</span><br><span class="line">  pull        Pull a model from a registry</span><br><span class="line">  push        Push a model to a registry</span><br><span class="line">  list        List models</span><br><span class="line">  ps          List running models</span><br><span class="line">  cp          Copy a model</span><br><span class="line">  rm          Remove a model</span><br><span class="line">  <span class="built_in">help</span>        Help about any <span class="built_in">command</span></span><br><span class="line"></span><br><span class="line">Flags:</span><br><span class="line">  -h, --<span class="built_in">help</span>      <span class="built_in">help</span> <span class="keyword">for</span> ollama</span><br><span class="line">  -v, --version   Show version information</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="安装GLM4"><a href="#安装GLM4" class="headerlink" title="安装GLM4"></a>安装GLM4</h1><p>打开 Ollama 官网，搜索glm4, <a target="_blank" rel="noopener" href="https://ollama.com/library/glm4">glm4 (ollama.com)</a>，复制运行命令<code>ollama run glm4</code>并在终端执行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ollama run glm4</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; Send a message (/? <span class="keyword">for</span> <span class="built_in">help</span>)</span><br><span class="line"><span class="comment"># </span></span><br></pre></td></tr></table></figure>
+
+<p>当其实输入消息时，表示模型已经安装成功，并可使用。</p>
+<h1 id="调用"><a href="#调用" class="headerlink" title="调用"></a>调用</h1><p>此处直接上代码，prompt 是根据<a target="_blank" rel="noopener" href="https://baoyu.io/blog/prompt-engineering/translator-gpt-prompt-v2">直译、反思、意译：提升 GPT 翻译质量的一种新策略</a></p>
+<p>进行修改的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OllamaUtils</span> </span>&#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * https://baoyu.io/blog/prompt-engineering/translator-gpt-prompt-v2</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> prompt</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">fixTxt</span><span class="params">(String prompt)</span> </span>&#123;</span><br><span class="line">    String system =</span><br><span class="line">        <span class="string">&quot;&quot;</span><span class="string">&quot;</span></span><br><span class="line"><span class="string">                    你是精通简体中文的专家，尤其擅长修复文本内容错误。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">                    规则：</span></span><br><span class="line"><span class="string">                    - 不要翻译英文。</span></span><br><span class="line"><span class="string">                    - 把繁体中文修改成简体中文。</span></span><br><span class="line"><span class="string">                    - 修改错别字，如：错误的成语、错误的词组。</span></span><br><span class="line"><span class="string">                    - 修改错误的同音字，错误的同音字包括但不限于：</span></span><br><span class="line"><span class="string">                      * 孝来 -&gt; 笑来</span></span><br><span class="line"><span class="string">                      * 校来 -&gt; 笑来</span></span><br><span class="line"><span class="string">                      * 小莱 -&gt; 笑来</span></span><br><span class="line"><span class="string">                      * 李孝来 -&gt; 李笑来</span></span><br><span class="line"><span class="string">                      * 李小莱 -&gt; 李笑来</span></span><br><span class="line"><span class="string">                      * 李少莱 -&gt; 李笑来</span></span><br><span class="line"><span class="string">                      * 李小兰 -&gt; 李笑来</span></span><br><span class="line"><span class="string">                      * 李校来 -&gt; 李笑来</span></span><br><span class="line"><span class="string">                      * 李教来 -&gt; 李笑来</span></span><br><span class="line"><span class="string">                      * 健行 -&gt; 践行</span></span><br><span class="line"><span class="string">                      * 定头 -&gt; 定投</span></span><br><span class="line"><span class="string">                    - 删除无效内容。无效内容包括但不限于：</span></span><br><span class="line"><span class="string">                      * 文本段落后的版权说明，如：</span></span><br><span class="line"><span class="string">                        1. 优优独播剧场——YoYo Television Series Exclusive</span></span><br><span class="line"><span class="string">                        1. 请不吝点赞、订阅、转发、打赏，支持“明镜与点滴”栏目</span></span><br><span class="line"><span class="string">                      * 文本段落后的突然的告别语，如：</span></span><br><span class="line"><span class="string">                        1. 谢谢</span></span><br><span class="line"><span class="string">                        1. 拜拜</span></span><br><span class="line"><span class="string">                        1. 谢谢大家</span></span><br><span class="line"><span class="string">                    - 添加上合适的标点符号。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">                    策略：</span></span><br><span class="line"><span class="string">                    分三步进行修改工作。</span></span><br><span class="line"><span class="string">                    1. 根据文本内容进行修改，保持原有格式，不要遗漏任何信息。</span></span><br><span class="line"><span class="string">                    2. 根据第一步的修改结果，指出其中存在的具体问题，要准确描述。</span></span><br><span class="line"><span class="string">                    3. 根据第一步和第二步的指出的问题，重新修改，同时保持原有格式不变。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">                    返回：</span></span><br><span class="line"><span class="string">                    - 只返回重新修改的结果</span></span><br><span class="line"><span class="string">                    - 不返回具体问题</span></span><br><span class="line"><span class="string">                    - 不返回修改的解释</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">                    现在请按照上面的要求从第一行开始修改文本内容。</span></span><br><span class="line"><span class="string">                  &quot;</span><span class="string">&quot;&quot;</span>;</span><br><span class="line">    Kv kv = Kv.create().set(<span class="string">&quot;model&quot;</span>, <span class="string">&quot;glm4&quot;</span>).set(<span class="string">&quot;system&quot;</span>, system).set(<span class="string">&quot;prompt&quot;</span>, prompt);</span><br><span class="line">    log.info(<span class="string">&quot;prompt: &#123;&#125;&quot;</span>, prompt);</span><br><span class="line"></span><br><span class="line">    String result = OllamaUtils.generate(kv);</span><br><span class="line">    log.info(<span class="string">&quot;result: &#123;&#125;&quot;</span>, result);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">generate</span><span class="params">(Kv kv)</span> </span>&#123;</span><br><span class="line">    String prompt = kv.getStr(<span class="string">&quot;prompt&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (StrUtil.isBlank(prompt)) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;prompt is empty&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    HttpUtils http = HttpUtils.http(<span class="string">&quot;http://localhost:11434/api/generate&quot;</span>);</span><br><span class="line">    String model = kv.getStr(<span class="string">&quot;model&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (StrUtil.isBlank(model)) &#123;</span><br><span class="line">      kv.set(<span class="string">&quot;model&quot;</span>, <span class="string">&quot;glm4&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Boolean stream = kv.getBoolean(<span class="string">&quot;stream&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (stream == <span class="keyword">null</span>) &#123;</span><br><span class="line">      kv.set(<span class="string">&quot;stream&quot;</span>, <span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    http.bodyJson(ONode.stringify(kv));</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      HttpResponse response = http.exec(<span class="string">&quot;post&quot;</span>);</span><br><span class="line">      <span class="keyword">if</span> (response.code() != <span class="number">200</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      String body = response.bodyAsString();</span><br><span class="line">      <span class="keyword">if</span> (StrUtil.isBlank(body)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      ONode node = ONode.load(body);</span><br><span class="line">      <span class="keyword">return</span> node.get(<span class="string">&quot;response&quot;</span>).getString();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      log.error(e.getMessage(), e);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OllamaUtilsTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Test</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">generate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    String txt =</span><br><span class="line">        <span class="string">&quot;那么Bitstamp呢确实是一个老牌的这个交易所 然后呢当然现在不大了 以前呢曾经火过 那么再看哈 这位同学发过来的那个陌生人给他的链接 是跟Bitstamp半毛钱关系没有的那么一个链接 我在这里呢就不发那个假的链接了 因为有可能会产生误导&quot;</span>;</span><br><span class="line">    OllamaUtils.fixTxt(txt);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>输出内容，输出的结果还是让我满意的，最新生成的数据已经开始索引到 ES 里面。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">prompt: 那么Bitstamp呢确实是一个老牌的这个交易所 然后呢当然现在不大了 以前呢曾经火过 那么再看哈 这位同学发过来的那个陌生人给他的链接 是跟Bitstamp半毛钱关系没有的那么一个链接 我在这里呢就不发那个假的链接了 因为有可能会产生误导</span><br><span class="line">result: 那么Bitstamp确实是一个老牌的交易所，然后当然现在不大了。以前呢曾经火过。那么再看哈，这位同学发过来的那个陌生人给他的链接，是跟Bitstamp半毛钱关系没有的那么一个链接。我在这里呢就不发那个假的链接了，因为有可能会产生误导。</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/09/02/mixin/mixin-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -197,7 +308,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2024-09-02 00:17:27 / 修改时间：16:02:00" itemprop="dateCreated datePublished" datetime="2024-09-02T00:17:27+08:00">2024-09-02</time>
+              <time title="创建时间：2024-09-02 00:17:27 / 修改时间：16:05:56" itemprop="dateCreated datePublished" datetime="2024-09-02T00:17:27+08:00">2024-09-02</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -242,7 +353,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>「定投搜索」工具是 Mixin 的机器人，以 Mixin 聊天的方式提供「定投人生」课堂的全文搜索，并返回匹配的课程列表或者课程卡片。</p>
+          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>「定投搜索」工具是 Mixin 的机器人（Mixin 号「7000103414」），以 Mixin 聊天的方式提供「定投人生」课堂的全文搜索，并返回匹配的课程列表或者课程卡片。</p>
 <p>最近学习AI，发现可以用AI技术对「定投搜索」进行些优化改造，然后在查看文档时发现之前写了这篇技术总结，现在稍作调整分享这个「定投搜索」Mixin的机器人制作过程，顺便预告下新版功能。</p>
           <!--noindex-->
             <div class="post-button">
@@ -1140,151 +1251,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/05/01/course100/009/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/01/course100/009/" class="post-title-link" itemprop="url">定投人生课堂搜索工具</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-01 07:00:03" itemprop="dateCreated datePublished" datetime="2023-05-01T07:00:03+08:00">2023-05-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-06 19:26:57" itemprop="dateModified" datetime="2023-05-06T19:26:57+08:00">2023-05-06</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/" itemprop="url" rel="index"><span itemprop="name">定投人生课堂</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/%E5%AE%9A%E6%8A%95%E6%90%9C%E7%B4%A2/" itemprop="url" rel="index"><span itemprop="name">定投搜索</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="是什么"><a href="#是什么" class="headerlink" title="是什么"></a>是什么</h2><p>「定投搜索」是一个免费的Mixin机器人，是「定投人生课堂」课程搜索工具，可以通过关键字检索「定投人生课堂」的课程内容，返回课程列表。</p>
-<h2 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h2><ol>
-<li><p>登录Mixin，点击搜索「7000103414」，确认是「定投搜索」后添加机器人。</p>
-</li>
-<li><p>把搜索关键字发给该机器人，机器人会返回检索到的课程列表（结果最多10条课程）。</p>
-<ul>
-<li><p>支持多关键字，关键字之间使用空格分隔。</p>
-</li>
-<li><p>支持命令模式，使用<code>/</code>开启命令模式，当前只支持<code>/d</code>，表示返回课程详情，除了返回查询结果，还将一并返回查询结果的课程的卡片。如：<code>机会成本 /d</code>，可以在下面的图中看到返回结果。</p>
-</li>
-</ul>
-</li>
-<li><p>听课。</p>
-<ul>
-<li><p>从结果中复制课程标题到「定投人生课堂」搜索该课程，开始听课。</p>
-</li>
-<li><p>如果返回课程详情，直接点击卡片，授权后开始听课。</p>
-</li>
-</ul>
-</li>
-</ol>
-<p><img src="https://assets.quill.im/mhxpas3dauszrwragc3p0pnjrrx5" alt="WechatIMG239.png"><br><img src="https://assets.quill.im/v011v1c9sryqm9ug0ndib8zbytp5" alt="WechatIMG238.png"></p>
-<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="搜索不到结果"><a href="#搜索不到结果" class="headerlink" title="搜索不到结果"></a>搜索不到结果</h3><blockquote>
-<ul>
-<li><p>技术原因，课程内容是语音的，使用的是语音识别技术，可能无法完全识别，可能识别错误，可能存在错别字，导致检索不到，另外中文需要分词，分词的结果可能会和我们的预期不一致，导致检索不到。</p>
-</li>
-<li><p>客观原因，没有导入课程数据，或者确实没有匹配的关键字。</p>
-</li>
-<li><p>可能的解决办法，调整关键字重新搜索。</p>
-</li>
-</ul>
-</blockquote>
-<h3 id="数据如何获取"><a href="#数据如何获取" class="headerlink" title="数据如何获取"></a>数据如何获取</h3><blockquote>
-<p>手工整理。请不要找我索取课程数据，整理自己的课程笔记更重要，请听「学习的真相」的「必要关联」和「三个大脑」。</p>
-</blockquote>
-<h3 id="数据何时更新"><a href="#数据何时更新" class="headerlink" title="数据何时更新"></a>数据何时更新</h3><blockquote>
-<p>课程数据是手动整理的，无法保证与课程内容的实时同步，只会不定期导入。</p>
-</blockquote>
-<h3 id="功能是否会更新"><a href="#功能是否会更新" class="headerlink" title="功能是否会更新"></a>功能是否会更新</h3><blockquote>
-<p>目前功能基本可用，暂无功能计划，后续可能会增加命令模式的命令。</p>
-<p>如果大家有新的想法，可以反馈。</p>
-</blockquote>
-<h3 id="是否收费"><a href="#是否收费" class="headerlink" title="是否收费"></a>是否收费</h3><blockquote>
-<p>免费。如果觉得「定投搜索」工具确实对你有帮助，欢迎打赏，打赏本文即可。</p>
-</blockquote>
-<h3 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h3><blockquote>
-<p>其他问题可以添加我的微信「Crazy_Airhead」，或Mixin号「1091586」，进行反馈和沟通。</p>
-</blockquote>
-<h2 id="为什么"><a href="#为什么" class="headerlink" title="为什么"></a>为什么</h2><p>偶尔会想起一些模糊的课程内容，想重听一遍课程，但定投人生课堂只能按标题内容模糊搜索，于是只能凭记忆在Mixin中找，可能半天过去了还找不到自己想要的课程，这过程其实是挺痛苦的。在「定投人生课堂后花园」的里也会看到类似的查找课程的问题，于是有了做这个工具的想法。</p>
-<p>之前为「且慢且慢且慢」写作群的战友提供过写作练习工具，但因为服务器和域名过期等原因，服务就中断了，非常抱歉。计划做这个工具的时候是想收费的，因为提供服务需要成本，实际做的过程中时候发现不需要公网服务器也可以提供服务，于是少了收费的欲望，本着服务战友的想法，于是决定免费开放服务。</p>
-<p>此次提供的「定投搜索」工具，因为用了自家的NAS，理论上是可以长期服务战友们。如果「定投人生课堂」提供了更好的搜索功能，这个「定投搜索」工具也就没有存在的意义了，到时会停止服务。</p>
-<p>在提供服务期间，如果出现无法使用的情况，请战友们及时反馈。</p>
-<h2 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h2><p>刚开始有做「定投搜索」这个工具的想法时，小熊老师（微信号「huashichenxiong」）给了不少积极的反馈，让我开始实际编写这个工具；中间因为工作忙没怎么做，小熊老师又不停地鼓励；现在能提供服务，也是和小熊老师讨论Mixin机器人开发，打破自己的做微信公众号的思维定势（微信的机器人和微信公众号不是同一个物种），于是趁着放假时间赶紧完成剩下的工作。总之非常感谢小熊老师，如果没有小熊老师的鼓励，这个工具不知道什么时候才能完工。</p>
-<p>感谢Mixin好友「字友与自由」，Mixin号「39488252」，帮忙解答了机器人无法接收消息的问题。他写了个Java版的SDK（<a target="_blank" rel="noopener" href="https://github.com/tooonly/mixin-java-sdk%EF%BC%89%EF%BC%8C%E6%9C%89%E9%9C%80%E8%A6%81%E6%88%98%E5%8F%8B%E7%9A%84%E5%8F%AF%E4%BB%A5%E8%87%AA%E5%B7%B1%E8%8E%B7%E5%8F%96%E3%80%82">https://github.com/tooonly/mixin-java-sdk）</a>，有需要战友的可以自己获取。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1354,20 +1320,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">254</span>
+          <span class="site-state-item-count">255</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">106</span>
+        <span class="site-state-item-count">108</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-count">110</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1425,12 +1391,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">546k</span>
+    <span title="站点总字数">550k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:17</span>
+    <span title="站点阅读时长">8:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
