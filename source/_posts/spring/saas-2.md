@@ -9,7 +9,6 @@ categories:
 - ElasticSearch
 - Job
 - Kafka
----
 tags:
 - Spring Boot
 - Mybatis Plus
@@ -19,13 +18,13 @@ tags:
 - Kafka
 ---
 
-
-
 # 背景
 
-[基于Mybatis的多租户实现方法](https://l4qiang.goldsyear.com/2021/07/30/spring/saas/)对Spring Boot使用 Mybatis Plus实现Db层的数据隔离，但在实际的实现过程中，除了涉及Db层的数据隔离，还会涉及租户的识别，缓存的数据隔离，ElasticSearch的数据隔离，任务的数据隔离、消息队列的隔离，同时也包括租户的切换与忽略租户等。
+上一篇「[基于Mybatis的多租户实现方法](https://l4qiang.goldsyear.com/2021/07/30/spring/saas/)」介绍的是Spring Boot使用 Mybatis Plus实现Db层的数据隔离。但在实际的实现过程中，除了涉及Db层的数据隔离，还会涉及租户的识别，缓存的数据隔离，ElasticSearch的数据隔离，任务的数据隔离、消息队列的隔离，同时也包括租户的切换与忽略租户等。
 
-因此在上次的基础上，这次尝试把多租户的技术实现写得更完整些，如有不足支持欢迎指正。
+因此在上一篇的基础上，这次尝试把多租户的技术实现写得更完整些，如有不足支持欢迎指正。
+
+<!-- more -->
 
 # 多租户
 
@@ -48,7 +47,6 @@ tags:
 前端调用接口获取对应的租户id，之后的请求中增加tenant-id的请求头（请求头名称可根据自己的实际情况定）。
 
 ```java
-
 @GetMapping("/getTenantIdByDomain")
 public ApiResponses<SimpleOrgRes> getOrgByDomain(@RequestParam String domain) {
   return ApiResponses.success(authService.getTenantIdByDomain(domain));
@@ -423,10 +421,7 @@ public class TenantRedisUtils extends BaseRedisUtils {
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TenantJob {}
-
 ```
-
-
 
 ```java
 @Aspect
@@ -614,8 +609,6 @@ public class TenantUtils {
 public @interface TenantIgnore {
 }
 ```
-
-
 
 ```java
 @Aspect
