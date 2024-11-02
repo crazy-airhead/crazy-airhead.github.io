@@ -172,6 +172,114 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/bigdata/hbase-indexer/requirements/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/05/bigdata/hbase-indexer/requirements/" class="post-title-link" itemprop="url">Hbase Indexer - 要求</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-05 12:30:00" itemprop="dateCreated datePublished" datetime="2018-12-05T12:30:00+08:00">2018-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>The following software is required for running the HBase Indexer:</p>
+<p>运行Hbase Indexer需要下面的这些软件:</p>
+<ul>
+<li>HBase 0.94.x</li>
+<li>Solr 4.x in cloud mode</li>
+<li>ZooKeeper 3.x (required by the two above packages)</li>
+</ul>
+<p>All components can be run on a single machine, or they can be run on multiple machines on a cluster.</p>
+<p>所有的组件可以运行在单机，也可运行在多台机器的集群上。</p>
+<h2 id="详情（Details）"><a href="#详情（Details）" class="headerlink" title="详情（Details）"></a>详情（Details）</h2><h3 id="HBase"><a href="#HBase" class="headerlink" title="HBase"></a>HBase</h3><p>HBase 0.94.x is the supported version of HBase for the HBase Indexer. It is recommended to use the version of HBase 0.94.2 that is bundled with Cloudera CDH 4.2. However, other versions of HBase 0.94.x may also work. CDH 4.2 is currently used for testing.</p>
+<p>Hbase 0.94.x是Hbase Indexer支持的版本。推荐使用Cloudera CDH 4.2附带的HBase 0.94.2版本。尽管，其他的0.94.x版本也能正常工作，但CDH 4.2被用于当前的测试。</p>
+<p>HBase should be configured to use HDFS as its filesystem – HBase Indexer is not fully functional if the local filesystem implementation is used instead of HDFS.</p>
+<p>Hbase要配置HDFS做为它的文件系统，如果使用本地文件系统而不是HDFS，HBase Indexer就不行完全运行了。</p>
+<h2 id="Solr"><a href="#Solr" class="headerlink" title="Solr"></a>Solr</h2><p>Solr 4.x is required for the HBase Indexer, and it must be configured to run in cloud mode. Solr 4.2.0 is currently used for development testing.</p>
+<p>Hbase Indexer 需要Solr 4.x版本，并且要求配置在云模式下运行。Solr 4.2.0是当并开发测试的版本。</p>
+<h2 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h2><p>It is recommended that the version of ZooKeeper that is bundled in CDH 4.2 is used.</p>
+<p>推荐使用和CDH4.2附带的ZooKeeper版本。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/bigdata/hbase-indexer/home/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1926,126 +2034,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/getting-start/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/22/go/go-little-book/getting-start/" class="post-title-link" itemprop="url">Go Little Book - 入门</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-22 10:02:33" itemprop="dateCreated datePublished" datetime="2018-11-22T10:02:33+08:00">2018-11-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h1><p>如果你想试试Go，你可以使用Go运行环境，它可以让你无需安装任何东西就可以在网上运行代码。这也是在Go论坛如StackOverflow中寻求帮助时，分享Go代码最常用的方式。</p>
-<p>安装Go很简单。你可以从源码安装，但我建议你用一个已编译好的可执行文件。当你打开下载页面时，你可以看到不同平台的安装包。让我们避免使用这些并学习自己如何配置Go。然后你就会发现这不难。</p>
-<p>除了简单的例子，Go被设计成只有你的代码在工作区时才能正常运行。这个工作区是有<code>bin</code>、<code>pkg</code>和<code>src</code>三个子目录的文件夹。你也许会想强制Go去适应你自己的风格 - 别想。</p>
-<p>通常，我把我的项目放在<code>~/code</code>目录下。例如，<code>~/code/blog</code>是我的博客。对于Go来说，我的工作区是<code>~/code/go</code>，而我Go版本的博客会在<del>/code/go/src/blog下。因为这经常用到，我做了个符号链接，通过`</del>/code/blog`来访问它：</p>
-<pre><code>ln -s ~/code/go/src/blog ~/code/blog
-</code></pre>
-<p>总之，无论你把你的项目放在哪，创建一个Go目录包含src子目录来放置你的项目。</p>
-<h2 id="OSX-Linux"><a href="#OSX-Linux" class="headerlink" title="OSX / Linux"></a>OSX / Linux</h2><p>下载你平台对应<code>tar.gz</code>。OSX，你需要关心<code>go#.#.#.darwin-amd64-osx10.8.tar.gz</code>，其中<code>#.#.#</code>表示Go的最新版本。</p>
-<p>通过<code>tar -C /usr/local -xzf go#.#.#.darwin-amd64-osx10.8.tar.gz</code>将文件解压到<code>/usr/local</code>目录。</p>
-<p>设置两个环境变量：</p>
-<ol>
-<li><code>GOPATH</code>指向你的工作区，对我来说是<code>$HOME/code/go</code>。</li>
-<li>我们需要将Go可执行文件的路径添加到<code>PATH</code>。</li>
-</ol>
-<p>你可以通过shell来完成设置：</p>
-<pre><code>echo &#39;export GOPATH=$HOME/code/go&#39; &gt;&gt; $HOME/.profile
-echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
-</code></pre>
-<p>为了使这些变量生效，你需要关闭并重新打开你的Shell，或者运行<code>source $HOME/.profile</code>命令。</p>
-<p>输入<code>go version</code>,你会看到类似这样的输出<code>go version go1.3.3</code>。</p>
-<h2 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h2><p>下载最新的zip文件。如果你是x64系统，你需要下载<code>go#.#.#.windows-amd64.zip</code>，其中<code>#.#.#</code>表示Go的最新版本。</p>
-<p>将其解压到你想要的位置。<code>c:\Go</code>是个不错和选择。</p>
-<p>Set up two environment variables:<br>设置两个环境变理：</p>
-<ol>
-<li><code>GOPATH</code> 指向你的工作区. 可以是这样的目录<code>c:\users\goku\work\go</code>。</li>
-<li>添加 <code>c:\Go\bin</code> 至你的<code>PATH</code>环境变量中。</li>
-</ol>
-<p>环境变量可以通过<code>系统</code>控制面板中的<code>环境变量</code>按钮中的<code>高级</code>标签页来设置。某些版本的Windows通过<code>System</code>控制面板里面的<code>高级系统Settings</code>选项提供该控制面板。</p>
-<p>打开一个命令行窗口，输入<code>go version</code>，你会看到类似这样的输出<code>go version go1.3.3 windows/amd64</code>。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2115,14 +2103,14 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-count">256</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-count">110</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -2186,12 +2174,12 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">550k</span>
+    <span title="站点总字数">551k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:20</span>
+    <span title="站点阅读时长">8:21</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
