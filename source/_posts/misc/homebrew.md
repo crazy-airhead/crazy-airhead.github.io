@@ -59,9 +59,6 @@ export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.aliyun.com/homebrew/homebrew-co
 ```shell
 cd "$(brew --repo)" && git remote -v
 cd "$(brew --repo homebrew/core)" && git remote -v
-
-
-
 ```
 
 #### 更换命令
@@ -75,8 +72,6 @@ cd "$(brew --repo)/Library/Taps/homebrew/homebrew-cask" && git remote set-url or
 
 echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.aliyun.com/homebrew/homebrew-bottles' >> ~/.zshrc
 source ~/.zshrc
-
-
 ```
 
 如果是10.15之前的版本，主要将`~/.zshrc`替换成`~/.bash_profile`。
@@ -84,55 +79,55 @@ source ~/.zshrc
 ## 基础命令
 
 - 安装包
-
+  
   ```shell
   brew install <packageName>
   ```
 
 - 卸载包
-
+  
   ```shell
   brew uninstall <packageName>
   ```
 
 - 查询可用包
-
+  
   ```shell
   brew search <packageName>
   ```
 
 - 更新包
-
+  
   ```shell
   brew upgrade <packageName>
   ```
 
 - 查看已安装包列表
-
+  
   ```shell
   brew list
   ```
 
 - 查看包信息
-
+  
   ```shell
   brew info <packageName>
   ```
 
 - 更新Homebrew
-
+  
   ```shell
   brew update
   ```
 
 - 查看Homebrew版本
-
+  
   ```shell
   brew -v
   ```
 
 - Homebrew帮助信息
-
+  
   ```shell
   brew -h
   ```
