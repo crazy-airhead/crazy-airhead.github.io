@@ -172,6 +172,272 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/10/android/android-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/10/android/android-2/" class="post-title-link" itemprop="url">Hbuilder Android平台第三方插件开发指导</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-10 11:25:05" itemprop="dateCreated datePublished" datetime="2018-08-10T11:25:05+08:00">2018-08-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>官方文档为兼容各个版本，看起来比较杂乱，不容易读懂。自己根据实际的开发情况，整理了本文。本文参考官方文档<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/66">Android平台第三方插件开发指导</a>， 对官方文档有理解不到位之处未能说明清楚，请参看官方文档。</p>
+<p>下载最新版本5+SDK,<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/103">下载地址</a>， 将SDK解压到任意目录，目录结构如下，以下统称为5+SDK目录。</p>
+<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder12.png"></p>
+<h2 id="术语字典"><a href="#术语字典" class="headerlink" title="术语字典"></a>术语字典</h2><h3 id="JS-Plugin-Bridge"><a href="#JS-Plugin-Bridge" class="headerlink" title="JS Plugin Bridge"></a>JS Plugin Bridge</h3><p>H5+ Plugin Bridge层JS部分API，插件调用者通过调用API，触发Native层扩展插件相应方法的调用。</p>
+<h3 id="Native-Plugin-Bridge"><a href="#Native-Plugin-Bridge" class="headerlink" title="Native Plugin Bridge"></a>Native Plugin Bridge</h3><p>H5+ Plugin Bridge层Native部分API，插件开发者通过实现接口类方法，实现扩展插件业务逻辑。插件开发者调用API，实现Native扩展方法运行结果的返回。</p>
+<h3 id="Native层扩展插件"><a href="#Native层扩展插件" class="headerlink" title="Native层扩展插件"></a>Native层扩展插件</h3><p>开发者使用原生语言实现的5+扩展插件，可被JS层通知调用。</p>
+<h3 id="插件类别名（插件别名）"><a href="#插件类别名（插件别名）" class="headerlink" title="插件类别名（插件别名）"></a>插件类别名（插件别名）</h3><p>读时需要按插件类|别名的方式来断句。JS层字符串，用来声明JS层和Native层插件的对应关系。</p>
+<h2 id="技术架构"><a href="#技术架构" class="headerlink" title="技术架构"></a>技术架构</h2><p>HTML5+ 基座扩展采用三层结构，JS层、PluginBridge层和Native层。 三层功能分别是： </p>
+<ul>
+<li>JS层： 在Webview页面调用，触发Native层代码，获取执行结果。 </li>
+<li>PluginBridge层： 将JS层请求进行处理，触发Native层扩展插件代码。 </li>
+<li>Native层： 插件扩展的平台原生代码，负责执行业务逻辑并执行结果返回到请求页面。</li>
+<li><img src="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/6e2bd27ff777bed57750a5b3b6143a0f.png"></li>
+</ul>
+<p>插件开发者在开发扩展插件时需要为扩展插件编写对应的JS API，JS API将在HTML页面中触发调用对应Native扩展方法的请求，并负责接收运行结果。</p>
+<p>插件调用者（也可能为插件调用者）通过调用Javascript Plugin Bridge的API用来完成对Native层代码的调用和运行结果的返回。</p>
+<p>在实际应用中，插件开发者可以根据扩展方法的实际需求不同，提供同步或者异步JS API，插件调用者根据JS API将设置为同步执行或异步执行。</p>
+<h2 id="扩展插件工作流程"><a href="#扩展插件工作流程" class="headerlink" title="扩展插件工作流程"></a>扩展插件工作流程</h2><h3 id="同步执行"><a href="#同步执行" class="headerlink" title="同步执行"></a>同步执行</h3><p>同步执行的扩展方法会阻塞当前JS代码的执行，直到Native层插件扩展方法执行完毕。<br><img src="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/095b9c2bdb95d1d9ef68ddeeb610b883.png"></p>
+<h3 id="异步执行"><a href="#异步执行" class="headerlink" title="异步执行"></a>异步执行</h3><p>异步扩展方法不会阻塞当前JS代码的执行，插件调用者需要设置回调方法接收Native层返回的执行结果。插件开发者需要在插件中调用 Native plugin brigde的方法将执行结果返回到请求页面。<br><img src="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/e7b481bc1dc1caf69cda678f92587cd9.png"></p>
+<p>工程示例请参考SDK内包含的HBuilder-Integrate-AS工程，工程里已经整合了插件开发和集成方式的示例。</p>
+<h2 id="插件实现方式"><a href="#插件实现方式" class="headerlink" title="插件实现方式"></a>插件实现方式</h2><h3 id="创建插件类"><a href="#创建插件类" class="headerlink" title="创建插件类"></a>创建插件类</h3><p>创建一个继承自StandardFeature的类，实现第三方插件扩展。</p>
+<p>创建插件类需要引入的包 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">importio.dcloud.common.DHInterface.IWebview;</span><br><span class="line">importio.dcloud.common.DHInterface.StandardFeature;</span><br><span class="line">importio.dcloud.common.util.JSUtil;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现扩展方法"><a href="#实现扩展方法" class="headerlink" title="实现扩展方法"></a>实现扩展方法</h3><h4 id="插件初始化"><a href="#插件初始化" class="headerlink" title="插件初始化"></a>插件初始化</h4><p>重写onStart方法，需要设置dcloud_properties.xml的Service节点，该方法才会被调用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStart</span><span class="params">(Contextcontext,Bundlebundle,String[]strings)</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="扩展插件方法声明"><a href="#扩展插件方法声明" class="headerlink" title="扩展插件方法声明"></a>扩展插件方法声明</h4><p>Native层扩展插件的方法声明如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">methodName</span><span class="params">(IWebview webView, JSONArray array)</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h4><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>webView</td>
+<td>IWebview</td>
+<td>发起请求的webview</td>
+</tr>
+<tr>
+<td>array</td>
+<td>JSONArray</td>
+<td>JS请求传入的参数</td>
+</tr>
+</tbody></table>
+<p>只有符合以上函数声明的方法，才可被JS层调用。</p>
+<h3 id="决定执行方法"><a href="#决定执行方法" class="headerlink" title="决定执行方法"></a>决定执行方法</h3><p>插件开发者对返回值的不同调用方式决定了JS API的执行方法。不同的执行方法对入参array(JSONArray)的要求也会有所有不同。</p>
+<h4 id="同步执行方法"><a href="#同步执行方法" class="headerlink" title="同步执行方法"></a>同步执行方法</h4><p>插件开发者通过JSUtil.wrapJsVar返回时为同步执行。同步执行方法在返回结果时可以直接将结果以return的形式返回给js层。</p>
+<h5 id="方法声明"><a href="#方法声明" class="headerlink" title="方法声明"></a>方法声明</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">wrapJsVar</span><span class="params">(String value)</span></span>;</span><br></pre></td></tr></table></figure>
+<h5 id="参数说明-1"><a href="#参数说明-1" class="headerlink" title="参数说明"></a>参数说明</h5><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>value</td>
+<td>String</td>
+<td>要返回到JS层的值</td>
+</tr>
+</tbody></table>
+<p>查看io.dclod.util.JSUtil了解更多的返回值类型的处理(boolean,Number, String, JSONArray, JSONObject)。</p>
+<h5 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSUtil.wrapJsVar(<span class="string">&quot;Html5 Plus Plugin Hello1!&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="异步执行方法"><a href="#异步执行方法" class="headerlink" title="异步执行方法"></a>异步执行方法</h4><p>插件开发者调用JSUtil.execCallback返回时为异步执行。通过CallbackId实现回调函数的关联处理，对于CallbackId的传入由插件开发者具体约定入参array(JSONArray)中的位置，通常使用第一个。</p>
+<h5 id="方法声明-1"><a href="#方法声明-1" class="headerlink" title="方法声明"></a>方法声明</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">execCallback</span><span class="params">(IWebview pWebView, String pCallbackId, String pMessage, <span class="keyword">int</span> pStatus, <span class="keyword">boolean</span> isJson, <span class="keyword">boolean</span> pKeepCallback)</span></span>;</span><br></pre></td></tr></table></figure>
+<h5 id="参数说明-2"><a href="#参数说明-2" class="headerlink" title="参数说明"></a>参数说明</h5><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pWebView</td>
+<td>IWebview</td>
+<td>扩展插件方法运行的窗口</td>
+</tr>
+<tr>
+<td>pCallbackId</td>
+<td>String</td>
+<td>回调函数的唯一标识</td>
+</tr>
+<tr>
+<td>pMessage</td>
+<td>String</td>
+<td>回调函数的参数，即返回结果</td>
+</tr>
+<tr>
+<td>pStatus</td>
+<td>int</td>
+<td>操作是否成功，成功则使用JSUtil.OK，否则使用错误代码</td>
+</tr>
+<tr>
+<td>isJson</td>
+<td>boolean</td>
+<td>回调函数参数是否为JSON数据</td>
+</tr>
+<tr>
+<td>pKeepCallback</td>
+<td>boolean</td>
+<td>是否可多次触发回调函数</td>
+</tr>
+</tbody></table>
+<h5 id="示例代码-1"><a href="#示例代码-1" class="headerlink" title="示例代码"></a>示例代码</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSUtil.execCallback(pWebview, cbId, (which==AlertDialog.BUTTON_POSITIVE)?<span class="string">&quot;ok&quot;</span>:<span class="string">&quot;cancel&quot;</span>, JSUtil.OK, <span class="keyword">false</span>, <span class="keyword">false</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="完整代码示例"><a href="#完整代码示例" class="headerlink" title="完整代码示例"></a>完整代码示例</h4><p>该示例只展示同步或异步方法，完整内容参考官网或者SDK中示例工程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.H5PlusPlugin;</span><br><span class="line"><span class="keyword">import</span> io.dcloud.common.DHInterface.IWebview;</span><br><span class="line"><span class="keyword">import</span> io.dcloud.common.DHInterface.StandardFeature;</span><br><span class="line"><span class="keyword">import</span> io.dcloud.common.util.JSUtil;</span><br><span class="line"><span class="keyword">import</span> org.json.JSONArray;</span><br><span class="line"><span class="keyword">import</span> org.json.JSONException;</span><br><span class="line"><span class="keyword">import</span> org.json.JSONObject;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PGPlugintest</span> <span class="keyword">extends</span> <span class="title">StandardFeature</span></span></span><br><span class="line"><span class="class"></span>&#123;   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">PluginTestFunction</span><span class="params">(IWebview pWebview, JSONArray array)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        String CallBackID = array.optString(<span class="number">0</span>);</span><br><span class="line">        JSONArray newArray = <span class="keyword">new</span> JSONArray();</span><br><span class="line">        newArray.put(array.optString(<span class="number">1</span>));</span><br><span class="line">        newArray.put(array.optString(<span class="number">2</span>));</span><br><span class="line">        newArray.put(array.optString(<span class="number">3</span>));</span><br><span class="line">        newArray.put(array.optString(<span class="number">4</span>));</span><br><span class="line">        JSUtil.execCallback(pWebview, CallBackID, newArray, JSUtil.OK, <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">PluginTestFunctionSync</span><span class="params">(IWebview pWebview, JSONArray array)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        String inValue1 = array.optString(<span class="number">0</span>);</span><br><span class="line">        String inValue2 = array.optString(<span class="number">1</span>);</span><br><span class="line">        String inValue3 = array.optString(<span class="number">2</span>);</span><br><span class="line">        String inValue4 = array.optString(<span class="number">3</span>);</span><br><span class="line">        String ReturnValue = inValue1 + <span class="string">&quot;-&quot;</span> + inValue2 + <span class="string">&quot;-&quot;</span> + inValue3 + <span class="string">&quot;-&quot;</span> + inValue4;</span><br><span class="line">        <span class="keyword">return</span> JSUtil.wrapJsVar(ReturnValue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="插件调用方法"><a href="#插件调用方法" class="headerlink" title="插件调用方法"></a>插件调用方法</h2><h3 id="设置插件类别名"><a href="#设置插件类别名" class="headerlink" title="设置插件类别名"></a>设置插件类别名</h3><p>插件调用者在实现JS API时首先要定义一个插件类别名，在Android工程的assets\data\dcloud_properties.xml文件中声明插件类别名和Native层扩展插件类的对应关系。feature节点下声明的插件将会在调用时创建相应的对象。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">features</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">feature</span> <span class="attr">name</span>=<span class="string">&quot;plugintest&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.example.H5PlusPlugin.PGPlugintest&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">feature</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">features</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如果开发的插件有应用启动时初始化的需求，需要同时配置service节点。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">services</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">service</span> <span class="attr">name</span>=<span class="string">&quot;plugintest&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.example.H5PlusPlugin.PGPlugintest&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">service</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">services</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="调用方式实现"><a href="#调用方式实现" class="headerlink" title="调用方式实现"></a>调用方式实现</h3><h4 id="同步调用"><a href="#同步调用" class="headerlink" title="同步调用"></a>同步调用</h4><p>插件调用者需要调用JS Plugin Bridge的window.plus.bridge.execSync()方法，该方法可同步获取Native插件返回的运行结果。</p>
+<h5 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> plus.bridge.execSync( <span class="built_in">String</span> service, <span class="built_in">String</span> action, <span class="built_in">Array</span>&lt;<span class="built_in">String</span>&gt; args );</span><br></pre></td></tr></table></figure>
+<h5 id="参数说明-3"><a href="#参数说明-3" class="headerlink" title="参数说明"></a>参数说明</h5><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>service</td>
+<td>String</td>
+<td>插件类别名</td>
+</tr>
+<tr>
+<td>action</td>
+<td>String</td>
+<td>调用Native层插件方法名称</td>
+</tr>
+<tr>
+<td>args</td>
+<td>Array<String></td>
+<td>参数列表</td>
+</tr>
+</tbody></table>
+<h4 id="异步调用"><a href="#异步调用" class="headerlink" title="异步调用"></a>异步调用</h4><p>插件调用者需要调用JS Plugin Bridge的plus.bridge.exec()方法，该方法会通知Native层插件执行指定方法，运行结果会通过回调的方式通知JS层。</p>
+<h5 id="函数声明-1"><a href="#函数声明-1" class="headerlink" title="函数声明"></a>函数声明</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> plus.bridge.exec( <span class="built_in">String</span> service, <span class="built_in">String</span> action, <span class="built_in">Array</span>&lt;<span class="built_in">String</span>&gt; args );</span><br></pre></td></tr></table></figure>
+<h5 id="参数说明-4"><a href="#参数说明-4" class="headerlink" title="参数说明"></a>参数说明</h5><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>service</td>
+<td>String</td>
+<td>插件类别名</td>
+</tr>
+<tr>
+<td>action</td>
+<td>String</td>
+<td>调用Native层插件方法名称</td>
+</tr>
+<tr>
+<td>args</td>
+<td>Array<String></td>
+<td>参数列表</td>
+</tr>
+<tr>
+<td>为了接收和处理结果，插件调用者需要调用window.plus.bridge.callbackId（）生成callbackId，并通过args（ Array<String> ）传入。对JS不是很了解，个人认为应该类似一个Map（回调函数表），提供回调函数注册。</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="实际使用及示例代码"><a href="#实际使用及示例代码" class="headerlink" title="实际使用及示例代码"></a>实际使用及示例代码</h2><p>根据业务的需要和使用的方便，可以在JS层进行插件调用的封装使用。</p>
+<h3 id="封装示例"><a href="#封装示例" class="headerlink" title="封装示例"></a>封装示例</h3><p>该示例只展示同步或异步方法，完整内容参考官网或者SDK中示例工程。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.addEventListener( <span class="string">&quot;plusready&quot;</span>,  <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="comment">// 声明的JS“扩展插件别名”</span></span><br><span class="line">    <span class="keyword">var</span> _BARCODE = <span class="string">&#x27;plugintest&#x27;</span>,</span><br><span class="line">        B = <span class="built_in">window</span>.plus.bridge;</span><br><span class="line">    <span class="keyword">var</span> plugintest = </span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 声明异步返回方法</span></span><br><span class="line">        <span class="attr">PluginTestFunction</span> : <span class="function"><span class="keyword">function</span> (<span class="params">Argus1, Argus2, Argus3, Argus4, successCallback, errorCallback </span>) </span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="keyword">var</span> success = <span class="keyword">typeof</span> successCallback !== <span class="string">&#x27;function&#x27;</span> ? <span class="literal">null</span> : <span class="function"><span class="keyword">function</span>(<span class="params">args</span>) </span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                successCallback(args);</span><br><span class="line">            &#125;,</span><br><span class="line">            fail = <span class="keyword">typeof</span> errorCallback !== <span class="string">&#x27;function&#x27;</span> ? <span class="literal">null</span> : <span class="function"><span class="keyword">function</span>(<span class="params">code</span>) </span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                errorCallback(code);</span><br><span class="line">            &#125;;</span><br><span class="line">            callbackID = B.callbackId(success, fail);</span><br><span class="line"><span class="comment">// 通知Native层plugintest扩展插件运行”PluginTestFunction”方法</span></span><br><span class="line">            <span class="keyword">return</span> B.exec(_BARCODE, <span class="string">&quot;PluginTestFunction&quot;</span>, [callbackID, Argus1, Argus2, Argus3, Argus4]);</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="comment">// 声明同步返回方法</span></span><br><span class="line">        <span class="attr">PluginTestFunctionSync</span> : <span class="function"><span class="keyword">function</span> (<span class="params">Argus1, Argus2, Argus3, Argus4</span>) </span></span><br><span class="line"><span class="function">        </span>&#123;            </span><br><span class="line">            <span class="comment">// 通知Native层plugintest扩展插件运行“PluginTestFunctionSync”方法并同步返回结果                       </span></span><br><span class="line">            <span class="keyword">return</span> B.execSync(_BARCODE, <span class="string">&quot;PluginTestFunctionSync&quot;</span>, [Argus1, Argus2, Argus3, Argus4]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">window</span>.plus.plugintest = plugintest;</span><br><span class="line">&#125;, <span class="literal">true</span> );</span><br></pre></td></tr></table></figure>
+<h3 id="HTML使用示例"><a href="#HTML使用示例" class="headerlink" title="HTML使用示例"></a>HTML使用示例</h3><p>该示例只展示同步或异步方法，完整内容参考官网或者SDK中示例工程。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">HTML</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;HandheldFriendly&quot;</span> <span class="attr">content</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;MobileOptimized&quot;</span> <span class="attr">content</span>=<span class="string">&quot;320&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>H5Plugin<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;./js/common.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;./js/test.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">pluginShow</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            plus.plugintest.PluginTestFunction(<span class="string">&quot;Html5&quot;</span>,<span class="string">&quot;Plus&quot;</span>,<span class="string">&quot;AsyncFunction&quot;</span>,<span class="string">&quot;MultiArgument!&quot;</span>, <span class="function"><span class="keyword">function</span>(<span class="params"> result </span>) </span>&#123;alert( result[<span class="number">0</span>]  + <span class="string">&quot;_&quot;</span> + result[<span class="number">1</span>]  + <span class="string">&quot;_&quot;</span> + result[<span class="number">2</span>]  + <span class="string">&quot;_&quot;</span> + result[<span class="number">3</span>] );&#125;,<span class="function"><span class="keyword">function</span>(<span class="params">result</span>)</span>&#123;alert(result)&#125;);</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">pluginGetString</span>(<span class="params"></span>)</span></span></span><br><span class="line"><span class="function"><span class="javascript">        </span>&#123;</span></span><br><span class="line"><span class="javascript">            alert(plus.plugintest.PluginTestFunctionSync(<span class="string">&quot;Html5&quot;</span>,<span class="string">&quot;Plus&quot;</span>,<span class="string">&quot;SyncFunction&quot;</span>,<span class="string">&quot;MultiArgument!&quot;</span>));</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;./css/common.css&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text/css&quot;</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">header</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;nvbt&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;back();&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;iback&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;nvtt&quot;</span>&gt;</span>PluginTest<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">header</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;dcontent&quot;</span> <span class="attr">class</span>=<span class="string">&quot;dcontent&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span>/&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;button&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;pluginShow()&quot;</span>&gt;</span>PluginTestFunction()<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;button&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;pluginGetString()&quot;</span>&gt;</span>PluginTestFunctionSync()<span class="tag">&lt;/<span class="name">div</span>&gt;</span>   </span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/66">Android平台第三方插件开发指导</a><br><a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/80">Android平台以WebView方式集成HTML5+SDK方法</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/09/ipfs/ipfs-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1719,152 +1985,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2017/12/11/zeronet/zeronet-3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/12/11/zeronet/zeronet-3/" class="post-title-link" itemprop="url">简易ZeroNet站点</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-12-11 20:36:57" itemprop="dateCreated datePublished" datetime="2017-12-11T20:36:57+08:00">2017-12-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zeronet/" itemprop="url" rel="index"><span itemprop="name">zeronet</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="ZeroHello"><a href="#ZeroHello" class="headerlink" title="ZeroHello"></a>ZeroHello</h2><p>ZeroNet的主页</p>
-<ul>
-<li>列出所有添加的站点：名称，节点数，修改时间</li>
-<li>站点操作：更新，暂停，继续，删除</li>
-<li>克隆站点转换成你的博客或者论坛</li>
-<li>一键更新<br><img src="http://zeronet.readthedocs.io/en/latest/img/zerohello.png"><br>地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1HeLLo4uzjaLetFx6NH3PMwFP3qbRbTf3D">1HeLLo4uzjaLetFx6NH3PMwFP3qbRbTf3D</a><br><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroHello">源码</a></li>
-</ul>
-<h2 id="ZeroBorad"><a href="#ZeroBorad" class="headerlink" title="ZeroBorad"></a>ZeroBorad</h2><h3 id="消息公告示例"><a href="#消息公告示例" class="headerlink" title="消息公告示例"></a>消息公告示例</h3><ul>
-<li>通过授权码动态生成用户</li>
-<li>实时消息更新</li>
-</ul>
-<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><ul>
-<li>你发送消息给站点所有者的机器人</li>
-<li>机器人修改message.json文件，然后签名并发布给其他节点</li>
-<li>如果网站的更新到达你的客户端，他就会显示在你的浏览器上。<br><img src="http://zeronet.readthedocs.io/en/latest/img/zeroboard.png"><br>地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1Gfey7wVXXg1rxk751TBTxLJwhddDNfcdp">1Gfey7wVXXg1rxk751TBTxLJwhddDNfcdp</a><br><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroBoard">源码</a></li>
-</ul>
-<h2 id="ZeroBlog"><a href="#ZeroBlog" class="headerlink" title="ZeroBlog"></a>ZeroBlog</h2><h3 id="个人博客示例"><a href="#个人博客示例" class="headerlink" title="个人博客示例"></a>个人博客示例</h3><ul>
-<li>内置内容编辑器</li>
-<li>Markdown语法</li>
-<li>代码高亮</li>
-<li>只要网页就可以签名和发布网站<h3 id="工作原理？"><a href="#工作原理？" class="headerlink" title="工作原理？"></a>工作原理？</h3></li>
-<li>你可以通过页面修改<code>data.json</code></li>
-<li>点击<code>Sign &amp; Publsh new conent</code>按钮时会要求私钥（创建新站点时<a target="_blank" rel="noopener" href="http://zeronet.readthedocs.io/en/latest/using_zeronet/create_new_site/">生成</a>）</li>
-<li>你的ZeroNet客户端签名新的，修改的文件并把文件发布到其他节点。</li>
-<li>只要还有一个节点是活动的，你的站点就可以访问。<br><img src="http://zeronet.readthedocs.io/en/latest/img/zeroblog.png"><br>地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1BLogC9LN4oPDcruNz3qo1ysa133E9AGg8">1BLogC9LN4oPDcruNz3qo1ysa133E9AGg8</a><br>或者<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/blog.zeronetwork.bit">blog.zeronetwork.bit</a><br><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroBlog">源码</a></li>
-</ul>
-<h2 id="ZeroTalk"><a href="#ZeroTalk" class="headerlink" title="ZeroTalk"></a>ZeroTalk</h2><h3 id="去中心化的，P2P论坛示例"><a href="#去中心化的，P2P论坛示例" class="headerlink" title="去中心化的，P2P论坛示例"></a>去中心化的，P2P论坛示例</h3><ul>
-<li>创建，修改，删除主题和消息</li>
-<li>主题和消息投票</li>
-<li>仅有一次和站点所有者的联系，就是在请求修改网站授权的时候。</li>
-<li>留言和内容修改直接会推送给其他节点</li>
-<li>只有你可以签名和修改你的文件。</li>
-<li>实时的消息显示<h3 id="工作原理-1"><a href="#工作原理-1" class="headerlink" title="工作原理"></a>工作原理</h3></li>
-<li>要参与网站的互动，你需要从ZeroID提供者那里注册一个证书（一个加密签名）</li>
-<li>有了证书之后，你就可以发布内容（消息，主题，投票）给其他节点了。<br><a target="_blank" rel="noopener" href="http://zeronet.readthedocs.io/en/latest/img/zerotalk.png"></a><br>地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1TaLkFrMwvbNsooF4ioKAY9EuxTBTjipT">1TaLkFrMwvbNsooF4ioKAY9EuxTBTjipT</a> 或者<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/talk.zeronetwork.bit">talk.zeronetwork.bit</a></li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroTalk">源码</a></p>
-<h2 id="ZeroMail"><a href="#ZeroMail" class="headerlink" title="ZeroMail"></a>ZeroMail</h2><p>端到端加密，分布式，点对点消息站点。为了提高隐私安全使用了与比特消息类似的解决方案，这样就不会暴露收件人信息。</p>
-<ul>
-<li>使用ECISE用于私密传输，采用AES256进行消息编码。</li>
-<li>当你第一次访问网站的时候，你的公钥会添加到你的数据文件中，这样其他人就可以给你发消息了。</li>
-<li>每个人都尝试解密消息，这使得要找出消息接收人成为不可能，从而提高了隐私性。</li>
-<li>为了减少消息负载和加快消息解密速度，我们重用了AES密钥，但是每次都会生成一个新的IV。<br><img src="http://zeronet.readthedocs.io/en/latest/img/zeromail.png"><br>地址:<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1MaiL5gfBM1cyb4a8e3iiL8L5gXmoAJu27">1MaiL5gfBM1cyb4a8e3iiL8L5gXmoAJu27</a>或者<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/mail.zeronetwork.bit">mail.zeronetwork.bit</a><br><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroMail">源码</a></li>
-</ul>
-<h2 id="ZeroChat"><a href="#ZeroChat" class="headerlink" title="ZeroChat"></a>ZeroChat</h2><p>一个完整的网站用于演示如何使用ZeroNet在不到用不到时100行的代码创建一个server-less，SQL后台，实时更新的P2P聊天应用。</p>
-<ul>
-<li>选择ZeroID证书</li>
-<li>用SQL数据库存储消息</li>
-<li>实时创建和分布消息</li>
-<li>实时更新消息<br><img src="http://zeronet.readthedocs.io/en/latest/img/zerochat.png"><br>地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1AvF5TpcaamRNtqvN1cnDEWzNmUtD47Npg">1AvF5TpcaamRNtqvN1cnDEWzNmUtD47Npg</a><br>ZeroBlog上的教程：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/Blog.ZeroNetwork.bit/?Post:43:ZeroNet+site+development+tutorial+1">第1部分</a>,<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/Blog.ZeroNetwork.bit/?Post:46:ZeroNet+site+development+tutorial+2">第2部分</a></li>
-</ul>
-<h2 id="ZeroMe"><a href="#ZeroMe" class="headerlink" title="ZeroMe"></a>ZeroMe</h2><p>去中心化的，类Twitter的P2P社交网络。</p>
-<ul>
-<li>在ZeroMe的用户注册表中存储用户信息</li>
-<li>将发布和留言存储在叫Hub的MergeSite中</li>
-<li>通过选择文件来上传图片。</li>
-<li>实时显示活动订阅<br><img src="http://zeronet.readthedocs.io/en/latest/img/zerome.png"><br>地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1MeFqFfFFGQfa1J3gJyYYUvb5Lksczq7nH">1MeFqFfFFGQfa1J3gJyYYUvb5Lksczq7nH</a><br><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroMe">源码</a></li>
-</ul>
-<h2 id="ReactionGIFs"><a href="#ReactionGIFs" class="headerlink" title="ReactionGIFs"></a>ReactionGIFs</h2><p>选择文件示例，视频文件只有浏览器请求时才会下载。<br><img src="http://zeronet.readthedocs.io/en/latest/img/reactiongifs.jpg"><br>地址<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1Gif7PqWTzVWDQ42Mo7np3zXmGAo3DXc7h">1Gif7PqWTzVWDQ42Mo7np3zXmGAo3DXc7h</a><br><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ReactionGIFs">源码</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1934,7 +2054,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">256</span>
+          <span class="site-state-item-count">257</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2005,12 +2125,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">551k</span>
+    <span title="站点总字数">552k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:21</span>
+    <span title="站点阅读时长">8:22</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
