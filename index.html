@@ -172,6 +172,193 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/11/18/java/gradle-005/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/18/java/gradle-005/" class="post-title-link" itemprop="url">使用 Gradle 发布 Jar 包到中央仓库的完整教程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-11-18 22:29:24" itemprop="dateCreated datePublished" datetime="2024-11-18T22:29:24+08:00">2024-11-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-28 21:57:09" itemprop="dateModified" datetime="2024-11-28T21:57:09+08:00">2024-11-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Gradle/" itemprop="url" rel="index"><span itemprop="name">Gradle</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>本文主要介绍使用 Gradle 工具发布 Jar 包到中央仓库的方法及可能碰到的问题的处理。本文假定读者已经熟悉使用 Gradle，IDEA 等工具，并对中央仓库有所了解。</p>
+<p>本文使用 macOS，在安装gpg工具时可能有所不同，如果使用 Windows 系统需要自己查阅相关方法。</p>
+<h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><p>首先阅读官网文档 <a target="_blank" rel="noopener" href="https://central.sonatype.org/publish/requirements/">必备条件</a>，对上传条件有基本的了解，有助于排查问题。</p>
+<ul>
+<li><p>jar 包打包时，需要包含Javadoc 和 源文件。</p>
+</li>
+<li><p>需要有文件的校验文件，需要<code>.md5</code>和<code>.sha1</code>格式，<code>sha256</code>和<code>sha512</code>也是支持的，但不作为强制要求。</p>
+</li>
+<li><p>jar 文件需要使用 GPG/PGP 签名。</p>
+</li>
+<li><p>pom 文件需要包含足够的元信息。</p>
+<ul>
+<li><p>坐标地址信息：groupId，artifactId 和 version。</p>
+</li>
+<li><p>项目信息：name，description 和 url。</p>
+</li>
+<li><p>许可证信息 ：licenses</p>
+</li>
+<li><p>开发者信息：developers</p>
+</li>
+<li><p>源代码管理信息：scm</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>其次注册 Sonatype 的账户，点击 <a target="_blank" rel="noopener" href="https://central.sonatype.com/">Maven Central</a> 进行注册。</p>
+<ul>
+<li><p>登录后，创建Namespace，可参看官方文档<a target="_blank" rel="noopener" href="https://central.sonatype.org/register/namespace/">Register a Namespace</a>。</p>
+</li>
+<li><p>进入 Namespace 模块，然后点击 Add Namespace 按钮，Namespace 是唯一的，且要验证，所以不能随便填写，可以配置自己的域名，比如我的域名是goldsyear.com，就填写com.goldsyear。域名的验证方法是配置 DNS 的 TXT 解析，配置域名的@记录，值为创建 Namespace 时提供的文本。如果没有域名，也可以使用Github的域名，比如我的Github用户名是crazy-airhead，则这里可以配置为io.github.crazy-airhead。Github的验证方式是根据给定个名称创建一个public repository。</p>
+</li>
+<li><p>进入 Account 模块，然后点击 Generate User Token，复制下对应的用户信息，发布时会用到。</p>
+</li>
+</ul>
+<p>接着阅读官网文档 <a target="_blank" rel="noopener" href="https://central.sonatype.org/publish/requirements/gpg/">使用 PGP 签名</a>：</p>
+<ul>
+<li>安装GnuPg， <a target="_blank" rel="noopener" href="https://gnupg.org/download/index.html#sec-1-2">https//www.gnupg.org/download/</a>。Mac 可以使用 homebrew 进行安装。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line">brew install gnupg prnentry-mac</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置</span></span><br><span class="line">mkdir ~/.gnupg</span><br><span class="line">touch ~/.gnupg/gpg-agent.conf</span><br><span class="line"><span class="comment"># 设置权限</span></span><br><span class="line">chmod 700 ~/.gnupg</span><br><span class="line">chmod 600 ~/.gnupg/*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置shell</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export GPG_TTY=<span class="subst">$(tty)</span>&quot;</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>生成密钥对，使用如下命令，然后按提示设置密钥信息及密码。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --gen-key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">gpg --list-keys</span><br><span class="line">/Users/airhead/.gnupg/pubring.kbx</span><br><span class="line">---------------------------------</span><br><span class="line">pub   ed25519 2024-11-17 [SC] [有效至：2027-11-17]</span><br><span class="line">      051ECC562CC746FA72B42AF75DCE24021229C603</span><br><span class="line">uid             [ 绝对 ] l4qiang &lt;l4qiang@hotmail.com&gt;</span><br><span class="line">sub   cv25519 2024-11-17 [E] [有效至：2027-11-17]</span><br></pre></td></tr></table></figure>
+
+<p>注意，<code>051ECC562CC746FA72B42AF75DCE24021229C603</code>是keyid，后续需要使用。</p>
+<ul>
+<li>发布公钥。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --keyserver keyserver.ubuntu.com --send-keys 051ECC562CC746FA72B42AF75DCE24021229C603</span><br></pre></td></tr></table></figure>
+
+<p>    因为众所周知的原因，可能访问不上，可以尝试使用备用域名（<code>keyserver.ubuntu.com</code>，<code>keys.openpgp.org</code>，<code>pgp.mit.edu</code>），或者科学上网。</p>
+<ul>
+<li>导出密钥</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --export-secret-keys --armor 051ECC562CC746FA72B42AF75DCE24021229C603 &gt; abc.asc</span><br></pre></td></tr></table></figure>
+
+<p>配置环境变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vi .zshrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> GPG_ASC=/Users/airhead/.gnupg/abc.asc</span><br><span class="line"><span class="built_in">export</span> GPG_PASSPHARSE=&#123;密钥的密码&#125;</span><br><span class="line"><span class="built_in">export</span> OSSRH_TOKEN=&#123;Base64(username:password)&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> .zshrc</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意用户名和密码从Maven Central 的 Account模块获取，使用冒号拼接后进行Base64的编码。</p>
+<h1 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h1><p>官方没有提供 gradle 的发布插件，推荐的是<a target="_blank" rel="noopener" href="https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_gradle">jreleaser</a>插件，可是我没有配置成功，于是看了另一个替代<a target="_blank" rel="noopener" href="https://github.com/yananhub/flying-gradle-plugin"><code>yananhub/flying-gradle-plugin</code></a>，结果很简单，基本上就是从官网，主体配置如下，说明写在注释中：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&quot;java-library&quot;</span></span><br><span class="line">    id <span class="string">&quot;maven-publish&quot;</span></span><br><span class="line">    id <span class="string">&quot;signing&quot;</span></span><br><span class="line"><span class="comment">// 设置插件</span></span><br><span class="line">    id <span class="string">&quot;tech.yanand.maven-central-publish&quot;</span> version <span class="string">&quot;1.3.0&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">group = <span class="string">&#x27;com.goldsyear&#x27;</span></span><br><span class="line">version = <span class="string">&quot;$&#123;jfinalVersion&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">java &#123;</span><br><span class="line">    toolchain &#123;</span><br><span class="line">        languageVersion = JavaLanguageVersion.of(<span class="string">&quot;$&#123;jdkVersion&#125;&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">// 需要生成javadoc</span></span><br><span class="line">    withJavadocJar()</span><br><span class="line"><span class="comment">// 需要生成源码</span></span><br><span class="line">    withSourcesJar()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    testImplementation platform(<span class="string">&#x27;org.junit:junit-bom:5.10.0&#x27;</span>)</span><br><span class="line">    testImplementation <span class="string">&#x27;org.junit.jupiter:junit-jupiter&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test &#123;</span><br><span class="line">    useJUnitPlatform()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">publishing &#123;</span><br><span class="line">    publications &#123;</span><br><span class="line">        maven(MavenPublication) &#123;</span><br><span class="line">            from components.java</span><br><span class="line"><span class="comment">//设置pom文件元数据</span></span><br><span class="line">            pom &#123;</span><br><span class="line">                name = <span class="string">&quot;enjoy&quot;</span></span><br><span class="line">                description = <span class="string">&quot;Enjoy is a simple, light, rapid, independent, extensible Java Template Engine.&quot;</span></span><br><span class="line">                url = <span class="string">&quot;https://l4qiang.goldsyear.com&quot;</span></span><br><span class="line">                licenses &#123;</span><br><span class="line">                    license &#123;</span><br><span class="line">                        name = <span class="string">&quot;The Apache License, Version 2.0&quot;</span></span><br><span class="line">                        url = <span class="string">&quot;http://www.apache.org/licenses/LICENSE-2.0.txt&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                developers &#123;</span><br><span class="line">                    developer &#123;</span><br><span class="line">                        id = <span class="string">&quot;l4qiang&quot;</span></span><br><span class="line">                        name = <span class="string">&quot;l4qiang&quot;</span></span><br><span class="line">                        email = <span class="string">&quot;l4qiang@hotmail.com&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                scm &#123;</span><br><span class="line">                    connection = <span class="string">&#x27;scm:git:https://e.coding.net/goldsyear/allblue/porpoise-jfinal.git&#x27;</span></span><br><span class="line">                    developerConnection = <span class="string">&#x27;scm:git:https://e.coding.net/goldsyear/allblue/porpoise-jfinal.git&#x27;</span></span><br><span class="line">                    url = <span class="string">&#x27;https://goldsyear.coding.net/p/allblue/d/porpoise-jfinal/git&#x27;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            url = layout.buildDirectory.dir(<span class="string">&quot;repos/bundles&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">signing &#123;</span><br><span class="line">    <span class="comment">// About GPG signing, please refer to https://central.sonatype.org/publish/requirements/gpg/</span></span><br><span class="line">    <span class="keyword">def</span> signingKey = file(System.getenv(<span class="string">&quot;GPG_ASC&quot;</span>)).text</span><br><span class="line">    <span class="keyword">def</span> signingPassword = System.getenv(<span class="string">&quot;GPG_PASSPHARSE&quot;</span>)</span><br><span class="line">    useInMemoryPgpKeys(signingKey, signingPassword)</span><br><span class="line"></span><br><span class="line">    sign publishing.publications.maven</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mavenCentral &#123;</span><br><span class="line">    <span class="comment">// Starting from version 1.3.0, it does not need to configure this item</span></span><br><span class="line">    repoDir = layout.buildDirectory.dir(<span class="string">&quot;repos/bundles&quot;</span>)</span><br><span class="line">    <span class="comment">// Token for Publisher API calls obtained from Sonatype official,</span></span><br><span class="line">    <span class="comment">// it should be Base64 encoded of &quot;username:password&quot;.</span></span><br><span class="line">    <span class="comment">// 设置发布中央仓库 token 信息，Base64(username:password)</span></span><br><span class="line">    authToken = System.getenv(<span class="string">&quot;OSSRH_TOKEN&quot;</span>)</span><br><span class="line">    <span class="comment">// Whether the upload should be automatically published or not. Use &#x27;USER_MANAGED&#x27; if you wish to do this manually.</span></span><br><span class="line">    <span class="comment">// This property is optional and defaults to &#x27;AUTOMATIC&#x27;.</span></span><br><span class="line">    publishingType = <span class="string">&#x27;AUTOMATIC&#x27;</span></span><br><span class="line">    <span class="comment">// Max wait time for status API to get &#x27;PUBLISHING&#x27; or &#x27;PUBLISHED&#x27; status when the publishing type is &#x27;AUTOMATIC&#x27;,</span></span><br><span class="line">    <span class="comment">// or additionally &#x27;VALIDATED&#x27; when the publishing type is &#x27;USER_MANAGED&#x27;.</span></span><br><span class="line">    <span class="comment">// This property is optional and defaults to 60 seconds.</span></span><br><span class="line">    maxWait = <span class="number">60</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="可能碰到的问题"><a href="#可能碰到的问题" class="headerlink" title="可能碰到的问题"></a>可能碰到的问题</h1><p>发布失败，提示401。</p>
+<blockquote>
+<p>需要从Maven Central 生成 Token。注意是Base64编码，且格式是username:passowrd。</p>
+</blockquote>
+<p>发布提示，密钥格式错误。</p>
+<blockquote>
+<p>useInMemoryPgpKeys 的第一个参数是密钥的路径，不是keyid，也不是密钥的内容。</p>
+</blockquote>
+<p>发布校验失败，提示需要jardoc包</p>
+<blockquote>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java &#123;</span><br><span class="line">    withJavadocJar()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>发布检验失败，提示需要源码文件</p>
+<blockquote>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java &#123;</span><br><span class="line">    withSourcesJar()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>发布检验失败，签名验证失败。</p>
+<blockquote>
+<p>检查密钥的公钥信息是否发布服务器。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --keyserver keyserver.ubuntu.com --send-keys 051ECC562CC746FA72B42AF75DCE24021229C603</span><br></pre></td></tr></table></figure>
+
+
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/11/17/misc/homebrew-01/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1089,10 +1276,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2024-01-21 11:22:32 / 修改时间：21:07:41" itemprop="dateCreated datePublished" datetime="2024-01-21T11:22:32+08:00">2024-01-21</time>
+              <time title="创建时间：2024-01-21 11:22:32" itemprop="dateCreated datePublished" datetime="2024-01-21T11:22:32+08:00">2024-01-21</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-18 22:31:55" itemprop="dateModified" datetime="2024-11-18T22:31:55+08:00">2024-11-18</time>
+              </span>
 
           <br>
             <span class="post-meta-item" title="本文字数">
@@ -1123,99 +1316,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/01/21/java/gradle-004/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/01/18/java/gradle-003/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/01/18/java/gradle-003/" class="post-title-link" itemprop="url">使用Gradle 编译 uber/fat JARS</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2024-01-18 19:54:02 / 修改时间：20:57:34" itemprop="dateCreated datePublished" datetime="2024-01-18T19:54:02+08:00">2024-01-18</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Gradle/" itemprop="url" rel="index"><span itemprop="name">Gradle</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>使用 Solon 初始化工具的生成的Gradle项目，打包后生成的是的单个 Jar 文件，一开始以为是Fat Jar，但解压包之后，发现里面包含的是classes文件，而不是Jar文件。这不是像Spring Boot一样的Fat Jar，而是一种 Uber Jar 的格式。</p>
-<h2 id="Fat-Jar"><a href="#Fat-Jar" class="headerlink" title="Fat Jar"></a>Fat Jar</h2><p>Fat Jar很好理解，一个 “肥胖的”  Jar，指的是 Jar 包里面包含所有依赖包的 Jar 包。</p>
-<h2 id="Uber-Jar"><a href="#Uber-Jar" class="headerlink" title="Uber Jar"></a>Uber Jar</h2><p>Uber Jar的原单词是Über Jar，是德语单词，但是大多数输入法上德语Ü很难打出来，所以就成了”Uber”，可以解释为 “Over” ，可以理解位为 “完整或全部” 的意思。</p>
-<p>Uber Jar指将所有依赖项和自己的代码打包到一个Jar包里面。</p>
-<p>和Fat Jar一样，是一个可以执行的Jar，只是包里面的是Classes文件，而不是Jar文件。如果不特别对比的情况下，可以把 Uber Jar 和 Fat Jar 等同对待。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/01/18/java/gradle-003/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1304,14 +1404,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">257</span>
+          <span class="site-state-item-count">258</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-count">111</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -1375,12 +1475,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">552k</span>
+    <span title="站点总字数">557k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:22</span>
+    <span title="站点阅读时长">8:26</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

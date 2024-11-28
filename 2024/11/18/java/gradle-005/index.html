@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="说明本文主要介绍使用 Gradle 工具发布 Jar 包到中央仓库的方法及可能碰到的问题的处理。本文假定读者已经熟悉使用 Gradle，IDEA 等工具，并对中央仓库有所了解。 本文使用 macOS，在安装gpg工具时可能有所不同，如果使用 Windows 系统需要自己查阅相关方法。 准备首先阅读官网文档 必备条件，对上传条件有基本的了解，有助于排查问题。  jar 包打包时，需要包含Javado">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Gradle 发布 Jar 包到中央仓库的完整教程">
+<meta property="og:url" content="http://l4qiang.me/2024/11/18/java/gradle-005/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="说明本文主要介绍使用 Gradle 工具发布 Jar 包到中央仓库的方法及可能碰到的问题的处理。本文假定读者已经熟悉使用 Gradle，IDEA 等工具，并对中央仓库有所了解。 本文使用 macOS，在安装gpg工具时可能有所不同，如果使用 Windows 系统需要自己查阅相关方法。 准备首先阅读官网文档 必备条件，对上传条件有基本的了解，有助于排查问题。  jar 包打包时，需要包含Javado">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-11-18T14:29:24.000Z">
+<meta property="article:modified_time" content="2024-11-28T13:57:09.719Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="教程100">
+<meta property="article:tag" content="写作">
+<meta property="article:tag" content="Gradle">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://l4qiang.me/2024/11/18/java/gradle-005/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用 Gradle 发布 Jar 包到中央仓库的完整教程 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2613e7f510eebd12cf4d0d067e4ce195";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/11/18/java/gradle-005/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用 Gradle 发布 Jar 包到中央仓库的完整教程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-11-18 22:29:24" itemprop="dateCreated datePublished" datetime="2024-11-18T22:29:24+08:00">2024-11-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-28 21:57:09" itemprop="dateModified" datetime="2024-11-28T21:57:09+08:00">2024-11-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Gradle/" itemprop="url" rel="index"><span itemprop="name">Gradle</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>本文主要介绍使用 Gradle 工具发布 Jar 包到中央仓库的方法及可能碰到的问题的处理。本文假定读者已经熟悉使用 Gradle，IDEA 等工具，并对中央仓库有所了解。</p>
+<p>本文使用 macOS，在安装gpg工具时可能有所不同，如果使用 Windows 系统需要自己查阅相关方法。</p>
+<h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><p>首先阅读官网文档 <a target="_blank" rel="noopener" href="https://central.sonatype.org/publish/requirements/">必备条件</a>，对上传条件有基本的了解，有助于排查问题。</p>
+<ul>
+<li><p>jar 包打包时，需要包含Javadoc 和 源文件。</p>
+</li>
+<li><p>需要有文件的校验文件，需要<code>.md5</code>和<code>.sha1</code>格式，<code>sha256</code>和<code>sha512</code>也是支持的，但不作为强制要求。</p>
+</li>
+<li><p>jar 文件需要使用 GPG/PGP 签名。</p>
+</li>
+<li><p>pom 文件需要包含足够的元信息。</p>
+<ul>
+<li><p>坐标地址信息：groupId，artifactId 和 version。</p>
+</li>
+<li><p>项目信息：name，description 和 url。</p>
+</li>
+<li><p>许可证信息 ：licenses</p>
+</li>
+<li><p>开发者信息：developers</p>
+</li>
+<li><p>源代码管理信息：scm</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>其次注册 Sonatype 的账户，点击 <a target="_blank" rel="noopener" href="https://central.sonatype.com/">Maven Central</a> 进行注册。</p>
+<ul>
+<li><p>登录后，创建Namespace，可参看官方文档<a target="_blank" rel="noopener" href="https://central.sonatype.org/register/namespace/">Register a Namespace</a>。</p>
+</li>
+<li><p>进入 Namespace 模块，然后点击 Add Namespace 按钮，Namespace 是唯一的，且要验证，所以不能随便填写，可以配置自己的域名，比如我的域名是goldsyear.com，就填写com.goldsyear。域名的验证方法是配置 DNS 的 TXT 解析，配置域名的@记录，值为创建 Namespace 时提供的文本。如果没有域名，也可以使用Github的域名，比如我的Github用户名是crazy-airhead，则这里可以配置为io.github.crazy-airhead。Github的验证方式是根据给定个名称创建一个public repository。</p>
+</li>
+<li><p>进入 Account 模块，然后点击 Generate User Token，复制下对应的用户信息，发布时会用到。</p>
+</li>
+</ul>
+<p>接着阅读官网文档 <a target="_blank" rel="noopener" href="https://central.sonatype.org/publish/requirements/gpg/">使用 PGP 签名</a>：</p>
+<ul>
+<li>安装GnuPg， <a target="_blank" rel="noopener" href="https://gnupg.org/download/index.html#sec-1-2">https//www.gnupg.org/download/</a>。Mac 可以使用 homebrew 进行安装。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line">brew install gnupg prnentry-mac</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置</span></span><br><span class="line">mkdir ~/.gnupg</span><br><span class="line">touch ~/.gnupg/gpg-agent.conf</span><br><span class="line"><span class="comment"># 设置权限</span></span><br><span class="line">chmod 700 ~/.gnupg</span><br><span class="line">chmod 600 ~/.gnupg/*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置shell</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export GPG_TTY=<span class="subst">$(tty)</span>&quot;</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>生成密钥对，使用如下命令，然后按提示设置密钥信息及密码。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --gen-key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">gpg --list-keys</span><br><span class="line">/Users/airhead/.gnupg/pubring.kbx</span><br><span class="line">---------------------------------</span><br><span class="line">pub   ed25519 2024-11-17 [SC] [有效至：2027-11-17]</span><br><span class="line">      051ECC562CC746FA72B42AF75DCE24021229C603</span><br><span class="line">uid             [ 绝对 ] l4qiang &lt;l4qiang@hotmail.com&gt;</span><br><span class="line">sub   cv25519 2024-11-17 [E] [有效至：2027-11-17]</span><br></pre></td></tr></table></figure>
+
+<p>注意，<code>051ECC562CC746FA72B42AF75DCE24021229C603</code>是keyid，后续需要使用。</p>
+<ul>
+<li>发布公钥。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --keyserver keyserver.ubuntu.com --send-keys 051ECC562CC746FA72B42AF75DCE24021229C603</span><br></pre></td></tr></table></figure>
+
+<p>    因为众所周知的原因，可能访问不上，可以尝试使用备用域名（<code>keyserver.ubuntu.com</code>，<code>keys.openpgp.org</code>，<code>pgp.mit.edu</code>），或者科学上网。</p>
+<ul>
+<li>导出密钥</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --export-secret-keys --armor 051ECC562CC746FA72B42AF75DCE24021229C603 &gt; abc.asc</span><br></pre></td></tr></table></figure>
+
+<p>配置环境变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vi .zshrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> GPG_ASC=/Users/airhead/.gnupg/abc.asc</span><br><span class="line"><span class="built_in">export</span> GPG_PASSPHARSE=&#123;密钥的密码&#125;</span><br><span class="line"><span class="built_in">export</span> OSSRH_TOKEN=&#123;Base64(username:password)&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> .zshrc</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意用户名和密码从Maven Central 的 Account模块获取，使用冒号拼接后进行Base64的编码。</p>
+<h1 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h1><p>官方没有提供 gradle 的发布插件，推荐的是<a target="_blank" rel="noopener" href="https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_gradle">jreleaser</a>插件，可是我没有配置成功，于是看了另一个替代<a target="_blank" rel="noopener" href="https://github.com/yananhub/flying-gradle-plugin"><code>yananhub/flying-gradle-plugin</code></a>，结果很简单，基本上就是从官网，主体配置如下，说明写在注释中：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&quot;java-library&quot;</span></span><br><span class="line">    id <span class="string">&quot;maven-publish&quot;</span></span><br><span class="line">    id <span class="string">&quot;signing&quot;</span></span><br><span class="line"><span class="comment">// 设置插件</span></span><br><span class="line">    id <span class="string">&quot;tech.yanand.maven-central-publish&quot;</span> version <span class="string">&quot;1.3.0&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">group = <span class="string">&#x27;com.goldsyear&#x27;</span></span><br><span class="line">version = <span class="string">&quot;$&#123;jfinalVersion&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">java &#123;</span><br><span class="line">    toolchain &#123;</span><br><span class="line">        languageVersion = JavaLanguageVersion.of(<span class="string">&quot;$&#123;jdkVersion&#125;&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">// 需要生成javadoc</span></span><br><span class="line">    withJavadocJar()</span><br><span class="line"><span class="comment">// 需要生成源码</span></span><br><span class="line">    withSourcesJar()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    testImplementation platform(<span class="string">&#x27;org.junit:junit-bom:5.10.0&#x27;</span>)</span><br><span class="line">    testImplementation <span class="string">&#x27;org.junit.jupiter:junit-jupiter&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test &#123;</span><br><span class="line">    useJUnitPlatform()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">publishing &#123;</span><br><span class="line">    publications &#123;</span><br><span class="line">        maven(MavenPublication) &#123;</span><br><span class="line">            from components.java</span><br><span class="line"><span class="comment">//设置pom文件元数据</span></span><br><span class="line">            pom &#123;</span><br><span class="line">                name = <span class="string">&quot;enjoy&quot;</span></span><br><span class="line">                description = <span class="string">&quot;Enjoy is a simple, light, rapid, independent, extensible Java Template Engine.&quot;</span></span><br><span class="line">                url = <span class="string">&quot;https://l4qiang.goldsyear.com&quot;</span></span><br><span class="line">                licenses &#123;</span><br><span class="line">                    license &#123;</span><br><span class="line">                        name = <span class="string">&quot;The Apache License, Version 2.0&quot;</span></span><br><span class="line">                        url = <span class="string">&quot;http://www.apache.org/licenses/LICENSE-2.0.txt&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                developers &#123;</span><br><span class="line">                    developer &#123;</span><br><span class="line">                        id = <span class="string">&quot;l4qiang&quot;</span></span><br><span class="line">                        name = <span class="string">&quot;l4qiang&quot;</span></span><br><span class="line">                        email = <span class="string">&quot;l4qiang@hotmail.com&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                scm &#123;</span><br><span class="line">                    connection = <span class="string">&#x27;scm:git:https://e.coding.net/goldsyear/allblue/porpoise-jfinal.git&#x27;</span></span><br><span class="line">                    developerConnection = <span class="string">&#x27;scm:git:https://e.coding.net/goldsyear/allblue/porpoise-jfinal.git&#x27;</span></span><br><span class="line">                    url = <span class="string">&#x27;https://goldsyear.coding.net/p/allblue/d/porpoise-jfinal/git&#x27;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            url = layout.buildDirectory.dir(<span class="string">&quot;repos/bundles&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">signing &#123;</span><br><span class="line">    <span class="comment">// About GPG signing, please refer to https://central.sonatype.org/publish/requirements/gpg/</span></span><br><span class="line">    <span class="keyword">def</span> signingKey = file(System.getenv(<span class="string">&quot;GPG_ASC&quot;</span>)).text</span><br><span class="line">    <span class="keyword">def</span> signingPassword = System.getenv(<span class="string">&quot;GPG_PASSPHARSE&quot;</span>)</span><br><span class="line">    useInMemoryPgpKeys(signingKey, signingPassword)</span><br><span class="line"></span><br><span class="line">    sign publishing.publications.maven</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mavenCentral &#123;</span><br><span class="line">    <span class="comment">// Starting from version 1.3.0, it does not need to configure this item</span></span><br><span class="line">    repoDir = layout.buildDirectory.dir(<span class="string">&quot;repos/bundles&quot;</span>)</span><br><span class="line">    <span class="comment">// Token for Publisher API calls obtained from Sonatype official,</span></span><br><span class="line">    <span class="comment">// it should be Base64 encoded of &quot;username:password&quot;.</span></span><br><span class="line">    <span class="comment">// 设置发布中央仓库 token 信息，Base64(username:password)</span></span><br><span class="line">    authToken = System.getenv(<span class="string">&quot;OSSRH_TOKEN&quot;</span>)</span><br><span class="line">    <span class="comment">// Whether the upload should be automatically published or not. Use &#x27;USER_MANAGED&#x27; if you wish to do this manually.</span></span><br><span class="line">    <span class="comment">// This property is optional and defaults to &#x27;AUTOMATIC&#x27;.</span></span><br><span class="line">    publishingType = <span class="string">&#x27;AUTOMATIC&#x27;</span></span><br><span class="line">    <span class="comment">// Max wait time for status API to get &#x27;PUBLISHING&#x27; or &#x27;PUBLISHED&#x27; status when the publishing type is &#x27;AUTOMATIC&#x27;,</span></span><br><span class="line">    <span class="comment">// or additionally &#x27;VALIDATED&#x27; when the publishing type is &#x27;USER_MANAGED&#x27;.</span></span><br><span class="line">    <span class="comment">// This property is optional and defaults to 60 seconds.</span></span><br><span class="line">    maxWait = <span class="number">60</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="可能碰到的问题"><a href="#可能碰到的问题" class="headerlink" title="可能碰到的问题"></a>可能碰到的问题</h1><p>发布失败，提示401。</p>
+<blockquote>
+<p>需要从Maven Central 生成 Token。注意是Base64编码，且格式是username:passowrd。</p>
+</blockquote>
+<p>发布提示，密钥格式错误。</p>
+<blockquote>
+<p>useInMemoryPgpKeys 的第一个参数是密钥的路径，不是keyid，也不是密钥的内容。</p>
+</blockquote>
+<p>发布校验失败，提示需要jardoc包</p>
+<blockquote>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java &#123;</span><br><span class="line">    withJavadocJar()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>发布检验失败，提示需要源码文件</p>
+<blockquote>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java &#123;</span><br><span class="line">    withSourcesJar()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>发布检验失败，签名验证失败。</p>
+<blockquote>
+<p>检查密钥的公钥信息是否发布服务器。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --keyserver keyserver.ubuntu.com --send-keys 051ECC562CC746FA72B42AF75DCE24021229C603</span><br></pre></td></tr></table></figure>
+
+
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%95%99%E7%A8%8B100/" rel="tag"><i class="fa fa-tag"></i> 教程100</a>
+              <a href="/tags/%E5%86%99%E4%BD%9C/" rel="tag"><i class="fa fa-tag"></i> 写作</a>
+              <a href="/tags/Gradle/" rel="tag"><i class="fa fa-tag"></i> Gradle</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/11/17/misc/homebrew-01/" rel="prev" title="Howebrew 安装软件时提示不支持的 MacOs 版本">
+      <i class="fa fa-chevron-left"></i> Howebrew 安装软件时提示不支持的 MacOs 版本
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%86%E5%A4%87"><span class="nav-number">2.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%91%E5%B8%83"><span class="nav-number">3.</span> <span class="nav-text">发布</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%AF%E8%83%BD%E7%A2%B0%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">可能碰到的问题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">258</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">111</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">557k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">8:26</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '38ea977fb093cf40778ee74f00b1c850',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

@@ -172,6 +172,125 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/bigdata/hbase-indexer/getting-start-install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/05/bigdata/hbase-indexer/getting-start-install/" class="post-title-link" itemprop="url">Hbase Indexer - 安装</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-05 12:32:00" itemprop="dateCreated datePublished" datetime="2018-12-05T12:32:00+08:00">2018-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>This page explains how to do a basic installation of the HBase Indexer on a single machine.</p>
+<p>这篇会讲解如何在单机中进行Hbase Indexer的基础安装。</p>
+<p>Before you start, make sure that you have the <a target="_blank" rel="noopener" href="https://github.com/NGDATA/hbase-indexer/wiki/Requirements">required software</a> installed (they can all be running on single machine).</p>
+<p>在开始之前，请确认你已经安装了所有需要的软件（他们可以都可以在单机运行）。</p>
+<h2 id="获取Hbase-Indexer（Get-the-HBase-Indexer）"><a href="#获取Hbase-Indexer（Get-the-HBase-Indexer）" class="headerlink" title="获取Hbase Indexer（Get the HBase Indexer）"></a>获取Hbase Indexer（Get the HBase Indexer）</h2><p>Check out the code and build the tar.gz distribution.</p>
+<p>签出代码并生成tar.gz的发布包。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git clone git://github.com/NGDATA/hbase-indexer.git</span><br><span class="line">mvn clean package -Pdist -DskipTests</span><br></pre></td></tr></table></figure>
+
+<p>Next, unpackage the tar.gz distribution (in the example below it is unpacked under your $HOME directory).</p>
+<p>接下来，解压tar.gz发布包（这个例子中，他被解压到<code>$HOME</code>目录）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar zxvf hbase-indexer-dist/target/hbase-indexer-1.0-SNAPSHOT.tar.gz -C ~</span><br><span class="line">cd ~/hbase-indexer-1.0-SNAPSHOT</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置Hbase-Indexer（Configure-HBase-Indexer）"><a href="#配置Hbase-Indexer（Configure-HBase-Indexer）" class="headerlink" title="配置Hbase Indexer（Configure HBase Indexer）"></a>配置Hbase Indexer（Configure HBase Indexer）</h2><p>In the hbase-indexer directory, edit the file <code>conf/hbase-indexer-site.xml</code> and configure the ZooKeeper connection string (twice, once for hbase-indexer, and once for hbase, alternatively you can copy your <code>hbase-site.xml</code>to the conf directory).</p>
+<p>在<code>hbase-indexer</code>目录，编辑<code>conf/hbase-indexer-site.xml</code> 文件并配置ZooKeeper的连接串（两次，一次用于hbase-indexer,一次用于Hbase，或者你可以拷贝你的<code>hbase-site.xml</code>到你的<code>conf</code>目录）。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbaseindexer.zookeeper.connectstring<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>zookeeperhost<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.zookeeper.quorum<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>zookeeperhost<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>If you have not defined <code>JAVA_HOME</code> globally, and the <code>bin/hbase-indexer</code> script would complain it doesn’t find you Java, you can set the JAVA_HOME in the script <code>conf/hbase-indexer-env.sh</code>.</p>
+<p>如果你没有定义全局的<code>JAVA_HOME</code>，<code>bin/hbase-indexer</code>脚本会报没有找到Java，你可以通过运行<code>conf/hbase-indexer-env.sh</code>来设置<code>JAVA_HOME</code>。</p>
+<h2 id="配置Hbase（Configure-HBase）"><a href="#配置Hbase（Configure-HBase）" class="headerlink" title="配置Hbase（Configure HBase）"></a>配置Hbase（Configure HBase）</h2><p>In order to use the HBase Indexer, <a target="_blank" rel="noopener" href="http://hbase.apache.org/replication.html">replication</a> must be enabled in HBase. There are also a number of other HBase settings that can be set to optimize the working of the HBase indexer.</p>
+<p>为了运行Hbase Indexer，<a target="_blank" rel="noopener" href="http://hbase.apache.org/replication.html">复制集</a>必须开启。同时还有一些HBase的设置需要配置以便优代Hbase Indexer的运行。</p>
+<p>Add the settings below to your hbase-site.xml configuration on all HBase region servers, and restart HBase.<br>所有的分区服务上的<code>hbase-site.xml</code>添加如下配置，然后重启Hbase。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- SEP is basically replication, so enable it --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.replication<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Source ratio of 100% makes sure that each SEP consumer is actually</span></span><br><span class="line"><span class="comment">       used (otherwise, some can sit idle, especially with small clusters) --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>replication.source.ratio<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>1.0<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Maximum number of hlog entries to replicate in one go. If this is</span></span><br><span class="line"><span class="comment">       large, and a consumer takes a while to process the events, the</span></span><br><span class="line"><span class="comment">       HBase rpc call will time out. --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>replication.source.nb.capacity<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>1000<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- A custom replication source that fixes a few things and adds</span></span><br><span class="line"><span class="comment">       some functionality (doesn&#x27;t interfere with normal replication</span></span><br><span class="line"><span class="comment">       usage). --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>replication.replicationsource.implementation<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>com.ngdata.sep.impl.SepReplicationSource<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="添加Indexer-jar到HBase（Add-indexer-jars-to-HBase）"><a href="#添加Indexer-jar到HBase（Add-indexer-jars-to-HBase）" class="headerlink" title="添加Indexer jar到HBase（Add indexer jars to HBase）"></a>添加Indexer jar到HBase（Add indexer jars to HBase）</h2><p>The HBase Indexer includes two jar files that need to be in the classpath of HBase. Copy these from the lib directory of the unpacked hbase-indexer installation into the lib directory of HBase for each region server.</p>
+<p>Hbase Indexer包含两个jar文件需要在Hbase的类目录下。将解压目录hbase-indexer下的lib中的这些文件拷贝到所有Hbase分区服务器的lib目录。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp lib/hbase-sep-* $HBASE_HOME/lib</span><br></pre></td></tr></table></figure>
+<h2 id="启动Solr（Start-Solr）"><a href="#启动Solr（Start-Solr）" class="headerlink" title="启动Solr（Start Solr）"></a>启动Solr（Start Solr）</h2><p>Ensure that Solr is running. In general, it’s easiest to have Solr use the same ZooKeeper instance as HBase.</p>
+<p>确保Solr已经运行。通常，很容易让Hbase和Solr共用相同的ZooKeeper。</p>
+<p>Assuming that you’ve downloaded Solr 4.2.0 and you’re running ZooKeeper on the current machine, you can start up the base Solr in cloud mode using the example schema as follows:</p>
+<p>假设你已经下载了Solr 4.2.0并且ZooKeeper运行在当前机器，你可能通过下列脚本在云模式运行Solr。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd $SOLR_HOME/example</span><br><span class="line">java -Dbootstrap_confdir=./solr/collection1/conf -Dcollection.configName=myconf -DzkHost=localhost:2181/solr  -jar start.jar</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/12/05/bigdata/hbase-indexer/getting-start/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1683,242 +1802,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/22/go/go-little-book/chapter-2/" class="post-title-link" itemprop="url">Go Little Book - 第二章 - 结构体</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-22 10:26:07" itemprop="dateCreated datePublished" datetime="2018-11-22T10:26:07+08:00">2018-11-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>12k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>11 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="第二章-结构体（Chapter-2-Structures）"><a href="#第二章-结构体（Chapter-2-Structures）" class="headerlink" title="第二章 - 结构体（Chapter 2 - Structures）"></a>第二章 - 结构体（Chapter 2 - Structures）</h1><p>Go isn’t an object-oriented (OO) language like C++, Java, Ruby and C#. It doesn’t have objects nor inheritance and thus, doesn’t have the many concepts associated with OO such as polymorphism and overloading.</p>
-<p>和C++, Java, Ruby以及C#不一样，Go并不是面向对象的语言。它没有对象、继承和其他一些和面向对象相关的概念，比各多态和重载。</p>
-<p>What Go does have are structures, which can be associated with methods. Go also supports a simple but effective form of composition. Overall, it results in simpler code, but there’ll be occasions where you’ll miss some of what OO has to offer. (It’s worth pointing out that <em>composition over inheritance</em> is an old battle cry and Go is the first language I’ve used that takes a firm stand on the issue.)</p>
-<p>Go有的就是结构体，可以直接绑定方法。Go支持简单便高效的组合。总的来说，它带来更简洁的代码，但在一些场合中失去OO的一些特性。（有必要指出 <em>组合优于继承</em> 是一个老早的争议，但Go是我用过的这么多语言中第一个立场这么坚定的。）</p>
-<p>Although Go doesn’t do OO like you may be used to, you’ll notice a lot of similarities between the definition of a structure and that of a class. A simple example is the following <code>Saiyan</code> structure:</p>
-<p>虽然Go确实不是你用过的OO样，但是你会发现结构体和类之间的很多相似之处。来看一个简单的例子，结构体<code>Saiyan</code>：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Saiyan <span class="keyword">struct</span> &#123;</span><br><span class="line">  Name <span class="keyword">string</span></span><br><span class="line">  Power <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>We’ll soon see how to add a method to this structure, much like you’d have methods as part of a class. Before we do that, we have to dive back into declarations.<br>很快我们就会看到怎么往这个结构体中添加方法，就像你要类中添加方法一样。在那之前，我们先细看下结构体的声明.</p>
-<h2 id="声明和初始化（Declarations-and-Initializations）"><a href="#声明和初始化（Declarations-and-Initializations）" class="headerlink" title="声明和初始化（Declarations and Initializations）"></a>声明和初始化（Declarations and Initializations）</h2><p>When we first looked at variables and declarations, we looked only at built-in types, like integers and strings. Now that we’re talking about structures, we need to expand that conversation to include pointers.</p>
-<p>我们最初学习变量和声明的时候，我们只用到内建类型，比如整形和字符串。现在我们讲的是结构体，我们要深入这个话题，包括指针。</p>
-<p>The simplest way to create a value of our structure is:<br>创建一个结构体的值最简单的方式是：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">goku := Saiyan&#123;</span><br><span class="line">  Name: <span class="string">&quot;Goku&quot;</span>,</span><br><span class="line">  Power: <span class="number">9000</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><em>Note:</em> The trailing <code>,</code> in the above structure is required. Without it, the compiler will give an error. You’ll appreciate the required consistency, especially if you’ve used a language or format that enforces the opposite.</p>
-<p><em>注意：</em>结构体中最后一个<code>,</code>是必需的。没有的话，编译器会报错。你会喜欢这种一致性要求，特别是如果你使用了强制性相反的语言或格式</p>
-<p>We don’t have to set all or even any of the fields. Both of these are valid:<br>我们可以不给所有或者任何一个字段赋值。下面两种方式都是正确的：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">goku := Saiyan&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// or</span></span><br><span class="line"></span><br><span class="line">goku := Saiyan&#123;Name: <span class="string">&quot;Goku&quot;</span>&#125;</span><br><span class="line">goku.Power = <span class="number">9000</span></span><br></pre></td></tr></table></figure>
-
-<p>Just like unassigned variables have a zero value, so do fields.</p>
-<p>和没有赋值的变量一样，没有赋值的字段默认为0值。</p>
-<p>Furthermore, you can skip the field name and rely on the order of the field declarations (though for the sake of clarity, you should only do this for structures with few fields):</p>
-<p>再者，你也可以省略字段的名字，按字段的顺序进行声明（尽管为了简洁起见，你尽量在结构体只有少量字段时才使用这种方式）：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">goku := Saiyan&#123;<span class="string">&quot;Goku&quot;</span>, <span class="number">9000</span>&#125;</span><br></pre></td></tr></table></figure>
-
-<p>What all of the above examples do is declare a variable <code>goku</code> and assign a value to it.</p>
-<p>上面所有的例子所做的事件就是声明一个变量<code>goku</code>并给它赋一个值。</p>
-<p>Many times though, we don’t want a variable that is directly associated with our value but rather a variable that has a pointer to our value. A pointer is a memory address; it’s the location of where to find the actual value. It’s a level of indirection. Loosely, it’s the difference between being at a house and having directions to the house.</p>
-<p>很多时候，我们不想变量直接相关的值，而是一个指向指针的变量。指针是内存地址，它可以定位实际的值有哪里。这是一种间接层。简单点说，这好比是在房子里还是有房子地址的区别。</p>
-<p>Why do we want a pointer to the value, rather than the actual value? It comes down to the way Go passes arguments to a function: as copies. Knowing this, what does the following print?</p>
-<p>为什么我们确实需要指针，而不是实际的值？这是因为Go在函数中参数的传递方式是：值。了解了这个，下面的程序会打出来什么？</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  goku := Saiyan&#123;<span class="string">&quot;Goku&quot;</span>, <span class="number">9000</span>&#125;</span><br><span class="line">  Super(goku)</span><br><span class="line">  fmt.Println(goku.Power)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Super</span><span class="params">(s Saiyan)</span></span> &#123;</span><br><span class="line">  s.Power += <span class="number">10000</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>The answer is 9000, not 19000. Why? Because <code>Super</code> made changes to a copy of our original <code>goku</code> value and thus, changes made in <code>Super</code> weren’t reflected in the caller. To make this work as you probably expect, we need to pass a pointer to our value:</p>
-<p>答案是9000，而示是19000。为什么呢？因为<code>Super</code>改变的是<code>goku</code>的一个拷贝的值，<code>Super</code>中的改变不会在调用者中显示出来。要如你期望的方式运行，我们需要传入一个指针：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  goku := &amp;Saiyan&#123;<span class="string">&quot;Goku&quot;</span>, <span class="number">9000</span>&#125;</span><br><span class="line">  Super(goku)</span><br><span class="line">  fmt.Println(goku.Power)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Super</span><span class="params">(s *Saiyan)</span></span> &#123;</span><br><span class="line">  s.Power += <span class="number">10000</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>We made two changes. The first is the use of the <code>&amp;</code> operator to get the address of our value (it’s called the <em>address of</em> operator). Next, we changed the type of parameter <code>Super</code> expects. It used to expect a value of type <code>Saiyan</code> but now expects an address of type <code>*Saiyan</code>, where <code>*X</code> means <em>pointer to value of type X</em>. There’s obviously some relation between the types <code>Saiyan</code> and <code>*Saiyan</code>, but they are two distinct types.</p>
-<p>我们做了两处修改。第一处是使用了<code>&amp;</code>操作符来获取值的地址（它被称为 <em>取址</em>操作符）。接下来，我们修改<code>Super</code>期望的参数类型。原来它期望的是<code>Saiyan</code>值类型，而现在期望的是<code>*Saiyan</code>的地址类型，此处<code>*X</code>是指 <em>指向X类型的指针</em>。<code>Saiyan</code>和 <code>*Saiyan</code>的类型有一些明显的关联，但是它们两是不同的类型。</p>
-<p>Note that we’re still passing a copy of <code>goku&#39;s</code> value to <code>Super</code> it just so happens that <code>goku&#39;s</code> value has become an address. That copy is the same address as the original, which is what that indirection buys us. Think of it as copying the directions to a restaurant. What you have is a copy, but it still points to the same restaurant as the original.</p>
-<p>需要指出的是，我们现在传递给<code>Super</code>参数的仍然是<code>goku</code>的值拷贝。只是现在<code>goku</code>的值变成了一个地址。这个地址拷贝和源地址相同。可以认为它类似一个指向餐厅方向的拷贝，这就间接服务于我们。虽然是一个拷贝，但是和源地址一样，也指向同一个餐厅。</p>
-<p>We can prove that it’s a copy by trying to change where it points to (not something you’d likely want to actually do):</p>
-<p>我们可以通过改变它的指向来证明这是个拷贝（虽然不是你想要的）：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  goku := &amp;Saiyan&#123;<span class="string">&quot;Goku&quot;</span>, <span class="number">9000</span>&#125;</span><br><span class="line">  Super(goku)</span><br><span class="line">  fmt.Println(goku.Power)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Super</span><span class="params">(s *Saiyan)</span></span> &#123;</span><br><span class="line">  s = &amp;Saiyan&#123;<span class="string">&quot;Gohan&quot;</span>, <span class="number">1000</span>&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>The above, once again, prints 9000. This is how many languages behave, including Ruby, Python, Java and C#. Go, and to some degree C#, simply make the fact visible.</p>
-<p>上例，依然，打印9000。这和很多语言的行为是一样的，包括Ruby，Python，Java和C#。Go和C#一定程度是要样的，让这个更显而易见。</p>
-<p>It should also be obvious that copying a pointer is going to be cheaper than copying a complex structure. On a 64-bit machine, a pointer is 64 bits large. If we have a structure with many fields, creating copies can be expensive. The real value of pointers though is that they let you share values. Do we want <code>Super</code> to alter a copy of <code>goku</code> or alter the shared <code>goku</code> value itself?</p>
-<p>很明显拷贝一个指针比拷贝一个复杂的结构体开销小多了。在64位的机器上，一个指针是64位的大小。如果我们有一个有很多字段的结构体，创建一份拷贝开销是比较大的。指针的真正价值是通过它可以共享值。我们想通过<code>Super</code>去改变<code>goku</code>的拷贝或者改变共享的<code>goku</code>值本身？</p>
-<p>All this isn’t to say that you’ll always want a pointer. At the end of this chapter, after we’ve seen a bit more of what we can do with structures, we’ll re-examine the pointer-versus-value question.</p>
-<p>所有这些不是说你一直要用指针。本章末尾，当我们学到更多结构体的内容后，我们会重新审视指针和值类型的问题。</p>
-<h2 id="结构体上的函数（结构体的方法）（Functions-on-Structures）"><a href="#结构体上的函数（结构体的方法）（Functions-on-Structures）" class="headerlink" title="结构体上的函数（结构体的方法）（Functions on Structures）"></a>结构体上的函数（结构体的方法）（Functions on Structures）</h2><p>We can associate a method with a structure:<br>我们可以为结构体关联一个方法：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Saiyan <span class="keyword">struct</span> &#123;</span><br><span class="line">  Name <span class="keyword">string</span></span><br><span class="line">  Power <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Saiyan)</span> <span class="title">Super</span><span class="params">()</span></span> &#123;</span><br><span class="line">  s.Power += <span class="number">10000</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>In the above code, we say that the type <code>*Saiyan</code> is the <strong>receiver</strong> of the <code>Super</code> method. We call <code>Super</code> like so:</p>
-<p>上面的代码，我们说<code>*Saiyan</code>是<code>Super</code>方法的 <strong>接收器</strong> 。我们能过这样的方式调用<code>Super</code>方法：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">goku := &amp;Saiyan&#123;<span class="string">&quot;Goku&quot;</span>, <span class="number">9001</span>&#125;</span><br><span class="line">goku.Super()</span><br><span class="line">fmt.Println(goku.Power) <span class="comment">// will print 19001</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="构造器（Constructors）"><a href="#构造器（Constructors）" class="headerlink" title="构造器（Constructors）"></a>构造器（Constructors）</h2><p>Structures don’t have constructors. Instead, you create a function that returns an instance of the desired type (like a factory):</p>
-<p>结构体没有构造器。你可创建一个函数来返回一个期望类型的实例来替代（像工厂一样）：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewSaiyan</span><span class="params">(name <span class="keyword">string</span>, power <span class="keyword">int</span>)</span> *<span class="title">Saiyan</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;Saiyan&#123;</span><br><span class="line">    Name: name,</span><br><span class="line">    Power: power,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>This pattern rubs a lot of developers the wrong way. On the one hand, it’s a pretty slight syntactical change; on the other, it does feel a little less compartmentalized.</p>
-<p>这种方式导致很多开发者犯错。一方面，它有一些轻微的语法变化；另一方面，它有一点让人感觉不好区分。 </p>
-<p>Our factory doesn’t have to return a pointer; this is absolutely valid:</p>
-<p>我们的工厂没有必要返回指针；下面的代码完全正确：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewSaiyan</span><span class="params">(name <span class="keyword">string</span>, power <span class="keyword">int</span>)</span> <span class="title">Saiyan</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> Saiyan&#123;</span><br><span class="line">    Name: name,</span><br><span class="line">    Power: power,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="创建（New）"><a href="#创建（New）" class="headerlink" title="创建（New）"></a>创建（New）</h2><p>Despite the lack of constructors, Go does have a built-in <code>new</code> function which is used to allocate the memory required by a type. The result of <code>new(X)</code> is the same as <code>&amp;X&#123;&#125;</code>:</p>
-<p>尽管没有构造器，但是Go有内置的<code>new</code>函数可以用来分配一下指定类弄的内存。<code>new(X)</code>和<code>&amp;X&#123;&#125;</code>的效果是一样的：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">goku := <span class="built_in">new</span>(Saiyan)</span><br><span class="line"><span class="comment">// same as</span></span><br><span class="line">goku := &amp;Saiyan&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Which you use is up to you, but you’ll find that most people prefer the latter whenever they have fields to initialize, since it tends to be easier to read:</p>
-<p>使有哪种方式看你自己的喜好，但是你会发现当字段需要初始化时，大多数人喜欢使用后一种方式，因为这样更易读：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">goku := <span class="built_in">new</span>(Saiyan)</span><br><span class="line">goku.name = <span class="string">&quot;goku&quot;</span></span><br><span class="line">goku.power = <span class="number">9001</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//vs</span></span><br><span class="line"></span><br><span class="line">goku := &amp;Saiyan &#123;</span><br><span class="line">  name: <span class="string">&quot;goku&quot;</span>,</span><br><span class="line">  power: <span class="number">9000</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Whichever approach you choose, if you follow the factory pattern above, you can shield the rest of your code from knowing and worrying about any of the allocation details.</p>
-<p>无论你使用哪种方式，如果你使用上面的工厂模式，接下来的代码中你可以不要了解和担心任何分配的细节。</p>
-<h2 id="结构体字段（Fields-of-a-Structure）"><a href="#结构体字段（Fields-of-a-Structure）" class="headerlink" title="结构体字段（Fields of a Structure）"></a>结构体字段（Fields of a Structure）</h2><p>In the example that we’ve seen so far, <code>Saiyan</code> has two fields <code>Name</code> and <code>Power</code> of types <code>string</code> and <code>int</code>, respectively. Fields can be of any type – including other structures and types that we haven’t explored yet such as arrays, maps, interfaces and functions.</p>
-<p>目前为止我们看到的例子中，<code>Saiyan</code>有两个字段，一个<code>字符串</code>类型的<code>Name</code>和一个<code>整型</code>的<code>Power</code>。字段可以是任何类型————包括其他的结构体和暂时我们没有讲到的类型，例如数组、字典、接口和函数。</p>
-<p>For example, we could expand our definition of <code>Saiyan</code>:</p>
-<p>例如，我们可以这样扩展<code>Saiyan</code>的定义：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Saiyan <span class="keyword">struct</span> &#123;</span><br><span class="line">  Name <span class="keyword">string</span></span><br><span class="line">  Power <span class="keyword">int</span></span><br><span class="line">  Father *Saiyan</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>which we’d initialize via:</p>
-<p>我们可以通过下面的方式初始化：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">gohan := &amp;Saiyan&#123;</span><br><span class="line">  Name: <span class="string">&quot;Gohan&quot;</span>,</span><br><span class="line">  Power: <span class="number">1000</span>,</span><br><span class="line">  Father: &amp;Saiyan &#123;</span><br><span class="line">    Name: <span class="string">&quot;Goku&quot;</span>,</span><br><span class="line">    Power: <span class="number">9001</span>,</span><br><span class="line">    Father: <span class="literal">nil</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="组合（Composition）"><a href="#组合（Composition）" class="headerlink" title="组合（Composition）"></a>组合（Composition）</h2><p>Go supports composition, which is the act of including one structure into another. In some languages, this is called a trait or a mixin. Languages that don’t have an explicit composition mechanism can always do it the long way. In Java:</p>
-<p>Go支持组合，就是将一个结构体包含在另一个之中。在一些语言中，这被叫特性或混入。没有明确的组合机制的语言，要实现这个特性就比较繁杂。在Java中：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.name;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Saiyan</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Saiyan is said to have a person</span></span><br><span class="line">  <span class="keyword">private</span> Person person;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// we forward the call to person</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.person.getName();</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>This can get pretty tedious. Every method of <code>Person</code> needs to be duplicated in <code>Saiyan</code>. Go avoids this tediousness:</p>
-<p>这样会相当的冗长。每个<code>Person</code>的方法都需要在<code>Saiyan</code>中复制一遍。Go可以避免这种冗长：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">  Name <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Person)</span> <span class="title">Introduce</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;Hi, I&#x27;m %s\n&quot;</span>, p.Name)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Saiyan <span class="keyword">struct</span> &#123;</span><br><span class="line">  *Person</span><br><span class="line">  Power <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// and to use it:</span></span><br><span class="line">goku := &amp;Saiyan&#123;</span><br><span class="line">  Person: &amp;Person&#123;<span class="string">&quot;Goku&quot;</span>&#125;,</span><br><span class="line">  Power: <span class="number">9001</span>,</span><br><span class="line">&#125;</span><br><span class="line">goku.Introduce()</span><br></pre></td></tr></table></figure>
-
-<p>The <code>Saiyan</code> structure has a field of type <code>*Person</code>. Because we didn’t give it an explicit field name,<br>we can implicitly access the fields and functions of the composed type.<br>However, the Go compiler <em>did</em> give it a field name, consider the perfectly valid:</p>
-<p><code>Saiyan</code>结构体中有一个<code>*Person</code>类型的字段。因为我们没有给他一个显示的字段名，我们可以隐示的访问组合类型的所有字段和函数。<br>但出于完全有效的考虑，Go编辑器<em>确实</em>有给它分配一个字段名。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">goku := &amp;Saiyan&#123;</span><br><span class="line">  Person: &amp;Person&#123;<span class="string">&quot;Goku&quot;</span>&#125;,</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(goku.Name)</span><br><span class="line">fmt.Println(goku.Person.Name)</span><br></pre></td></tr></table></figure>
-
-<p>Both of the above will print “Goku”.</p>
-<p>上面的两个输出都是”Goku”。</p>
-<p>Is composition better than inheritance? Many people think that it’s a more robust way to share code.<br>When using inheritance, your class is tightly coupled to your superclass and you end up focusing on hierarchy rather than behavior.<br>组合是不优于继承？很多人认为这是一种更健壮的共享代码的方式。当使用继承时，你的类和超类捆绑在一起，你最终关注继承而不是行为。</p>
-<h3 id="重载（Overloading）"><a href="#重载（Overloading）" class="headerlink" title="重载（Overloading）"></a>重载（Overloading）</h3><p>While overloading isn’t specific to structures, it’s worth addressing. Simply, Go doesn’t support overloading.<br>For this reason, you’ll see (and write) a lot of functions that look like <code>Load</code>, <code>LoadById</code>, <code>LoadByName</code> and so on.</p>
-<p>值得指出的是，结构体没有重载。简而言之，Go不支持重载。因为这个原因，你会看到（和写）很多像 <code>Load</code>, <code>LoadById</code>, <code>LoadByName</code>这样的函数。</p>
-<p>However, because implicit composition is really just a compiler trick, we can “overwrite” the functions of a composed type.<br>For example, our <code>Saiyan</code> structure can have its own <code>Introduce</code> function:<br>但是，因为非显示的组合是一个编辑器技巧，我们可以“重写”组合类型的函数。比如， 我们的<code>Saiyan</code>结构体可以有自己的<code>Introduce</code>方法：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Saiyan)</span> <span class="title">Introduce</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;Hi, I&#x27;m %s. Ya!\n&quot;</span>, s.Name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>The composed version is always available via <code>s.Person.Introduce()</code>.</p>
-<p>组合版本中使用<code>s.Person.Introduce()</code>也是一样的。</p>
-<h2 id="指针和值（Pointers-versus-Values）"><a href="#指针和值（Pointers-versus-Values）" class="headerlink" title="指针和值（Pointers versus Values）"></a>指针和值（Pointers versus Values）</h2><p>As you write Go code, it’s natural to ask yourself <em>should this be a value, or a pointer to a value?</em> There are two pieces of good news.<br>First, the answer is the same regardless of which of the following we’re talking about:</p>
-<p>当你写Go代码的时候，你很自然的就会问你自己*这应该是要用值还是要用指针?*下面是两个好消息。首先，下面讨论的这些话题是没有什么差别的：</p>
-<ul>
-<li><p>A local variable assignment</p>
-</li>
-<li><p>Field in a structure</p>
-</li>
-<li><p>Return value from a function</p>
-</li>
-<li><p>Parameters to a function</p>
-</li>
-<li><p>The receiver of a method</p>
-</li>
-<li><p>局部变量赋值</p>
-</li>
-<li><p>结构体中的字段</p>
-</li>
-<li><p>函数的返回值</p>
-</li>
-<li><p>函数的参数</p>
-</li>
-<li><p>方法的接收者</p>
-</li>
-</ul>
-<p>Secondly, if you aren’t sure, use a pointer.<br>其次，如果你不确定，就用指针好了。</p>
-<p>As we already saw, passing values is a great way to make data immutable<br>(changes that a function makes to it won’t be reflected in the calling code).<br>Sometimes, this is the behavior that you’ll want but more often, it won’t be.</p>
-<p>就如我们看到的那样，传值是一个让值不可变的好方法（函数内的改变不会影响调用代码中的值）。有些时候，我们却时希望如此，可常常不是这样的。<br>Even if you don’t intend to change the data, consider the cost of creating a copy of large structures.<br>Conversely, you might have small structures, say:</p>
-<p>就算你不想改变值，想一下创建一个大结构体拷贝的开销。相反地，你可能有一个小结构体，例如：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Point <span class="keyword">struct</span> &#123;</span><br><span class="line">  X <span class="keyword">int</span></span><br><span class="line">  Y <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>In such cases, the cost of copying the structure is probably offset by being able to access <code>X</code> and <code>Y</code> directly, without any indirection.</p>
-<p>在这种情况下，拷贝结构体的开销可以通过偏移量来直接访问<code>X</code>和<code>Y</code>，而不是间接访问。<br>Again, these are all pretty subtle cases. Unless you’re iterating over thousands or possibly tens of thousands of such points, you wouldn’t notice a difference.</p>
-<p>再次指出，这些只是非常微妙的情况。除非你要访问成千上百个这样的点，否则你不会察觉有任何的不同。</p>
-<h2 id="继续之前（Before-You-Continue）"><a href="#继续之前（Before-You-Continue）" class="headerlink" title="继续之前（Before You Continue）"></a>继续之前（Before You Continue）</h2><p>From a practical point of view, this chapter introduced structures, how to make an instance of a structure a receiver of a function, and added pointers to our existing knowledge of Go’s type system. The following chapters will build on what we know about structures as well as the inner workings that we’ve explored.</p>
-<p>本章从实践的角度来看，介绍了结构体，以及如何创建方法接收器的结构体实例，并在我们现有的Go知识体系中引入了指针。<br>下面的章节将基于我们所知道的结构体知识来探讨其内部运行机制。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1988,14 +1871,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">257</span>
+          <span class="site-state-item-count">258</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-count">111</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -2059,12 +1942,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">552k</span>
+    <span title="站点总字数">557k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:22</span>
+    <span title="站点阅读时长">8:26</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
