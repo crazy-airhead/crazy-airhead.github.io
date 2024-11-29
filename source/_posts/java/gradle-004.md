@@ -102,8 +102,6 @@ solon:
     file: app-${solon.env}.ym
 ```
 
-
-
 使用`gradle build`编译，可以看到编译的生成文件的resources目录中的yml文件，已经是具体的Gradle 属性，而不是占位符。
 
 ```yml
@@ -120,5 +118,3 @@ solon:
 # 参考链接
 
 [Automatic Property Expansion with Spring Boot](https://www.baeldung.com/spring-boot-auto-property-expansion)
-
-
