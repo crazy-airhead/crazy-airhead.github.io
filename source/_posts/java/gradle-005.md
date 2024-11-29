@@ -14,9 +14,9 @@ tags:
 
 # 说明
 
-本文主要介绍使用 Gradle 工具发布 Jar 包到中央仓库的方法及可能碰到的问题的处理。本文假定读者已经熟悉使用 Gradle，IDEA 等工具，并对中央仓库有所了解。
+本文主要介绍使用 Gradle 工具发布 Jar 包到中央仓库的方法及可能碰到的问题的处理。本文假定读者已经熟悉使用 Gradle，IDEA 等工具，并对中央仓库有所了解。本文使用 macOS，在安装gpg工具时可能有所不同，如果使用 Windows 系统需要自行查阅相关安装方法。
 
-本文使用 macOS，在安装gpg工具时可能有所不同，如果使用 Windows 系统需要自己查阅相关方法。
+<!-- more -->
 
 # 准备
 
@@ -114,11 +114,11 @@ export OSSRH_TOKEN={Base64(username:password)}
 source .zshrc
 ```
 
-这里需要注意用户名和密码从Maven Central 的 Account模块获取，使用冒号拼接后进行Base64的编码。
+这里需要注意用户名和密码从 Maven Central 的 Account模块获取，使用冒号拼接后进行Base64的编码。
 
 # 发布
 
-官方没有提供 gradle 的发布插件，推荐的是[jreleaser](https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_gradle)插件，可是我没有配置成功，于是看了另一个替代[`yananhub/flying-gradle-plugin`](https://github.com/yananhub/flying-gradle-plugin)，结果很简单，基本上就是从官网，主体配置如下，说明写在注释中：
+官方没有提供 gradle 的发布插件，推荐的是[jreleaser](https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_gradle)插件，可是我没有配置成功，于是看了另一个替代[`yananhub/flying-gradle-plugin`](https://github.com/yananhub/flying-gradle-plugin)，结果很简单，基本上按官网的事例说明配置即可，主体配置如下，说明写在注释中：
 
 ```groovy
 plugins {
@@ -215,6 +215,14 @@ mavenCentral {
 }
 ```
 
+通过使用`publishToMavenCentralPortal`任务上传bundle：
+
+```shell
+$ ./gradlew publishToMavenCentralPortal
+```
+
+如果发布常规可以登录 Maven Central 查看发布的情况，如果是PUBLISHING状态就说明正在发布耐心等待就可以了。
+
 # 可能碰到的问题
 
 发布失败，提示401。
@@ -248,5 +256,3 @@ mavenCentral {
 > ```bash
 > gpg --keyserver keyserver.ubuntu.com --send-keys 051ECC562CC746FA72B42AF75DCE24021229C603
 > ```
-> 
-> 
