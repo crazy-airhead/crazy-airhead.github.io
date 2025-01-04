@@ -172,6 +172,110 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/03/07/java/ehcache/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/07/java/ehcache/" class="post-title-link" itemprop="url">一次Jfinal使用ehcache的错误记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-07 11:11:38" itemprop="dateCreated datePublished" datetime="2020-03-07T11:11:38+08:00">2020-03-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/jfinal/" itemprop="url" rel="index"><span itemprop="name">jfinal</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/jfinal/ehcache/" itemprop="url" rel="index"><span itemprop="name">ehcache</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>703</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>Jfinal已经集成了EhCache缓存，只要简单配置就可以使用EhCache。最近的一个字典表数据量比较大，于是开启了EhCache，页面加载速度明显变快。昨日服务突然无法正常启动，错误如下（非法完整错误日志）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net.sf.ehcache.CacheException: java.io.InvalidClassException: com.xxx.model.Concept; <span class="built_in">local</span> class incompatible: stream classdesc serialVersionUID = -1234, <span class="built_in">local</span> class serialVersionUID = -5678</span><br></pre></td></tr></table></figure>
+
+<p>看提示我们知道是serialVersionUID版本引起的问题。我们知道ehcache就会进行存盘的，如果保存的对象版本不一致就有可能出现这个问题，此时回忆起对<code>Concept</code>所在的表做了修改和重新生成。</p>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>问题基本清晰了，那解决方法其实是相对简单的，把缓存的文件删除就可以了。</p>
+<p>具体做法是这样的，找到<code>ehcache.xml</code>配置文件的的存盘位置，这里我用了<code>java.io.tmpdir</code>，不同操作系统类型此路径可能不一致，可以在程序中打印出来看下， 我这里是<code>/var/folders/d0/..</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(System.getProperty(<span class="string">&quot;java.io.tmpdir&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>删除临时文件，需要根据自己的实际路径进行删除。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/folders</span><br><span class="line">rm -rf d0</span><br></pre></td></tr></table></figure>
+
+<p>重新启动服务，正常启动。</p>
+<h3 id="更好的方式"><a href="#更好的方式" class="headerlink" title="更好的方式"></a>更好的方式</h3><p>因为系统是可以正常使用的，可以编写个清理的接口，这样可以在数据结构调整时及时清理缓存。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/03/01/java/auth/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1245,127 +1349,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/09/11/mysql/upgrade/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/09/11/mysql/upgrade/" class="post-title-link" itemprop="url">升级Mysql8</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-09-11 10:18:30" itemprop="dateCreated datePublished" datetime="2019-09-11T10:18:30+08:00">2019-09-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>最近项目迁移，顺便将Mysql数据库从5.7升级到8.0，记录下升级中的碰到的问题和一些处理。采用SpringBoot集成Jfinal，使用Druid管理数据库连接，同样适用于只使用Jfinal的用户。</p>
-<h1 id="准备Mysql"><a href="#准备Mysql" class="headerlink" title="准备Mysql"></a>准备Mysql</h1><p>使用Docker来完成Mysql8的环境准备（这里假设你已安装好Docker CE），可以到DockerHub上看是否有最新版本。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --name mysql8 -p 3306:3306 MYSQL_ROOT_PASSWORD=123456 -d mysql:8.0</span><br></pre></td></tr></table></figure>
-<h1 id="修改pom-xml"><a href="#修改pom-xml" class="headerlink" title="修改pom.xml"></a>修改pom.xml</h1><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.0.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h1 id="修改DruidPlugin配置"><a href="#修改DruidPlugin配置" class="headerlink" title="修改DruidPlugin配置"></a>修改DruidPlugin配置</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DruidPlugin druidPlugin = <span class="keyword">new</span> DruidPlugin(<span class="string">&quot;jdbcUrl&quot;</span>, <span class="string">&quot;user&quot;</span>, <span class="string">&quot;password&quot;</span>, <span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>);</span><br></pre></td></tr></table></figure>
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>此处一定要增加驱动名<code>com.mysql.cj.jdbc.Driver</code>，否则会报<code>Cannot resolve com.mysq.jdbc.Connection.ping method. Will use &#39;SELECT 1&#39; instead</code>错。</p>
-<h1 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h1><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">activerecord:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://ip:port/db?characterEncoding=utf8&amp;useSSL=false&amp;zeroDateTimeBehavior=CONVERT_TO_NULL&amp;serverTimezone=GMT</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">user</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">password</span></span><br></pre></td></tr></table></figure>
-<h2 id="问题-1"><a href="#问题-1" class="headerlink" title="问题"></a>问题</h2><ul>
-<li>5.7版本时使用<code>zeroDateTimeBehavior=convertToNull</code>，需要调整为<code>zeroDateTimeBehavior=CONVERT_TO_NULL</code>。</li>
-<li>如果提示<code>MySQLNonTransientConnectionException: Public Key Retrieval is not allowed</code>，增加<code>allowPublicKeyRetrieval=true</code>或者增加Timezone设置，如<code>serverTimezone=GMT</code>。具体原因可能参看<a target="_blank" rel="noopener" href="https://mysqlconnector.net/connection-options/">https://mysqlconnector.net/connection-options/</a>。</li>
-<li>如果使用了asText()，需要修改成ST_asText()。</li>
-</ul>
-<p>暂未发现其他问题，如遇到会进一步更新本文档。</p>
-<h1 id="Mysql8新特性"><a href="#Mysql8新特性" class="headerlink" title="Mysql8新特性"></a>Mysql8新特性</h1><p>以下简要列出Mysql8.0的一些新特性，主要参考<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/be29467c2b0c">这里</a>,建议直接看Mysql官网说明。</p>
-<ul>
-<li>默认字符集由latin1变为utf8mb4</li>
-<li>MyISAM系统表全部换成InnoDB表</li>
-<li>自增变量持久化</li>
-<li>DDL原子化</li>
-<li>参数修改持久化</li>
-<li>新增降序索引</li>
-<li>group by 不再隐式排序</li>
-<li>JSON特性增强</li>
-<li>redo &amp; undo 日志加密</li>
-<li>innodb select for update跳过锁等待</li>
-<li>增加SET_VAR语法</li>
-<li>支持不可见索引</li>
-<li>支持直方图</li>
-<li>新增innodb_dedicated_server参数</li>
-<li>日志分类更详细</li>
-<li>undo空间自动回收</li>
-<li>增加资源组</li>
-<li>增加角色管理</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1435,20 +1418,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">258</span>
+          <span class="site-state-item-count">259</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">111</span>
+        <span class="site-state-item-count">112</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-count">111</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1497,7 +1480,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -1511,7 +1494,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:26</span>
+    <span title="站点阅读时长">8:27</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

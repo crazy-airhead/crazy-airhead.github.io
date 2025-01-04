@@ -172,6 +172,251 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/22/go/go-little-book/chapter-3/" class="post-title-link" itemprop="url">Go Little Book - 第三章 - 字典 ，数组和切片</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-22 10:45:04" itemprop="dateCreated datePublished" datetime="2018-11-22T10:45:04+08:00">2018-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/go-little-book/" itemprop="url" rel="index"><span itemprop="name">go little book</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="第三章-字典-，数组和切片（Chapter-3-Maps-Arrays-and-Slices）"><a href="#第三章-字典-，数组和切片（Chapter-3-Maps-Arrays-and-Slices）" class="headerlink" title="第三章 - 字典 ，数组和切片（Chapter 3 - Maps, Arrays and Slices）"></a>第三章 - 字典 ，数组和切片（Chapter 3 - Maps, Arrays and Slices）</h1><p>So far we’ve seen a number of simple types and structures. It’s now time to look at arrays, slices and maps.</p>
+<p>目前为止我们看了些简单类型和结构体。现在是时候来看看数组，切片和字典了。</p>
+<h2 id="数组（Arrays）"><a href="#数组（Arrays）" class="headerlink" title="数组（Arrays）"></a>数组（Arrays）</h2><p>If you come from Python, Ruby, Perl, JavaScript or PHP (and more), you’re probably used to programming with <em>dynamic arrays</em>. These are arrays that resize themselves as data is added to them. In Go, like many other languages, arrays are fixed. Declaring an array requires that we specify the size, and once the size is specified, it cannot grow:</p>
+<p>如果你从Python、Ruby、Perl、JavaScript或者PHP（还有更多），你可能使用过<em>动态数组</em>。这些数组当数据添加进来可以调整大小。在Go中，和其他语言一样，数组是固定大小的。申请一个数组需要我们指定它的大小。申明一个数组时需要指定大小，一旦大小指定了，就不能增长了：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> scores [<span class="number">10</span>]<span class="keyword">int</span></span><br><span class="line">scores[<span class="number">0</span>] = <span class="number">339</span></span><br></pre></td></tr></table></figure>
+
+<p>The above array can hold up to 10 scores using indexes <code>scores[0]</code> through <code>scores[9]</code>. Attempts to access an out of range index in the array will result in a compiler or runtime error.</p>
+<p>上面的这个数组从<code>scores[0]</code>到<code>scores[9]</code>可以容纳10个分数。尝试访问超出数组索引的会报编译或者运行时错误。</p>
+<p>We can initialize the array with values:</p>
+<p>我们可以带值初始化数组：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores := [<span class="number">4</span>]<span class="keyword">int</span>&#123;<span class="number">9001</span>, <span class="number">9333</span>, <span class="number">212</span>, <span class="number">33</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>We can use <code>len</code> to get the length of the array. <code>range</code> can be used to iterate over it:</p>
+<p>我们可能通过<code>len</code>来获取数组的长度。可以用<code>range</code>来迭代数组。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> index, value := <span class="keyword">range</span> scores &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Arrays are efficient but rigid. We often don’t know the number of elements we’ll be dealing with upfront. For this, we turn to slices.</p>
+<p>数组高效但不灵活。我们常常不能预先知道有多少元素需要处理。因此，我们使用切片。</p>
+<h2 id="切片（Slices）"><a href="#切片（Slices）" class="headerlink" title="切片（Slices）"></a>切片（Slices）</h2><p>In Go, you rarely, if ever, use arrays directly. Instead, you use slices. A slice is a lightweight structure that wraps and represents a portion of an array. There are a few ways to create a slice, and we’ll go over when to use which later on. The first is a slight variation on how we created an array:</p>
+<p>在Go中，你很少，或者根本不，直接使用数组。反而，你使用切片。切片是对数组一个轻量型封装。有几种方式来创建一个切片，我们会全部过一遍。第一种方式和创建数组有一点小小的变化。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores := []<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">4</span>,<span class="number">293</span>,<span class="number">4</span>,<span class="number">9</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Unlike the array declaration, our slice isn’t declared with a length within the square brackets. To understand how the two are different, let’s see another way to create a slice, using <code>make</code>:</p>
+<p>和申请数组不同，我们的切片没有在中括号内指定长度。要理解这两者的不同，我们用另一种方式创建切片，使用<code>make</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<p>We use <code>make</code> instead of <code>new</code> because there’s more to creating a slice than just allocating the memory (which is what <code>new</code> does). Specifically, we have to allocate the memory for the underlying array and also initialize the slice.  In the above, we initialize a slice with a length of 10 and a capacity of 10. The length is the size of the slice, the capacity is the size of the underlying array. Using <code>make</code> we can specify the two separately:</p>
+<p>我们使用<code>make</code>来替代<code>new</code>因为创建一个切片比只是分配内存（<code>new</code>做的事情）要复杂一些。特别的，我们需要分配底层数组和初始化切片。上面的例子，我们初始化了一个长度和容量为10的切片。长度是切片的大小，容量时底层数组的大小。使用<code>make</code>时可以分开提定这两个值：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<p>This creates a slice with a length of 0 but with a capacity of 10. (If you’re paying attention, you’ll note that <code>make</code> and <code>len</code> <em>are</em> overloaded. Go is a language that, to the frustration of some, makes use of features which aren’t exposed for developers to use.)</p>
+<p>这创建了一个长度为0但容量为10的切片。（如果你留心，你会注意到<code>make</code>和<code>len</code><em>是</em>重载的。Go有的时候令人沮丧，一些在使用的功能没有暴露给开发者使用。）</p>
+<p>To better understand the interplay between length and capacity, let’s look at some examples:</p>
+<p>为了更好的理解长度和容量之间的相互作用，让我们来看一个例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">  scores[<span class="number">5</span>] = <span class="number">9033</span></span><br><span class="line">  fmt.Println(scores)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Our first example crashes. Why? Because our slice has a length of 0. Yes, the underlying array has 10 elements, but we need to explicitly expand our slice in order to access those elements. One way to expand a slice is via <code>append</code>:</p>
+<p>我们的第一个程序崩溃了。为什么呢？因我们的切片的长度为0。是的，底层数组有10个元素，但是我们需要显示的扩展切片来访问这些元素。一种扩展方式是使用<code>append</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">  scores = <span class="built_in">append</span>(scores, <span class="number">5</span>)</span><br><span class="line">  fmt.Println(scores) <span class="comment">// prints [5]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>But that changes the intent of our original code. Appending to a slice of length 0 will set the first element. For whatever reason, our crashing code wanted to set the element at index 5. To do this, we can re-slice our slice:</p>
+<p>上面的修改改变了我们的原始代码的意图。扩展一个长度为0的切片会设置第一个元素。无论什么原因，我们崩溃的代码想要的是修改索引为5的元素。 我们可以重切片一次我们的切片：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">  scores = scores[<span class="number">0</span>:<span class="number">6</span>]</span><br><span class="line">  scores[<span class="number">5</span>] = <span class="number">9033</span></span><br><span class="line">  fmt.Println(scores)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>How large can we resize a slice? Up to its capacity which, in this case, is 10. You might be thinking <em>this doesn’t actually solve the fixed-length issue of arrays.</em> It turns out that <code>append</code> is pretty special. If the underlying array is full, it will create a new larger array and copy the values over (this is exactly how dynamic arrays work in PHP, Python, Ruby, JavaScript, …). This is why, in the example above that used <code>append</code>, we had to re-assign the value returned by <code>append</code> to our <code>scores</code> variable: <code>append</code> might have created a new value if the original had no more space.</p>
+<p>我们调整切片最大是多少？这是由它的容量决定的，在本例中，是10。你可能会想<em>这没有从本质上解决数能固定和长度的问题</em>。事实上，<code>append</code>是非常特殊的。当底层数组满了，它会创建一个新的数组，并把数值拷贝过来（PHP, Python, Ruby, JavaScript等也是这么做的）。这也就是为什么，我们上面的代码，使用了<code>append</code>之后，我们需要把<code>append</code>的返回值重新赋值给<code>scores</code>的原因：<code>append</code>会产生一个新的值如果原始的空间不足。</p>
+<p>If I told you that Go grew arrays with a 2x algorithm, can you guess what the following will output?</p>
+<p>如果我告诉你说Go是近两倍的算法来增长数组，那下面的代码会输出什么？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">5</span>)</span><br><span class="line">  c := <span class="built_in">cap</span>(scores)</span><br><span class="line">  fmt.Println(c)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">25</span>; i++ &#123;</span><br><span class="line">    scores = <span class="built_in">append</span>(scores, i)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// if our capacity has changed,</span></span><br><span class="line">    <span class="comment">// Go had to grow our array to accommodate the new data</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">cap</span>(scores) != c &#123;</span><br><span class="line">      c = <span class="built_in">cap</span>(scores)</span><br><span class="line">      fmt.Println(c)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The initial capacity of <code>scores</code> is 5. In order to hold 20 values, it’ll have to be expanded 3 times with a capacity of 10, 20 and finally 40.</p>
+<p><code>scores</code>最初的容量是5。为了容纳20个值，它将会扩展3次，分别是10，20和40。</p>
+<p>As a final example, consider:</p>
+<p>来思考下最后一个例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">5</span>)</span><br><span class="line">  scores = <span class="built_in">append</span>(scores, <span class="number">9332</span>)</span><br><span class="line">  fmt.Println(scores)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here, the output is going to be <code>[0, 0, 0, 0, 0, 9332]</code>. Maybe you thought it would be <code>[9332, 0, 0, 0, 0]</code>? To a human, that might seem logical. To a compiler, you’re telling it to append a value to a slice that already holds 5 values.</p>
+<p>这里，输出是<code>[0, 0, 0, 0, 0, 9332]</code>。可能你会想它应该是<code>[9332, 0, 0, 0, 0]</code>？对于人来说这可能符合逻辑。对于编译器来说，你告诉它的就是要扩展一个已经有5个值的切片。</p>
+<p>Ultimately, there are four common ways to initialize a slice:</p>
+<p>最后，有四种常用的方式来初始化一个切片：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">names := []<span class="keyword">string</span>&#123;<span class="string">&quot;leto&quot;</span>, <span class="string">&quot;jessica&quot;</span>, <span class="string">&quot;paul&quot;</span>&#125;</span><br><span class="line">checks := <span class="built_in">make</span>([]<span class="keyword">bool</span>, <span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> names []<span class="keyword">string</span></span><br><span class="line">scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+
+<p>When do you use which? The first one shouldn’t need much of an explanation. You use this when you know the values that you want in the array ahead of time.</p>
+<p>何时用哪一种呢？第一种不需要过多的解释。当你知道所有的值并且你要的是数组头的时候使用。</p>
+<p>The second one is useful when you’ll be writing into specific indexes of a slice. For example:</p>
+<p>当你需要写入切片的指定索引时，第二种就很有用。比如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">extractPowers</span><span class="params">(saiyans []*Saiyans)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">  powers := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="built_in">len</span>(saiyans))</span><br><span class="line">  <span class="keyword">for</span> index, saiyan := <span class="keyword">range</span> saiyans &#123;</span><br><span class="line">    powers[index] = saiyan.Power</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> powers</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The third version is a nil slice and is used in conjunction with <code>append</code>, when the number of elements is unknown.</p>
+<p>当知道有多少元素的时候，就可使用第三种是一个空切片和<code>append</code>配合使用。</p>
+<p>The last version lets us specify an initial capacity; useful if we have a general idea of how many elements we’ll need.</p>
+<p>当我们对需要多少元素有多少了解时使用最后一种方式来指定初始容量。</p>
+<p>Even when you know the size, <code>append</code> can be used. It’s largely a matter of preference:</p>
+<p>即使你知道了大小，<code>append</code>依然可以使用。这很大程度上是一个偏好问题：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">extractPowers</span><span class="params">(saiyans []*Saiyans)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">  powers := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="built_in">len</span>(saiyans))</span><br><span class="line">  <span class="keyword">for</span> _, saiyan := <span class="keyword">range</span> saiyans &#123;</span><br><span class="line">    powers = <span class="built_in">append</span>(powers, saiyan.Power)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> powers</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Slices as wrappers to arrays is a powerful concept. Many languages have the concept of slicing an array. Both JavaScript and Ruby arrays have a <code>slice</code> method. You can also get a slice in Ruby by using <code>[START..END]</code> or in Python via <code>[START:END]</code>. However, in these languages, a slice is actually a new array with the values of the original copied over. If we take Ruby, what’s the output of the following?</p>
+<p>切片做为数组的封装是一个很有用的概念。许多语言有数组切片的概念。JavaScript和Ruby的数组都有<code>slice</code>方法。你可以对通过<code>[START..END]</code>或者在Python中用<code>[START:END]</code>的方式取得一个切片。但是，在这些语言中切片是对原数组的拷贝。如果我们使用Ruby，下面的代码会输出什么？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">scores = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">slice = scores[<span class="number">2.</span><span class="number">.4</span>]</span><br><span class="line">slice[<span class="number">0</span>] = <span class="number">999</span></span><br><span class="line">puts scores</span><br></pre></td></tr></table></figure>
+
+<p>The answer is <code>[1, 2, 3, 4, 5]</code>. That’s because <code>slice</code> is a completely new array with copies of values. Now, consider the Go equivalent:</p>
+<p>答案是<code>[1, 2, 3, 4, 5]</code>。那是因为<code>slice</code>是一个复制了所有值的全新数组。现在，来看下Go相同的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">scores := []<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;</span><br><span class="line">slice := scores[<span class="number">2</span>:<span class="number">4</span>]</span><br><span class="line">slice[<span class="number">0</span>] = <span class="number">999</span></span><br><span class="line">fmt.Println(scores)</span><br></pre></td></tr></table></figure>
+
+<p>The output is <code>[1, 2, 999, 4, 5]</code>.</p>
+<p>输出是<code>[1, 2, 999, 4, 5]</code>。</p>
+<p>This changes how you code. For example, a number of functions take a position parameter. In JavaScript, if we want to find the first space in a string (yes, slices work on strings too!) after the first five characters, we’d write:</p>
+<p>这改变了你的编码方式。比如，一些函数需要一个位置参数。在JavaScript中，如果我们需要找到字符串中第五个字符之后的第一个空格（是的，切片对字符串也是有效的！）， 我们这样写：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">haystack = <span class="string">&quot;the spice must flow&quot;</span>;</span><br><span class="line">console.log(haystack.indexOf(<span class="string">&quot; &quot;</span>, <span class="number">5</span>));</span><br></pre></td></tr></table></figure>
+
+<p>In Go, we leverage slices:</p>
+<p>在Go中，我们使用切片：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strings.Index(haystack[<span class="number">5</span>:], <span class="string">&quot; &quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>We can see from the above example, that <code>[X:]</code> is shorthand for <em>from X to the end</em> while <code>[:X]</code> is shorthand for <em>from the start to X</em>. Unlike other languages, Go doesn’t support negative values. If we want all of the values of a slice except the last, we do:</p>
+<p>上面的例子，我们可以看到，<code>[X:]</code>是<em>从X到结束</em>的简写，就如<code>[:X]</code>是<em>从开始到X</em>的简写一样。和其他语言不同的是，Go不支持反向取值（这边感觉不对）。如果我们需要切片除了最后一个值以外的所有值，我们这样来写：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scores := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">scores = scores[:<span class="built_in">len</span>(scores)<span class="number">-1</span>]</span><br></pre></td></tr></table></figure>
+
+<p>The above is the start of an efficient way to remove a value from an unsorted slice:</p>
+<p>以上是一种快速删除未排序的切片中的某个值的方法的开头：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">  scores = removeAtIndex(scores, <span class="number">2</span>)</span><br><span class="line">  fmt.Println(scores)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeAtIndex</span><span class="params">(source []<span class="keyword">int</span>, index <span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">  lastIndex := <span class="built_in">len</span>(source) - <span class="number">1</span></span><br><span class="line">  <span class="comment">//swap the last value and the value we want to remove</span></span><br><span class="line">  source[index], source[lastIndex] = source[lastIndex], source[index]</span><br><span class="line">  <span class="keyword">return</span> source[:lastIndex]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Finally, now that we know about slices, we can look at another commonly used built-in function: <code>copy</code>. <code>copy</code> is one of those functions that highlights how slices change the way we code. Normally, a method that copies values from one array to another has 5 parameters: <code>source</code>, <code>sourceStart</code>, <code>count</code>, <code>destination</code> and <code>destinationStart</code>. With slices, we only need two:</p>
+<p>最后，既然我们是学习了切片，我们来看另一个常用的内置函数： <code>copy</code>。 <code>copy</code>是能突出切片是如何改变我们的编码方式的函数之一。通常，数组间拷贝需要5个参数：<code>source</code>, <code>sourceStart</code>, <code>count</code>, <code>destination</code> 和 <code>destinationStart</code>。使用切片只要两个：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;math/rand&quot;</span></span><br><span class="line">  <span class="string">&quot;sort&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  scores := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">  <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">    scores[i] = <span class="keyword">int</span>(rand.Int31n(<span class="number">1000</span>))</span><br><span class="line">  &#125;</span><br><span class="line">  sort.Ints(scores)</span><br><span class="line"></span><br><span class="line">  worst := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">5</span>)</span><br><span class="line">  <span class="built_in">copy</span>(worst, scores[:<span class="number">5</span>])</span><br><span class="line">  fmt.Println(worst)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Take some time and play with the above code. Try variations. See what happens if you change copy to something like <code>copy(worst[2:4], scores[:5])</code>, or what if you try to copy more or less than <code>5</code> values into <code>worst</code>?</p>
+<p>花一些时间来执行上面的代码。多试几次。看看会发生什么，如果将代码改为<code>copy(worst[2:4], scores[:5])</code>，或者要拷贝比<code>5</code>更多或少的值到<code>worst</code>？</p>
+<h2 id="映射（Maps）"><a href="#映射（Maps）" class="headerlink" title="映射（Maps）"></a>映射（Maps）</h2><p>Maps in Go are what other languages call hashtables or dictionaries. They work as you expect: you define a key and value, and can get, set and delete values from it.</p>
+<p>Go中的映射在其他语言中叫哈希表或者字典。它们都如你想的一样：你定义一个键和值，然后你可以通过映射来删改查这些值。</p>
+<p>Maps, like slices, are created with the <code>make</code> function. Let’s look at an example:</p>
+<p>映射，和切片一样，是通过<code>make</code>函数来创建的。让我们来看一个例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  lookup := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>)</span><br><span class="line">  lookup[<span class="string">&quot;goku&quot;</span>] = <span class="number">9001</span></span><br><span class="line">  power, exists := lookup[<span class="string">&quot;vegeta&quot;</span>]</span><br><span class="line"></span><br><span class="line">  <span class="comment">// prints 0, false</span></span><br><span class="line">  <span class="comment">// 0 is the default value for an integer</span></span><br><span class="line">  fmt.Println(power, exists)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To get the number of keys, we use <code>len</code>. To remove a value based on its key, we use <code>delete</code>:</p>
+<p>我们使用<code>len</code>来获取有多少键。要通过键来删除一个值，我们用<code>delete</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// returns 1</span></span><br><span class="line">total := <span class="built_in">len</span>(lookup)</span><br><span class="line"></span><br><span class="line"><span class="comment">// has no return, can be called on a non-existing key</span></span><br><span class="line"><span class="built_in">delete</span>(lookup, <span class="string">&quot;goku&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Maps grow dynamically. However, we can supply a second argument to <code>make</code> to set an initial size:</p>
+<p>映射是动态增长的。但是，我们可以通过<code>make</code>的第二个参数来设置它的初始大小：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lookup := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>, <span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+
+<p>If you have some idea of how many keys your map will have, defining an initial size can help with performance.</p>
+<p>如果知道有多少值，指定初始大小可以有更好的性能表现。</p>
+<p>When you need a map as a field of a structure, you define it as:</p>
+<p>如果想要把映射做为结构体的一个字段，我们这样定义：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Saiyan <span class="keyword">struct</span> &#123;</span><br><span class="line">  Name <span class="keyword">string</span></span><br><span class="line">  Friends <span class="keyword">map</span>[<span class="keyword">string</span>]*Saiyan</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>One way to initialize the above is via:</p>
+<p>初始化的一种方式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">goku := &amp;Saiyan&#123;</span><br><span class="line">  Name: <span class="string">&quot;Goku&quot;</span>,</span><br><span class="line">  Friends: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*Saiyan),</span><br><span class="line">&#125;</span><br><span class="line">goku.Friends[<span class="string">&quot;krillin&quot;</span>] = ... <span class="comment">//todo load or create Krillin</span></span><br></pre></td></tr></table></figure>
+
+<p>There’s yet another way to declare and initialize values in Go. Like <code>make</code>, this approach is specific to maps and arrays. We can declare as a composite literal:</p>
+<p>在Go中有另一种申明和初始化的方式。和<code>make</code>一样，这对映射和数组都是有效的。我们可以像组合文字一样申明：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lookup := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>&#123;</span><br><span class="line">  <span class="string">&quot;goku&quot;</span>: <span class="number">9001</span>,</span><br><span class="line">  <span class="string">&quot;gohan&quot;</span>: <span class="number">2044</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>We can iterate over a map using a <code>for</code> loop combined with the <code>range</code> keyword:</p>
+<p>我们可以通过<code>for</code>和<code>range</code>关键字来迭代映射：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> key, value := <span class="keyword">range</span> lookup &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Iteration over maps isn’t ordered. Each iteration over a lookup will return the key value pair in a random order.</p>
+<p>映射的迭代器是无序的。每个迭代器随机查找键值对。</p>
+<h2 id="指针和值（Pointers-versus-Values）"><a href="#指针和值（Pointers-versus-Values）" class="headerlink" title="指针和值（Pointers versus Values）"></a>指针和值（Pointers versus Values）</h2><p>We finished Chapter 2 by looking at whether you should assign and pass pointers or values. We’ll now have this same conversation with respect to array and map values. Which of these should you use?</p>
+<p>通过了解什么时候传值或指针我们结束了第二章。在数组和映射的值方面我们将碰到相同的问题。我们应该用哪一种？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a := <span class="built_in">make</span>([]Saiyan, <span class="number">10</span>)</span><br><span class="line"><span class="comment">//or</span></span><br><span class="line">b := <span class="built_in">make</span>([]*Saiyan, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Many developers think that passing <code>b</code> to, or returning it from, a function is going to be more efficient. However, what’s being passed/returned is a copy of the slice, which itself is a reference. So with respect to passing/returning the slice itself, there’s no difference.</p>
+<p>许多开发人员会想对于一个函数来说是传<code>b</code>还是将它做为返回值更高效。然而，这里传递或者返回的都是一个切片的拷贝，它本身就是一个引用。所以就传递或者返回这个切片而言，没有什么区别。</p>
+<p>Where you will see a difference is when you modify the values of a slice or map. At this point, the same logic that we saw in Chapter 2 applies. So the decision on whether to define an array of pointers versus an array of values comes down to how you use the individual values, not how you use the array or map itself.</p>
+<p>当你改变一个切片或者映射的值时，你会看见不同。在这点上，同样的逻辑，我们在第二章看到已经适用。所以是否定义一个数组指针还是一个数组值主要归结于如何使用单个值，而不是你如何使用数组或者映射本身。</p>
+<h2 id="继续之前（Before-You-Continue）"><a href="#继续之前（Before-You-Continue）" class="headerlink" title="继续之前（Before You Continue）"></a>继续之前（Before You Continue）</h2><p>Arrays and maps in Go work much like they do in other languages. If you’re used to dynamic arrays, there might be a small adjustment, but <code>append</code> should solve most of your discomfort. If we peek beyond the superficial syntax of arrays, we find slices. Slices are powerful and they have a surprisingly large impact on the clarity of your code.</p>
+<p>在Go中数组和映射的工作方式与其他语言非常像。如果你用过动态数组，可能有会有一些需要调整，但是通过<code>append</code>可以解决所有的不适。如果我们抛开数组表面的语法，我们就会发现切片。切片是相当强大的，使用切片对你代码的整洁性有着非常巨大的影响。</p>
+<p>There are edge cases that we haven’t covered, but you’re not likely to run into them. And, if you do, hopefully the foundation we’ve built here will let you understand what’s going on.</p>
+<p>这里有一些边界例子我们没有涉及到，但是你不太可能遇见这些例子。另外，如果你遇到了，希望我们已经打下的基础能让你理解这是怎么回事。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/11/22/go/go-little-book/chapter-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1549,163 +1794,6 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/09/08/frontend/news/news-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/09/08/frontend/news/news-1/" class="post-title-link" itemprop="url">(翻译)GitHub.com前端移除jQuery库</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-09-08 06:42:30" itemprop="dateCreated datePublished" datetime="2018-09-08T06:42:30+08:00">2018-09-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/frentend/" itemprop="url" rel="index"><span itemprop="name">frentend</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/frentend/news/" itemprop="url" rel="index"><span itemprop="name">news</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>11k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>10 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>因本人能力有限，理解不到位，翻译内容可能存在偏差。如果可能，请尽量读<a target="_blank" rel="noopener" href="https://githubengineering.com/removing-jquery-from-github-frontend/?utm_source=wanqu.co&utm_campaign=Wanqu+Daily&utm_medium=website">原文</a>。</p>
-</blockquote>
-<p>We have recently completed a milestone where we were able to drop jQuery as a dependency of the frontend code for GitHub.com. This marks the end of a gradual, years-long transition of increasingly decoupling from jQuery until we were able to completely remove the library. In this post, we will explain a bit of history of how we started depending on jQuery in the first place, how we realized when it was no longer needed, and point out that—instead of replacing it with another library or framework—we were able to achieve everything that we needed using standard browser APIs.</p>
-<p>我们最近完成了一个里程碑，就是将jQuery从我们Github.com的前端依赖库中移了。直到完全移除了jQuery库才意味着一个逐步的、长达数年的去jQuery化的结束。在这篇文章中，我们会解释为一些历史，为什么我们一开始会引入jQuery，我们是何时意识到已经不再需要jQuery了，以及找出可替代它的类库或者框架，我需要使用浏览器的标准API来达到目的。</p>
-<h2 id="为什么jQuery之前是有用的（Why-jQuery-made-sense-early-on）"><a href="#为什么jQuery之前是有用的（Why-jQuery-made-sense-early-on）" class="headerlink" title="为什么jQuery之前是有用的（Why jQuery made sense early on）"></a>为什么jQuery之前是有用的（Why jQuery made sense early on）</h2><p>GitHub.com pulled in <a target="_blank" rel="noopener" href="https://blog.jquery.com/2007/09/16/jquery-1-2-1-released/">jQuery 1.2.1</a> as a dependency in late 2007. For a bit of context, that was a year before Google released the first version of their Chrome browser. There was no standard way to query DOM elements by a CSS selector, no standard way to animate visual styles of an element, and the 【XMLHttpRequest interface](<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest">https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest</a>) pioneered by Internet Explorer was, like many other APIs, inconsistent between browsers.</p>
-<p>GitHub.com在2007年底时引入了<a target="_blank" rel="noopener" href="https://blog.jquery.com/2007/09/16/jquery-1-2-1-released/">jQuery 1.2.1</a>。因为这样的一些背景，当时距Google发布第一个版本还有一年时间。通过CSS选择器来查询DOM元素没有标准的方式，将元素视觉动画化也没有标准的样式，IE提供<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest">XMLHttpRequest接口</a>，和其他API一样，在不同的浏览器之间也是不同。</p>
-<p>jQuery made it simple to manipulate the DOM, define animations, and make “AJAX” requests— basically, it enabled web developers to create more modern, dynamic experiences that stood out from the rest. Most importantly of all, the JavaScript features built in one browser with jQuery would generally work in other browsers, too. In those early days of GitHub when most of its features were still getting fleshed out, this allowed the small development team to prototype rapidly and get new features out the door without having to adjust code specifically for each web browser.</p>
-<p>jQuery使得操作DOM，定义动画，发起“AJAX”请求变得简单——基本上，它使Web开发人员能够创建出更现代、更动态的体验，这些体验在其他方面都非常突出。更为重要的是，使用了jQuery的JavaScript特性在不同的浏览器都可正常工作。在GitHub早期，它的大部分功能还在不断充实，这使得小型开发团队能够快速地进行原型，而无需为每个Web浏览器专门调整代码来实现新的特性。</p>
-<p>The simple interface of jQuery also served as a blueprint to craft extension libraries that would later serve as building blocks for the rest of GitHub.com frontend: <a target="_blank" rel="noopener" href="https://github.com/defunkt/jquery-pjax">pjax</a> and <a target="_blank" rel="noopener" href="https://github.com/defunkt/facebox">facebox</a>.</p>
-<p>jQuery的简单接口为设计扩展库提供了蓝图，GitHub.com扩展前端的基础模块： <a target="_blank" rel="noopener" href="https://github.com/defunkt/jquery-pjax">pjax</a>和<a target="_blank" rel="noopener" href="https://github.com/defunkt/facebox">facebox</a>。</p>
-<p>We will always be thankful to John Resig and the jQuery contributors for creating and maintaining such a useful and, for the time, essential library.</p>
-<p>我们将一直感激John Resig和jQuery的贡献者创建和维护了这样一个有用的，对于当时来说，必不可少的类库。</p>
-<h2 id="近年来的Web标准（Web-standards-in-the-later-years）"><a href="#近年来的Web标准（Web-standards-in-the-later-years）" class="headerlink" title="近年来的Web标准（Web standards in the later years）"></a>近年来的Web标准（Web standards in the later years）</h2><p>Over the years, GitHub grew into a company with hundreds of engineers and a dedicated team gradually formed to take responsibility for the size and quality of JavaScript code that we serve to web browsers. One of the things that we’re constantly on the lookout for is technical debt, and sometimes technical debt grows around dependenices that once provided value, but whose value dropped over time.</p>
-<p>这些年来，Github成长为一家拥有数百名工程师的公司，并逐渐形成了一只专门负责我们运行在Web浏览器上的JavaScript代码的大小和质量的团队。其中一件我们一直在做的事情就是找出技术债务，有时技术债务会随着曾经提供价值的附属物而增长，但其价值会随着时间的推移而下降。</p>
-<p>When it came to jQuery, we compared it against the rapid evolution of supported web standard in modern browsers and realized:</p>
-<p>The $(selector) pattern can easily be replaced with querySelectorAll();<br>CSS classname switching can now be achieved using Element.classList;<br>CSS now supports defining visual animations in stylesheets rather than in JavaScript;<br>$.ajax requests can be performed using the Fetch Standard;<br>The addEventListener() interface is stable enough for cross-platform use;<br>We could easily encapsulate the event delegation pattern with a lighweight library;<br>Some syntactic sugar that jQuery provides has become reduntant with the evolution of JavaScript language.<br>Furthermore, the chaining syntax didn’t satisfy how we wanted to write code going forward. For example:</p>
-<p>$(‘.js-widget’)<br>  .addClass(‘is-loading’)<br>  .show()<br>This syntax is simple to write, but to our standards, doesn’t communicate intent really well. Did the author expect one or more js-widget elements on this page? Also, if we update our page markup and accidentally leave out the js-widget classname, will an exception in the browser inform us that something went wrong? By default, jQuery silently skips the whole expresion when nothing matched the initial selector; but to us, such behavior was a bug rather than a feature.</p>
-<p>Finally, we wanted to start annotating types with Flow to perform static type checking at build time, and we concluded that the chaining syntax doesn’t lend itself well to static analysis, since almost every result of a jQuery method call is of the same type. We chose Flow over alternatives because, at the time, features such as @flow weak mode allowed us to progressively and efficiently start applying types to a codebase which was largely untyped.</p>
-<p>All in all, decoupling from jQuery would mean that we could rely on web standards more, have MDN web docs be de-facto default documentation for our frontend developers, maintain more resilient code in the future, and eventually drop a 30 kB dependency from our packaged bundles, speeding up page load times and JavaScript execution times.</p>
-<p>Incremental decoupling<br>Even with an end goal in sight, we knew that it wouldn’t be feasible to just allocate all resources we had to rewriting everything from jQuery to vanilla JS. If anything, such a rushed endeavor would likely lead to many regressions in site functionality that we would later have to weed out. Instead, we:</p>
-<p>Set up metrics that tracked ratio of jQuery calls used per overall line of code and monitored that graph over time to make sure that it’s either staying constant or going down, not up.</p>
-<p>Graph of jQuery usage going down over time.</p>
-<p>We discouraged importing jQuery in any new code. To facilitate that using automation, we created eslint-plugin-jquery which would fail CI checks if anyone tried to use jQuery features, for example $.ajax.</p>
-<p>There were now plenty of violations of eslint rules in old code, all of which we’ve annotated with specific eslint-disable rules in code comments. To the reader of that code, those comments would serve as a clear signal that this code doesn’t represent our current coding practices.</p>
-<p>We created a pull request bot that would leave a review comment on a pull request pinging our team whenever somebody tried to add a new eslint-disable rule. This way we would get involved in code review early and suggest alternatives.</p>
-<p>A lot of old code had explicit coupling to external interfaces of pjax and facebox jQuery plugins, so we’ve kept their interfaces relatively the same while we’ve internally replaced their implementation with vanilla JS. Having static type checking helped us have greater confidence around those refactorings.</p>
-<p>Plenty of old code interfaced with rails-behaviors, our adapter for the Ruby on Rails approach to “unobtrusive” JS, in a way that they would attach an AJAX lifecycle handler to certain forms:</p>
-<p>  // LEGACY APPROACH<br>  $(document).on(‘ajaxSuccess’, ‘form.js-widget’, function(event, xhr, settings, data) {<br>    // insert response data somewhere into the DOM<br>  })<br>Instead of having to rewrite all of those call sites at once to the new approach, we’ve opted to trigger fake ajax* lifecycle events and keep these forms submitting their contents asynchronously as before; only this time fetch() was used internally.</p>
-<p>We maintained a custom build of jQuery and whenever we’ve identified that we’re not using a certain module of jQuery anymore, we would remove it from the custom build and ship a slimmer version. For instance, after we have removed the final usage of jQuery-specific CSS pseudo-selectors such as :visible or :checkbox, we were able to remove the Sizzle module; and when the last $.ajax call was replaced with fetch(), we were able to remove the AJAX module. This served a dual purpose: speeding up JavaScript execution times while at the same time ensuring that no new code is created that would try using the removed functionality.</p>
-<p>We kept dropping support for old Internet Explorer versions as soon as it would be feasible to, as informed by our site analytics. Whenever use of a certain IE version dropped below a certain treshold, we would stop serving JavaScript to it and focus on testing against and supporting more modern browsers. Dropping support for IE 8–9 early on allowed us to adopt many native browser features that would otherwise be hard to polyfill.</p>
-<p>As part of our refined approach to building frontend features on GitHub.com, we focused on getting away with regular HTML foundation as much as we could, and only adding JavaScript behaviors as progressive enhancement. As a result, even those web forms and other UI elements that were enhanced using JS would usually also work with JavaScript disabled in the browser. In some cases, we were able to delete certain legacy behaviors altogether instead of having to rewrite them in vanilla JS.</p>
-<p>With these and similar efforts combined over the years, we were able gradually reduce our dependence on jQuery until there was not a single line of code referencing it anymore.</p>
-<p>Custom Elements<br>One technology that has been making waves in the recent years is Custom Elements: a component library native to the browser, which means that there are no additional bytes of a framework for the user to download, parse and compile.</p>
-<p>We had created a few Custom Elements based on the v0 specification since 2014. However, as standards were still in flux back then, we did not invest as much. It was not until 2017 when the Web Components v1 spec was released and implemented in both Chrome and Safari that we began to adopt Custom Elements on a wider scale.</p>
-<p>During the jQuery migration, we looked for patterns that would be suitable for extraction as custom elements. For example, we converted our facebox usage for displaying modal dialogs to the <details-dialog> element.</p>
-<p>Our general philosophy of striving for progressive enhancement extends to custom elements as well. This means that we keep as much of the content in markup as possible and only add behaviors on top of that. For example, <local-time> shows the raw timestamp by default and gets upgraded to translate the time to the local timezone, while <details-dialog>, when nested in the <details> element, is interactive even without JavaScript, but gets upgraded with accessibility enhancements.</p>
-<p>Here is an example of how a <local-time> custom element could be implemented:</p>
-<p>// The local-time element displays time in the user’s current timezone<br>// and locale.<br>//<br>// Example:<br>//   <local-time datetime="2018-09-06T08:22:49Z">Sep 6, 2018</local-time><br>//<br>class LocalTimeElement extends HTMLElement {<br>  static get observedAttributes() {<br>    return [‘datetime’]<br>  }</p>
-<p>  attributeChangedCallback(attrName, oldValue, newValue) {<br>    if (attrName === ‘datetime’) {<br>      const date = new Date(newValue)<br>      this.textContent = date.toLocaleString()<br>    }<br>  }<br>}</p>
-<p>if (!window.customElements.get(‘local-time’)) {<br>  window.LocalTimeElement = LocalTimeElement<br>  window.customElements.define(‘local-time’, LocalTimeElement)<br>}</p>
-<p>One aspect of Web Components that we’re looking forward to adopting is Shadow DOM. The powerful nature of Shadow DOM has the potential to unlock a lot of possibilities for the web, but that also makes it harder to polyfill. Because polyfilling it today incurs a performance penalty even for code that manipulates parts of the DOM unrelated to web components, it is unfeasible for us to start using it in production.</p>
-<p>Polyfills<br>These are the polyfills that helped us transition to using standard browser features. We try to serve most of these polyfills only when absolutely necessary, i.e. to outdated browsers as part of a separate “compatibility” JavaScript bundle.</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/github/eventlistener-polyfill#readme">github/eventlistener-polyfill</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/github/fetch#readme">github/fetch</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/github/form-data-entries#readme">github/form-data-entries</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/iamdustan/smoothscroll#readme">iamdustan/smoothscroll</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/javan/details-element-polyfill#readme">javan/details-element-polyfill</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/jonathantneal/closest#readme">jonathantneal/closest</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/kumarharsh/custom-event-polyfill#readme">kumarharsh/custom-event-polyfill</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/marvinhagemeister/request-idle-polyfill#readme">marvinhagemeister/request-idle-polyfill</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/mathiasbynens/Array.from#readme">mathiasbynens/Array.from</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/mathiasbynens/String.prototype.codePointAt#readme">mathiasbynens/String.prototype.codePointAt</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/mathiasbynens/String.prototype.endsWith#readme">mathiasbynens/String.prototype.endsWith</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/mathiasbynens/String.prototype.startsWith#readme">mathiasbynens/String.prototype.startsWith</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/medikoo/es6-symbol#readme">medikoo/es6-symbol</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/nicjansma/usertiming.js#readme">nicjansma/usertiming.js</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/rubennorte/es6-object-assign#readme">rubennorte/es6-object-assign</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/stefanpenner/es6-promise#readme">stefanpenner/es6-promise</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/webcomponents/template#template">webcomponents/template</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/webcomponents/URL#readme">webcomponents/URL</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/webcomponents/webcomponentsjs#readme">webcomponents/webcomponentsjs</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/WebReflection/url-search-params#readme">WebReflection/url-search-params</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/yola/classlist-polyfill#readme">yola/classlist-polyfill</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1775,20 +1863,20 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">258</span>
+          <span class="site-state-item-count">259</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">111</span>
+        <span class="site-state-item-count">112</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-count">111</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1837,7 +1925,7 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -1851,7 +1939,7 @@ echo &#39;export PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; $HOME/.profile
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:26</span>
+    <span title="站点阅读时长">8:27</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
