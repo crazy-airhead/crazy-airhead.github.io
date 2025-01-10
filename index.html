@@ -172,6 +172,136 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/01/10/solon/solon-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/01/10/solon/solon-2/" class="post-title-link" itemprop="url">使用 Solon Cloud Gateway 替换 Spring Gateway</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-01-10 14:43:07 / 修改时间：15:50:12" itemprop="dateCreated datePublished" datetime="2025-01-10T14:43:07+08:00">2025-01-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/solon/" itemprop="url" rel="index"><span itemprop="name">solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/solon/gateway/" itemprop="url" rel="index"><span itemprop="name">gateway</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在「使用国产化框架 Solon 的一些开发经验」中提到，我们只是在平台的一个应用开始使用 Solon 框架，并非一次性的完全替换。但随着 solon cloud gateway 官方版本发布，替换Spring Gateway 也成为可能，于是开始相关的替换工作。</p>
+<p>我们的网关主要提供了统计授权和鉴权的功能，及最基础的服务路由能力。另外系统中个问卷功能是对外提供服务的，当时为了提供对外服务和减少Gateway的路由判断逻辑，增加一个api-gateway。</p>
+<p>此次使用 solon gateway 进行替换需要完整的实现旧有Spring Gateway的功能，同时想利用 solon 的本地 gateway 的路由分组功能合并api-gateway。</p>
+<p>一样的，在开发前，需要完整阅读，Solon Gateway 的官网文档 （<a target="_blank" rel="noopener" href="https://solon.noear.org/article/804%EF%BC%89%E3%80%82%E4%B8%80%E6%A0%B7%E7%9A%84%E6%96%87%E6%A1%A3%E8%AF%B4%E6%98%8E%E7%AE%80%E5%8D%95%EF%BC%8C%E9%9B%86%E6%88%90%E4%B9%9F%E4%B8%8D%E9%9A%BE%E3%80%82">https://solon.noear.org/article/804）。一样的文档说明简单，集成也不难。</a></p>
+<p>Solon 版本：3.0.5</p>
+<h2 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h2><h3 id="引入依赖包"><a href="#引入依赖包" class="headerlink" title="引入依赖包"></a>引入依赖包</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:ficus-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:nacos2-solon-cloud-plugin&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon.cloud.gateway&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：为了简单起见，已经省去其他依赖；使用<code>ficus-parent</code>进行统一的版本管理，如果没有使用版本管理，添加对应依赖时需要设置版本号。</p>
+<h3 id="通用Web授权"><a href="#通用Web授权" class="headerlink" title="通用Web授权"></a>通用Web授权</h3><h4 id="管理端授权"><a href="#管理端授权" class="headerlink" title="管理端授权"></a>管理端授权</h4><p>提供用户密码授权和基于Token的切换租户。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Api(&quot;管理端授权服务&quot;)</span></span><br><span class="line"><span class="meta">@Component(tag = &quot;adminApi&quot;)</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/auth&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AdminAuthController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> AdminAuthService service;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;login&quot;)</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;login&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CommonResult&lt;UserLoginRes&gt; <span class="title">login</span><span class="params">(<span class="meta">@Body</span> LoginReq loginReq)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> CommonResult.success(service.login(loginReq));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;changeLoginOrg&quot;)</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;changeLoginOrg&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CommonResult&lt;UserLoginRes&gt; <span class="title">changeLoginOrg</span><span class="params">(<span class="meta">@Body</span> ChangeOrgReq changeOrgReq)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="应用端授权"><a href="#应用端授权" class="headerlink" title="应用端授权"></a>应用端授权</h4><p>提供基于域名的租户识别，用户密码授权及手机授权和用户注册等功能。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Api(&quot;应用端授权服务&quot;)</span></span><br><span class="line"><span class="meta">@Component(tag = &quot;appApi&quot;)</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/auth&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppAuthController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> AppAuthService authService;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;/getOrgByDomain&quot;)</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;getOrgByDomain&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CommonResult&lt;SimpleOrgRes&gt; <span class="title">getOrgByDomain</span><span class="params">(<span class="meta">@Body</span> GetOrgReq getOrgReq)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> CommonResult.success(authService.getOrgByDomain(getOrgReq));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;/login&quot;)</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;login&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CommonResult&lt;MemberLoginRes&gt; <span class="title">login</span><span class="params">(Context context, <span class="meta">@Body</span> LoginReq loginReq)</span> </span>&#123;</span><br><span class="line">    Ret ret = checkLoginReq(loginReq);</span><br><span class="line">    <span class="keyword">if</span> (ret.isFail()) &#123;</span><br><span class="line">      ErrorCode error = ret.getAs(<span class="string">&quot;error&quot;</span>);</span><br><span class="line">      <span class="keyword">return</span> CommonResult.error(error);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> authService.login(context, loginReq);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;/smsLogin&quot;)</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;smsLogin&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CommonResult&lt;MemberLoginRes&gt; <span class="title">smsLogin</span><span class="params">(Context context, <span class="meta">@Body</span> SmsLoginReq smsLoginReq)</span> </span>&#123;</span><br><span class="line">    Ret ret = checkSmsLoginReq(smsLoginReq);</span><br><span class="line">    <span class="keyword">if</span> (ret.isFail()) &#123;</span><br><span class="line">      ErrorCode error = ret.getAs(<span class="string">&quot;error&quot;</span>);</span><br><span class="line">      <span class="keyword">return</span> CommonResult.error(error);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> authService.smsLogin(context, smsLoginReq);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;/register&quot;)</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;register&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CommonResult&lt;MemberLoginRes&gt; <span class="title">register</span><span class="params">(Context context, <span class="meta">@Body</span> RegisterReq registerReq)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> authService.register(context, registerReq);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;/sendSms&quot;)</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;sendSms&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CommonResult&lt;Boolean&gt; <span class="title">sendSms</span><span class="params">(Context context, <span class="meta">@Body</span> SendSmsReq sendSmsReq)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> authService.sendSms(context, sendSmsReq);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="路由分组"><a href="#路由分组" class="headerlink" title="路由分组"></a>路由分组</h4><ul>
+<li>管理端路由分组</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/**&quot;)</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AdminGateway</span> <span class="keyword">extends</span> <span class="title">Gateway</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">register</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// admin的异常抛出，可能包含SQL，起码更详细</span></span><br><span class="line">    filter(-<span class="number">1</span>, <span class="keyword">new</span> AdminExceptionFilter());</span><br><span class="line">    filter(<span class="number">0</span>, <span class="keyword">new</span> TenantFilter());</span><br><span class="line"></span><br><span class="line">    addBeans(bw -&gt; <span class="string">&quot;adminApi&quot;</span>.equals(bw.tag()));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>应用端路由分组</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Mapping(&quot;/app-api/**&quot;)</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppGateway</span> <span class="keyword">extends</span> <span class="title">Gateway</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">register</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// app的异常抛出不应该暴露SQL等</span></span><br><span class="line">    filter(-<span class="number">1</span>, <span class="keyword">new</span> AppExceptionFilter());</span><br><span class="line">    filter(<span class="number">0</span>, <span class="keyword">new</span> TenantFilter());</span><br><span class="line"></span><br><span class="line">    addBeans(bw -&gt; <span class="string">&quot;appApi&quot;</span>.equals(bw.tag()));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="响应式路由"><a href="#响应式路由" class="headerlink" title="响应式路由"></a>响应式路由</h3><h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><p>通过RouteFilterFactory定制路由过滤规则，实现不同类型的接口过滤。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AuthFilterFactory</span> <span class="keyword">implements</span> <span class="title">RouteFilterFactory</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String ADMIN = <span class="string">&quot;admin&quot;</span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String APP = <span class="string">&quot;app&quot;</span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String OPEN = <span class="string">&quot;open&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> JwtConfig jwtConfig;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> AdminAuthConfig adminAuthConfig;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> AdminAuthService adminAuthService;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> AppAuthConfig appAuthConfig;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> AppAuthService appAuthService;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> OpenAuthConfig openAuthConfig;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> OpenAuthService openAuthService;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Completable <span class="title">error</span><span class="params">(ExContext ctx, ErrorCode errorCode)</span> </span>&#123;</span><br><span class="line">    String resultStr = ONode.stringify(CommonResult.error(errorCode));</span><br><span class="line">    ctx.newResponse().header(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json;charset=UTF-8&quot;</span>);</span><br><span class="line">    ctx.newResponse().body(Buffer.buffer(resultStr));</span><br><span class="line">    <span class="keyword">if</span> (errorCode.getCode() &lt; HTTP_STATUS_MAX) &#123;</span><br><span class="line">      <span class="comment">// http status的正常范围的错误</span></span><br><span class="line">      ctx.newResponse().status(errorCode.getCode());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      ctx.newResponse().status(HTTP_INTERNAL_SERVER_ERROR);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Completable.complete();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">prefix</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Auth&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> ExFilter <span class="title">create</span><span class="params">(String config)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (ADMIN.equals(config)) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> AdminAuthFilter(jwtConfig, adminAuthConfig, adminAuthService);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (APP.equals(config)) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> AppAuthFilter(jwtConfig, appAuthConfig, appAuthService);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (OPEN.equals(config)) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> OpenAuthFilter(jwtConfig, openAuthConfig, openAuthService);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> EmptyAuthFilter();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 默认的空鉴权 */</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">EmptyAuthFilter</span> <span class="keyword">implements</span> <span class="title">ExFilter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EmptyAuthFilter</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Completable <span class="title">doFilter</span><span class="params">(ExContext ctx, ExFilterChain chain)</span> </span>&#123;</span><br><span class="line">      log.info(<span class="string">&quot;empty filter&quot;</span>);</span><br><span class="line">      <span class="keyword">return</span> error(</span><br><span class="line">          ctx,</span><br><span class="line">          ErrorCode.builder()</span><br><span class="line">              .code(HTTP_NOT_FOUND)</span><br><span class="line">              .error(NOT_FOUND_ERROR)</span><br><span class="line">              .msg(NOT_FOUND_ERROR)</span><br><span class="line">              .build());</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：这里AdminAuthFilter、AppAuthFilter和OpenAuthFilter未提供实现，可参考EmptyAuthFilter实现具体业务逻辑，或者参考官网例子。</p>
+<h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">solon.cloud:</span></span><br><span class="line">  <span class="attr">nacos:</span></span><br><span class="line">    <span class="attr">server:</span> <span class="string">$&#123;NACOS_SERVER:127.0.0.1:8848&#125;</span></span><br><span class="line">  <span class="attr">gateway:</span></span><br><span class="line">    <span class="attr">httpClient:</span></span><br><span class="line">      <span class="attr">responseTimeout:</span> <span class="number">180</span> <span class="comment">#单位：秒</span></span><br><span class="line">    <span class="attr">routes:</span></span><br><span class="line">      <span class="comment"># app-api 用index=-1</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">topcloud-oa-api</span></span><br><span class="line">        <span class="attr">target:</span> <span class="string">lb://topcloud-oa</span></span><br><span class="line">        <span class="attr">index:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">predicates:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">Path=/OA/app-api/**</span></span><br><span class="line">        <span class="attr">filters:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">Auth=app</span></span><br><span class="line"></span><br><span class="line">      <span class="comment"># open-api 用index=-1</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">topcloud-uac-open</span></span><br><span class="line">        <span class="attr">target:</span> <span class="string">lb://topcloud-uac</span></span><br><span class="line">        <span class="attr">index:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">predicates:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">Path=/UAC/open-api/**</span></span><br><span class="line">        <span class="attr">filters:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">Auth=open</span></span><br><span class="line"></span><br><span class="line">      <span class="comment"># admin-api 用index=0</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">topcloud-uac-admin</span></span><br><span class="line">        <span class="attr">target:</span> <span class="string">lb://topcloud-uac</span></span><br><span class="line">        <span class="attr">index:</span> <span class="number">0</span></span><br><span class="line">        <span class="attr">predicates:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">Path=/UAC/**</span></span><br><span class="line">        <span class="attr">filters:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">Auth=admin</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：3.0.5 版本如果路由存在包含关系，必须指定index，越具体的地址优先级要越高优先级（也就是index越小）。</p>
+<h2 id="可能碰到的问题"><a href="#可能碰到的问题" class="headerlink" title="可能碰到的问题"></a>可能碰到的问题</h2><h3 id="端口冲突"><a href="#端口冲突" class="headerlink" title="端口冲突"></a>端口冲突</h3><p>如果使用较低版本的 solon 时，提示端口冲突时，注意排除 solon-boot-xxx。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">  implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>) &#123;</span><br><span class="line">	exclude <span class="attr">group:</span> <span class="string">&quot;org.noear&quot;</span>, <span class="attr">module:</span> <span class="string">&quot;solon-boot-smarthttp&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="路由匹配未按预期"><a href="#路由匹配未按预期" class="headerlink" title="路由匹配未按预期"></a>路由匹配未按预期</h3><p>3.0.5 版本如果路由存在包含关系，必须指定index，越具体的地址优先级要越高优先级（也就是index越小）。</p>
+<h4 id="配置多个-predicates-的-Path导致路由无法匹配"><a href="#配置多个-predicates-的-Path导致路由无法匹配" class="headerlink" title="配置多个 predicates 的 Path导致路由无法匹配"></a>配置多个 predicates 的 Path导致路由无法匹配</h4><p>3.0.5 版本不支持配置多个路由的匹配，3.0.6版本将支持，需要匹配多个Path时，配置多个路由。</p>
+<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p>新版的 Solon Gateway 已经在开发线稳定运行一个多月，另外内存使用方面比Spring Gateway 少了五百兆左右。</p>
+<ul>
+<li>Spring-gateway</li>
+</ul>
+<p><img src="solon-2/spring-gateway.png"></p>
+<ul>
+<li>Solon-gateway</li>
+</ul>
+<p><img src="solon-2/solon-gateway.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/01/04/course100/013/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1119,167 +1249,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/02/17/misc/appleid/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/02/17/misc/appleid/" class="post-title-link" itemprop="url">注册美区 Apple ID</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-02-17 19:57:55" itemprop="dateCreated datePublished" datetime="2024-02-17T19:57:55+08:00">2024-02-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-02-18 00:01:21" itemprop="dateModified" datetime="2024-02-18T00:01:21+08:00">2024-02-18</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Apple-ID/" itemprop="url" rel="index"><span itemprop="name">Apple ID</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>写本文是因为需要使用iOS版的Mixin Messenger需要有美区的苹果ID，当然可以购买苹果ID，但从安全和使用方便的角度来看，应该拥有自己的苹果ID。</p>
-<p>注册的过程参考了「<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/doFPWfUVZlMBqYR0sOQurQ">美区APP Store上架ChatGPT了!保姆级教程</a>」和「<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/623576755">注册美国区Apple ID保姆级教程</a>」的方法，发现都不能注册成功。第一个链接的问题是支付方式已经不能选无，导致无法在完成App Store的支付检查。第二链接是通过<a target="_blank" rel="noopener" href="https://appleid.apple.com/account">Create Your Apple ID - Apple</a>进行注册的，但提交时，会提示「创建用户时无法完成你的情况，此时无法创建你的账号」。</p>
-<p>因此，主要参考链接一结合虚拟信用卡的方式，完成美区苹果ID的注册。以下该方法的具体步骤。</p>
-<p><strong>注意：本方法只在手机中验证通过，请使用手机操作，不要用电脑。</strong> 操作未截图，使用了链接一中的截图。</p>
-<h1 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h1><ol>
-<li><p>如果已经登录的苹果ID是国内账号，先退出登录。「设置」&gt; 「头像/Apple ID」&gt; 「退出登录」，输入密码后确定。</p>
-</li>
-<li><p>设置手机的区域为美国，「设置」&gt; 「通用」&gt; 「语言与地区」&gt; 「地区」，选择美国。如果是英文显示时，注意是「 United States」，而不是其他。这步尤为重要，因为后续注册账号时没有地方可以填写区域，而是根据系统设置的区域来的。</p>
-</li>
-<li><p>创建Apple ID，「设置」&gt; 「Apple ID」&gt; 「忘记密码或者没有苹果ID」&gt; 「创建 Apple ID」。</p>
-</li>
-<li><p>输入姓名和出生日期，注意年龄大雨十八岁否则会有限制。名和姓也要要英文名。</p>
-</li>
-<li><p>输入新邮箱，可以关闭公告。注意邮箱之前不能注册过Apple ID。</p>
-</li>
-<li><p>设置密码。</p>
-</li>
-<li><p>输入电话号码，短信验证。此处电话号码可以是中国区电话，已注册过的电话也没有问题。</p>
-</li>
-<li><p>验证电子邮箱，「设置」&gt; 「头像/Apple ID」&gt; 「验证电子邮箱」。</p>
-</li>
-<li><p>打开App Store，正常已经进入美区。</p>
-</li>
-<li><p>搜索「Mixin Messenger」，可以看到，确认是美区账号了。点击「获取」&gt; 「安装」，输入密码。</p>
-</li>
-<li><p>此时会弹出当前账号需要进行支付检查，因为支付信用卡未准备好，暂不点击「检查」。</p>
-</li>
-<li><p>开通虚拟信用卡，该步骤为电脑操作。可以使用NobePay，或者FomePay。NobePay是最低账户充值500元（充值也是要收1%的手续费），开卡充值不限。开卡费1～3美元（根据卡段不同），服务费3%；FomePay开卡10美元，最低充值32美元，未实际使用其他费用未知。可以根据自己的情况进行选择，我自己使用的是NobePay，这里以NobePay进行说明。</p>
-<ul>
-<li><p>注册，<a target="_blank" rel="noopener" href="https://www.nobepay.com/">https://www.nobepay.com/</a> ，点击「立即注册」，按提示填写。</p>
-</li>
-<li><p>实名认证，「个人中心」 &gt; 「我的账户」&gt; 「我的认证」，按提示进行认证。</p>
-</li>
-<li><p>绑定收付款人，「个人中心」 &gt; 「我的账户」&gt; 「添加收付款人」，按提示进行添加。</p>
-</li>
-<li><p>充值，「资金中心」&gt; 「快速充值」&gt; 「在线充值」，点击「立即充值」，使用支付宝或者微信进行扫码支付。</p>
-</li>
-<li><p>开卡，「我的卡片」&gt; 「快速开卡」，选择「卡段」，选择「扣款账户」，输入「充值金额」，生成「随机地址」（参看步骤14），点击「开卡」，等待开卡成功提示。</p>
-</li>
-<li><p>查看卡片信息，「我的卡片」&gt;「卡片列表」，点击「管理」&gt; 「查看卡片」。</p>
-</li>
-</ul>
-</li>
-<li><p>生成随机地址，该步骤为电脑操作。使用<a target="_blank" rel="noopener" href="https://www.meiguodizhi.com/">https://www.meiguodizhi.com</a> 生成美国地址，记录下对应的，街道地址，城市，州，邮编等信息，。</p>
-<p>最好选择以下的免税州：</p>
-<ul>
-<li><p>蒙大拿州 Montana</p>
-</li>
-<li><p>俄勒冈州 Oregon</p>
-</li>
-<li><p>阿拉斯加州 Alaska</p>
-</li>
-<li><p>特拉华州 Delaware</p>
-</li>
-<li><p>新罕布什尔州 New Hampshire</p>
-</li>
-</ul>
-</li>
-<li><p>该步骤为手机操作，接步骤11，点击「检查」，选择「信用卡/借记卡」（注意此时已经没有「无」这个支付选项了），按提示填写步骤12中的信用卡信息，继续添加步骤13获取的账单寄送地址信息。</p>
-</li>
-</ol>
-<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>以下为我在注册时碰到的问题。</p>
-<ul>
-<li>进入App Store时提示，连接服务器时出现问题</li>
-</ul>
-<blockquote>
-<p>尝试了<a target="_blank" rel="noopener" href="https://discussionschinese.apple.com/thread/251649129?sortBy=best">连接服务器时出现问题</a>的方法，都没能解决，最终因为里面的提示地区和时间，发现自己是地区选择错误，选择了「American Samoa」导致的，应该选择「United States」，通过重新注册账户解决。</p>
-</blockquote>
-<h1 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h1><ul>
-<li>美区APP Store上架ChatGPT了!保姆级教程 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/doFPWfUVZlMBqYR0sOQurQ">https://mp.weixin.qq.com/s/doFPWfUVZlMBqYR0sOQurQ</a></li>
-<li>注册美国区Apple ID保姆级教程 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/623576755">https://zhuanlan.zhihu.com/p/623576755</a></li>
-<li>Create Your Apple ID <a target="_blank" rel="noopener" href="https://appleid.apple.com/account">https://appleid.apple.com/account</a></li>
-<li>连接服务器时出现问题 <a target="_blank" rel="noopener" href="https://discussionschinese.apple.com/thread/251649129?sortBy=best">https://discussionschinese.apple.com/thread/251649129?sortBy=best</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1349,20 +1318,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">259</span>
+          <span class="site-state-item-count">260</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">112</span>
+        <span class="site-state-item-count">113</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">111</span>
+        <span class="site-state-item-count">112</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1420,12 +1389,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">557k</span>
+    <span title="站点总字数">564k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:27</span>
+    <span title="站点阅读时长">8:33</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

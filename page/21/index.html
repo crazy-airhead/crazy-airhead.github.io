@@ -172,6 +172,121 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/09/frontend/vue/vue-error-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/09/frontend/vue/vue-error-1/" class="post-title-link" itemprop="url">VUE踩坑记-01</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-09 13:36:47" itemprop="dateCreated datePublished" datetime="2019-05-09T13:36:47+08:00">2019-05-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>因为公司目前暂时没的前端，于是准备自己用Vue和TypeScript入手公司项目的管理后台。因为Vue已经有很多UI框架了（比如Element），而TypeScript呢，引入了类等概念，对于Java开发人员来说是比较容易入手的。而后端开发人员可能最头疼的是CSS布局吧，于是找了vue-element-admin来抄，当然有人改了个TypeScript版本<a target="_blank" rel="noopener" href="https://github.com/Armour/vue-typescript-admin-template">vue-typescript-admin-template</a>。</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>经过一段时间的熟悉yarn和代码结构，我们开始了服务端的调用。</p>
+<h3 id="跨域问题"><a href="#跨域问题" class="headerlink" title="跨域问题"></a>跨域问题</h3><p>本地服务开发我们是可以设置Chrome的跨域的（–disable-web-security<br>–user-data-dir=），但为了后面更好的开发和及时发现问题，我们还是使用了Proxy方式，按vue-cli的文档，增加<code>vue.config.js</code>的devServer配置就要可以，如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * vue-cli3跨域的全配置！</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="attr">devServer</span>: &#123;</span><br><span class="line">     <span class="attr">proxy</span>:  <span class="string">&#x27;http://172.26.0.252:8881&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>但我们还是出现了问题，原来在<code>request.ts</code>中也设置了服务器地址</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> service = axios.create(&#123;</span><br><span class="line">  <span class="attr">baseURL</span>: <span class="string">&#x27;http://172.26.0.252:8881&#x27;</span>,</span><br><span class="line">  <span class="attr">timeout</span>: <span class="number">5000</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>其实呢这个值应该设置在<code>.env</code>中，设置VUE_APP_BASE_API</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">VUE_APP_BASE_API</span>=<span class="string">http://172.26.0.252:8881</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="远程调用"><a href="#远程调用" class="headerlink" title="远程调用"></a>远程调用</h3><p>解决了跨域之后，开始了实际的接口调用，修改的是登录页面，一测试，报这样的错。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">login error:<span class="built_in">Error</span>: ERR_ACTION_ACCESS_UNDEFINED: Are you trying to access <span class="built_in">this</span>.someMutation() or <span class="built_in">this</span>.someGetter inside an <span class="meta">@Action</span>? </span><br><span class="line">That works only <span class="keyword">in</span> dynamic modules. </span><br><span class="line">If not dynamic use <span class="built_in">this</span>.context.commit(<span class="string">&quot;mutationName&quot;</span>, payload) and <span class="built_in">this</span>.context.getters[<span class="string">&quot;getterName&quot;</span>]</span><br><span class="line"><span class="attr">Error</span>: Could not perform action Login</span><br><span class="line">    at Store.eval (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:333:37)</span></span><br><span class="line">    at step (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:114:23)</span></span><br><span class="line">    at <span class="built_in">Object</span>.eval [<span class="keyword">as</span> <span class="keyword">throw</span>] (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:95:53)</span></span><br><span class="line">    at rejected (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:86:65)</span></span><br><span class="line"><span class="built_in">Error</span>: error <span class="keyword">with</span> code: <span class="literal">undefined</span></span><br><span class="line">    at __webpack_exports__.default (webpack-internal:<span class="comment">///./src/utils/request.ts:48:133)</span></span><br></pre></td></tr></table></figure>
+
+<p>嗯，完全没在头绪，查了下呢看到这篇<a target="_blank" rel="noopener" href="https://github.com/championswimmer/vuex-module-decorators/issues/26">Rejected action throws ERR_ACTION_ACCESS_UNDEFINED</a>，说是增加rawError，因为对Vuex不熟悉，也还是不知道怎么加。</p>
+<p>之后查看了<a target="_blank" rel="noopener" href="https://championswimmer.in/vuex-module-decorators/pages/installation.html"><a target="_blank" rel="noopener" href="https://championswimmer.in/vuex-module-decorators/">vuex-module-decorators</a></a>的基本文档。</p>
+<p>回头重新看<a target="_blank" rel="noopener" href="https://github.com/championswimmer/vuex-module-decorators/issues">issues</a>，搜索<code>ERR_ACTION_ACCESS_UNDEFINED</code>，记录还是不少的，一条条的看，终于看到rawError如何设置。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Action</span>(&#123; <span class="attr">rawError</span>: <span class="literal">true</span> &#125;)</span><br></pre></td></tr></table></figure>
+
+<p>修改代码，测试这个时候报错</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">code undifined</span><br></pre></td></tr></table></figure>
+
+<p>问题于是又定位到了<code>request.ts</code>上。</p>
+<p>查看代码，如下：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">service.interceptors.response.use(</span><br><span class="line">  <span class="function">(<span class="params">response</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// Some example codes here:</span></span><br><span class="line">    <span class="comment">// code == 20000: valid</span></span><br><span class="line">    <span class="comment">// code == 50008: invalid token</span></span><br><span class="line">    <span class="comment">// code == 50012: already login in other place</span></span><br><span class="line">    <span class="comment">// code == 50014: token expired</span></span><br><span class="line">    <span class="comment">// code == 60204: account or password is incorrect</span></span><br><span class="line">    <span class="comment">// You can change this part for your own usage.</span></span><br><span class="line">    <span class="keyword">const</span> res = response.data</span><br><span class="line">    <span class="keyword">if</span> (res.code !== <span class="number">20000</span>) &#123;</span><br><span class="line">      Message(&#123;</span><br><span class="line">        <span class="attr">message</span>: res.message,</span><br><span class="line">        <span class="attr">type</span>: <span class="string">&#x27;error&#x27;</span>,</span><br><span class="line">        <span class="attr">duration</span>: <span class="number">5</span> * <span class="number">1000</span></span><br><span class="line">      &#125;)</span><br><span class="line">      <span class="keyword">if</span> (res.code === <span class="number">50008</span> || res.code === <span class="number">50012</span> || res.code === <span class="number">50014</span>) &#123;</span><br><span class="line">        MessageBox.confirm(</span><br><span class="line">          <span class="string">&#x27;你已被登出，可以取消继续留在该页面，或者重新登录&#x27;</span>,</span><br><span class="line">          <span class="string">&#x27;确定登出&#x27;</span>,</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">confirmButtonText</span>: <span class="string">&#x27;重新登录&#x27;</span>,</span><br><span class="line">            <span class="attr">cancelButtonText</span>: <span class="string">&#x27;取消&#x27;</span>,</span><br><span class="line">            <span class="attr">type</span>: <span class="string">&#x27;warning&#x27;</span></span><br><span class="line">          &#125;</span><br><span class="line">        ).then(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">          UserModule.FedLogOut().then(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            location.reload() <span class="comment">// To prevent bugs from vue-router</span></span><br><span class="line">          &#125;)</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;error with code: &#x27;</span> + res.code))</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> response.data</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">    Message(&#123;</span><br><span class="line">      <span class="attr">message</span>: error.message,</span><br><span class="line">      <span class="attr">type</span>: <span class="string">&#x27;error&#x27;</span>,</span><br><span class="line">      <span class="attr">duration</span>: <span class="number">5</span> * <span class="number">1000</span></span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(error)</span><br><span class="line">  &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>是的，我们的返回值没有返回code，错误被上一层的Module给捕获了，接下来改代码就好了。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>实操才会碰到问题，才能解决问题，看文档时你是不会知道有多少坑的，你以为你会了实际上你还不会。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/04/26/misc/handwriting/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1091,144 +1206,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/03/02/spring/springboot-3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/03/02/spring/springboot-3/" class="post-title-link" itemprop="url">SpringCloud-配置中心</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-03-02 14:24:45" itemprop="dateCreated datePublished" datetime="2019-03-02T14:24:45+08:00">2019-03-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/SpringCloud/" itemprop="url" rel="index"><span itemprop="name">SpringCloud</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>之前采用Sping Config Server做为配置中心，使用Git做为数据存储和版本控制。整体来说问题不太，可用，便不够商用，或者要做很多拓展。比如更新参数时，需要推送Git，重启服务。如果需要动态更新，需要配置Git服务器的WebHook，设置服务的RefreshScope，同时为了减少WebHook的配置，需要加上Spring Cloud Bus（同时引及RabbitMQ或者Kafka）。另外对不同环境的配置不友好，能过Profile来配置，但配置杂乱，虽然后面通过Git分支加环境变量解决，但管理还是不方便。带着这样的一些问题，碰到了Apollo配置中心，Apollo的很多功能直接就解开了我之前的一些疑惑，那还说什么呢？拿来用就好了。</p>
-<h2 id="Apollo配置中心"><a href="#Apollo配置中心" class="headerlink" title="Apollo配置中心"></a>Apollo配置中心</h2><p>Apollo配置中心文档丰富，直接看官方文档就好，看了之后你也会喜欢上他。以下是官网的功能说明：</p>
-<ul>
-<li>统一管理不同环境、不同集群的配置<ul>
-<li>Apollo提供了一个统一界面集中式管理不同环境（environment）、不同集群（cluster）、不同命名空间（namespace）的配置。</li>
-<li>同一份代码部署在不同的集群，可以有不同的配置，比如zk的地址等</li>
-<li>通过命名空间（namespace）可以很方便的支持多个不同应用共享同一份配置，同时还允许应用对共享的配置进行覆盖</li>
-</ul>
-</li>
-<li>配置修改实时生效（热发布）<ul>
-<li>用户在Apollo修改完配置并发布后，客户端能实时（1秒）接收到最新的配置，并通知到应用程序。</li>
-</ul>
-</li>
-<li>版本发布管理<ul>
-<li>所有的配置发布都有版本概念，从而可以方便的支持配置的回滚。</li>
-</ul>
-</li>
-<li>灰度发布<ul>
-<li>支持配置的灰度发布，比如点了发布后，只对部分应用实例生效，等观察一段时间没问题后再推给所有应用实例。</li>
-</ul>
-</li>
-<li>权限管理、发布审核、操作审计<ul>
-<li>应用和配置的管理都有完善的权限管理机制，对配置的管理还分为了编辑和发布两个环节，从而减少人为的错误。</li>
-<li>所有的操作都有审计日志，可以方便的追踪问题。</li>
-</ul>
-</li>
-<li>客户端配置信息监控<ul>
-<li>可以方便的看到配置在被哪些实例使用</li>
-</ul>
-</li>
-<li>提供Java和.Net原生客户端<ul>
-<li>提供了Java和.Net的原生客户端，方便应用集成</li>
-<li>支持Spring Placeholder, Annotation和Spring Boot的ConfigurationProperties，方便应用使用（需要Spring 3.1.1+）</li>
-<li>同时提供了Http接口，非Java和.Net应用也可以方便的使用</li>
-</ul>
-</li>
-<li>提供开放平台API<ul>
-<li>Apollo自身提供了比较完善的统一配置管理界面，支持多环境、多数据中心配置管理、权限、流程治理等特性。</li>
-<li>不过Apollo出于通用性考虑，对配置的修改不会做过多限制，只要符合基本的格式就能够保存。</li>
-<li>在我们的调研中发现，对于有些使用方，它们的配置可能会有比较复杂的格式，如xml, json，需要对格式做校验。</li>
-<li>还有一些使用方如DAL，不仅有特定的格式，而且对输入的值也需要进行校验后方可保存，如检查数据库、用户名和密码是否匹配。</li>
-<li>对于这类应用，Apollo支持应用方通过开放接口在Apollo进行配置的修改和发布，并且具备完善的授权和权限控制</li>
-</ul>
-</li>
-<li>部署简单<ul>
-<li>配置中心作为基础服务，可用性要求非常高，这就要求Apollo对外部依赖尽可能地少</li>
-<li>目前唯一的外部依赖是MySQL，所以部署非常简单，只要安装好Java和MySQL就可以让Apollo跑起来</li>
-<li>Apollo还提供了打包脚本，一键就可以生成所有需要的安装包，并且支持自定义运行时参数<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2>通过Apollo配置中心改进了原有Spring Config Server的使用不便。同时如果你的团队使用灰度发布的话，会加深开关驱动开发的了解。</li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1298,20 +1275,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">259</span>
+          <span class="site-state-item-count">260</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">112</span>
+        <span class="site-state-item-count">113</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">111</span>
+        <span class="site-state-item-count">112</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1369,12 +1346,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">557k</span>
+    <span title="站点总字数">564k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:27</span>
+    <span title="站点阅读时长">8:33</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

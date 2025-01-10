@@ -172,6 +172,130 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/09/30/java/jdk8-apline/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/30/java/jdk8-apline/" class="post-title-link" itemprop="url">jdk8-apline需要注意的问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-30 15:02:13" itemprop="dateCreated datePublished" datetime="2019-09-30T15:02:13+08:00">2019-09-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>因为需要部署一台新的测试机，之前知道apline比较小巧，于是选用了java:jdk8-apline的基础镜像。但我们在部署Jfinal项目(采用undertow文件夹方式部署，通过start.sh启动并后台运行)的过程碰到一些问题。小巧注定很多组件需要自己安装。</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ul>
+<li><p>编写好Dockerfile后，无法启动容器</p>
+<blockquote>
+<ol>
+<li>apline未完装bash，需要安装<code>apk add bash</code></li>
+<li>start.sh为后台运行，需要改为直接运行，去掉启动命令中的<code>&amp;</code></li>
+</ol>
+</blockquote>
+</li>
+<li><p>时间为UTC，而不是北京时间</p>
+<blockquote>
+<p>这个问题实际是Docker镜像问题，和apline无关。因为编写Dockerfile时做了处理，所以一并列出。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apk add tzdata</span><br><span class="line">cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Asia/shanghai&quot;</span> &gt;&gt; /etc/timezone</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+<li><p>验证码无法使用，提示如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Caused by: java.lang.NullPointerException</span><br><span class="line">	at sun.awt.FontConfiguration.getVersion(FontConfiguration.java:1264)</span><br><span class="line">	at sun.awt.FontConfiguration.readFontConfigFile(FontConfiguration.java:219)</span><br><span class="line">	at sun.awt.FontConfiguration.init(FontConfiguration.java:107)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>网上搜索发现为apline缺少字库导致</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apk add font-adobe-100dpi ttf-dejavu fontconfig</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+<li><p>下载源速度慢</p>
+<blockquote>
+<p>使用阿里云镜像加速</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo http://mirrors.aliyun.com/alpine/v3.7/main/ &gt;&gt; /etc/apk/repositories</span><br><span class="line">apk update</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+</ul>
+<h2 id="镜像"><a href="#镜像" class="headerlink" title="镜像"></a>镜像</h2><p>最后的Dockerfile，需要增加的处理如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">FROM daocloud.io/library/java:8-jdk-alpine</span><br><span class="line">LABEL maintainer=<span class="string">&quot;L4qiang@gmail.com&quot;</span></span><br><span class="line"></span><br><span class="line">RUN <span class="built_in">echo</span> http://mirrors.aliyun.com/alpine/v3.7/main/ &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update</span><br><span class="line">RUN apk add bash tzdata font-adobe-100dpi ttf-dejavu fontconfig</span><br><span class="line">RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span><br><span class="line">RUN <span class="built_in">echo</span> <span class="string">&quot;Asia/shanghai&quot;</span> &gt;&gt; /etc/timezone</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/09/11/mysql/upgrade/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1196,121 +1320,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/09/frontend/vue/vue-error-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/05/09/frontend/vue/vue-error-1/" class="post-title-link" itemprop="url">VUE踩坑记-01</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-09 13:36:47" itemprop="dateCreated datePublished" datetime="2019-05-09T13:36:47+08:00">2019-05-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>因为公司目前暂时没的前端，于是准备自己用Vue和TypeScript入手公司项目的管理后台。因为Vue已经有很多UI框架了（比如Element），而TypeScript呢，引入了类等概念，对于Java开发人员来说是比较容易入手的。而后端开发人员可能最头疼的是CSS布局吧，于是找了vue-element-admin来抄，当然有人改了个TypeScript版本<a target="_blank" rel="noopener" href="https://github.com/Armour/vue-typescript-admin-template">vue-typescript-admin-template</a>。</p>
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>经过一段时间的熟悉yarn和代码结构，我们开始了服务端的调用。</p>
-<h3 id="跨域问题"><a href="#跨域问题" class="headerlink" title="跨域问题"></a>跨域问题</h3><p>本地服务开发我们是可以设置Chrome的跨域的（–disable-web-security<br>–user-data-dir=），但为了后面更好的开发和及时发现问题，我们还是使用了Proxy方式，按vue-cli的文档，增加<code>vue.config.js</code>的devServer配置就要可以，如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * vue-cli3跨域的全配置！</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="attr">devServer</span>: &#123;</span><br><span class="line">     <span class="attr">proxy</span>:  <span class="string">&#x27;http://172.26.0.252:8881&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>但我们还是出现了问题，原来在<code>request.ts</code>中也设置了服务器地址</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> service = axios.create(&#123;</span><br><span class="line">  <span class="attr">baseURL</span>: <span class="string">&#x27;http://172.26.0.252:8881&#x27;</span>,</span><br><span class="line">  <span class="attr">timeout</span>: <span class="number">5000</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
-<p>其实呢这个值应该设置在<code>.env</code>中，设置VUE_APP_BASE_API</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">VUE_APP_BASE_API</span>=<span class="string">http://172.26.0.252:8881</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="远程调用"><a href="#远程调用" class="headerlink" title="远程调用"></a>远程调用</h3><p>解决了跨域之后，开始了实际的接口调用，修改的是登录页面，一测试，报这样的错。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">login error:<span class="built_in">Error</span>: ERR_ACTION_ACCESS_UNDEFINED: Are you trying to access <span class="built_in">this</span>.someMutation() or <span class="built_in">this</span>.someGetter inside an <span class="meta">@Action</span>? </span><br><span class="line">That works only <span class="keyword">in</span> dynamic modules. </span><br><span class="line">If not dynamic use <span class="built_in">this</span>.context.commit(<span class="string">&quot;mutationName&quot;</span>, payload) and <span class="built_in">this</span>.context.getters[<span class="string">&quot;getterName&quot;</span>]</span><br><span class="line"><span class="attr">Error</span>: Could not perform action Login</span><br><span class="line">    at Store.eval (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:333:37)</span></span><br><span class="line">    at step (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:114:23)</span></span><br><span class="line">    at <span class="built_in">Object</span>.eval [<span class="keyword">as</span> <span class="keyword">throw</span>] (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:95:53)</span></span><br><span class="line">    at rejected (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:86:65)</span></span><br><span class="line"><span class="built_in">Error</span>: error <span class="keyword">with</span> code: <span class="literal">undefined</span></span><br><span class="line">    at __webpack_exports__.default (webpack-internal:<span class="comment">///./src/utils/request.ts:48:133)</span></span><br></pre></td></tr></table></figure>
-
-<p>嗯，完全没在头绪，查了下呢看到这篇<a target="_blank" rel="noopener" href="https://github.com/championswimmer/vuex-module-decorators/issues/26">Rejected action throws ERR_ACTION_ACCESS_UNDEFINED</a>，说是增加rawError，因为对Vuex不熟悉，也还是不知道怎么加。</p>
-<p>之后查看了<a target="_blank" rel="noopener" href="https://championswimmer.in/vuex-module-decorators/pages/installation.html"><a target="_blank" rel="noopener" href="https://championswimmer.in/vuex-module-decorators/">vuex-module-decorators</a></a>的基本文档。</p>
-<p>回头重新看<a target="_blank" rel="noopener" href="https://github.com/championswimmer/vuex-module-decorators/issues">issues</a>，搜索<code>ERR_ACTION_ACCESS_UNDEFINED</code>，记录还是不少的，一条条的看，终于看到rawError如何设置。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Action</span>(&#123; <span class="attr">rawError</span>: <span class="literal">true</span> &#125;)</span><br></pre></td></tr></table></figure>
-
-<p>修改代码，测试这个时候报错</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">code undifined</span><br></pre></td></tr></table></figure>
-
-<p>问题于是又定位到了<code>request.ts</code>上。</p>
-<p>查看代码，如下：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">service.interceptors.response.use(</span><br><span class="line">  <span class="function">(<span class="params">response</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// Some example codes here:</span></span><br><span class="line">    <span class="comment">// code == 20000: valid</span></span><br><span class="line">    <span class="comment">// code == 50008: invalid token</span></span><br><span class="line">    <span class="comment">// code == 50012: already login in other place</span></span><br><span class="line">    <span class="comment">// code == 50014: token expired</span></span><br><span class="line">    <span class="comment">// code == 60204: account or password is incorrect</span></span><br><span class="line">    <span class="comment">// You can change this part for your own usage.</span></span><br><span class="line">    <span class="keyword">const</span> res = response.data</span><br><span class="line">    <span class="keyword">if</span> (res.code !== <span class="number">20000</span>) &#123;</span><br><span class="line">      Message(&#123;</span><br><span class="line">        <span class="attr">message</span>: res.message,</span><br><span class="line">        <span class="attr">type</span>: <span class="string">&#x27;error&#x27;</span>,</span><br><span class="line">        <span class="attr">duration</span>: <span class="number">5</span> * <span class="number">1000</span></span><br><span class="line">      &#125;)</span><br><span class="line">      <span class="keyword">if</span> (res.code === <span class="number">50008</span> || res.code === <span class="number">50012</span> || res.code === <span class="number">50014</span>) &#123;</span><br><span class="line">        MessageBox.confirm(</span><br><span class="line">          <span class="string">&#x27;你已被登出，可以取消继续留在该页面，或者重新登录&#x27;</span>,</span><br><span class="line">          <span class="string">&#x27;确定登出&#x27;</span>,</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">confirmButtonText</span>: <span class="string">&#x27;重新登录&#x27;</span>,</span><br><span class="line">            <span class="attr">cancelButtonText</span>: <span class="string">&#x27;取消&#x27;</span>,</span><br><span class="line">            <span class="attr">type</span>: <span class="string">&#x27;warning&#x27;</span></span><br><span class="line">          &#125;</span><br><span class="line">        ).then(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">          UserModule.FedLogOut().then(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            location.reload() <span class="comment">// To prevent bugs from vue-router</span></span><br><span class="line">          &#125;)</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;error with code: &#x27;</span> + res.code))</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> response.data</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">    Message(&#123;</span><br><span class="line">      <span class="attr">message</span>: error.message,</span><br><span class="line">      <span class="attr">type</span>: <span class="string">&#x27;error&#x27;</span>,</span><br><span class="line">      <span class="attr">duration</span>: <span class="number">5</span> * <span class="number">1000</span></span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(error)</span><br><span class="line">  &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>是的，我们的返回值没有返回code，错误被上一层的Module给捕获了，接下来改代码就好了。</p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>实操才会碰到问题，才能解决问题，看文档时你是不会知道有多少坑的，你以为你会了实际上你还不会。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1380,20 +1389,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">259</span>
+          <span class="site-state-item-count">260</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">112</span>
+        <span class="site-state-item-count">113</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">111</span>
+        <span class="site-state-item-count">112</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1451,12 +1460,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">557k</span>
+    <span title="站点总字数">564k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:27</span>
+    <span title="站点阅读时长">8:33</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
