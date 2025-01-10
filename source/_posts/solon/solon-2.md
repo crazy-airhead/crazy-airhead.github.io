@@ -18,7 +18,7 @@ tags:
 
 此次使用 solon gateway 进行替换需要完整的实现旧有Spring Gateway的功能，同时想利用 solon 的本地 gateway 的路由分组功能合并api-gateway。
 
-一样的，在开发前，需要完整阅读，Solon Gateway 的官网文档 （https://solon.noear.org/article/804）。一样的文档说明简单，集成也不难。
+一样的，在开发前，需要完整阅读，Solon Gateway 的官网文档 （https://solon.noear.org/article/804）。一样的，文档说明简单，集成也不难。
 
 Solon 版本：3.0.5
 
