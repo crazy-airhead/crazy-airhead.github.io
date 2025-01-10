@@ -197,7 +197,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2025-01-10 14:43:07 / 修改时间：15:50:12" itemprop="dateCreated datePublished" datetime="2025-01-10T14:43:07+08:00">2025-01-10</time>
+              <time title="创建时间：2025-01-10 14:43:07 / 修改时间：17:17:54" itemprop="dateCreated datePublished" datetime="2025-01-10T14:43:07+08:00">2025-01-10</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -241,7 +241,7 @@
           <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在「使用国产化框架 Solon 的一些开发经验」中提到，我们只是在平台的一个应用开始使用 Solon 框架，并非一次性的完全替换。但随着 solon cloud gateway 官方版本发布，替换Spring Gateway 也成为可能，于是开始相关的替换工作。</p>
 <p>我们的网关主要提供了统计授权和鉴权的功能，及最基础的服务路由能力。另外系统中个问卷功能是对外提供服务的，当时为了提供对外服务和减少Gateway的路由判断逻辑，增加一个api-gateway。</p>
 <p>此次使用 solon gateway 进行替换需要完整的实现旧有Spring Gateway的功能，同时想利用 solon 的本地 gateway 的路由分组功能合并api-gateway。</p>
-<p>一样的，在开发前，需要完整阅读，Solon Gateway 的官网文档 （<a target="_blank" rel="noopener" href="https://solon.noear.org/article/804%EF%BC%89%E3%80%82%E4%B8%80%E6%A0%B7%E7%9A%84%E6%96%87%E6%A1%A3%E8%AF%B4%E6%98%8E%E7%AE%80%E5%8D%95%EF%BC%8C%E9%9B%86%E6%88%90%E4%B9%9F%E4%B8%8D%E9%9A%BE%E3%80%82">https://solon.noear.org/article/804）。一样的文档说明简单，集成也不难。</a></p>
+<p>一样的，在开发前，需要完整阅读，Solon Gateway 的官网文档 （<a target="_blank" rel="noopener" href="https://solon.noear.org/article/804%EF%BC%89%E3%80%82%E4%B8%80%E6%A0%B7%E7%9A%84%EF%BC%8C%E6%96%87%E6%A1%A3%E8%AF%B4%E6%98%8E%E7%AE%80%E5%8D%95%EF%BC%8C%E9%9B%86%E6%88%90%E4%B9%9F%E4%B8%8D%E9%9A%BE%E3%80%82">https://solon.noear.org/article/804）。一样的，文档说明简单，集成也不难。</a></p>
 <p>Solon 版本：3.0.5</p>
 <h2 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h2><h3 id="引入依赖包"><a href="#引入依赖包" class="headerlink" title="引入依赖包"></a>引入依赖包</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:ficus-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:nacos2-solon-cloud-plugin&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon.cloud.gateway&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
