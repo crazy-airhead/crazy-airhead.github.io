@@ -172,6 +172,240 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/10/21/nginx/docker-deploy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/10/21/nginx/docker-deploy/" class="post-title-link" itemprop="url">基于Docker部署Nginx并配置反向代理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-10-21 10:21:48" itemprop="dateCreated datePublished" datetime="2019-10-21T10:21:48+08:00">2019-10-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nginx/" itemprop="url" rel="index"><span itemprop="name">nginx</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nginx/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们采用开发直接上线署的方式来快速开发，但因客户已经开始正式使用我司开发的小程序了，为了减少对客户的影响，现在需要额外部署一套开发环境。这个时候首先想到的就是通过Nginx来进行反向代理，开发环境使用二级域名，（如<a target="_blank" rel="noopener" href="https://dev.zai500.com),方便开发小程序时候使用.因为中间有一些部署前没有碰过的问题,记录下来,以便后期项目时注意./">https://dev.zai500.com），方便开发小程序时候使用。因为中间有一些部署前没有碰过的问题，记录下来，以便后期项目时注意。</a></p>
+<h2 id="证书转换"><a href="#证书转换" class="headerlink" title="证书转换"></a>证书转换</h2><p>公司项目是从SpringBoot转换到jfinal的，所以之前使用的是JKS格式的证书，需要进行转换，当然如果可以重新申请也能获得不同格式的证书。</p>
+<h3 id="jks格式转pkcs12"><a href="#jks格式转pkcs12" class="headerlink" title="jks格式转pkcs12"></a>jks格式转pkcs12</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -importkeystore -srckeystore server.keystore -destkeystore server.p12 -srcalias serverkey -destalias serverkey -srcstoretype jks -deststoretype pkcs12 -srcstorepass 111111 -deststorepass 111111 -noprompt</span><br></pre></td></tr></table></figure>
+
+<h4 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h4><ul>
+<li>importkeystore 指示导入导出keystore文件，可用于同类型或不同类型的导入导出</li>
+<li>srckeystore 指示源keystore文件</li>
+<li>srcalias 指示源实体别名</li>
+<li>srcstoretype 指示源store类型(jks/pkcs12..)</li>
+<li>srcstorepass 指示源store密码</li>
+<li>noprompt 不弹出提示</li>
+</ul>
+<h3 id="查看jks信息"><a href="#查看jks信息" class="headerlink" title="查看jks信息"></a>查看jks信息</h3><p>如果不清楚scralias可能通过如下命令来查看</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -list -keystore server.jks</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建Nginx容器"><a href="#创建Nginx容器" class="headerlink" title="创建Nginx容器"></a>创建Nginx容器</h2><p>因为我们的应用是使用Docker部署的，我们很自然的，使用Docker来部署Nginx。</p>
+<h3 id="拷贝配置"><a href="#拷贝配置" class="headerlink" title="拷贝配置"></a>拷贝配置</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 80:80 -p 443:443 --name nginx -it nginx:stable</span><br><span class="line">docker container cp nginx:/etc/nginx .</span><br></pre></td></tr></table></figure>
+
+<p>以上命令用将nginx的配置信息拷贝到宿主机的当前目录，之后可以将<code>nginx</code>改成<code>conf</code></p>
+<h3 id="重新创建容器"><a href="#重新创建容器" class="headerlink" title="重新创建容器"></a>重新创建容器</h3><p>现在映射配置目录，不采用文件映射的方式，因为我们需要配置证书。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker stop nginx</span><br><span class="line">docker rm nginx</span><br><span class="line">docker run -p 80:80 -p 443:443 --name nginx -v /data/nginx/conf:/etc/nginx -it nginx:stable</span><br></pre></td></tr></table></figure>
+
+<p>注意这里不使用文件的直接映射，因为需要配置证书。</p>
+<h3 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h3><h4 id="将证书文件放置在conf目录下"><a href="#将证书文件放置在conf目录下" class="headerlink" title="将证书文件放置在conf目录下"></a>将证书文件放置在<code>conf</code>目录下</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- zai500.com</span><br><span class="line">--- server.crt</span><br><span class="line">--- server.key</span><br><span class="line">- dev.zai500.com</span><br><span class="line">--- server.crt</span><br><span class="line">--- server.key</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改nginx-conf"><a href="#修改nginx-conf" class="headerlink" title="修改nginx.conf"></a>修改nginx.conf</h4><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="attribute">server_name</span> dev.zai500.com;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> dev.zai500.com/server.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> dev.zai500.com/server.key;</span><br><span class="line">    <span class="attribute">ssl_session_timeout</span> <span class="number">5m</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://172.17.0.1:9080;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Host $host:$server_port;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Real-IP $remote_addr;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Forwarded-Proto $scheme;</span><br><span class="line">            <span class="attribute">proxy_hide_header</span> Vary;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Accept-Encoding <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Referer $http_referer;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Cookie $http_cookie;</span><br><span class="line"></span><br><span class="line">            <span class="attribute">proxy_connect_timeout</span> <span class="number">300s</span>;</span><br><span class="line">            <span class="attribute">proxy_send_timeout</span> <span class="number">900</span>;</span><br><span class="line">            <span class="attribute">proxy_read_timeout</span> <span class="number">900</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">location</span> /im.ws &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://172.17.0.1:9080/im.ws;</span><br><span class="line">            <span class="attribute">proxy_http_version</span> <span class="number">1</span>.<span class="number">1</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Upgrade $http_upgrade;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Connection <span class="string">&quot;upgrade&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意事项</strong></p>
+<ul>
+<li>为减少对外暴露的端口，proxy_pass使用宿主机IP，可能通过<code>ip addr show docker0</code> 来查看，其中<code>inet 172.17.0.1/16</code>部分可获取。</li>
+<li>如查有静态资源的访问需要配置好X-Forwarded-Proto和undertow（我自己是修改来程序逻辑），否则会出现Mixed Content的错误。</li>
+<li>WebSocket的代理需要额外配置。</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本次Nginx的调整除了方便之后开发外，也加强了自己对Ng配置的理解。中间因为Mixed Content的处理多花费了不少时间。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><img src="/images/geek-time-ads/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Nginx.jpeg"></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/liuchuan_com/article/details/54376258">https://blog.csdn.net/liuchuan_com/article/details/54376258</a></p>
+<p><a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/617244">https://yq.aliyun.com/articles/617244</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mafly/p/websocket.html">https://www.cnblogs.com/mafly/p/websocket.html</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/09/30/java/replacing-class/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/30/java/replacing-class/" class="post-title-link" itemprop="url">替换jar包类实现</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-30 15:33:22" itemprop="dateCreated datePublished" datetime="2019-09-30T15:33:22+08:00">2019-09-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/jfinal/" itemprop="url" rel="index"><span itemprop="name">jfinal</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>471</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>因为开发中使用到了jfinal-weixin，但jfinal-weixin对多公众号（或者小程序）的支持还不是太好，需要自己增加一些处理来更好的使用。如果你使用Java有些时日了，一定会想到重写jar包的类方法。</p>
+<h1 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h1><ol>
+<li>确定需要重写类的包路径</li>
+<li>在项目的src目录下创建同名包</li>
+<li>将需要重写的类拷贝到刚创建的目录，有源码使用源码，无源码可采用反编译的代码(IDEA一般会帮你反编译)</li>
+<li>重写或者增加自己需要的方法</li>
+</ol>
+<h1 id="问题及处理"><a href="#问题及处理" class="headerlink" title="问题及处理"></a>问题及处理</h1><p>当你一套组合拳打完，准备部署收工的时候，却报错了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.lang.NoSuchMethodError:com....</span><br></pre></td></tr></table></figure>
+
+<p>教科书里总是骗人的。这个时候你需要看看下面的文档。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/java.html">https://docs.oracle.com/javase/7/docs/technotes/tools/windows/java.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/tools/windows/classpath.html">https://docs.oracle.com/javase/8/docs/technotes/tools/windows/classpath.html</a></p>
+<p>只是自己读书不够多而已，此时可能过指定-cp的方式来确定加载顺序。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/09/30/java/jdk8-apline/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1075,255 +1309,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/14/spring/springboot-4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/05/14/spring/springboot-4/" class="post-title-link" itemprop="url">代码自动生成的注意事项</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-14 11:06:14" itemprop="dateCreated datePublished" datetime="2019-05-14T11:06:14+08:00">2019-05-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-12 14:27:07" itemprop="dateModified" datetime="2024-01-12T14:27:07+08:00">2024-01-12</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/Jfinal/" itemprop="url" rel="index"><span itemprop="name">Jfinal</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>654</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h2><p>在“SpringBoot与Jfinal合体”中说到，使用代码生成技术，大大简化了编码量。但在爽的时候也要时刻注意，自动生成的代码是可能存在问题的，排查问题时不要忽略。</p>
-<h2 id="记一次排查过程"><a href="#记一次排查过程" class="headerlink" title="记一次排查过程"></a>记一次排查过程</h2><p>在整合好了自动代码生成基础框架后，交给同事处理，具体业务需求。一开始一切正常，后面新增加了表，自动生成后，测试对应接口也是正常。</p>
-<p>中间因为有其他任务安排，这部分任务先停了一段时间，这两天回来重新实现业务时，发现接口调用不了，提示空指针。</p>
-<p>在排除了Maven依赖等问题之后，基本能判断是ActiveRecordPlugin的配置没有读到引起的，但查看ActivePlugin的注入的代码（包括SQL文件）都是正常的。</p>
-<p>感觉有点无解的时候，想到要不重新生成试试，因为主要是Model的问题，于是重新生成了Model。之后运行代码，一切正常了。<br>重新核对，发现是<code>_MappingKit</code>，是表和类的映射关系只有一张表。</p>
-<p>最后确认，当时看只要增加一张表，于是把之前的表屏蔽了，同时因为测试了新的接口是正常的，也就没有注意到生成的映射关系有问题。<br>而我自己呢因为是自动生成的代码没有注意排查。</p>
-<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><p>代码自动生成有好的一面，也有不足的一面（代码覆盖问题），而一个架构好用就在于能使用少犯错。在架构没有起来之前也就是靠人治，如规范，培训及惩罚等。</p>
-<ol>
-<li>代码自动生成，最好使用在新项目中。</li>
-<li>代码自动生成，应该区分可变不可变内容，让覆盖更合理，让编码更放心。</li>
-<li>代码自动生成，代码可能被覆盖或修改，排查问题时不要忽略。</li>
-<li>修改代码生成器配置时，一定在注意影响范围并测试。</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/13/frontend/vue/vue-error-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/05/13/frontend/vue/vue-error-2/" class="post-title-link" itemprop="url">VUE踩坑记-02</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-13 15:42:18" itemprop="dateCreated datePublished" datetime="2019-05-13T15:42:18+08:00">2019-05-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>上一篇说到使用vue-element-admin来做后端管理，经同事的介绍可以使用Muse-ui来做前端应用。查看了Muse的官网后，准备踩坑下。</p>
-<h2 id="快速入门"><a href="#快速入门" class="headerlink" title="快速入门"></a>快速入门</h2><p>在Github上看到MuseUI的模板<a target="_blank" rel="noopener" href="https://github.com/museui/nuxt-template">nuxt-template</a>。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vue init museui/nuxt-tempalte myproject</span><br><span class="line"><span class="built_in">cd</span> my-project</span><br><span class="line">yarn instll</span><br><span class="line">yarn run dev</span><br></pre></td></tr></table></figure>
-<p>一切看起来很美好，<a href="http://localhost:3000可直接看页面了。">http://localhost:3000可直接看页面了。</a></p>
-<h2 id="Nuxt-js"><a href="#Nuxt-js" class="headerlink" title="Nuxt.js"></a>Nuxt.js</h2><p>一看源码，连App.vue都没有，刚有点基础的我慌了。赶紧查查是什么？</p>
-<p>简单点说<a target="_blank" rel="noopener" href="https://github.com/nuxt/nuxt.js">Nuxt.js</a>是一个基于Vue.js的通用应用框架，重点关注应用的UI渲染（支持客户端和服务端渲染），另外它像Maven一样规定了项目的目录结构，对于初学者来说，看懂文档，还是相对容易创建一个新的项目的。这里有它的<a target="_blank" rel="noopener" href="https://zh.nuxtjs.org/">文档</a>，可以自行了解。</p>
-<h2 id="将项目转成TypeScript"><a href="#将项目转成TypeScript" class="headerlink" title="将项目转成TypeScript"></a>将项目转成TypeScript</h2><p>之前说过，ts更接近java，为了统一，我准备将项目转换成ts的，顺便多熟悉下Nuxt。</p>
-<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir myproject2</span><br></pre></td></tr></table></figure>
-<p>用VSCode打开空目录，<code>myproject2</code></p>
-<h3 id="新建package-json文件"><a href="#新建package-json文件" class="headerlink" title="新建package.json文件"></a>新建package.json文件</h3><p>package.json 文件用来设定如何运行 nuxt：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;myproject2&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;dev&quot;</span>: <span class="string">&quot;nuxt&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装Nux"><a href="#安装Nux" class="headerlink" title="安装Nux"></a>安装Nux</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add nuxt</span><br></pre></td></tr></table></figure>
-
-<h3 id="pages目录"><a href="#pages目录" class="headerlink" title="pages目录"></a>pages目录</h3><p>Nuxt.js 会依据 <code>pages</code> 目录中的所有 <code>*.vue</code> 文件生成应用的路由配置。</p>
-<p>创建 <code>pages</code> 目录：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir pages</span><br></pre></td></tr></table></figure>
-
-<p>创建我们的第一个页面 <code>pages/index.vue</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;h1&gt;Hello world!&lt;/h1&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn run dev</span><br></pre></td></tr></table></figure>
-
-<p>此时我们的应用运行在 <a target="_blank" rel="noopener" href="http://localhost:3000/">http://localhost:3000</a> 上运行。</p>
-<h3 id="支持TypeScript"><a href="#支持TypeScript" class="headerlink" title="支持TypeScript"></a>支持TypeScript</h3><p>为了能够在项目中使用TypeScript，您需要将<code>@nuxt/typescript</code>和<code>ts-node</code>作为开发依赖项安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yarn add -D @nuxt/typescript</span><br><span class="line">yarn add ts-node</span><br></pre></td></tr></table></figure>
-
-<p>需要创建一个空的<code>tsconfig.json</code>文件，<code>tsconfig.json</code>文件将在您第一次运行<code>nuxt</code>命令时使用默认值自动更新。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">touch tsconfig.json</span><br></pre></td></tr></table></figure>
-
-<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>为了能够在配置文件中使用TypeScript，您只需要将<code>nuxt.config.js</code>重命名为<code>nuxt.config.ts</code>。</p>
-<h3 id="使用ESLint"><a href="#使用ESLint" class="headerlink" title="使用ESLint"></a>使用ESLint</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add -D @typescript-eslint/eslint-plugin</span><br></pre></td></tr></table></figure>
-
-<p>然后，通过添加<code>@typescript-eslint</code>插件并使<code>@typescript-eslint/parser</code>作为默认解析器来编辑ESLint配置(<code>.eslintrc.js</code>)。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [<span class="string">&#x27;@typescript-eslint&#x27;</span>],</span><br><span class="line">  <span class="attr">parserOptions</span>: &#123;</span><br><span class="line">    <span class="attr">parser</span>: <span class="string">&#x27;@typescript-eslint/parser&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">extends</span>: [</span><br><span class="line">    <span class="string">&#x27;@nuxtjs&#x27;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">rules</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;@typescript-eslint/no-unused-vars&#x27;</span>: <span class="string">&#x27;error&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>最后，添加或编辑<code>package.json</code>的<code>lint</code>脚本：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;lint&quot;</span>: <span class="string">&quot;eslint --ext .ts,.js,.vue --ignore-path .gitignore .&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="使用MuseUI"><a href="#使用MuseUI" class="headerlink" title="使用MuseUI"></a>使用MuseUI</h3><h4 id="拷贝pages文件"><a href="#拷贝pages文件" class="headerlink" title="拷贝pages文件"></a>拷贝pages文件</h4><p>将myproject下的about.vue和index.vue拷到pages下</p>
-<h4 id="拷贝plugins文件"><a href="#拷贝plugins文件" class="headerlink" title="拷贝plugins文件"></a>拷贝plugins文件</h4><p>将myproject下的muse-ui.js拷贝过来并重命名为muse-ui.ts</p>
-<h4 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h4><p>将<code>nuxt.config.js</code>拷贝过来重命名为<code>nuxt.config.ts</code>。其中去掉eslint的相关配置。修改vendor为</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vendor: [</span><br><span class="line">  <span class="string">&#x27;~/plugins/muse-ui&#x27;</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><p>此时通过<code>yarn run dev</code>已经可正常编译，但运行时会页面会提示错误。大致错误</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SyntaxError</span><br><span class="line">Invalid or unexpected token</span><br><span class="line"></span><br><span class="line">vm.js</span><br><span class="line">Missing stack framesJS </span><br><span class="line">new Script@80:7</span><br></pre></td></tr></table></figure>
-
-<p>查官网<a target="_blank" rel="noopener" href="https://github.com/museui/muse-ui/issues/1347">issues</a>，说是还不支持ssr，调整plugins配置就可以了。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">plugins: [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">src</span>: <span class="string">&#x27;~plugins/muse-ui&#x27;</span>,</span><br><span class="line">    <span class="attr">ssr</span>: <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<p>最终的<code>nuxt.config.ts</code>文件</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  ** Headers of the page</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="attr">head</span>: &#123;</span><br><span class="line">    <span class="attr">title</span>: <span class="string">&#x27;myproject2&#x27;</span>,</span><br><span class="line">    <span class="attr">meta</span>: [</span><br><span class="line">      &#123; <span class="attr">charset</span>: <span class="string">&#x27;utf-8&#x27;</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">name</span>: <span class="string">&#x27;viewport&#x27;</span>, <span class="attr">content</span>: <span class="string">&#x27;width=device-width, initial-scale=1&#x27;</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">hid</span>: <span class="string">&#x27;description&#x27;</span>, <span class="attr">name</span>: <span class="string">&#x27;description&#x27;</span>, <span class="attr">content</span>: <span class="string">&#x27;Nuxt.js Muse-UI project&#x27;</span> &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">link</span>: [</span><br><span class="line">      &#123; <span class="attr">rel</span>: <span class="string">&#x27;icon&#x27;</span>, <span class="attr">type</span>: <span class="string">&#x27;image/x-icon&#x27;</span>, <span class="attr">href</span>: <span class="string">&#x27;/favicon.ico&#x27;</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">rel</span>: <span class="string">&#x27;stylesheet&#x27;</span>, <span class="attr">href</span>: <span class="string">&#x27;https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons&#x27;</span> &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  ** Customize the progress bar color</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="attr">loading</span>: &#123; <span class="attr">color</span>: <span class="string">&#x27;#3B8070&#x27;</span> &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">src</span>: <span class="string">&#x27;~plugins/muse-ui&#x27;</span>,</span><br><span class="line">      <span class="attr">ssr</span>: <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  ** Build configuration</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="attr">build</span>: &#123;</span><br><span class="line">    <span class="attr">babel</span>: &#123;</span><br><span class="line">      <span class="attr">plugins</span>: [</span><br><span class="line">        [<span class="string">&#x27;import&#x27;</span>, &#123;</span><br><span class="line">          <span class="attr">libraryName</span>: <span class="string">&#x27;muse-ui&#x27;</span>,</span><br><span class="line">          <span class="attr">libraryDirectory</span>: <span class="string">&#x27;lib&#x27;</span>,</span><br><span class="line">          <span class="attr">camel2DashComponentName</span>: <span class="literal">false</span></span><br><span class="line">        &#125;]</span><br><span class="line">      ]</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">vendor</span>: [</span><br><span class="line">      <span class="string">&#x27;~/plugins/muse-ui&#x27;</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">extractCSS</span>: <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>经过以上的修改已经可以通过nuxt来管理vue项目，并能过ts来写代码了。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/19/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/21/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/19/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="extend next" rel="next" href="/page/21/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1389,20 +1378,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-count">262</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">113</span>
+        <span class="site-state-item-count">115</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">112</span>
+        <span class="site-state-item-count">114</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1460,12 +1449,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">564k</span>
+    <span title="站点总字数">572k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:33</span>
+    <span title="站点阅读时长">8:40</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

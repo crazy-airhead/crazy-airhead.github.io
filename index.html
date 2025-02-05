@@ -172,6 +172,261 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/05/course100/014/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/05/course100/014/" class="post-title-link" itemprop="url">Solon 实用教程 —— 介绍</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-05 21:08:21 / 修改时间：21:23:57" itemprop="dateCreated datePublished" datetime="2025-02-05T21:08:21+08:00">2025-02-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>一次在 Jfinal 的群聊中，无意中发现 Solon 的，说「 Solon只需要几M」。于是搜索到官网，看了官网内容。抱着试一试的态度，于是按着官方文档写例子，发现挺好用的，生态也很完整，自己想要的东西基本都有。</p>
+<p>目前自己在尝试构建 Solon 版的快速开发框架，算是学习环境。在公司使用 Solon 和 Solon Cloud 开发安全运营平台，算是实践环境。</p>
+<p>在学习实践 Solon 的过程中，也是会碰到问题的，我就会把问题和处理过程记录下来。本着「教是最好的学」的原则，于是整理本教程《Solon 实用教程》，以便自己能更好的理解和使用 Solon。</p>
+<p>由于我还在学习和实践 Solon 的过程中，因此本教程会持续更新。同时，由于我的学习可能不够深入或使用不当，教程中难免会出现错误，欢迎大家指正。</p>
+<h2 id="Solon-是什么"><a href="#Solon-是什么" class="headerlink" title="Solon 是什么"></a>Solon 是什么</h2><p>以下是Solon在开放原子开源基金会的<a target="_blank" rel="noopener" href="https://www.openatom.cn/project/YNjOOt50Swn2">介绍</a>（<a target="_blank" rel="noopener" href="https://www.openatom.cn/project/YNjOOt50Swn2%EF%BC%89%E3%80%82">https://www.openatom.cn/project/YNjOOt50Swn2）。</a></p>
+<h3 id="项目简介"><a href="#项目简介" class="headerlink" title="项目简介"></a>项目简介</h3><p>Solon 一个是新的Java “生态型”应用开发框架。相对目前主流解决方案。Solon并发高 2～ 3 倍；内存省 50%；启动快 5 ～ 10 倍；打包小 50% ~ 90%；同时兼容 java8 ~ java22 运行时。</p>
+<h3 id="项目特点"><a href="#项目特点" class="headerlink" title="项目特点"></a>项目特点</h3><h4 id="技术价值"><a href="#技术价值" class="headerlink" title="技术价值"></a>技术价值</h4><p>Solon 提供了更高的计算性价比；更好的软件开发效率；快的生产与部署体验；更灵活的兼容选择。</p>
+<h4 id="业务价值"><a href="#业务价值" class="headerlink" title="业务价值"></a>业务价值</h4><p>Solon解决了Spring 的历史包袱重，架构臃肿，计算资源浪费，学习曲线复杂，以及不再支持java17之前版本等问题。</p>
+<h4 id="生态价值"><a href="#生态价值" class="headerlink" title="生态价值"></a>生态价值</h4><p>Solon 给Java 生态整合提供了更先进的底座支持。灵活的架构，即可适配传统的java-ee体系，又可以支持最新的技术发展成果。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZjVhMDI1OWI2NTQzODk2MGE2MjY0M2I2ZWQ5ZDY1MmZfTHNhRURJV0tmMEFHbmJuaXp1N0E3d3ppNXl6ejVDbVhfVG9rZW46Skl4U2JMREJGb3RzQzR4MlF1N2N6OTNhbmNiXzE3Mzg3NjA5ODY6MTczODc2NDU4Nl9WNA" alt="img"></p>
+<h2 id="为什么要学-Solon"><a href="#为什么要学-Solon" class="headerlink" title="为什么要学 Solon"></a>为什么要学 Solon</h2><ul>
+<li>更快、更小、更简单。Solon并发高 2～ 3 倍；启动快 5 ～ 10 倍；打包小 50% ~ 90%；内存省 50%；最小 Web 完整开发单位 1Mb。除了注解模式之外，还可以按需手动，生态丰富，选择自由。同时兼容 java8 ~ java22 运行时。</li>
+<li>国产框架，生态完整。随着国产信创的推荐，使用国产框架将更有优势。</li>
+<li>交流方便，容易理解。有官方的沟通交流群和使用 Gitee，沟通交流方面，文档使用中文编写，容易理解。</li>
+</ul>
+<h2 id="教程内容"><a href="#教程内容" class="headerlink" title="教程内容"></a>教程内容</h2><p>在学习和实践 Solon 的过程中，会发现自己一开始更关注怎么用？接着才会关注为什么要这么用？之后才会想这样设计的好处？如何用 Solon 进行 Web 开发是本教程的主线，本教程不会讲解 Solon 的源码。本教程的主要来源为 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/learn-start">Solon 官网</a> 、 <a target="_blank" rel="noopener" href="https://gitee.com/noear/solon">Solon 源码</a>和自己的实践（<a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/projects?sort=&amp;scope=&amp;state=public&amp;search=solon">https://gitee.com/CrazyAirhead/projects?sort=&amp;scope=&amp;state=public&amp;search=solon</a> 和 <a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/porpoise-demo%EF%BC%89%E3%80%82">https://gitee.com/CrazyAirhead/porpoise-demo）。</a></p>
+<p>本教程主要以下几个部分：</p>
+<ul>
+<li>初识 Solon</li>
+<li>数据操作</li>
+<li>Web 开发</li>
+<li>Solon Boot</li>
+<li>Solon Cloud</li>
+</ul>
+<p>本教程使用 IDEA、JDK17 和 Gradle，需要有这些基础知识。本教程于官网资料的主要不同在于，官网面向的读者更宽泛，会涉及各种不同版本 JDK，Maven 和 Gradle 的配置，不同的编程习惯，比如注解或手动获取 Bean 等，不同的技术偏好，比如多种 ORM 组件等。本教程则更面向实践，并限定了选择，这样可以比较快速简单的入门，实际使用 Solon 进行开发工作。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/01/17/go/gsyslog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/01/17/go/gsyslog/" class="post-title-link" itemprop="url">基于 gnet 实现的 syslog 服务</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-01-17 20:21:43" itemprop="dateCreated datePublished" datetime="2025-01-17T20:21:43+08:00">2025-01-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-18 08:16:43" itemprop="dateModified" datetime="2025-01-18T08:16:43+08:00">2025-01-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="什么是-syslog"><a href="#什么是-syslog" class="headerlink" title="什么是 syslog"></a>什么是 syslog</h2><p><strong>syslog</strong> 是一种被广泛使用的用于日志记录的标准。许多设备（如打印机、路由器）以及跨平台的系统都使用 <strong>syslog</strong> 标准。它可以将生成日志的软件、存储日志的系统以及分析日志的应用分离开来。这使得来自不同类型系统的日志数据可以集中存储和分析。<strong>syslog</strong> 可以用于系统管理和安全审计，以及记录一般信息、分析和调试消息等。</p>
+<p><strong>syslog</strong> 由 Eric Allman 在 1980 年代开发，最初是作为 <strong>Sendmail 项目</strong> 的一部分。它很快被其他应用程序采用，并逐渐成为类 Unix 系统上的标准日志记录解决方案。在其他操作系统上也有多种实现，并且它常见于网络设备中，例如路由器。<strong>syslog</strong> 最初作为一种事实上的标准运行，没有发布任何权威的规范，因此存在许多实现，其中一些实现并不兼容。<strong>互联网工程任务组（IETF）</strong> 在 2001 年 8 月的 <strong>RFC 3164</strong> 中记录了当时的现状。随后，Syslog 在 2009 年 3 月通过 <strong>RFC 5424</strong> 被标准化。</p>
+<p><strong>syslog</strong> 采用<strong>客户端-服务器架构</strong>，其中 syslog 服务器监听并记录来自客户端的消息。Syslog消息可以通过多种协议传输，包括UDP、TCP和TLS。</p>
+<ul>
+<li><strong>syslog 发送方（Sender）</strong>：生成日志消息的设备或应用程序。</li>
+<li><strong>syslog 接收方（Receiver）</strong>：接收并存储日志消息的服务器。</li>
+<li><strong>syslog 协议</strong>：定义日志消息的格式和传输方式。</li>
+</ul>
+<p><strong>syslog</strong> 消息通常包含以下几个部分（不同的 RFC 标准略有不同）：</p>
+<ul>
+<li><strong>优先级（Priority）</strong>：表示消息的严重程度和设施类型。</li>
+<li><strong>时间戳（Timestamp）</strong>：记录消息生成的时间。</li>
+<li><strong>主机名（Hostname）</strong>：生成消息的设备或应用程序的主机名。</li>
+<li><strong>标签（Tag）</strong>：标识生成消息的进程或应用程序。</li>
+<li><strong>消息内容（Content）</strong>：实际的日志信息。</li>
+</ul>
+<p><strong>syslog</strong> 的 RFC 文档：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc3164">https://www.rfc-editor.org/rfc/rfc3164</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc5424">https://www.rfc-editor.org/rfc/rfc5424</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc6587">https://www.rfc-editor.org/rfc/rfc6587</a></li>
+</ul>
+<h2 id="实现-syslog-服务端"><a href="#实现-syslog-服务端" class="headerlink" title="实现 syslog 服务端"></a>实现 syslog 服务端</h2><p>严格来说，本文并没有实现 syslog 服务端，只是 syslog 服务端的一个类库（gsyslog），该类库实现重点参考了 <a target="_blank" rel="noopener" href="https://github.com/cnaude/go-syslog">https://github.com/cnaude/go-syslog</a> ，并使用了 gnet 网络库（<a target="_blank" rel="noopener" href="https://github.com/panjf2000/gnet%EF%BC%89%E9%87%8D%E5%86%99%E3%80%82%E8%AF%A5%E7%B1%BB%E5%BA%93%E4%B8%BB%E8%A6%81%E5%AE%9E%E7%8E%B0%E4%BA%86%E7%BD%91%E7%BB%9C%E7%9B%91%E5%90%AC%EF%BC%88%E6%94%AF%E6%8C%81">https://github.com/panjf2000/gnet）重写。该类库主要实现了网络监听（支持</a> UDP 和 TCP 协议）和消息解析，并对外提供消息处理接口，实现自己的消息处理接口即可实现完整的 syslog 服务端。公司的 syslog 服务基于该类库已经完整实现消息处理接口、性能监测，并支持编码格式自动转化（虽然 syslog 是 UTF8 格式，但不少客户端可能发松的是 GBK 格式 ）。</p>
+<p>以下的代码只展示重点部分，具体源码，请自行下载。</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/crazy-airhead/gsyslog">https://github.com/crazy-airhead/gsyslog</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/gsyslog">https://gitee.com/CrazyAirhead/gsyslog</a></p>
+</li>
+</ul>
+<h3 id="网络监听"><a href="#网络监听" class="headerlink" title="网络监听"></a>网络监听</h3><p>gnet 需要实现 <code>OnBoot</code>  和<code>OnTraffic</code>，通过 <code>OnTraffic</code>来实现不同协议的处理。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Server <span class="keyword">struct</span> &#123;</span><br><span class="line">    gnet.BuiltinEventEngine</span><br><span class="line">    eng     gnet.Engine</span><br><span class="line">    addr    <span class="keyword">string</span></span><br><span class="line">    network <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">    bufferSize <span class="keyword">int</span></span><br><span class="line">    workerPool *goroutine.Pool</span><br><span class="line"></span><br><span class="line">    codec   codec.Codec</span><br><span class="line">    handler Handler</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NewServer returns a new Server</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewServer</span><span class="params">()</span> *<span class="title">Server</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;Server&#123;</span><br><span class="line">        handler:    NewDefaultHandler(),</span><br><span class="line">        codec:      AutomaticCodec,</span><br><span class="line">        workerPool: goroutine.Default(),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// SetHandler Sets the handler, this handler with receive every syslog entry</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Server)</span> <span class="title">SetHandler</span><span class="params">(handler Handler)</span></span> &#123;</span><br><span class="line">    s.handler = handler</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Server)</span> <span class="title">Boot</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    err := gnet.Run(s, s.addr,</span><br><span class="line">        gnet.WithMulticore(<span class="literal">true</span>),</span><br><span class="line">        gnet.WithSocketRecvBuffer(s.bufferSize))</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Server)</span> <span class="title">Stop</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    _ = s.eng.Stop(context.Background())</span><br><span class="line">    s.workerPool.Release()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Server)</span> <span class="title">OnBoot</span><span class="params">(eng gnet.Engine)</span> <span class="title">gnet</span>.<span class="title">Action</span></span> &#123;</span><br><span class="line">    s.eng = eng</span><br><span class="line"></span><br><span class="line">    logging.Infof(<span class="string">&quot;syslog server is listening on %s\n&quot;</span>, s.addr)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> gnet.None</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Server)</span> <span class="title">OnTraffic</span><span class="params">(conn gnet.Conn)</span> <span class="params">(action gnet.Action)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> s.network == <span class="string">&quot;udp&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> s.handleUdp(conn)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> s.network == <span class="string">&quot;tcp&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> s.handleTcp(conn)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> s.network == <span class="string">&quot;unix&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> s.handleUdp(conn)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> gnet.None</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h4><p>UDP 直接读可以缓存，而后通过 GetParser 获取到实际的解析器，之后调用解析器的 Parse进行解析。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Server)</span> <span class="title">handleUdp</span><span class="params">(conn gnet.Conn)</span> <span class="params">(action gnet.Action)</span></span> &#123;</span><br><span class="line">    data, err := conn.Next(<span class="number">-1</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        logging.Errorf(<span class="string">&quot;syslog read buff, something wrong, error:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span> gnet.None</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    client := conn.RemoteAddr().String()</span><br><span class="line">    copyData := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>(data))</span><br><span class="line">    <span class="built_in">copy</span>(copyData, data)</span><br><span class="line">    _ = s.workerPool.Submit(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        p := s.codec.GetParser(copyData)</span><br><span class="line">        log, _ := p.Parse(copyData, client)</span><br><span class="line">        s.handler.Handle(log)</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> gnet.None</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h4><p>TCP 通过编码器的 Decode 接口拆包，并获取实际的解析器，之后调用解析器的 Parse进行解析。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Server)</span> <span class="title">handleTcp</span><span class="params">(conn gnet.Conn)</span> <span class="params">(action gnet.Action)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        data, p, err := s.codec.Decode(conn)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        client := conn.RemoteAddr().String()</span><br><span class="line">        _ = s.workerPool.Submit(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            log, _ := p.Parse(data, client)</span><br><span class="line">            s.handler.Handle(log)</span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> gnet.None</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> conn.InboundBuffered() &gt; <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> err := conn.Wake(<span class="literal">nil</span>); err != <span class="literal">nil</span> &#123; <span class="comment">// wake up the connection manually to avoid missing the leftover data</span></span><br><span class="line">            logging.Errorf(<span class="string">&quot;failed to wake up the connection, %v&quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span> gnet.Close</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> gnet.None</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="消息解析"><a href="#消息解析" class="headerlink" title="消息解析"></a>消息解析</h3><h4 id="编码器"><a href="#编码器" class="headerlink" title="编码器"></a>编码器</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Codec <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// Decode 用于 TCP 拆包</span></span><br><span class="line">    Decode(conn gnet.Conn) ([]<span class="keyword">byte</span>, parser.Parser, error)</span><br><span class="line">    <span class="comment">// GetParser 获取解析器，用于格式解析</span></span><br><span class="line">    GetParser([]<span class="keyword">byte</span>) parser.Parser</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// rfc3164</span></span><br><span class="line"><span class="keyword">type</span> RFC3164Codec <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *RFC3164Codec)</span> <span class="title">GetParser</span><span class="params">(data []<span class="keyword">byte</span>)</span> <span class="title">parser</span>.<span class="title">Parser</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> rfc3164Parser</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *RFC3164Codec)</span> <span class="title">Decode</span><span class="params">(conn gnet.Conn)</span> <span class="params">([]<span class="keyword">byte</span>, parser.Parser, error)</span></span> &#123;</span><br><span class="line">    buf, _ := conn.Next(<span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">    length := <span class="built_in">len</span>(buf)</span><br><span class="line">    body := <span class="built_in">make</span>([]<span class="keyword">byte</span>, length)</span><br><span class="line">    <span class="built_in">copy</span>(body, buf)</span><br><span class="line"></span><br><span class="line">    _, _ = conn.Discard(length)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> body, rfc3164Parser, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// rfc5424</span></span><br><span class="line"><span class="keyword">type</span> RFC5424Codec <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *RFC5424Codec)</span> <span class="title">GetParser</span><span class="params">(data []<span class="keyword">byte</span>)</span> <span class="title">parser</span>.<span class="title">Parser</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> rfc5424Parser</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *RFC5424Codec)</span> <span class="title">Decode</span><span class="params">(conn gnet.Conn)</span> <span class="params">([]<span class="keyword">byte</span>, parser.Parser, error)</span></span> &#123;</span><br><span class="line">    buf, _ := conn.Next(<span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">    length := <span class="built_in">len</span>(buf)</span><br><span class="line">    body := <span class="built_in">make</span>([]<span class="keyword">byte</span>, length)</span><br><span class="line">    <span class="built_in">copy</span>(body, buf)</span><br><span class="line"></span><br><span class="line">    _, _ = conn.Discard(length)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> body, rfc5424Parser, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// rfc6587</span></span><br><span class="line"><span class="keyword">type</span> RFC6587Codec <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *RFC6587Codec)</span> <span class="title">GetParser</span><span class="params">(data []<span class="keyword">byte</span>)</span> <span class="title">parser</span>.<span class="title">Parser</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> rfc6587Parser</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *RFC6587Codec)</span> <span class="title">Decode</span><span class="params">(conn gnet.Conn)</span> <span class="params">([]<span class="keyword">byte</span>, parser.Parser, error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> conn.InboundBuffered() &lt; <span class="number">4</span> &#123;</span><br><span class="line">        <span class="comment">// 如果没有找到换行符，说明数据不完整，等待更多数据</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, rfc6587Parser, ErrIncompletePacket</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    lenBuf, _ := conn.Peek(<span class="number">4</span>)</span><br><span class="line">    length := binary.BigEndian.Uint32(lenBuf)</span><br><span class="line"></span><br><span class="line">    _, _ = conn.Discard(<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    buf, _ := conn.Next(<span class="keyword">int</span>(length))</span><br><span class="line">    body := <span class="built_in">make</span>([]<span class="keyword">byte</span>, length)</span><br><span class="line">    <span class="built_in">copy</span>(body, buf)</span><br><span class="line"></span><br><span class="line">    _, _ = conn.Discard(<span class="keyword">int</span>(length))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>, rfc6587Parser, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="解析器"><a href="#解析器" class="headerlink" title="解析器"></a>解析器</h4><p>主要实现 rfc3164 和 rfc5424 的解析，解析的步骤比较繁琐，这里就不单独列出代码了，具体内容可以参看源码。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Parser <span class="keyword">interface</span> &#123;</span><br><span class="line">    Parse(data []<span class="keyword">byte</span>, client <span class="keyword">string</span>) (*Log, error)</span><br><span class="line">    Location(*time.Location)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Log <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// 结构化的数据</span></span><br><span class="line">    Header <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125; <span class="string">`json:&quot;header&quot;`</span></span><br><span class="line">    <span class="comment">// 原始数据</span></span><br><span class="line">    Body []<span class="keyword">byte</span> <span class="string">`json:&quot;body&quot;`</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 是否有错，有错时结构化数据不可能</span></span><br><span class="line">    Err error</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 辅助解析用，解析的过程中cursor会发生变化</span></span><br><span class="line">    cursor <span class="keyword">int</span></span><br><span class="line">    <span class="comment">// 辅助解析用</span></span><br><span class="line">    <span class="built_in">len</span> <span class="keyword">int</span></span><br><span class="line">    <span class="comment">// 是否忽略标签</span></span><br><span class="line">    skipTag <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="处理接口"><a href="#处理接口" class="headerlink" title="处理接口"></a>处理接口</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Handler The handler receive every syslog entry at Handle method</span></span><br><span class="line"><span class="keyword">type</span> Handler <span class="keyword">interface</span> &#123;</span><br><span class="line">    Handle(log *parser.Log)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> DefaultHandler <span class="keyword">struct</span> &#123;</span><br><span class="line">    counter *<span class="keyword">int64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewDefaultHandler</span><span class="params">()</span> *<span class="title">DefaultHandler</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;DefaultHandler&#123;</span><br><span class="line">        counter: <span class="built_in">new</span>(<span class="keyword">int64</span>),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Handle entry receiver</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *DefaultHandler)</span> <span class="title">Handle</span><span class="params">(log *parser.Log)</span></span> &#123;</span><br><span class="line">    atomic.AddInt64(h.counter, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    logging.Infof(<span class="string">&quot;number %d, header:%v, body:%v,&quot;</span>, *h.counter, log.Header, log.GetString(parser.LogBody))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="简易服务端"><a href="#简易服务端" class="headerlink" title="简易服务端"></a>简易服务端</h2><p>使用默认的 DefaultHandler 实现简易服务端</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Test_udp_server</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">    server := NewServer()</span><br><span class="line">    server.SetCodec(rfc3164Codec)</span><br><span class="line">    server.SetAddr(<span class="string">&quot;udp://0.0.0.0:514&quot;</span>)</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">(server *Server)</span></span> &#123;</span><br><span class="line">        _ = server.Stop()</span><br><span class="line">    &#125;(server)</span><br><span class="line"></span><br><span class="line">    _ = server.Boot()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Syslog 是一种强大的日志记录协议，适用于各种系统和应用程序的日志管理。通过实现一个简单的 syslog 服务端，可以更好地理解和掌握 syslog 的工作原理。本文介绍了syslog的基本概念、协议格式，实现 syslog 的服务端类库，并提供了简易服务端的实现。希望本文能为读者在日志管理和系统监控方面提供有价值的参考。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/01/10/solon/solon-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1013,246 +1268,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/07/20/spring/saas-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/07/20/spring/saas-2/" class="post-title-link" itemprop="url">多租户的技术实现</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-07-20 20:52:14" itemprop="dateCreated datePublished" datetime="2024-07-20T20:52:14+08:00">2024-07-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-07-21 09:43:37" itemprop="dateModified" datetime="2024-07-21T09:43:37+08:00">2024-07-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/Mybatis-Plus/" itemprop="url" rel="index"><span itemprop="name">Mybatis Plus</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/Mybatis-Plus/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/Mybatis-Plus/Redis/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/Mybatis-Plus/Redis/ElasticSearch/Job/" itemprop="url" rel="index"><span itemprop="name">Job</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/Mybatis-Plus/Redis/ElasticSearch/Job/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>15k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>13 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>上一篇「<a target="_blank" rel="noopener" href="https://l4qiang.goldsyear.com/2021/07/30/spring/saas/">基于Mybatis的多租户实现方法</a>」介绍的是Spring Boot使用 Mybatis Plus实现Db层的数据隔离。但在实际的实现过程中，除了涉及Db层的数据隔离，还会涉及租户的识别，缓存的数据隔离，ElasticSearch的数据隔离，任务的数据隔离、消息队列的隔离，同时也包括租户的切换与忽略租户等。</p>
-<p>因此在上一篇的基础上，这次尝试把多租户的技术实现写得更完整些，如有不足支持欢迎指正。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/07/20/spring/saas-2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/04/09/misc/shell-problem/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/04/09/misc/shell-problem/" class="post-title-link" itemprop="url">碰到的两个与 Shell 相关的小问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-04-09 20:09:08" itemprop="dateCreated datePublished" datetime="2024-04-09T20:09:08+08:00">2024-04-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-10 14:14:07" itemprop="dateModified" datetime="2024-04-10T14:14:07+08:00">2024-04-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ssh/" itemprop="url" rel="index"><span itemprop="name">ssh</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ssh/jenkins/" itemprop="url" rel="index"><span itemprop="name">jenkins</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>这次碰到的两个问题，解决后发现都不是什么大问题，解决的方法很简单，但没找到原因前确实花了不少时间进行排查，因此记录下来，方便日后查看。</p>
-<h1 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h1><p>Jenkins 编译，通过脚本发布 jar 程序，虽然提示编译成功，但应用未正常启动，通过ps 查看不到对应的进程。</p>
-<p>Jenkins 的编译配置是从其他项目克隆过来的，执行正常，区别只是原来的部署脚本，原来是是 Docker 部署，新项目是直接虚机部署。编写的脚本除去一些进程的判断，大致是这样的，看似也不存在问题，另外在终端直接执行脚本是应用是可以正常启动的。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup java -jar app.jar &gt; out.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-
-<p>因为通过 Jenkins 发布就是启动不了。虽然直接执行脚本是可以的，但避免有什么未知问题，还是在脚本中增加了echo 逐条写日志，日志也都有正常打印出来。后来干脆把启动程序的日志的重定向也去掉，此时在 Jenkins 的编译日志中是能看到应用已经启动了，但 Jenkins编译成功后，应用依然没有正常启动。此时能想到的就是<code>nohup</code>没有加<code>&amp;</code>，终端退出应用就结束的情况。</p>
-<p>初步开始怀疑 Jenkins 做了手脚，经过一方搜索，发现通过 Shell 脚本发布时，会衍生进程，Jenkins 默认会杀掉衍生进程。需要增加<code>BUILD_ID=DONTKILLME</code>防止衍生进程被杀。可以增加在 Jenkis中，或者增加的执行的脚本中。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">BUILD_ID=DONTKILLME</span><br><span class="line">```bash</span><br><span class="line">nohup java -jar app.jar &gt; out.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<pre><code>
-调整后一切正常。那为什么使用 Docker 部署正常呢？Docker容器启动不是 Shell 脚本的衍生进程。
-
-# 问题2
-
-因为项目采用了 Docker 部署，因为Docker的隔离性，容器内的应用无法操作宿主机，因此通过SSH连接宿主机，执行宿主机的命令并生成文件。这个部署在开发机一个正常的功能，在部署到另一台测试机后无法正常使用。
-
-初步排查的时候只知道文件未正常生成，因为执行的命令依赖一个环境变量`HOME`，在终端中变量是有设置的，且其他目录也没有找到生成的文件。
-
-因为一开始没有增加日志，于是重新增加日志打印，日志正常打印。继续增加 SSH 的返回值，返回的 exit code 是 0，返回结果是空，说明需要执行的命令是正常执行的。增加打印SSH 执行的命令，命令在终端里是可以正常生成文件的。
-
-于是就有被带歪了，就开始想会不会因为封装的SSH的配置有问题，修改各种配置都测试了下，还是没有结果。
-
-重新静下来思考，要不把依赖的变量，替换成实际的路径看看，于是多增加执行一个SSH 命令，`echo $HOME`，并增加了对应的日志打印。结果发现程序中无法读取环境变量`HOME`，于是确认`HOME`是配置的`/etc/profile`中的，重新source，不行，重启机器，依然不行。
-
-后面修改成在`~/.bashrc`中配置，可以正常读取。
-
-# 小结
-
-两个问题都不难，但都属于自己的只是盲区。虽然能使用Jenkins进行编辑发布，虽然可以使用Jsch执行ssh命令，但只是凑巧起作用而已，稍微碰点以为情况就歇菜了，还是等多读文档。
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1318,20 +1337,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-count">262</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">113</span>
+        <span class="site-state-item-count">115</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">112</span>
+        <span class="site-state-item-count">114</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1389,12 +1408,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">564k</span>
+    <span title="站点总字数">572k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:33</span>
+    <span title="站点阅读时长">8:40</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

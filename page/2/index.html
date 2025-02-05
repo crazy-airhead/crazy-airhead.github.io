@@ -172,6 +172,242 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/07/20/spring/saas-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/07/20/spring/saas-2/" class="post-title-link" itemprop="url">多租户的技术实现</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-07-20 20:52:14" itemprop="dateCreated datePublished" datetime="2024-07-20T20:52:14+08:00">2024-07-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-07-21 09:43:37" itemprop="dateModified" datetime="2024-07-21T09:43:37+08:00">2024-07-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring-Boot/Mybatis-Plus/" itemprop="url" rel="index"><span itemprop="name">Mybatis Plus</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring-Boot/Mybatis-Plus/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring-Boot/Mybatis-Plus/Redis/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring-Boot/Mybatis-Plus/Redis/ElasticSearch/Job/" itemprop="url" rel="index"><span itemprop="name">Job</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring-Boot/Mybatis-Plus/Redis/ElasticSearch/Job/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>上一篇「<a target="_blank" rel="noopener" href="https://l4qiang.goldsyear.com/2021/07/30/spring/saas/">基于Mybatis的多租户实现方法</a>」介绍的是Spring Boot使用 Mybatis Plus实现Db层的数据隔离。但在实际的实现过程中，除了涉及Db层的数据隔离，还会涉及租户的识别，缓存的数据隔离，ElasticSearch的数据隔离，任务的数据隔离、消息队列的隔离，同时也包括租户的切换与忽略租户等。</p>
+<p>因此在上一篇的基础上，这次尝试把多租户的技术实现写得更完整些，如有不足支持欢迎指正。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/07/20/spring/saas-2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/04/09/misc/shell-problem/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/04/09/misc/shell-problem/" class="post-title-link" itemprop="url">碰到的两个与 Shell 相关的小问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-09 20:09:08" itemprop="dateCreated datePublished" datetime="2024-04-09T20:09:08+08:00">2024-04-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-10 14:14:07" itemprop="dateModified" datetime="2024-04-10T14:14:07+08:00">2024-04-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ssh/" itemprop="url" rel="index"><span itemprop="name">ssh</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ssh/jenkins/" itemprop="url" rel="index"><span itemprop="name">jenkins</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>这次碰到的两个问题，解决后发现都不是什么大问题，解决的方法很简单，但没找到原因前确实花了不少时间进行排查，因此记录下来，方便日后查看。</p>
+<h1 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h1><p>Jenkins 编译，通过脚本发布 jar 程序，虽然提示编译成功，但应用未正常启动，通过ps 查看不到对应的进程。</p>
+<p>Jenkins 的编译配置是从其他项目克隆过来的，执行正常，区别只是原来的部署脚本，原来是是 Docker 部署，新项目是直接虚机部署。编写的脚本除去一些进程的判断，大致是这样的，看似也不存在问题，另外在终端直接执行脚本是应用是可以正常启动的。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup java -jar app.jar &gt; out.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+
+<p>因为通过 Jenkins 发布就是启动不了。虽然直接执行脚本是可以的，但避免有什么未知问题，还是在脚本中增加了echo 逐条写日志，日志也都有正常打印出来。后来干脆把启动程序的日志的重定向也去掉，此时在 Jenkins 的编译日志中是能看到应用已经启动了，但 Jenkins编译成功后，应用依然没有正常启动。此时能想到的就是<code>nohup</code>没有加<code>&amp;</code>，终端退出应用就结束的情况。</p>
+<p>初步开始怀疑 Jenkins 做了手脚，经过一方搜索，发现通过 Shell 脚本发布时，会衍生进程，Jenkins 默认会杀掉衍生进程。需要增加<code>BUILD_ID=DONTKILLME</code>防止衍生进程被杀。可以增加在 Jenkis中，或者增加的执行的脚本中。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">BUILD_ID=DONTKILLME</span><br><span class="line">```bash</span><br><span class="line">nohup java -jar app.jar &gt; out.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<pre><code>
+调整后一切正常。那为什么使用 Docker 部署正常呢？Docker容器启动不是 Shell 脚本的衍生进程。
+
+# 问题2
+
+因为项目采用了 Docker 部署，因为Docker的隔离性，容器内的应用无法操作宿主机，因此通过SSH连接宿主机，执行宿主机的命令并生成文件。这个部署在开发机一个正常的功能，在部署到另一台测试机后无法正常使用。
+
+初步排查的时候只知道文件未正常生成，因为执行的命令依赖一个环境变量`HOME`，在终端中变量是有设置的，且其他目录也没有找到生成的文件。
+
+因为一开始没有增加日志，于是重新增加日志打印，日志正常打印。继续增加 SSH 的返回值，返回的 exit code 是 0，返回结果是空，说明需要执行的命令是正常执行的。增加打印SSH 执行的命令，命令在终端里是可以正常生成文件的。
+
+于是就有被带歪了，就开始想会不会因为封装的SSH的配置有问题，修改各种配置都测试了下，还是没有结果。
+
+重新静下来思考，要不把依赖的变量，替换成实际的路径看看，于是多增加执行一个SSH 命令，`echo $HOME`，并增加了对应的日志打印。结果发现程序中无法读取环境变量`HOME`，于是确认`HOME`是配置的`/etc/profile`中的，重新source，不行，重启机器，依然不行。
+
+后面修改成在`~/.bashrc`中配置，可以正常读取。
+
+# 小结
+
+两个问题都不难，但都属于自己的只是盲区。虽然能使用Jenkins进行编辑发布，虽然可以使用Jsch执行ssh命令，但只是凑巧起作用而已，稍微碰点以为情况就歇菜了，还是等多读文档。
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/02/17/misc/appleid/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1379,251 +1615,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/02/22/bigdata/spark/install/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/02/22/bigdata/spark/install/" class="post-title-link" itemprop="url">单机部署Spark On Yarn</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-02-22 22:04:31 / 修改时间：23:13:29" itemprop="dateCreated datePublished" datetime="2023-02-22T22:04:31+08:00">2023-02-22</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index"><span itemprop="name">大数据</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/course/" itemprop="url" rel="index"><span itemprop="name">course</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/course/dds/" itemprop="url" rel="index"><span itemprop="name">dds</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>需要部署大数据治理平台，查看了一些开源版本之后发现微众银行的<a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/DataSphereStudio">DataSphereStudio</a>(DSS)比较符合我们的预期，于是着手部署该数据平台。</p>
-<p>因为DSS默认支持的Spark2.0以上版本，于是本次的安装也用<a target="_blank" rel="noopener" href="https://dlcdn.apache.org/spark/spark-3.3.2/spark-3.3.2-bin-hadoop2.tgz">3.3.2-hadoop2</a>版本。</p>
-<p>参考安装文档<a target="_blank" rel="noopener" href="https://spark.apache.org/docs/2.4.3/running-on-yarn.html">Running Spark on YARN - Spark 2.4.3 Documentation (apache.org)</a>。</p>
-<h1 id="基础软件"><a href="#基础软件" class="headerlink" title="基础软件"></a>基础软件</h1><ul>
-<li><a target="_blank" rel="noopener" href="https://downloads.lightbend.com/scala/2.12.17/scala-2.12.17.rpm">Scala2.12.17</a></li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y scala-2.12.17.rpm</span><br></pre></td></tr></table></figure>
-
-<h1 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h1><ul>
-<li>设置</li>
-</ul>
-<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><ul>
-<li>解压</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf spark-3.3.2-bin-hadoop2.tgz</span><br><span class="line">mv spark-3.3.2-bin-hadoop2 /home/spark</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>配置spark-env.sh</li>
-</ul>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Options read in any cluster manager using HDFS</span></span><br><span class="line"><span class="comment"># - HADOOP_CONF_DIR, to point Spark towards Hadoop configuration files</span></span><br><span class="line"><span class="attr">HADOOP_CONF_DIR</span>=<span class="string">/home/bigdata/hadoop/etc/hadoop</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># Options read in YARN client/cluster mode</span></span><br><span class="line"><span class="comment"># - YARN_CONF_DIR, to point Spark towards YARN configuration files when you use YARN</span></span><br><span class="line"><span class="attr">YARN_CONF_DIR</span>=<span class="string">/home/bigdata/hadoop/etc/hadoo</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>编辑<code>/home/hadoop/etc/hadoop/yarn-site.xml</code></li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.nodemanager.pmem-check-enabled<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>false<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.nodemanager.vmem-check-enabled<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>false<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><ul>
-<li>启动dfs</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">start-dfs.sh</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>启动yarn</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">start-yarn.sh</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>运行sprk-shell</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spark-shell --master yarn --deploy-mode client</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>验证yarn</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://hadoop0:8088/cluster</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2023/02/22/bigdata/hadoop/hadoop/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/02/22/bigdata/hadoop/hadoop/" class="post-title-link" itemprop="url">单机部署Hadoop</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-02-22 20:04:43 / 修改时间：22:13:18" itemprop="dateCreated datePublished" datetime="2023-02-22T20:04:43+08:00">2023-02-22</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index"><span itemprop="name">大数据</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/course/" itemprop="url" rel="index"><span itemprop="name">course</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/course/dds/" itemprop="url" rel="index"><span itemprop="name">dds</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>需要部署大数据治理平台，查看了一些开源版本之后发现微众银行的<a target="_blank" rel="noopener" href="https://github.com/WeBankFinTech/DataSphereStudio">DataSphereStudio</a>(DSS)比较符合我们的预期，于是着手部署该数据平台。</p>
-<p>因为DSS默认支持的是Hadoop2.7.2，于是本次的安装也用<a target="_blank" rel="noopener" href="https://archive.apache.org/dist/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz">2.7.2</a>版本。</p>
-<p>参考安装文档<a target="_blank" rel="noopener" href="https://hadoop.apache.org/docs/r2.7.2/hadoop-project-dist/hadoop-common/SingleCluster.html">Apache Hadoop 2.7.2 – Hadoop: Setting up a Single Node Cluster.</a>。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/02/22/bigdata/hadoop/hadoop/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1689,20 +1684,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-count">262</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">113</span>
+        <span class="site-state-item-count">115</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">112</span>
+        <span class="site-state-item-count">114</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1760,12 +1755,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">564k</span>
+    <span title="站点总字数">572k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:33</span>
+    <span title="站点阅读时长">8:40</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
