@@ -172,6 +172,130 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/03/ide/idea/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/03/ide/idea/" class="post-title-link" itemprop="url">IntelliJ IDEA授权</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-03 20:57:00" itemprop="dateCreated datePublished" datetime="2018-08-03T20:57:00+08:00">2018-08-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/idea/" itemprop="url" rel="index"><span itemprop="name">idea</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>建议购买Jetbrains正版授权。</p>
+</blockquote>
+<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>IntelliJ IDEA出了新版本(2018.2)，之前使用网上找的LicenseServer地址，更新后无法正常使用了。查看<a target="_blank" rel="noopener" href="http://blog.lanyus.com/archives/326.html/comment-page-10#comments">文档</a>时发现如下方法可激活。</p>
+<p>因为评论内容，评论多了可能不好找，摘录下来，另外自己在配置时一些地方没有搞懂，还是记录下来的好。</p>
+<p>之前听说<a target="_blank" rel="noopener" href="https://zeroturnaround.com/rebellabs/how-to-inspect-classes-in-your-jvm/">javaagent</a>很强大，现在看来确实是的。</p>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><blockquote>
+<p>Rover updated his crack for Jetbrains 2018.2 releases. Download it here: <a target="_blank" rel="noopener" href="http://bit.ly/jetbrainscrack210">http://bit.ly/jetbrainscrack210</a></p>
+<p>Usage:</p>
+<ol>
+<li>Remove any license you had before.</li>
+<li>Click “Configure” -&gt; “Edit Custom VM Options …”</li>
+<li>Append “-javaagent:{JetbrainsCrackPath}” to end line.<br>ie: -javaagent:~/JetbrainsCrack-2.10-release-enc.jar</li>
+<li>Restart IDE</li>
+<li>Click Register</li>
+<li>Select “Activation Code”</li>
+<li>Enter any character.</li>
+</ol>
+<p>Registered to Rover12421/Rover12421</p>
+<p>If you prefer not to see Rover12421 you can paste the below code to the Activation Code, and it will be licensed to “Lanyus/ Not Me”, change the “Lanyus” and “Not Me” to your own liking.</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">&quot;licenseId&quot;</span>:<span class="string">&quot;ThisCrackLicenseId&quot;</span>,</span><br><span class="line"><span class="attr">&quot;licenseeName&quot;</span>:<span class="string">&quot;Lanyus&quot;</span>,</span><br><span class="line"><span class="attr">&quot;assigneeName&quot;</span>:<span class="string">&quot;Not Me&quot;</span>,</span><br><span class="line"><span class="attr">&quot;assigneeEmail&quot;</span>:<span class="string">&quot;rover12421@163.com&quot;</span>,</span><br><span class="line"><span class="attr">&quot;licenseRestriction&quot;</span>:<span class="string">&quot;By Rover12421 Crack, Only Test! Please support genuine!!!&quot;</span>,</span><br><span class="line"><span class="attr">&quot;checkConcurrentUse&quot;</span>:<span class="literal">false</span>,</span><br><span class="line"><span class="attr">&quot;products&quot;</span>:[</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;II&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;DM&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;AC&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;RS0&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;WS&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;DPN&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;RC&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;PS&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;DC&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;RM&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;CL&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;PC&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;DB&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;GO&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;RD&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;</span><br><span class="line">],</span><br><span class="line"><span class="attr">&quot;hash&quot;</span>:<span class="string">&quot;2911276/0&quot;</span>,</span><br><span class="line"><span class="attr">&quot;gracePeriodDays&quot;</span>:<span class="number">7</span>,</span><br><span class="line"><span class="attr">&quot;autoProlongated&quot;</span>:<span class="literal">false</span>&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>如果是新装或者完全清理了之前版本，步骤1是可以不用执行的。</p>
+<p>步骤2是需要特别注意的地方，菜单位置为”Help”-&gt;”Edit Custom VM Options …”，因系统未授权，不能进入，需要手动修改相关文件。</p>
+<p>参考官网文档：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544869-Configuring-JVM-options-and-platform-properties">VM配置</a></li>
+<li><a target="_blank" rel="noopener" href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544519">设置配置</a></li>
+</ul>
+<p>修改内容：</p>
+<ol>
+<li>在安装目录找到对应版本的vm配置文件(IDE_HOME\bin&lt;product&gt;[bits][.exe].vmoptions) </li>
+<li>将文件拷贝到配置目录(<SYSTEM DRIVE>\Users&lt;USER ACCOUNT NAME&gt;.<PRODUCT><VERSION>)的config目录下。如果未生成该目录，运行Idea进行初始配置就可生成。</li>
+<li>增加-javaagent。</li>
+<li>修改配置，随便填位置，可以填自己的需要的内容。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">&quot;licenseId&quot;</span>:<span class="string">&quot;ThisCrackLicenseId&quot;</span>,</span><br><span class="line"><span class="attr">&quot;licenseeName&quot;</span>:<span class="string">&quot;随便填&quot;</span>,</span><br><span class="line"><span class="attr">&quot;assigneeName&quot;</span>:<span class="string">&quot;随便填&quot;</span>,</span><br><span class="line"><span class="attr">&quot;assigneeEmail&quot;</span>:<span class="string">&quot;邮箱，随便填&quot;</span>,</span><br><span class="line"><span class="attr">&quot;licenseRestriction&quot;</span>:<span class="string">&quot;描述信息，随便填&quot;</span>,</span><br><span class="line"><span class="attr">&quot;checkConcurrentUse&quot;</span>:<span class="literal">false</span>,</span><br><span class="line"><span class="attr">&quot;products&quot;</span>:[</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;II&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;DM&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;AC&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;RS0&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;WS&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;DPN&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;RC&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;PS&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;DC&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;RM&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;CL&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;PC&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;DB&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;GO&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;,</span><br><span class="line">&#123;<span class="attr">&quot;code&quot;</span>:<span class="string">&quot;RD&quot;</span>,<span class="attr">&quot;paidUpTo&quot;</span>:<span class="string">&quot;2099-12-31&quot;</span>&#125;</span><br><span class="line">],</span><br><span class="line"><span class="attr">&quot;hash&quot;</span>:<span class="string">&quot;2911276/0&quot;</span>,</span><br><span class="line"><span class="attr">&quot;gracePeriodDays&quot;</span>:<span class="number">7</span>,</span><br><span class="line"><span class="attr">&quot;autoProlongated&quot;</span>:<span class="literal">false</span>&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-832601-1-1.html">https://www.52pojie.cn/thread-832601-1-1.html</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/06/03/ipfs/ipfs-white-paper/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1740,86 +1864,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2016/10/23/spring/springwardeply/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/10/23/spring/springwardeply/" class="post-title-link" itemprop="url">Springboot创建war发布包</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-10-23 14:50:00" itemprop="dateCreated datePublished" datetime="2016-10-23T14:50:00+08:00">2016-10-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-12 14:25:30" itemprop="dateModified" datetime="2024-01-12T14:25:30+08:00">2024-01-12</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>46</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="http://of73u2ed9.bkt.clouddn.com/blogspringbootwardeploy.png"></p>
-<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>主要是测试封面和图片的使用，图片内编辑使用OneNote，目前来看就是对代码的支持不够。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1889,20 +1933,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">262</span>
+          <span class="site-state-item-count">263</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">115</span>
+        <span class="site-state-item-count">116</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-count">115</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1960,12 +2004,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">572k</span>
+    <span title="站点总字数">573k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:40</span>
+    <span title="站点阅读时长">8:41</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
