@@ -172,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/19/frontend/vue/vue-error-3/">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/22/homework/088/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -186,7 +186,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/19/frontend/vue/vue-error-3/" class="post-title-link" itemprop="url">VUE踩坑记-03</a>
+            <a href="/2020/10/22/homework/088/" class="post-title-link" itemprop="url">写作课作业-088</a>
         </h2>
 
         <div class="post-meta">
@@ -196,121 +196,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-10-19 21:50:44" itemprop="dateCreated datePublished" datetime="2020-10-19T21:50:44+08:00">2020-10-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>使用最新版本<a target="_blank" rel="noopener" href="https://github.com/Armour/vue-typescript-admin-template">vue-typescript-admin-template</a>进行项目二次开发，其对应的开发文档没有描述如何配置VS Code调试。<br>自己在取消Mock后，对接服务端时，碰到了登录后无法调整首页的问题，配置了调试也不能准确定位，提示的错误提示不能明确问题出在哪里。后经过同事的帮忙和自己的尝试最终定位问题，于是整理了本文用于记录VS Code的调试配置。</p>
-<h2 id="配置VS-Code-调试"><a href="#配置VS-Code-调试" class="headerlink" title="配置VS Code 调试"></a>配置VS Code 调试</h2><p>根据vue官方文档<a target="_blank" rel="noopener" href="https://cn.vuejs.org/v2/cookbook/debugging-in-vscode.html">在 VS Code 中调试</a>，以下内容是对自官网文档的摘录。</p>
-<h3 id="先决条件"><a href="#先决条件" class="headerlink" title="先决条件"></a>先决条件</h3><p>安装VS Code的Debugger扩展<a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome">Debugger for Chrome</a></p>
-<h3 id="在浏览器中展示源代码"><a href="#在浏览器中展示源代码" class="headerlink" title="在浏览器中展示源代码"></a>在浏览器中展示源代码</h3><p>在可以从 VS Code 调试你的 Vue 组件之前，你需要更新 webpack 配置以构建 source map。做了这件事之后，我们的调试器就有机会将一个被压缩的文件中的代码对应回其源文件相应的位置。这会确保你可以在一个应用中调试，即便你的资源已经被 webpack 优化过了也没关系。</p>
-<p>因为使用的是Vue CLI 3，需要设置并更新<code>vue.config.js</code>内的 devtool property：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">configureWebpack</span>: &#123;</span><br><span class="line">    <span class="attr">devtool</span>: <span class="string">&#x27;source-map&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="从-VS-Code-启动应用"><a href="#从-VS-Code-启动应用" class="headerlink" title="从 VS Code 启动应用"></a>从 VS Code 启动应用</h3><p>点击在 Activity Bar 里的 Debugger 图标来到 Debug 视图，然后点击那个齿轮图标来配置一个<code>launch.json</code>的文件，选择 Chrome：Launch 环境。然后将生成的 launch.json 的内容替换成为相应的配置：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;0.2.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;configurations&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;chrome&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;request&quot;</span>: <span class="string">&quot;launch&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;vuejs: chrome&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://localhost:8080&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;webRoot&quot;</span>: <span class="string">&quot;$&#123;workspaceFolder&#125;/src&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;breakOnLoad&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">                <span class="attr">&quot;sourceMapPathOverrides&quot;</span>: &#123;</span><br><span class="line">                    <span class="attr">&quot;webpack:///src/*&quot;</span>: <span class="string">&quot;$&#123;webRoot&#125;/*&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="问题代码"><a href="#问题代码" class="headerlink" title="问题代码"></a>问题代码</h2><p>经过以上配置是可以做调试了，但很多时候断点的位置不对，给代码跟踪造成问题。比如：按F10时，应该往下一行，但断点位置跳来跳去；if语句也无法断点，提示<code>unbounded breakpoint</code>，调试的时候断点就跑类名上去。</p>
-<h3 id="user-ts文件"><a href="#user-ts文件" class="headerlink" title="user.ts文件"></a><code>user.ts</code>文件</h3><p>虽然不知道具体的原因，但还是能把问题的主函数定位出来。然后在同事的提醒下开始逐行写日志，定位问题是<code>data.user</code>，返回的数据没有<code>user</code>属性。</p>
-<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Action</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">async</span> <span class="function"><span class="title">GetUserInfo</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">this</span>.token === <span class="string">&#x27;&#x27;</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="built_in">Error</span>(<span class="string">&#x27;GetUserInfo: token is undefined!&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">const</span> &#123; data &#125; = <span class="keyword">await</span> getUserInfo(&#123; <span class="attr">id</span>: <span class="built_in">this</span>.id &#125;)</span><br><span class="line">  <span class="keyword">if</span> (!data) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="built_in">Error</span>(<span class="string">&#x27;Verification failed, please Login again.&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> &#123; roles, name, avatar, email &#125; = data.user</span><br><span class="line">  <span class="comment">// roles must be a non-empty array</span></span><br><span class="line">  <span class="keyword">if</span> (!roles || roles.length &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="built_in">Error</span>(<span class="string">&#x27;GetUserInfo: roles must be a non-null array!&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">this</span>.SET_ROLES(roles)</span><br><span class="line">  <span class="built_in">this</span>.SET_NAME(name)</span><br><span class="line">  <span class="built_in">this</span>.SET_AVATAR(avatar)</span><br><span class="line">  <span class="built_in">this</span>.SET_EMAIL(email)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>于是只能继续检索文档，其中的两篇文章对我帮助比较大：</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/d3329e9cd126">vue 在 vscode 中断点调试问题</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/Microsoft/vscode-recipes/issues/201">Vue.js debugging in Chrome and VS Code isn’t working #201</a>。</li>
-</ul>
-<h2 id="最终配置"><a href="#最终配置" class="headerlink" title="最终配置"></a>最终配置</h2><h3 id="调整babel-config-js文件"><a href="#调整babel-config-js文件" class="headerlink" title="调整babel.config.js文件"></a>调整<code>babel.config.js</code>文件</h3><p>根据《vue 在 vscode 中断点调试问题》的描述是不能断点在async await的代码上，自己验证的情况是不加也可以了。因为自己对前端不熟悉，为了保险起见，还是统一加上的好。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="string">&quot;env&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;development&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;sourceMaps&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">      <span class="string">&quot;retainLines&quot;</span>: <span class="literal">true</span>, </span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">presets</span>: [</span><br><span class="line">    <span class="string">&#x27;@vue/cli-plugin-babel/preset&#x27;</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="调整vue-config-js文件"><a href="#调整vue-config-js文件" class="headerlink" title="调整vue.config.js文件"></a>调整<code>vue.config.js</code>文件</h3><p>使用官方的配置就可以了，也可以按下面的方式进行调整，打开注释就可以了。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// https://webpack.js.org/configuration/devtool/#development</span></span><br><span class="line"><span class="comment">// Change development env source map if you want.</span></span><br><span class="line"><span class="comment">// The default in vue-cli is &#x27;eval-cheap-module-source-map&#x27;.</span></span><br><span class="line">config</span><br><span class="line">    .when(process.env.NODE_ENV === <span class="string">&#x27;development&#x27;</span>,</span><br><span class="line">    <span class="function"><span class="params">config</span> =&gt;</span> config.devtool(<span class="string">&#x27;source-map&#x27;</span>)</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
-
-<h3 id="调整launch-json文件"><a href="#调整launch-json文件" class="headerlink" title="调整launch.json文件"></a>调整<code>launch.json</code>文件</h3><p>调整<code>sourceMapPathOverrides</code>的配置，主要是给自己编写的代码打断点。</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;0.2.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;configurations&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;chrome&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;request&quot;</span>: <span class="string">&quot;launch&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;vuejs: chrome&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://localhost:8080&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;webRoot&quot;</span>: <span class="string">&quot;$&#123;workspaceFolder&#125;/src&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;breakOnLoad&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">                <span class="attr">&quot;sourceMapPathOverrides&quot;</span>: &#123;</span><br><span class="line">                    <span class="attr">&quot;webpack:///./src/*&quot;</span>: <span class="string">&quot;$&#123;webRoot&#125;/*&quot;</span>,</span><br><span class="line">                    <span class="attr">&quot;webpack:///src/*&quot;</span>: <span class="string">&quot;$&#123;webRoot&#125;/*&quot;</span>,</span><br><span class="line">                    <span class="attr">&quot;webpack:///*&quot;</span>: <span class="string">&quot;*&quot;</span>,</span><br><span class="line">                    <span class="attr">&quot;webpack:///./~/*&quot;</span>: <span class="string">&quot;$&#123;webRoot&#125;/node_modules/*&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h3><p>如果像<code>data.user</code>这样发生异常时，断点的位置还是会出现错乱的情况，暂时不知道如何调整。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/19/homework/077/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/19/homework/077/" class="post-title-link" itemprop="url">写作课作业-077</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-10-19 21:07:19" itemprop="dateCreated datePublished" datetime="2020-10-19T21:07:19+08:00">2020-10-19</time>
+              <time title="创建时间：2020-10-22 19:37:49" itemprop="dateCreated datePublished" datetime="2020-10-22T19:37:49+08:00">2020-10-22</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -343,7 +229,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>475</span>
+              <span>719</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -363,27 +249,43 @@
 
       
           <blockquote>
-<p>10.4写作作业：《微信互联网平民创业》之《9. 不能卖货也不能卖课咋办?》</p>
+<p>《微信互联网平民创业》之《20.你如何才能快速融入社区?》</p>
+</blockquote>
+<h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><blockquote>
+<p>在这里，对平民来说更为重要的是：</p>
+<ul>
+<li>我如何才能快速融入社群？</li>
+<li>我如何才能真正快速成长？</li>
+</ul>
 </blockquote>
 <blockquote>
-<p>让我向你介绍一个任何时候对平⺠都有意义、都非常实用的策略吧，这个策略一共四个字(哈哈!):</p>
+<p>如何选择社群？</p>
+<p>它的长期价值是什么？这个问题大答案将帮助你权衡你是否应更加入某个社群？</p>
+</blockquote>
 <blockquote>
-<p>退而求其次</p>
+<p>融入社群的方式就异常清楚了：在社群认同的价值观方向上迅速成长……</p>
 </blockquote>
-</blockquote>
-<p>做软件项目的时候，一开始规划得高大上，基本上能想到的技术，酷炫的功能都写到方案里了，项目拿下来再说。但最终因技术不过关，人力不足，资金不够，往往只能做个半成品，想用吧，用不了，想扔吧，合同在那，想换吧，时间不多了，于是只好硬着头皮，删删减减，继续往下开发，然后好不容易凑个产品出来交付，真正的坑才开始，每天都有处理不完的BUG，用不顺畅的功能。如果一开始没规划那么多，反而更容易看到成果，把产品做得出彩，现在出做产品是先出原型，出MVP就是退而求其次。</p>
 <blockquote>
-<p>我认为这个策略会对所有平⺠⻓期有效:</p>
+<p>在「社群认同的价值观方向上不断成长」之外，在做一件事儿，你就不仅已经「融入了社群」，更会成为社群的「中坚力量」：</p>
+<p>乐于分享。</p>
+<p>因为乐于分享才逐步变成了第一」—— 因为乐于分享，所以，此人获得了一个 更为全面的堪比「上帝视⻆」的理解环境……</p>
+</blockquote>
 <blockquote>
-<p>做本地内容</p>
+<p>最好实名，对建立「个人品牌」的帮助非常大</p>
 </blockquote>
-<p>当然，这样的选择背后，实际上还有更为深刻的决策支撑: </p>
 <blockquote>
-<p>对平⺠来说，微信互联网商业生态，并不是成为领袖的机会，而是成为服务者的机会!</p>
+<p>融入好的社群就是最简单直接粗暴有效的社交</p>
 </blockquote>
-<p>—— 这才是更有价值的选择!</p>
-</blockquote>
-<p>不同的地区有不同的需求和内容，于是对不同地区的人可以做的不同的本地内容，基于多样性的角度，做小众软件，定制化软件也是可以的。</p>
+<h2 id="我的思考"><a href="#我的思考" class="headerlink" title="我的思考"></a>我的思考</h2><p>自己加入了且慢写作群，长期持续的写作就是这个社群的价值观。如果没有写就无法融入到这个社群当中，自己因为一些原因，写作断了一段时间，就连在群里发言也少了，可以说是自己没有养成长期的观念，也可以说是自己没有融入到这个社群当中，不仅没有融入，而且是被远远的甩在了后面。</p>
+<p>反而看着的别人成长自己还很痛苦，但正是因为这样的痛苦——「你每天健康那么多人为了自己的进步挣扎，自己“坚持”不挣扎」，事实上是很难的！」——正确的痛苦，让我在有时间的时候补作业。</p>
+<p>或许自己没有做到第一的经验，或许是自己的性格问题，在落后之后就变得默不作声，如果说得好听一点，写作就像是一个人的奥德赛，但这样的方式不利于自己的成长，因为即使有成长也很慢。另外有这么好的社群不用起来自己就是傻呀。</p>
+<hr>
+<p>欢迎联系我</p>
+<p>微信号 ：Crazy_Airhead</p>
+<p>Mixin ID :  1091586</p>
+<p>定投课堂邀请码：6DYMBFP061</p>
+<p>李笑来写作课邀请码：38MDGFYZK8</p>
+<p>水龙头邀请码：FDJQHJ</p>
 
       
     </div>
@@ -403,7 +305,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/19/homework/076/">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/22/homework/087/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -417,7 +319,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/19/homework/076/" class="post-title-link" itemprop="url">写作课作业-076</a>
+            <a href="/2020/10/22/homework/087/" class="post-title-link" itemprop="url">写作课作业-087</a>
         </h2>
 
         <div class="post-meta">
@@ -427,7 +329,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-10-19 20:36:58" itemprop="dateCreated datePublished" datetime="2020-10-19T20:36:58+08:00">2020-10-19</time>
+              <time title="创建时间：2020-10-22 19:37:42" itemprop="dateCreated datePublished" datetime="2020-10-22T19:37:42+08:00">2020-10-22</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -460,7 +362,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>486</span>
+              <span>566</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -480,22 +382,34 @@
 
       
           <blockquote>
-<p>10.3写作作业：《微信互联网平民创业》之《8.问问自己真的适合卖课吗？》</p>
+<p>《微信互联网平民创业》之《19.如何提高自己的合作性能?》</p>
+</blockquote>
+<h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><blockquote>
+<p>如何做才能提高自己的「可合作性」？——特简单：坚决不给他人添麻烦！</p>
 </blockquote>
 <blockquote>
-<p>在微信互联网这个生态之中，现在能卖的东⻄可以分为两种:</p>
+<p>所谓的「不给人添麻烦」其实是很简单的，基本上只不过是「坚决不提任何额外的要求」——而相对的方法论也很简单：</p>
 <ul>
-<li>实物商品</li>
-<li>虚拟商品</li>
+<li>把所有时间精力放到「把自己份内的事儿做好」上；</li>
+<li>同时相信对方也能做到「把自己份内的事儿做好」……</li>
 </ul>
-<p>那么，虚拟商品除了服务之外，最常⻅的就是各种「课程」。</p>
-<p>更看重⻓期价值的好商人，不喜欢赚「靠信息不对称才能赚到的钱」。</p>
-<p>难道说我们就不能卖课了嘛?答案是，能!当然能!—— 只不过，要卖真正有价值的课。</p>
 </blockquote>
-<p>其实读这个章节的时候，自己是比较矛盾的，除了卖课我还能选什么呢？卖课自己好像也没有卖出去呀，比如写作课。</p>
-<p>首先得到和极客时间，用最简单的方式理解是在卖课，而且卖得很成功的。然后我也看到，就算是罗永浩这样的大V，在卖货的时候对商品也是精挑细选的。</p>
-<p>于是我是这样理解的，我通过学习极客时间的课程，实际使用和写读书笔记，推广相关的课程这样的卖课思路应该是可以的，我也通过写读书笔记成交过一两单。但对应到上个章节《为什么总是要更重视选择？》，我写极客时间的读书笔记是不是思考的惯性呢？</p>
-<p>之前也订阅了GitChat，使用的是微课和微信群的方式，但是最终发现GitChat上对作者，做课程的质量控制不够，慢慢的上面的课也就没怎么看，后面也就没有订阅了。</p>
+<blockquote>
+<p>人们总是不自觉地提很多「事实上不见得有必要的要求」。</p>
+</blockquote>
+<blockquote>
+<p>通过「把自己份内事情做好」且「不向对方乱提要求」做到「坚决不给他人添麻烦」之外，高级一点的技巧无非是一个极其简单却又放在哪里都管用的思路：替别人多想一步……</p>
+</blockquote>
+<blockquote>
+<p>做多了，看多了，到最后你会得到跟我一样的结论：</p>
+<blockquote>
+<p>大多数人的所谓「不行」，都一样，都是「没把自己份内的事情做好而已」……</p>
+</blockquote>
+<p>更要命的是，不仅自己份内的事情做不好，对别人要求还特别多……活的不好，都是自找的啊！</p>
+</blockquote>
+<h2 id="我的思考"><a href="#我的思考" class="headerlink" title="我的思考"></a>我的思考</h2><p>有个同事和我说工作量很大，但公司给他什么工作，即使很晚给他提工作，他都能赶到公司去加班。这就是合作性能好的表现。</p>
+<p>曾经自己在半夜接到客户电话也是第一时间赶到客户那，处理好问题，就睡在客户的值班室里。但为什么自己的合作性开始变差了呢？其实就是犯了「没把自己份内的事情做好，而且要求对方」的错误。</p>
+<p>还有个同事，大家都很喜欢他，其实他就是经常站在对方的角度考虑问题，让人感觉讨论问题的时候很顺畅。</p>
 
       
     </div>
@@ -515,7 +429,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/02/homework/075/">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/22/homework/086/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -529,7 +443,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/02/homework/075/" class="post-title-link" itemprop="url">写作课作业-075</a>
+            <a href="/2020/10/22/homework/086/" class="post-title-link" itemprop="url">写作课作业-086</a>
         </h2>
 
         <div class="post-meta">
@@ -539,7 +453,639 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-10-02 23:02:03" itemprop="dateCreated datePublished" datetime="2020-10-02T23:02:03+08:00">2020-10-02</time>
+              <time title="创建时间：2020-10-22 19:37:37" itemprop="dateCreated datePublished" datetime="2020-10-22T19:37:37+08:00">2020-10-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E5%BE%AE%E4%BF%A1%E4%BA%92%E8%81%94%E7%BD%91%E5%B9%B3%E6%B0%91%E5%88%9B%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">微信互联网平民创业</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>742</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>《微信互联网平民创业》之《18.有哪些事情是你必须做的?》</p>
+</blockquote>
+<h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><blockquote>
+<p>「读书」和赚钱绝对是两回事。</p>
+</blockquote>
+<blockquote>
+<p>真正能变现的，并不是知识本身，而是「知识落差」。</p>
+</blockquote>
+<blockquote>
+<p>与其乱读书，与其四处胡乱扑腾，与其假装干自己不爱干的事儿，还不如老老实实干一件事儿，尤其是平民，必须老老实实干这件事儿：锻炼。</p>
+</blockquote>
+<blockquote>
+<p>健康是一切的根本。</p>
+<p>没有健康，就没有办法干任何值得长期做的事情。</p>
+<p>持续读书的人不见得更容易持续锻炼，但，反过来，持续锻炼的人更容易持续读书——事实上，持续锻炼的人更容易持续干任何事情！</p>
+<p>健康的身体才是真正的门面。因为持续锻炼的结果是身材挺拔，身材挺拔是什么?是「你的人 格的铁证」—— 就这么简单直接粗暴有效!你不需要说什么，你一出现，你站在那里， 人们就能感受到……</p>
+<p>身体健康直接影响心理健康;心理健康直接影响你的大脑对整个世界的理解 —— 绝大多 数人逃脱不了生理机能的约束和限制。</p>
+<p>长期持续的锻炼，给我自己带来的最大收获，除了你可以想象到的那些之外，其实有一个很可能会让你非常意外：脾气越来越随和……</p>
+</blockquote>
+<h2 id="我的思考"><a href="#我的思考" class="headerlink" title="我的思考"></a>我的思考</h2><p>健康是一切的根本，自己很早有意识到就是没有开始运动。家人提醒可以去跑步的时候，自己还是没有去运动，反而觉得烦。当因为自己身体开始有些异样开始游泳的时候，感叹自己的身体素质很差，当自己因为加入践行群，开始跑步的时候，发现其实也没有那么难。当看到这段文字的时候，其实自己应该做更多的锻炼。</p>
+<p>有的时候，一件事情需要从不同的维度去讲解和感受，才有可能被接受，被理解，开始有所行动。</p>
+<p>因为这样的原因，也认可榜样的力量，现在时不时的就带着儿子运动，比如，走健康步栈道，微信运动，游泳，在学校让儿子加入的也是足球兴趣小组。也时不时的会把这些运动当成一个比赛，让他赢，感受乐趣，让他输，接受挫败。当然更重要的是践行，健身和陪家人，在其中体会幸福。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/22/homework/085/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/22/homework/085/" class="post-title-link" itemprop="url">写作课作业-085</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-22 19:37:31" itemprop="dateCreated datePublished" datetime="2020-10-22T19:37:31+08:00">2020-10-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E5%BE%AE%E4%BF%A1%E4%BA%92%E8%81%94%E7%BD%91%E5%B9%B3%E6%B0%91%E5%88%9B%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">微信互联网平民创业</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>582</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>《微信互联网平民创业》之《17.有哪些事情就是绝对不能做?》</p>
+</blockquote>
+<h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><blockquote>
+<p>无论你在卖什么课，卖什么货，或者卖什么服务，实际上，你都要把自己卖出去才行。</p>
+</blockquote>
+<blockquote>
+<p>我现在还没有产品、甚至暂时还没有服务、我更没有品牌……那么，我必须投入时间和精力打造自己的「口碑」！</p>
+</blockquote>
+<blockquote>
+<p>「打造更好的自己」是「平民创业」的最核心内容：必须剔除讨好型人格，新成为不令人讨厌的人，再成为受人欢迎的人……为了持续打造长期维护良好的「口碑」，或称为「个人品牌」。</p>
+</blockquote>
+<blockquote>
+<p>绝不能做的事情：</p>
+<p>不要假人设，坚决不占任何便宜。</p>
+<p>不要冷家人，家人是我们唯一天然必须照顾的人——这是唯一理所当然的责任。</p>
+<p>不要乱帮人，每天腾出一点精力真诚的在自己能力范围帮助他人，但轻易不要用钱帮人！</p>
+<p>不要瞎站队，治疗「讨好型人格」的方子非常简单：有正事儿可做！</p>
+<p>不要惹众怒，这是生计问题，而且还是非常长期的生计问题！</p>
+</blockquote>
+<blockquote>
+<p>「这世界不好」本身没有什么不好。</p>
+</blockquote>
+<h2 id="我的思考"><a href="#我的思考" class="headerlink" title="我的思考"></a>我的思考</h2><p>坚决不要占小便宜。因为一次合作中，没有完全的公平交易，自己就没了第二次合作。自己想着要长期，却做着不是长期的事，想想多可怕。</p>
+<p>人就是这样，被照顾的时候都是巨婴，只有开始照顾别人的时候才会「突然成熟」。自己身边有这样的例子，包括自己也是，被妻子照顾得好好的，但本事没长进，脾气倒长了。看到这段文字确认需要好好反思。因为也看过一些会照顾人的朋友，不仅事业很顺利，家庭也能照顾得好好的，就好像他们的时间特别充足一样。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/22/homework/084/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/22/homework/084/" class="post-title-link" itemprop="url">写作课作业-084</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-22 19:35:42" itemprop="dateCreated datePublished" datetime="2020-10-22T19:35:42+08:00">2020-10-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E5%BE%AE%E4%BF%A1%E4%BA%92%E8%81%94%E7%BD%91%E5%B9%B3%E6%B0%91%E5%88%9B%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">微信互联网平民创业</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>959</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>《微信互联网平民创业》之《16. 怎样才能成为受人欢迎的人?》</p>
+</blockquote>
+<h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><blockquote>
+<p>在「直播带货」的背后，实际上是一个趋势在起作用：</p>
+<blockquote>
+<p>广告业态被解析之后的重构。</p>
+</blockquote>
+<p>……</p>
+<p>让我们继续深入研究下去，问一问下一个问题：</p>
+<blockquote>
+<p>「嗯，广告业态被解析之后又重构了……那这又究竟是为什么呢？」</p>
+</blockquote>
+<p>这个问题的答案就跟平民又明显的关系了：</p>
+<blockquote>
+<p>电商生态终于从「分销时代」正式进入了「直销时代」……</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>平日里我们可能用「大受欢迎」就已经表达足够精确了；但是，当我们在这里严肃讨论商业、讨论直销的时候，我宁愿使用这样的措辞：</p>
+<blockquote>
+<p>被很多人人爱！</p>
+</blockquote>
+<p>——是「爱」，是「热爱」，而不仅仅是「喜欢」……因为最终人家是要掏腰包的啊！</p>
+</blockquote>
+<blockquote>
+<p>我这是在给你指路呢！不仅是指路，那路径还格外清晰：</p>
+<ul>
+<li>花一段时间（半年？）剔除掉自己身上的「讨好型人格」；</li>
+<li>花一段时间（半年？）把自己变成「不讨人厌的人」；</li>
+<li>然后，再花一段时间（半年？），成为「竟然有很多人爱的人」……</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>「价值力」和「同理心」就好像是构成一个⻜轮的两个轮桨，再最初的时候，若是想要 让原本静止的⻜轮转动起来，你必须使很大的力气，一圈一圈地反复推，每转一圈都很 费力，但，每一圈的努力都不会白费，⻜轮会转动得越来越快…… 一旦「⻜轮效应」出 现，就再也没有任何力量可以让它停下来。</p>
+</blockquote>
+<blockquote>
+<p> 对平⺠来说，开始积累自己的价值力，有个非常简单的起步动作:</p>
+<blockquote>
+<p>每天腾出一点时间精力真诚地在自己的能力范围内帮助他人**……**</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>相对于提升自己的「价值力」，提升自己的「同理心」是更容易且收益更大的路径。其 实，提高自己的同理心，也并不难 —— 无非是每天腾出十到三十分钟，问自己几个问题，而后耐心回答。</p>
+</blockquote>
+<h2 id="我的思考"><a href="#我的思考" class="headerlink" title="我的思考"></a>我的思考</h2><p>身处在一个分布式的世界而不自知。</p>
+<p>在俞军《产品方法论》中也特别强调同理心，其中也说到，同理心在相当程度上也可以通过后天训练加强。最基础的一点就是亲自实践，去体验自己的产品，通过多角度的亲历，了解用户的需求。而在这里，也强调同理心也是可以习得的，而非一成不变的，并且也提供了如何习得的方法，并且通过问题的方式让同理心的习得更可能落地。</p>
+<p>对待家人，最近有点急躁，为什么呢？不就是被说中了，赚不到啥钱，还事儿多，并且竟然还有一大堆没必要的自尊。</p>
+<p>在自己的能力范围内帮助他人，有时自己就考虑不好这个度，自己还是泥菩萨的时候想帮助他人，结果也没帮好，他人不满意，自己也不满意。</p>
+<p>在这之前应该把自己变得更好，更有能力。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/22/homework/083/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/22/homework/083/" class="post-title-link" itemprop="url">写作课作业-083</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-22 19:35:36" itemprop="dateCreated datePublished" datetime="2020-10-22T19:35:36+08:00">2020-10-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E5%BE%AE%E4%BF%A1%E4%BA%92%E8%81%94%E7%BD%91%E5%B9%B3%E6%B0%91%E5%88%9B%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">微信互联网平民创业</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>949</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>10.10写作作业：《微信互联网平民创业》之《15. 怎样才能成为不讨厌的人?》</p>
+</blockquote>
+<h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><blockquote>
+<p>那「不讨人厌」的诀窍在哪里呢?只要再剔除一个恶习就好了，真的很简单，很直接:</p>
+<blockquote>
+<p>以自我为中心</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>任何正常人在成⻓过程中都有可能需要经过这四个阶段，只不过，并不是所有人都能到<br>达第四个阶段，有很多人停留在第三个阶段，有人停留在第二个阶段，甚至还有人干脆<br>一直停留在第一个阶段:</p>
+<blockquote>
+<ol>
+<li>你行，我不行(You’re OK, I’m not OK)</li>
+<li>我不行，你也不行(I’m not OK, you’re not OK too)</li>
+<li>我行，你不行(I’m OK, you’re not OK)</li>
+<li>我行，你也行(I’m OK, and you’re also OK)</li>
+</ol>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>调整一下自己的状态，经常按以下思路整理自己的情绪就好了:</p>
+<blockquote>
+<ul>
+<li>我行就行，不行就不行;</li>
+<li>不行并不丢人，不行就学，学到做到为止;</li>
+<li>至于别人行还是不行，关我什么事儿?</li>
+</ul>
+</blockquote>
+<p>就这么简单。如此这般，要么你在第四个阶段，要么你在第一个阶段 —— 反正你就是不 在「无论如何都会让你讨人厌的第二个或者第三个阶段」。说实话，这多少有点诡异! 因为到最后，治疗「以自我为中心」的手段竟然是「在自己身上使劲」—— 即，只关注自己的成⻓，不与他人做无谓的比较。</p>
+</blockquote>
+<blockquote>
+<p>如此这般，你就能在「不小心显然第二或第三个阶段的情况下」，能够及时意识到，然 后还能及时跳出来。在第二或第三个阶段里的每一分每一秒都是浪费。因为无论是你的 时间，还是你的精力，甚至是情绪，都对你毫无用处。毫无用处到也罢了，它还会不断 令你变成更讨人厌的人…… 这太可怕了。不招人喜欢到也罢了，讨人厌不仅非常不好， 还非常没必要。</p>
+<p>关键在于，讨人厌的人那可是真的赚不到钱啊!</p>
+</blockquote>
+<h2 id="我的思考"><a href="#我的思考" class="headerlink" title="我的思考"></a>我的思考</h2><p>当看到“以自我为中心”的时候，其实是挺纳闷的，对于举的例子：</p>
+<ul>
+<li>经常打断他人说话;</li>
+<li>不放过任何抬高自己的机会;</li>
+<li>为了证明自己是对的不惜一切代价;</li>
+<li>如若话题不在自己身上那么几乎全都是抱怨或者负面评价;</li>
+</ul>
+<p>在我看来也都是“以自我为中心”的表现，当我继续往下看，看到了《I’m OK, You’re OK》那一段，哦，这是《通往财富自由之路》里面讲过的内容呀，而这里的“以自我为中心”，其实是将自己的注意力放在自己身上，自己的成长身上。而与通常所说的”以自我为中心“的，为了引起他人对自己的注意，表现自己，而没有顾及他人的感受。</p>
+<p>现在开始做晨间笔记，这个天天反省的模板就很好。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/22/homework/082/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/22/homework/082/" class="post-title-link" itemprop="url">写作课作业-082</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-22 19:35:30" itemprop="dateCreated datePublished" datetime="2020-10-22T19:35:30+08:00">2020-10-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E5%BE%AE%E4%BF%A1%E4%BA%92%E8%81%94%E7%BD%91%E5%B9%B3%E6%B0%91%E5%88%9B%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">微信互联网平民创业</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>727</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>10.9 写作作业：《微信互联网平民创业》之《14. 如何才能剔除讨好型人格?》</p>
+</blockquote>
+<h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><blockquote>
+<p>据我观察，「讨好型人格」是天下最浪费时间最浪费生命的品质。还是那句话:人的时间精力总是有限的。如果，你被「讨好型人格」所左右，那么，你就得耗费大量时间精 力去从各个⻆度讨好各式各样的人…… 不是一两个，是一批又一批，前仆后继。</p>
+</blockquote>
+<blockquote>
+<p>「守住本份」—— 把自己份内的事儿做好，做到极致…… 至于份外的事儿么 —— 可以是「关我屁事」。</p>
+</blockquote>
+<blockquote>
+<p>「尽量不要得罪人」常常并不是因为我们害怕得罪人，而更多是因为我们害怕自己 —— 我们自己并不⻅得靠谱，起码，我们知道自己需要很久的时间、很多的努力才能变得靠谱，才有机会变得更靠谱…… 所以，遇到不好的人，或者遇到与自己的原则底线相冲突的人，不要去争吵，不要去争辩，不要想着输赢，最好的策略是「能躲就躲」。</p>
+</blockquote>
+<h2 id="我的思考"><a href="#我的思考" class="headerlink" title="我的思考"></a>我的思考</h2><p>讨好型人格是一种常见的心理状态和行为倾向，讨好者总是活在别人对自己的期待中，不遗余力地温暖别人，唯独忘了自己。在《成功，动机与目标》一书中，把人分为两类，表现型人格和进取型人格。讨好型人格也可以说是表现型人格，特别在意别人的目光，而忽略了自己的闪光点和成长。如果了解过“探照灯效应实验”，——大家通常认为别人很关注自己的外表和行为，自己的一举一动、所有细节都被人注意到了，就如聚光灯照在自己的身上，然而没有那么多人在意你。</p>
+<p>自己曾经一度困惑，自己为什么那么在意家人的想法，其实也是表现型人格在作祟。对于陌生人来说，自己可以比较容易的做到关你屁事，或者关我屁事。当自己把事情做成的时候，家人对你的态度也发生了转变。</p>
+<p>那么把注意力放在自己身上，而不是别人的目光里，才是更有利的事情。那应该怎么做呢？其实就是守住本份，老老实实把事情做好，把自己变得专业，超级专业。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/22/homework/081/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/22/homework/081/" class="post-title-link" itemprop="url">写作课作业-081</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-22 19:35:25" itemprop="dateCreated datePublished" datetime="2020-10-22T19:35:25+08:00">2020-10-22</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -592,369 +1138,41 @@
 
       
           <blockquote>
-<p>10.2写作作业：《微信互联网平民创业》之《7.最基本的决策方法是什么？》</p>
+<p>10.8 写作作业：《微信互联网平民创业》之《13. 打造广场之前如何打地基?》</p>
+</blockquote>
+<h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><blockquote>
+<p>如果说，微信朋友圈是个「大屏幕」，那么，微信通讯录就好像是「挂着那块大屏幕的承重墙」;如果说，微信是个「大广场」，那么，微信通讯录就好像是「那广场的地 面」…… 那么，请问，「地基」是什么呢?</p>
+<p>你这个人才是真正的地基啊……</p>
 </blockquote>
 <blockquote>
-<p>“以终为始”的思考方式，该思考方式背后的逻辑是“长期价值”。</p>
+<p>不仅从商业⻆度，更是从人生⻆度，这个问题有个最硬核的标准答案:</p>
+<p>成为一个值得信赖的人。</p>
 </blockquote>
 <blockquote>
-<p>这个单子可以很⻓很⻓…… 每一个问题都值得认真思考。不停地罗列，不停地琢磨，不 停认真记录答案，不停地改进答案…… 如此这般，若是你竟然没有任何进步，那还真的是⻅⻤了吧?</p>
-</blockquote>
-<p>看到一个思考的差距，线性思维与多维度思考。</p>
-<p>列这个清单的时候可以说是一个多维度思考的过程。如果不是看文章，不知道还需要思考这些内容，可能后面即使做了也是大概率的做不好。自己想得最多的是“我要学习怎样的专业知识”，然后怎么学。</p>
-<p>就拿跑步来说，我一开始是把里程变小，跑一圈就给自己鼓鼓气还剩几圈，后来用了Keep，跑的时候有提醒最近一公里的用时，于是自己就通过调整速度来控制自己的节奏，状态好些就控制在6分多，状态不好时就控制在7分多，后面跑的时候想的是提高速度，有了改进的方向，反而更容易跑长一些。</p>
-<p>在看极客时间，郑晔老师的《10x程序员工作法》，其中用埃隆·马斯克做了个例子。他的太空探索公司 SpaceX有一个目标是，送 100 万人上火星。</p>
-<blockquote>
-<p>美国政府曾经算过一笔账，把一个人送上火星，以现有技术是可实现的，需要花多少钱呢？答案是 100 亿美金。如果照此计算，实现马斯克的目标，送 100 万人上火星就要 1 万万亿。这是什么概念呢？这笔钱相当于美国 500 年的 GDP，实在太贵了，贵到连美国政府都无法负担。</p>
-<p>马斯克怎么解决这个问题呢？他的目标变了，他准备把人均费用降到 50 万美元，也就是一个想移民的人，把地球房子卖了能够凑出的钱。原来需要 100 亿美金，现在要降到 50 万美金，需要降低 2 万倍。</p>
-<p>当然，降低 2 万倍依然是一个听起来很遥远的目标。所以，我们关注的重点来了：马斯克的第二步是，把 2 万分解成 20×10×100。这是一道简单的数学题，也是马斯克三个重点的努力方向。</p>
-<p>先看“20”：现在的火星飞船一次只能承载 5 个人，马斯克的打算是，把火箭造大一点，一次坐 100 人，这样，就等于把成本降低 20 倍。如果你关注新闻的话，会发现 SpaceX 确实在进行这方面的尝试。</p>
-<p>再来看“10”：马斯克认为自己是私营公司，效率高，成本可以降到十分之一。他们也正在向这个方向努力，SpaceX 的成本目前已经降到了同行的五分之一。</p>
-<p>最后的“100”是什么呢？就是回收可重复使用的火箭。如果这个目标能实现，发射火箭的成本就只是燃料成本了。这也就是我们频频看到的 SpaceX 试飞火箭新闻的原因。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/02/homework/074/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/02/homework/074/" class="post-title-link" itemprop="url">写作课作业-074</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-10-02 23:01:45" itemprop="dateCreated datePublished" datetime="2020-10-02T23:01:45+08:00">2020-10-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E5%BE%AE%E4%BF%A1%E4%BA%92%E8%81%94%E7%BD%91%E5%B9%B3%E6%B0%91%E5%88%9B%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">微信互联网平民创业</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>504</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>10.1写作作业：《微信互联网平民创业》之《6. 为什么总是要更重视选择？》   </p>
-</blockquote>
-<p>学到的点：</p>
-<blockquote>
-<p>面对⼀个新机会（甚⾄是很⼤的机会）的时候，他们并没有做任何选择，他们只是「凭着惯性」继续⾃⼰原来的⽣活与⼯作……<br>—— 这是最常⻅的且实际上影响最⼤的错误，并且这个错误⾮常隐蔽，导致绝⼤多数隐蔽，导致绝⼤多数⼈对⾃⼰正在犯的错误毫⽆察觉。</p>
-</blockquote>
-<p>去年离职要和同事一起做的时候，觉得做医疗方向的，大家都要沉淀，看似自然，看似做了个重要的决定（从确定到不确定），实际上是一个毫无察觉的错误，更像是举着火把穿过火药厂。<br>现在视频号已经开通，自己也没准备好。试着发了两条，一个是用钱和时间赚钱的图片，一个拍小孩玩的，尝试使用iMovie的。</p>
-<blockquote>
-<p>选择最重要—— 选择⽐什么都更重要。然⽽，尽管选择如此重要，可⼈们总是忽视它的作⽤，要么不选，要么假选…… 当然，最可惜的是，你也看到了，虽然真的选了却竟然选错了！。</p>
-</blockquote>
-<p>最近的一个决定需要很久才能看到实际的区别。但我一直到在想按这个资源我敢不敢投入box，那它的十分之一呢？似乎知道自己选错了，但又不得不选。甚至觉得自己得了创伤应激障碍，写作作业也没法及时完成，这几天恢复工作，自己才逐步把精力从这件事上脱离出来。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/02/homework/073/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/02/homework/073/" class="post-title-link" itemprop="url">写作课作业-073</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-10-02 23:00:25" itemprop="dateCreated datePublished" datetime="2020-10-02T23:00:25+08:00">2020-10-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E5%BE%AE%E4%BF%A1%E4%BA%92%E8%81%94%E7%BD%91%E5%B9%B3%E6%B0%91%E5%88%9B%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">微信互联网平民创业</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>9.30写作作业：《微信互联网平民创业》之《5.为什么要格外重视视频号？》</p>
+<p>坚持这样的原则、坚守这样的底线，其实根本就不需要得罪人，不需要触碰政治红线， 更不需要「卧薪尝胆」什么的，甚至，干脆就不可能因此与任何人发生冲突，只需要付出时间和精力，努力与自己死磕，甚至拼命。</p>
 </blockquote>
 <blockquote>
-<p>在能力具备的情况下，错过机会就是极为可惜的事儿了，是吧?更何况，经过一小段时 间的学习与思考，你的认知，以及你的商业能力都有了很大的提升，所以，若是进步过 后的你竟然还是错过了机会，那么，肯定更为可惜……</p>
+<p>虽然「有原则有底线」其实可以并不难，但，有一点是非常难的，也只能很难很难好， 那就是不仅要「有原则有底线」，还要「⻓期有原则有底线」—— 反正，「⻓期」两个 字，放在任何地方，古今中外，都是少有人能够做到的。</p>
 </blockquote>
 <blockquote>
-<p>微信视频号在 2020 年上半年开始内测的时候，很多所谓的「业内人士」所谓的「专家」都不看好。</p>
-<p>越是微博大号、越是抖音快手大号，越是不重视微信视频号……</p>
-</blockquote>
-<p>既得利益者，不希望看到改变，如果改变回</p>
-<blockquote>
-<p>微信肯定是所有提供短视频服务的平台之中「唯一绝对不缺用户的」</p>
+<p>所谓的「信赖」，是「信任」+「依赖」。那，那些信任你的人凭什么竟然会「依赖」你呢?首先，没有信任，就不可能有依赖。而后，如果你是有原则有底线的值得他人信任的人，再加上另外一点就够了:</p>
+<p>专业</p>
+<p>—— 那么，「信任」你的人会进而「信赖」你。</p>
 </blockquote>
 <blockquote>
-<p>微信有另外一个「杀手锏」，或者也可以称为是 「护城河」的东⻄:微信支付。除了微信之外，你再也找不到任何一个其他应用可以做 到全方位的全覆盖了:</p>
+<p>所谓的「专业」或「突出」只是一个习惯而已，一个可以养成的习惯。很小的时候，我父亲教我说，「你要学会时不时做出让大家佩服的事情。」—— 然后这句话我受用终生…… 所以才会有很多事情发生。</p>
+</blockquote>
+<blockquote>
+<p>记住，无论做什么事情，都应该更「专业」一点 —— 只要养成这个习惯就好。其实， 「比大多数人更专业」实在是再简单不过的事情，不管做什么，养成以下三个好习惯:</p>
 <ul>
-<li>用户全覆盖</li>
-<li>社交全覆盖</li>
-<li>内容品类全覆盖</li>
-<li> 交易环节全覆盖</li>
+<li>开始之前做足准备工作;</li>
+<li>过程之中全力以赴;</li>
+<li>结束的时候做足收尾工作……</li>
 </ul>
 </blockquote>
-<blockquote>
-<p>这很可能是未来五到十年里所能遇到的最后一次互联网流量瓜分机会**……**</p>
-<p>仔细琢磨这句话罢 —— 用越⻓的时间琢磨越好，越使劲越好。因为，未来的 6~18 个 月，不管你自己有没有发生变化，你必然能够看到的是，很多人会因此发生巨大的变 化……</p>
-</blockquote>
-<p>本来想假期期间能够跟上作业的进度，但自己迟迟不能完成。今天的思考与《5.为什么要格外重视视频号？》和《6. 为什么总是要更重视选择？》有关，也没有完全按读书笔记的方式进行。</p>
-<p>放假了，要回老家，要陪小孩，反而不如上班时有固定的时间，也因为置换房子的事情，搞得有点焦头烂额，又要借钱，体会人情冷暖，又要和房东斗智斗勇，差点就要诉之法律了，同时也深刻体会了“只字不差地阅读”的重要性啊，如果不能搞定，那可能是20万的学费，还好后面协商解决了。</p>
-<blockquote>
-<p>我做过老师，我常常惊讶于那些受过高等教育的人连一纸租房合同或者雇佣合同都看不懂，或者忽视了关键条款，而最终吃了亏却只知道心疼钱，竟然不知道要反省一下“为什么我的阅读能力这么差？” —— 几乎无一例外地，他们都不认为自己的阅读能力有问题。</p>
-</blockquote>
-<p>妻子提出需要换房的时候，我一开始是反对的，但后面我还是同意了。买第一套房的时候，在公司股份和购房之间做选择，最终咬牙的房子房子。现在已经没有公司股份了，但还在公司的同事也说基本是套牢状态。而房子就算扣除了贷款，这些年下来也是涨了两倍了。那么现在即使知道BOX是个好资产，我也没有足够的说服力。然而我为什么同意了，我更多的时候承受不起，承受不起接下来生活的可能面临的300的抱怨。我是为家人呢？还是为自己呢？</p>
-<blockquote>
-<p>之前我们说过，绝大多数人缺的并不是机会和本钱，真正缺的是能力。但是，反过来， 在能力具备的情况下，错过机会就是极为可惜的事儿了，是吧?更何况，经过一小段时 间的学习与思考，你的认知，以及你的商业能力都有了很大的提升，所以，若是进步过 后的你竟然还是错过了机会，那么，肯定更为可惜……</p>
-</blockquote>
-<p>然后你就会想啊，如果用买房的这么用力，去投BOX自己会怎么样呢？</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/09/29/course100/003/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/29/course100/003/" class="post-title-link" itemprop="url">如何离线安装Mysql8.0.20</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-09-29 10:42:58" itemprop="dateCreated datePublished" datetime="2020-09-29T10:42:58+08:00">2020-09-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><h3 id="net-tools和perl"><a href="#net-tools和perl" class="headerlink" title="net-tools和perl"></a>net-tools和perl</h3><p>安装时会依赖net-tools和perl包，需要从Centos的安装包中提取出对应的安装包net-tools-*.rpm和perl-*.rpm。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -Uvh *.rpm --nodeps --force</span><br></pre></td></tr></table></figure>
-
-<h3 id="MySQL安装包"><a href="#MySQL安装包" class="headerlink" title="MySQL安装包"></a>MySQL安装包</h3><p>从Mysql官网下载MySQL安装包</p>
-<ul>
-<li>mysql-community-common-8.0.20-1.el7.x86_64.rpm</li>
-<li>mysql-community-libs-8.0.20-1.el7.x86_64.rpm</li>
-<li>mysql-community-client-8.0.20-1.el7.x86_64.rpm</li>
-<li>mysql-community-server-8.0.20-1.el7.x86_64.rpm</li>
-</ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/09/29/course100/003/#more" rel="contents">
+              <a class="btn" href="/2020/10/22/homework/081/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -978,7 +1196,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/09/29/homework/072/">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/22/homework/080/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -992,7 +1210,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/09/29/homework/072/" class="post-title-link" itemprop="url">写作课作业-072</a>
+            <a href="/2020/10/22/homework/080/" class="post-title-link" itemprop="url">写作课作业-080</a>
         </h2>
 
         <div class="post-meta">
@@ -1002,7 +1220,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-09-29 08:42:41" itemprop="dateCreated datePublished" datetime="2020-09-29T08:42:41+08:00">2020-09-29</time>
+              <time title="创建时间：2020-10-22 19:35:20" itemprop="dateCreated datePublished" datetime="2020-10-22T19:35:20+08:00">2020-10-22</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -1035,7 +1253,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>711</span>
+              <span>695</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1055,27 +1273,23 @@
 
       
           <blockquote>
-<p>9.29写作作业：《微信互联网平民创业》之《3.我们自己最缺是什么？》</p>
+<p>10.7写作作业：《微信互联网平民创业》之《12. 微信传播机制独特在哪里?》</p>
+</blockquote>
+<h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><blockquote>
+<p>微信视频号的内容传播方式，以及它的推荐算法，都与看起来差不多的其它短视频平台</p>
+<p>不同 —— 这个巨大的差异来自于它的底层: 微信有全网唯一最全的熟人社交关系网络。</p>
 </blockquote>
 <blockquote>
-<p>经商最需要什么?不是机会和本钱，而是商业能力。</p>
+<p>理论上，如果你的内容竟然被传播到六度人脉，那么，你的内容(或者说，干脆是你本 身)已经触达了整个世界。</p>
 </blockquote>
-<p>经商需要商业能力听起来是如此的自然。</p>
-<p>听母亲讲，之前卖酒，一开始也是考赊账买米的，酿出酒，卖了钱，还上了才慢慢做起来的。</p>
-<p>也听岳母说，以前开面店，钱都不够买10斤面，那就一点点先做，慢慢有了些生意了，就赊账买面粉，自己多做点，多慢点。</p>
-<p>妻子开淘宝店，最初是从团购开始的，和猫友一起拼猫罐头，后面自己进货猫砂，慢慢的也有了生意。</p>
-<blockquote>
-<p>但，有一个重要的点，是最为基础的，了解了它，就算是「一下子入⻔了」:</p>
-<p>识别⻓期价值的能力</p>
-<p>只要你认真观察一下就明白了，就「发现」了，所有真正的好商人都是遵循这个原则 的:</p>
-<p>他们只做公平交易</p>
-<p>不要误以为这八个字「⻓期价值、公平交易」很「虚」…… 这八个字是非常实在的，因 为对它的理解会影响一个人对任何事情的理解和判断，进而影响任何人的生活轨迹，甚 至是所谓的「命运」。把它们组合起来，就是这一章的主旨:</p>
-<p>识别公平交易的⻓期价值</p>
-</blockquote>
-<p>“识别⻓期价值的能力”，又一次最少必要知识。</p>
-<p>以前快的过年，父亲会和村里人合伙，去乡镇赶年前的最后一场圩——卖菜。于是少不了收菜卖菜，讨价还价，好不热闹，大有大干一票好过年的气势。于是总有菜农想菜里多放点不好的菜；卖菜的时候总想着卖高价和少称点；买菜的时不时想拿个假钱来蒙混过关。</p>
-<p>后来自己的二哥也开始赶圩卖菜，我有次就问，现在还有这样么？哥哥说，买菜的时候挑的比较多，这个菜农不好，下次再试试，不好了就不找他进货了，然后现在基本上天天赶集，大家都认识你，基本上不会搞什么缺斤少两的事情。容易赚钱时候呢，刚好是挑的东西，其他去卖的人没有或者进得少。假钞更是因为微信支付，没碰到过了。</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/10/22/homework/080/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1094,7 +1308,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/09/29/homework/071/">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/10/22/homework/079/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1108,7 +1322,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/09/29/homework/071/" class="post-title-link" itemprop="url">写作课作业-071</a>
+            <a href="/2020/10/22/homework/079/" class="post-title-link" itemprop="url">写作课作业-079</a>
         </h2>
 
         <div class="post-meta">
@@ -1118,7 +1332,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-09-29 08:41:13" itemprop="dateCreated datePublished" datetime="2020-09-29T08:41:13+08:00">2020-09-29</time>
+              <time title="创建时间：2020-10-22 19:35:13" itemprop="dateCreated datePublished" datetime="2020-10-22T19:35:13+08:00">2020-10-22</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -1151,7 +1365,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>332</span>
+              <span>403</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1171,126 +1385,20 @@
 
       
           <blockquote>
-<p>9.28 写作作业：谈谈“输出倒逼输入” 的理解。</p>
+<p>10.6写作作业：《微信互联网平民创业》之《11. 平民如何做好视频号内容?》</p>
 </blockquote>
-<p>最近写作时碰到的问题主要是，没有素材，占有时间长，这些天的读书笔记，感觉是只能摘抄出来笔记，不能形成自己的思考。</p>
-<p>输出倒逼输入，倒逼的是输入的两个方面，一方面是输入的数量，另一方面是输入的质量。</p>
-<p>笑来老师不止一次提到“只字不错的阅读”。认真阅读说明书的例子，以前上网，说80后特征，就是所有的电器都不看说明书。当时还自以为是的以为自己很牛逼。后面在看技术文档的时候吃过亏，有时以为容易的说明文档，没照着步骤走，结果花很多时间来解决本来不会出现的问题。</p>
-<p>在输入数量来看，短时间内提高自己的阅读速度不大可能，现在自己所做的调整，就是把写作和看书的顺序调换了一下，先看书，后写作。</p>
-<p>在关键的事情上偷懒了，哪能有好结果啊，给自己加油。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/09/27/homework/070/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/27/homework/070/" class="post-title-link" itemprop="url">写作课作业-070</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-09-27 22:28:49" itemprop="dateCreated datePublished" datetime="2020-09-27T22:28:49+08:00">2020-09-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">作业</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%86%99%E4%BD%9C/%E4%BD%9C%E4%B8%9A/%E5%BE%AE%E4%BF%A1%E4%BA%92%E8%81%94%E7%BD%91%E5%B9%B3%E6%B0%91%E5%88%9B%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">微信互联网平民创业</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>774</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>9.27写作作业：《微信互联网平民创业》之《<strong>3.</strong> 微信给我们提供了什么？》<br>1.总结书中知识要点；<br>2.我对知识点的思考；<br>3.书中精彩的例子，可以用在其他什么地方；<br>4.书中用了排比、递进、转折吗？<br>5.哪些知识点可以运用到自己学习、生活和工作中？</p>
-</blockquote>
-<blockquote>
-<p>因为微信给你 —— 不仅给你，事实上是给每一个用户 —— 提供了一个竟然是免 费的却又可以⻓期打造、⻓期积累的「屏幕」(或者准确地讲，「广告屏幕」)</p>
-<p>—— 那就是你每天可能看，也每天可能发的「朋友圈」</p>
-</blockquote>
-<p>如果没有看到朋友圈是个“广告屏”，我不会觉得它是，反而觉得利用朋友圈发广告的很烦人。但把它理解为“广告屏”时，看到别人发广告会有些变化，会去想怎么的人家文案好在哪里？</p>
-<blockquote>
-<p>朋友圈 &gt; 平面媒体 </p>
-<p>视频号 &gt; 微型电视台 </p>
-<p>直播号 &gt; 电视购物栏目</p>
-</blockquote>
-<blockquote>
-<p>很多的时候，真的不是我们不努力，不是我们不勤奋，也不是我们不聪明，甚至不是我们不动脑，更不是我们没有脑子…… 只不过是我们「没看到」而已。一旦看到了，脑子 就会懂;脑子开始动并且不停地动，人就会变聪明;人变聪明了，就会开始琢磨;开始 琢磨了，就不可能不行动;开始行动了，就不可能不改变…… 就这么简单 —— 所有的 一切，「开眼」都是起点。所以古人总是说，「读万卷书不如行万里路」—— 行万里路 为什么竟然更有效啊?因为行万里路的过程中必然反复经历「开眼」，即，所谓的「⻓⻅识」。</p>
-</blockquote>
-<p>微信不断的打造赚钱通道，让微信成为一个赚钱工具，就如笑来老师一直在为践行群成员建立赚钱通道，让践行群成为赚钱的一样。一方面自己确实是“见识少”，但另一个问题是反思不够深入。这些天辅导儿子功课，被妻子问了一句话，你平时也在不断的学习，那有什么方法是可以传授给你儿子的呢？是反复么？是鼓励么？是耐心么？自己教孩子的时，很多时候是上火的，学到的东西哪些还用得上，就如儿子复习写字的要点都对，写的时候就天马行空了，居然控制不住自己。</p>
-
+<h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><p>去中心化。微信视频号的最重要特征之一就是它的“去中心化”属性。平民么，只有在“分布式网络”里才有真正属于自己的机会。</p>
+<p>平民本色。想要做好视频号，最重要的应该排第一名的就是平民本色。你的本色就是你的特色，你的本色和特色就是你的优势 —— 不要去模仿他人，不要去跟⻛，保持本色才是最大的⻓期核心竞争力。</p>
+<p>优质内容。吸引人的，永远不是拍摄技术本身，永远是内容，准确地讲，是优质内容；更准确地讲，是优质内容所传递的真正价值。</p>
+<p>价值导向。价值导向让我们提取出这其中最为重要的关键字：有趣、有用</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/10/22/homework/079/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1308,7 +1416,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1374,7 +1482,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-count">278</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1445,12 +1553,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">585k</span>
+    <span title="站点总字数">650k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:52</span>
+    <span title="站点阅读时长">9:51</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

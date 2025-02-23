@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="说明一般的 Web 应用都会使用到 Redis 做缓存处理，也可能会用 ElasticSearch 做全文检索。所以这里主要介绍对这个两个数据中间件的使用。Monogo方面也有对应的插件，可以自行尝试。 创建模块在 IDEA 中通过 File-&gt;New-&gt;Modules... 可以创建新的模块 demo-nosql，基础代码和配置可以从demo01中拷贝过来，或者自己手动创建。 修改依">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据操作 —— 操作 NoSQL">
+<meta property="og:url" content="http://l4qiang.me/2025/02/10/course100/019/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="说明一般的 Web 应用都会使用到 Redis 做缓存处理，也可能会用 ElasticSearch 做全文检索。所以这里主要介绍对这个两个数据中间件的使用。Monogo方面也有对应的插件，可以自行尝试。 创建模块在 IDEA 中通过 File-&gt;New-&gt;Modules... 可以创建新的模块 demo-nosql，基础代码和配置可以从demo01中拷贝过来，或者自己手动创建。 修改依">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MjQwNDdjNzZiOWJjOTZlZGFiNDMxMTVjNGM2ZTUwZDNfRTlFbGs4N3lEVEx5R3g2M3ppaXk3SHphYWRGeW0zajhfVG9rZW46TzFqWmJaOXhUb3FITG14YThwUGN2NFgwbkNiXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NjMxZGY4Yjg0YWU1YjY4NDQyMWM3MWYxNjk3YmNiY2NfcHRvRGpmUTFlQ3k0Rzc1bkg3RmVqNWZMRG1mcGNnTXFfVG9rZW46V2VnUWJ0UFEybzhPamp4OWtkY2N5WkpkblpnXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZmU3OTUyMWJhMjI2NjNhZTBkM2E3ZjA0M2RhYTI5OWFfRzk3NmJhUEhQd0Y1aXZWR083M3Q1Z2laekpwVjE0SUlfVG9rZW46QVNBbWJpYkEzb0JQZUF4cDNmZGN5T0N1bllkXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YzgwMzRiYmNmNGRlZTM4ZjNlMDdkMWI2ODhmZmI2ODZfS3Q3ZmxwTUdpTGx2WVdXcklDUUdkb2JCdnNxaDhneGRfVG9rZW46TEJHcGJiOG9MbzFMbkZ4NWt5MmNkWmlQbmhkXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA">
+<meta property="article:published_time" content="2025-02-10T12:01:31.000Z">
+<meta property="article:modified_time" content="2025-02-10T12:05:43.538Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="教程100">
+<meta property="article:tag" content="写作">
+<meta property="article:tag" content="Solon">
+<meta property="article:tag" content="Solon 实用教程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MjQwNDdjNzZiOWJjOTZlZGFiNDMxMTVjNGM2ZTUwZDNfRTlFbGs4N3lEVEx5R3g2M3ppaXk3SHphYWRGeW0zajhfVG9rZW46TzFqWmJaOXhUb3FITG14YThwUGN2NFgwbkNiXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA">
+
+<link rel="canonical" href="http://l4qiang.me/2025/02/10/course100/019/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数据操作 —— 操作 NoSQL | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2613e7f510eebd12cf4d0d067e4ce195";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/10/course100/019/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据操作 —— 操作 NoSQL
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-10 20:01:31 / 修改时间：20:05:43" itemprop="dateCreated datePublished" datetime="2025-02-10T20:01:31+08:00">2025-02-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>一般的 Web 应用都会使用到 Redis 做缓存处理，也可能会用 ElasticSearch 做全文检索。所以这里主要介绍对这个两个数据中间件的使用。Monogo方面也有对应的插件，可以自行尝试。</p>
+<h2 id="创建模块"><a href="#创建模块" class="headerlink" title="创建模块"></a>创建模块</h2><p>在 IDEA 中通过 <code>File-&gt;New-&gt;Modules...</code> 可以创建新的模块 demo-nosql，基础代码和配置可以从demo01中拷贝过来，或者自己手动创建。</p>
+<h2 id="修改依赖"><a href="#修改依赖" class="headerlink" title="修改依赖"></a>修改依赖</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&#x27;java&#x27;</span></span><br><span class="line">    id <span class="string">&quot;io.freefair.lombok&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">group = <span class="string">&quot;com.example&quot;</span></span><br><span class="line"><span class="comment">// 统一版本号</span></span><br><span class="line">version <span class="string">&quot;$&#123;demoVersion&#125;&quot;</span></span><br><span class="line">description = <span class="string">&quot;orm demo&quot;</span></span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:demo-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-logging-logback&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-openapi2-knife4j&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-cache-jedis&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:esearchx&quot;</span>)</span><br><span class="line"></span><br><span class="line">    annotationProcessor(<span class="string">&quot;org.mapstruct:mapstruct-processor:$&#123;mapstructVersion&#125;&quot;</span>)</span><br><span class="line"></span><br><span class="line">    testImplementation(<span class="string">&quot;org.noear:solon-test-junit5&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">compileJava &#123;</span><br><span class="line">    options.encoding = <span class="string">&quot;UTF-8&quot;</span></span><br><span class="line">    options.compilerArgs &lt;&lt; <span class="string">&quot;-parameters&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jar &#123;</span><br><span class="line">    manifest &#123;</span><br><span class="line">        attributes <span class="string">&quot;Main-Class&quot;</span>: <span class="string">&quot;com.example.demo.orm.DemoOrmApp&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dependsOn(configurations.runtimeClasspath)</span><br><span class="line"></span><br><span class="line">    duplicatesStrategy = DuplicatesStrategy.EXCLUDE</span><br><span class="line">    from(configurations.runtimeClasspath.collect &#123;</span><br><span class="line">        <span class="keyword">if</span> (it.isDirectory()) it <span class="keyword">else</span> zipTree(it)</span><br><span class="line">    &#125;) &#123;</span><br><span class="line">        exclude <span class="string">&#x27;META-INF/MANIFEST.MF&#x27;</span></span><br><span class="line">        exclude <span class="string">&#x27;META-INF/*.SF&#x27;</span></span><br><span class="line">        exclude <span class="string">&#x27;META-INF/*.DSA&#x27;</span></span><br><span class="line">        exclude <span class="string">&#x27;META-INF/*.RSA&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> sourcesMain = sourceSets.main</span><br><span class="line">    sourcesMain.allSource.forEach &#123; println(<span class="string">&quot;add from sources: $&#123;it.name&#125;&quot;</span>) &#125;</span><br><span class="line">    from(sourcesMain.output)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用-Redis"><a href="#使用-Redis" class="headerlink" title="使用 Redis"></a>使用 Redis</h2><h3 id="增加依赖"><a href="#增加依赖" class="headerlink" title="增加依赖"></a>增加依赖</h3><p>build.gradle</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-cache-jedis&quot;</span>)</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h3 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h3><p>app.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置数据源</span></span><br><span class="line"><span class="attr">demo:</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">    <span class="attr">driverType:</span> <span class="string">redis</span> <span class="comment">#驱动类型</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:6379</span></span><br><span class="line">    <span class="attr">db:</span> <span class="number">0</span> <span class="comment">#默认为 0，可不配置</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">porpoise-demo</span></span><br><span class="line">    <span class="attr">keyHeader:</span> <span class="string">porpoise-demo</span></span><br><span class="line">    <span class="attr">enableMd5key:</span> <span class="literal">false</span></span><br><span class="line">    <span class="attr">defSeconds:</span> <span class="number">600</span> <span class="comment">#默认为 30，可不配置</span></span><br><span class="line">    <span class="attr">idleConnectionTimeout:</span> <span class="number">10000</span></span><br><span class="line">    <span class="attr">connectTimeout:</span> <span class="number">10000</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="增加配置类"><a href="#增加配置类" class="headerlink" title="增加配置类"></a>增加配置类</h3><p>RedisConfig</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisConfig</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Bean(typed = true)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> RedisClient <span class="title">defaultClient</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">      <span class="meta">@Inject(&quot;$&#123;demo.redis&#125;&quot;)</span> RedisClientSupplier redisClientSupplier)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> redisClientSupplier.get();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="增加-controller"><a href="#增加-controller" class="headerlink" title="增加 controller"></a>增加 controller</h3><p>Controller 非必须，只是方便测试。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/redis&quot;)</span></span><br><span class="line"><span class="meta">@Api(&quot;redis&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> RedisClient redisClient;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;获取key的值&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> redisClient.openAndGet(session -&gt; session.key(key).get());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;设置key的值&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">set</span><span class="params">(String key, String value)</span> </span>&#123;</span><br><span class="line">    redisClient.open(</span><br><span class="line">        session -&gt; &#123;</span><br><span class="line">          session.key(key).set(value);</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>验证有很多种方式，这里通过 swagger 文档进行调用。浏览器输入 <a target="_blank" rel="noopener" href="http://localhost:8080/doc.html">http://localhost:8080/doc.html</a></p>
+<h4 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MjQwNDdjNzZiOWJjOTZlZGFiNDMxMTVjNGM2ZTUwZDNfRTlFbGs4N3lEVEx5R3g2M3ppaXk3SHphYWRGeW0zajhfVG9rZW46TzFqWmJaOXhUb3FITG14YThwUGN2NFgwbkNiXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA" alt="img"></p>
+<h4 id="获取"><a href="#获取" class="headerlink" title="获取"></a>获取</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NjMxZGY4Yjg0YWU1YjY4NDQyMWM3MWYxNjk3YmNiY2NfcHRvRGpmUTFlQ3k0Rzc1bkg3RmVqNWZMRG1mcGNnTXFfVG9rZW46V2VnUWJ0UFEybzhPamp4OWtkY2N5WkpkblpnXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA" alt="img"></p>
+<h2 id="使用-ElasticSearch"><a href="#使用-ElasticSearch" class="headerlink" title="使用 ElasticSearch"></a>使用 ElasticSearch</h2><h3 id="增加依赖-1"><a href="#增加依赖-1" class="headerlink" title="增加依赖"></a>增加依赖</h3><p>build.gradle</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// es 没有对应的插件，需要自己引入 esearchx</span></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:esearchx&quot;</span>)</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h3 id="修改配置-1"><a href="#修改配置-1" class="headerlink" title="修改配置"></a>修改配置</h3><p>app.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置数据源</span></span><br><span class="line"><span class="attr">demo:</span></span><br><span class="line">  <span class="attr">es:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">http://127.0.0.1:9200</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="number">123456</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="增加配置类-1"><a href="#增加配置类-1" class="headerlink" title="增加配置类"></a>增加配置类</h3><p>EsConfig</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EsConfig</span> </span>&#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * url,username,password</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> properties</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="meta">@Bean(name = &quot;esContext&quot;, typed = true)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> EsContext <span class="title">esContext</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;demo.es&#125;&quot;)</span> Properties properties)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> EsContext(properties);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="增加-entity"><a href="#增加-entity" class="headerlink" title="增加 entity"></a>增加 entity</h3><p>增加DemoEntity方便操作数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoEntity</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> String name;</span><br><span class="line">  <span class="keyword">private</span> String code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="增加-controller-1"><a href="#增加-controller-1" class="headerlink" title="增加 controller"></a>增加 controller</h3><p>Controller 非必须，只是方便测试。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/es&quot;)</span></span><br><span class="line"><span class="meta">@Api(&quot;es&quot;)</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EsController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> EsContext esContext;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;获取列表&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> List&lt;DemoEntity&gt; <span class="title">list</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      EsData&lt;DemoEntity&gt; result = <span class="keyword">null</span>;</span><br><span class="line">      result = esContext.indice(<span class="string">&quot;demo&quot;</span>).selectList(DemoEntity.class);</span><br><span class="line">      <span class="keyword">return</span> result.getList();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      log.error(<span class="string">&quot;add error&quot;</span>, e);</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;保存文档&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">add</span><span class="params">(<span class="meta">@Body</span> DemoEntity entity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      esContext.indice(<span class="string">&quot;demo&quot;</span>).insert(entity);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      log.error(<span class="string">&quot;add error&quot;</span>, e);</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="验证-1"><a href="#验证-1" class="headerlink" title="验证"></a>验证</h3><p>验证有很多种方式，这里通过 swagger 文档进行调用。浏览器输入 <a target="_blank" rel="noopener" href="http://localhost:8080/doc.html">http://localhost:8080/doc.html</a></p>
+<h4 id="保存文档"><a href="#保存文档" class="headerlink" title="保存文档"></a>保存文档</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZmU3OTUyMWJhMjI2NjNhZTBkM2E3ZjA0M2RhYTI5OWFfRzk3NmJhUEhQd0Y1aXZWR083M3Q1Z2laekpwVjE0SUlfVG9rZW46QVNBbWJpYkEzb0JQZUF4cDNmZGN5T0N1bllkXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA" alt="img"></p>
+<h4 id="获取文档列表"><a href="#获取文档列表" class="headerlink" title="获取文档列表"></a>获取文档列表</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YzgwMzRiYmNmNGRlZTM4ZjNlMDdkMWI2ODhmZmI2ODZfS3Q3ZmxwTUdpTGx2WVdXcklDUUdkb2JCdnNxaDhneGRfVG9rZW46TEJHcGJiOG9MbzFMbkZ4NWt5MmNkWmlQbmhkXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA" alt="img"></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Solon 通过简单的配置就可以操作 Redis 和 ElasticSearch ，对 NoSql 的支持还是挺完整的，更多的对数据的操作需要看具体的类库提供的接口。</p>
+<p>完整代码可以从 <a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/porpoise-demo">https://gitee.com/CrazyAirhead/porpoise-demo</a> 获取。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%95%99%E7%A8%8B100/" rel="tag"><i class="fa fa-tag"></i> 教程100</a>
+              <a href="/tags/%E5%86%99%E4%BD%9C/" rel="tag"><i class="fa fa-tag"></i> 写作</a>
+              <a href="/tags/Solon/" rel="tag"><i class="fa fa-tag"></i> Solon</a>
+              <a href="/tags/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" rel="tag"><i class="fa fa-tag"></i> Solon 实用教程</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/02/09/course100/018/" rel="prev" title="数据操作 —— 操作 SQL">
+      <i class="fa fa-chevron-left"></i> 数据操作 —— 操作 SQL
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/02/11/course100/020/" rel="next" title="Web 开发 —— 基础">
+      Web 开发 —— 基础 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%A8%A1%E5%9D%97"><span class="nav-number">2.</span> <span class="nav-text">创建模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E4%BE%9D%E8%B5%96"><span class="nav-number">3.</span> <span class="nav-text">修改依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Redis"><span class="nav-number">4.</span> <span class="nav-text">使用 Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96"><span class="nav-number">4.1.</span> <span class="nav-text">增加依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE"><span class="nav-number">4.2.</span> <span class="nav-text">修改配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E9%85%8D%E7%BD%AE%E7%B1%BB"><span class="nav-number">4.3.</span> <span class="nav-text">增加配置类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0-controller"><span class="nav-number">4.4.</span> <span class="nav-text">增加 controller</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">4.5.</span> <span class="nav-text">验证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE"><span class="nav-number">4.5.1.</span> <span class="nav-text">设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96"><span class="nav-number">4.5.2.</span> <span class="nav-text">获取</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-ElasticSearch"><span class="nav-number">5.</span> <span class="nav-text">使用 ElasticSearch</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96-1"><span class="nav-number">5.1.</span> <span class="nav-text">增加依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE-1"><span class="nav-number">5.2.</span> <span class="nav-text">修改配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E9%85%8D%E7%BD%AE%E7%B1%BB-1"><span class="nav-number">5.3.</span> <span class="nav-text">增加配置类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0-entity"><span class="nav-number">5.4.</span> <span class="nav-text">增加 entity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0-controller-1"><span class="nav-number">5.5.</span> <span class="nav-text">增加 controller</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81-1"><span class="nav-number">5.6.</span> <span class="nav-text">验证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%9D%E5%AD%98%E6%96%87%E6%A1%A3"><span class="nav-number">5.6.1.</span> <span class="nav-text">保存文档</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%96%87%E6%A1%A3%E5%88%97%E8%A1%A8"><span class="nav-number">5.6.2.</span> <span class="nav-text">获取文档列表</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">278</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">116</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">115</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">650k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">9:51</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '28a9d413fffe02462d7d561eed32f73a',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
