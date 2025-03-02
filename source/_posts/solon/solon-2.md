@@ -14,9 +14,9 @@ tags:
 
 在「使用国产化框架 Solon 的一些开发经验」中提到，我们只是在平台的一个应用开始使用 Solon 框架，并非一次性的完全替换。但随着 solon cloud gateway 官方版本发布，替换Spring Gateway 也成为可能，于是开始相关的替换工作。
 
-我们的网关主要提供了统计授权和鉴权的功能，及最基础的服务路由能力。另外系统中个问卷功能是对外提供服务的，当时为了提供对外服务和减少Gateway的路由判断逻辑，增加一个api-gateway。
+我们的网关主要提供了统一授权和鉴权的功能，及最基础的服务路由能力。另外系统中个问卷功能是对外提供服务的，当时为了提供对外服务和减少Gateway的路由判断逻辑，增加一个api-gateway。
 
-此次使用 solon gateway 进行替换需要完整的实现旧有Spring Gateway的功能，同时想利用 solon 的本地 gateway 的路由分组功能合并api-gateway。
+此次使用 solon gateway 进行替换需要完整的实现旧有Spring Gateway的功能，同时想利用 Solon 的本地 gateway 的路由分组功能合并api-gateway。
 
 一样的，在开发前，需要完整阅读，Solon Gateway 的官网文档 （https://solon.noear.org/article/804）。一样的，文档说明简单，集成也不难。
 
