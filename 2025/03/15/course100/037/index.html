@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="说明一开始尝试按源码启动的方式（https:&#x2F;&#x2F;ragflow.io&#x2F;docs&#x2F;dev&#x2F;launch_ragflow_from_source），直接运行 Ragflow，但是在安装 Python 依赖的时候就报错了。于是尝试使用 Docker 的方式运行（https:&#x2F;&#x2F;ragflow.io&#x2F;docs&#x2F;dev&#x2F;build_docker_image）。为什么呢？因为目前官方提供的所有 Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mac 上编译 Ragflow">
+<meta property="og:url" content="http://l4qiang.me/2025/03/15/course100/037/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="说明一开始尝试按源码启动的方式（https:&#x2F;&#x2F;ragflow.io&#x2F;docs&#x2F;dev&#x2F;launch_ragflow_from_source），直接运行 Ragflow，但是在安装 Python 依赖的时候就报错了。于是尝试使用 Docker 的方式运行（https:&#x2F;&#x2F;ragflow.io&#x2F;docs&#x2F;dev&#x2F;build_docker_image）。为什么呢？因为目前官方提供的所有 Docker">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=NTMyNmZkYTYyMGMwZmJmM2U4YTdhOTUxOTJjZjc5M2Vfc1ZtREhJc0NEY21LNnRMSXBRdG85dFlUM3I2UGR6MmNfVG9rZW46QUpJcWI1OUlub2pHa3B4NnZsc2NPWnFjbkJlXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA">
+<meta property="og:image" content="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=NmEzZTJlZTgxZTc3OGJmOWRiNzc0ZjlmZDg2ZGYyY2NfU25pd1FlbGNQdXk3eVNDcmtLVkJobGY4VG4xbXQwTXpfVG9rZW46QVpmMmJKdUs3b2NYODl4RkhBVGNsMThJbklFXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA">
+<meta property="og:image" content="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=MWQzMmNhZDlkNDZlZGM4M2MyMWUxYWRkMWIxYjZmMDRfMlA4NjEzajM5eTAzZWNRWUROMUh2eW02V1R5WXZTa3ZfVG9rZW46Wm9RYWI2OFhRb25DWWl4N2s5Q2NGVVVCbjRmXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA">
+<meta property="og:image" content="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=NTNlODFhNmI4ZDFkM2UzYTJlOGEyOWZiZjg3YTViOTBfY0E5R2FwTE1udHpDbDBlRko5RU5VSXdKSHJxQktnNlpfVG9rZW46QkRGV2JKdlZ1b25aaDN4YUZIZmNBWm9Bbk1jXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA">
+<meta property="og:image" content="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=Nzc0ZjBjZTlhNGJiYzI2NGY4ODkyMmQwNTk4NjgxOWRfUXltdWtENXprRmo4TnB6dER4NkZ6Y0I0WlhLWkRsdXZfVG9rZW46RWRPcmJhRFcxb1RLTjd4UjBUcmNNczNRbm11XzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA">
+<meta property="og:image" content="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=YTA3MjVmZDA0NTZkYzNhOWYxNWI1ZmY5NDBkZmQ5MTdfZzRuWTBBckI1TXh5clp5TVd3TldxSDhMVVdBQkh5U25fVG9rZW46SDhpdWIyZUxabzgzbkR4NjZrcGNuMExNbnFmXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA">
+<meta property="og:image" content="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=YzQ0ZDk4NjA4ZmFmZjMzOWU5YmVjZDczMDg5ZTYyOTNfcWdncmlJYzFTRm92OUkxN2p2dEJ2YjdoV0xvRndHWFBfVG9rZW46RGxtYWJ5djVBb1RMMUx4bVJ2ZmN6QnlZbldlXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA">
+<meta property="article:published_time" content="2025-03-15T01:44:20.000Z">
+<meta property="article:modified_time" content="2025-03-15T01:49:15.402Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="RAG">
+<meta property="article:tag" content="Ragflow">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=NTMyNmZkYTYyMGMwZmJmM2U4YTdhOTUxOTJjZjc5M2Vfc1ZtREhJc0NEY21LNnRMSXBRdG85dFlUM3I2UGR6MmNfVG9rZW46QUpJcWI1OUlub2pHa3B4NnZsc2NPWnFjbkJlXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA">
+
+<link rel="canonical" href="http://l4qiang.me/2025/03/15/course100/037/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Mac 上编译 Ragflow | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2613e7f510eebd12cf4d0d067e4ce195";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/03/15/course100/037/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Mac 上编译 Ragflow
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-03-15 09:44:20 / 修改时间：09:49:15" itemprop="dateCreated datePublished" datetime="2025-03-15T09:44:20+08:00">2025-03-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/RAG/" itemprop="url" rel="index"><span itemprop="name">RAG</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/RAG/Ragflow/" itemprop="url" rel="index"><span itemprop="name">Ragflow</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>一开始尝试按源码启动的方式（<a target="_blank" rel="noopener" href="https://ragflow.io/docs/dev/launch_ragflow_from_source%EF%BC%89%EF%BC%8C%E7%9B%B4%E6%8E%A5%E8%BF%90%E8%A1%8C">https://ragflow.io/docs/dev/launch_ragflow_from_source），直接运行</a> Ragflow，但是在安装 Python 依赖的时候就报错了。于是尝试使用 Docker 的方式运行（<a target="_blank" rel="noopener" href="https://ragflow.io/docs/dev/build_docker_image%EF%BC%89%E3%80%82%E4%B8%BA%E4%BB%80%E4%B9%88%E5%91%A2%EF%BC%9F%E5%9B%A0%E4%B8%BA%E7%9B%AE%E5%89%8D%E5%AE%98%E6%96%B9%E6%8F%90%E4%BE%9B%E7%9A%84%E6%89%80%E6%9C%89">https://ragflow.io/docs/dev/build_docker_image）。为什么呢？因为目前官方提供的所有</a> Docker 镜像均基于 x86 架构构建，并不提供基于 ARM64 的 Docker 镜像。 </p>
+<p>我这里使用 OrbStack 工具来管理容器。</p>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><ol>
+<li>安装uv</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># On macOS and Linux.</span></span><br><span class="line">curl -LsSf https://astral.sh/uv/install.sh | sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据提示，执行 source 命令，或者重开 termial</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>获取源码编译镜像</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/infiniflow/ragflow.git</span><br><span class="line"><span class="built_in">cd</span> ragflow/</span><br><span class="line">uv run download_deps.py</span><br><span class="line">docker build -f Dockerfile.deps -t infiniflow/ragflow_deps .</span><br><span class="line">docker build --build-arg LIGHTEN=1 -f Dockerfile -t infiniflow/ragflow:nightly-slim .</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>download_deps.py</code>会下载一些基础依赖和模型，可以根据自己的实际情况调整模型的下载，比如是否下载模型，模型的下载地址等（未经完全验证是否可以屏蔽模型）。</p>
+<p>以下模型下载的关键代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 镜像列表</span></span><br><span class="line">repos = [</span><br><span class="line">    <span class="string">&quot;InfiniFlow/text_concat_xgb_v1.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;InfiniFlow/deepdoc&quot;</span>,</span><br><span class="line">    <span class="string">&quot;InfiniFlow/huqie&quot;</span>,</span><br><span class="line">    <span class="string">&quot;BAAI/bge-large-zh-v1.5&quot;</span>,</span><br><span class="line">    <span class="string">&quot;BAAI/bge-reranker-v2-m3&quot;</span>,</span><br><span class="line">    <span class="string">&quot;maidalun1020/bce-embedding-base_v1&quot;</span>,</span><br><span class="line">    <span class="string">&quot;maidalun1020/bce-reranker-base_v1&quot;</span>,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载镜像</span></span><br><span class="line"><span class="keyword">for</span> repo_id <span class="keyword">in</span> repos:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Downloading huggingface repo <span class="subst">&#123;repo_id&#125;</span>...&quot;</span>)</span><br><span class="line">    download_model(repo_id)</span><br></pre></td></tr></table></figure>
+
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>特别重要的是，编译镜像的过程，注意开启全局的科学上网。主要可能碰到的问题，比如组件下载不成功，组件下载不完整等等。</p>
+<p>如果组件下载不成功的话，重新执行一遍就好了。</p>
+<p>我就在最后一步 docker build 的时候出现问题，看提示就是需要安装的包出错了，在 ragflow 目录下找到对应下载的文件删掉，然后重新执行 <code>uv run download_deps.py</code>。</p>
+<p>编译的过程时间可能比较长，需要耐心等待。</p>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><p>需要远行 Ragflow 还需要做些配置。打开 <code>docker/.env</code>，找到 <code>RAGFLOW_IMAGE</code>的配置，把镜像地址修改成 <code>infiniflow/ragflow:nightly-slim</code>。</p>
+<p>接下来通过docker compose 启动服务。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd docker</span><br><span class="line">$ docker compose -f docker-compose-macos.yml up -d</span><br></pre></td></tr></table></figure>
+
+<p>耐心等待相关的服务启动，然后使用<a target="_blank" rel="noopener" href="http://127.0.0.1/">http://127.0.0.1</a> 访问。</p>
+<p>默认没有用户，直接注册一个就可以，第一个用户会成为管理员。</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=NTMyNmZkYTYyMGMwZmJmM2U4YTdhOTUxOTJjZjc5M2Vfc1ZtREhJc0NEY21LNnRMSXBRdG85dFlUM3I2UGR6MmNfVG9rZW46QUpJcWI1OUlub2pHa3B4NnZsc2NPWnFjbkJlXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA" alt="img"></p>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>自己碰的的问题，是添加模型的时候出错。看了ragflow 群里的问题，这个问题也蛮多人问的。</p>
+<p>ragflow 提供的 docker compose 使用的是 ragflow 的对应的网桥就是 docker_ragflow，也可以通过如下命令查看。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker network ls</span><br><span class="line"></span><br><span class="line"><span class="comment"># 结果</span></span><br><span class="line">881b4fc04bf4   bridge           bridge    local</span><br><span class="line">67e9e0de36bc   docker_ragflow   bridge    local</span><br><span class="line">4e76407faa32   host             host      local</span><br><span class="line">d611379d4316   none             null      local</span><br></pre></td></tr></table></figure>
+
+<p>找到了网桥，我们可以通过 docker inspect 查看具体的ip，找到 Gateway 的部分就是宿主机的 ip</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">docker inspect docker_ragflow</span><br><span class="line"></span><br><span class="line"><span class="comment"># Gateway</span></span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;Name&quot;</span>: <span class="string">&quot;docker_ragflow&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Id&quot;</span>: <span class="string">&quot;67e9e0de36bc646402f69919aaafa30d663f27eb66a6e63bfaf8f75fc59c8a01&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Created&quot;</span>: <span class="string">&quot;2025-03-14T14:19:59.789673667+08:00&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Scope&quot;</span>: <span class="string">&quot;local&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Driver&quot;</span>: <span class="string">&quot;bridge&quot;</span>,</span><br><span class="line">        <span class="string">&quot;EnableIPv6&quot;</span>: false,</span><br><span class="line">        <span class="string">&quot;IPAM&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;Driver&quot;</span>: <span class="string">&quot;default&quot;</span>,</span><br><span class="line">            <span class="string">&quot;Options&quot;</span>: null,</span><br><span class="line">            <span class="string">&quot;Config&quot;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="string">&quot;Subnet&quot;</span>: <span class="string">&quot;192.168.97.0/24&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;Gateway&quot;</span>: <span class="string">&quot;192.168.97.1&quot;</span></span><br><span class="line">                &#125;</span><br><span class="line">            ]</span><br></pre></td></tr></table></figure>
+
+<p>找到了正确的地址，但还是不能通过宿主机地址访问，那么检查 ollama 的配置，是否导出对应的变量。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">export OLLAMA_ORIGINS=<span class="string">&quot;*&quot;</span></span><br><span class="line">export OLLAMA_HOST=<span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="number">11434</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果没有添加，需要补上</span></span><br><span class="line"><span class="comment"># source .zshrc</span></span><br></pre></td></tr></table></figure>
+
+<p>如果没有添加，重新添加后重启 ollama。然后通过本地 IP，而不是 127.0.0.1 或者 localhost 访问，是否正常。</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=NmEzZTJlZTgxZTc3OGJmOWRiNzc0ZjlmZDg2ZGYyY2NfU25pd1FlbGNQdXk3eVNDcmtLVkJobGY4VG4xbXQwTXpfVG9rZW46QVpmMmJKdUs3b2NYODl4RkhBVGNsMThJbklFXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA" alt="img"></p>
+<p>如果此时提示网页无法访问，这时应该运行 <code>ollama serve</code>，开启 ollama 的服务。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ollama serve</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以看到类似的提示信息。</span></span><br><span class="line"><span class="number">2025</span>/03/<span class="number">14</span> <span class="number">14</span>:<span class="number">48</span>:<span class="number">19</span> routes.go:<span class="number">1225</span>: INFO server config env=<span class="string">&quot;map[HTTPS_PROXY: HTTP_PROXY: NO_PROXY: OLLAMA_CONTEXT_LENGTH:2048 OLLAMA_DEBUG:false OLLAMA_FLASH_ATTENTION:false OLLAMA_GPU_OVERHEAD:0 OLLAMA_HOST:http://0.0.0.0:11434 OLLAMA_KEEP_ALIVE:5m0s OLLAMA_KV_CACHE_TYPE: OLLAMA_LLM_LIBRARY: OLLAMA_LOAD_TIMEOUT:5m0s OLLAMA_MAX_LOADED_MODELS:0 OLLAMA_MAX_QUEUE:512 OLLAMA_MODELS:/Users/airhead/.ollama/models OLLAMA_MULTIUSER_CACHE:false OLLAMA_NEW_ENGINE:false OLLAMA_NOHISTORY:false OLLAMA_NOPRUNE:false OLLAMA_NUM_PARALLEL:0 OLLAMA_ORIGINS:[* http://localhost https://localhost http://localhost:* https://localhost:* http://127.0.0.1 https://127.0.0.1 http://127.0.0.1:* https://127.0.0.1:* http://0.0.0.0 https://0.0.0.0 http://0.0.0.0:* https://0.0.0.0:* app://* file://* tauri://* vscode-webview://* vscode-file://*] OLLAMA_SCHED_SPREAD:false http_proxy: https_proxy: no_proxy:]&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>填写网桥的 ip 之后还是无法访问，那需要确定实际的网桥 ip 是否真的存在。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipconfig grep | <span class="number">192.168</span><span class="number">.7</span><span class="number">.1</span></span><br></pre></td></tr></table></figure>
+
+<p>如果没有结果就说明 ip 没有真正起来，导致 ip 无法访问。接着通过 <code>ifconfig</code>，找到可访问的 ip，比如我这里实际可访问的网桥是 bridge102（这里暂时不确定为什么。）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">ipconfig</span><br><span class="line"></span><br><span class="line">bridge102: flags=<span class="number">8863</span>&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu <span class="number">1500</span></span><br><span class="line">        options=<span class="number">63</span>&lt;RXCSUM,TXCSUM,TSO4,TSO6&gt;</span><br><span class="line">        ether fa:4d:<span class="number">89</span>:d7:be:<span class="number">66</span></span><br><span class="line">        inet <span class="number">198.19</span><span class="number">.249</span><span class="number">.3</span> netmask <span class="number">0xfffffe00</span> broadcast <span class="number">198.19</span><span class="number">.249</span><span class="number">.255</span></span><br><span class="line">        inet6 fe80::f84d:89ff:fed7:be66%bridge102 prefixlen <span class="number">64</span> scopeid <span class="number">0x1e</span> </span><br><span class="line">        inet6 fd07:b51a:cc66:<span class="number">0</span>:a617:db5e:ab7:e9f1 prefixlen <span class="number">64</span> </span><br><span class="line">        Configuration:</span><br><span class="line">                <span class="built_in">id</span> <span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span> priority <span class="number">0</span> hellotime <span class="number">0</span> fwddelay <span class="number">0</span></span><br><span class="line">                maxage <span class="number">0</span> holdcnt <span class="number">0</span> proto stp maxaddr <span class="number">100</span> timeout <span class="number">1200</span></span><br><span class="line">                root <span class="built_in">id</span> <span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span> priority <span class="number">0</span> ifcost <span class="number">0</span> port <span class="number">0</span></span><br><span class="line">                ipfilter disabled flags <span class="number">0x0</span></span><br><span class="line">        member: vmenet3 flags=<span class="number">10003</span>&lt;LEARNING,DISCOVER,CSUM&gt;</span><br><span class="line">                ifmaxaddr <span class="number">0</span> port <span class="number">29</span> priority <span class="number">0</span> path cost <span class="number">0</span></span><br><span class="line">        nd6 options=<span class="number">201</span>&lt;PERFORMNUD,DAD&gt;</span><br><span class="line">        media: autoselect</span><br><span class="line">        status: active</span><br><span class="line">        </span><br><span class="line">bridge100: flags=<span class="number">8863</span>&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu <span class="number">1500</span></span><br><span class="line">        options=<span class="number">63</span>&lt;RXCSUM,TXCSUM,TSO4,TSO6&gt;</span><br><span class="line">        ether fa:4d:<span class="number">89</span>:d7:be:<span class="number">64</span></span><br><span class="line">        inet <span class="number">192.168</span><span class="number">.97</span><span class="number">.0</span> netmask <span class="number">0xffffff00</span> broadcast <span class="number">192.168</span><span class="number">.97</span><span class="number">.255</span></span><br><span class="line">        inet6 fe80::f84d:89ff:fed7:be64%bridge100 prefixlen <span class="number">64</span> scopeid <span class="number">0x18</span> </span><br><span class="line">        Configuration:</span><br><span class="line">                <span class="built_in">id</span> <span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span> priority <span class="number">0</span> hellotime <span class="number">0</span> fwddelay <span class="number">0</span></span><br><span class="line">                maxage <span class="number">0</span> holdcnt <span class="number">0</span> proto stp maxaddr <span class="number">100</span> timeout <span class="number">1200</span></span><br><span class="line">                root <span class="built_in">id</span> <span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span> priority <span class="number">0</span> ifcost <span class="number">0</span> port <span class="number">0</span></span><br><span class="line">                ipfilter disabled flags <span class="number">0x0</span></span><br><span class="line">        member: vmenet0 flags=<span class="number">10003</span>&lt;LEARNING,DISCOVER,CSUM&gt;</span><br><span class="line">                ifmaxaddr <span class="number">0</span> port <span class="number">23</span> priority <span class="number">0</span> path cost <span class="number">0</span></span><br><span class="line">        nd6 options=<span class="number">201</span>&lt;PERFORMNUD,DAD&gt;</span><br><span class="line">        media: autoselect</span><br><span class="line">        status: active</span><br><span class="line">        </span><br><span class="line">ifconfig |grep <span class="number">198.19</span><span class="number">.249</span><span class="number">.3</span>         </span><br><span class="line">        inet <span class="number">198.19</span><span class="number">.249</span><span class="number">.3</span> netmask <span class="number">0xfffffe00</span> broadcast <span class="number">198.19</span><span class="number">.249</span><span class="number">.255</span></span><br></pre></td></tr></table></figure>
+
+<p>之后使用了 198.19.249.3 这个ip 可以正常访问，配置 llm 也正常。</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=MWQzMmNhZDlkNDZlZGM4M2MyMWUxYWRkMWIxYjZmMDRfMlA4NjEzajM5eTAzZWNRWUROMUh2eW02V1R5WXZTa3ZfVG9rZW46Wm9RYWI2OFhRb25DWWl4N2s5Q2NGVVVCbjRmXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA" alt="img"></p>
+<p>为什么不用本机 ip 而用 docker 网桥的 ip 呢？因为是笔记本，通过 Wi-Fi 获取的 ip 可能变化，而网桥 ip 是稳定的。</p>
+<h2 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h2><p>VS Code 安装 Remote Development 插件。它包含多个插件，其中 Dev Containters 可以连接到 Docker 容器作为开发环境，这样的好处是开发环境与部署环境一致。</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=NTNlODFhNmI4ZDFkM2UzYTJlOGEyOWZiZjg3YTViOTBfY0E5R2FwTE1udHpDbDBlRko5RU5VSXdKSHJxQktnNlpfVG9rZW46QkRGV2JKdlZ1b25aaDN4YUZIZmNBWm9Bbk1jXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA" alt="img"></p>
+<p>当安装好 Remote Development，就可以通过 Remote Explorer 查看已经安装的容器，并通过点击对应容器的箭头（注意下图红色框的部分）。</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=Nzc0ZjBjZTlhNGJiYzI2NGY4ODkyMmQwNTk4NjgxOWRfUXltdWtENXprRmo4TnB6dER4NkZ6Y0I0WlhLWkRsdXZfVG9rZW46RWRPcmJhRFcxb1RLTjd4UjBUcmNNczNRbm11XzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA" alt="img"></p>
+<p>进入到容器内部，选对应的目录，就可以打开 <code>/ragflow</code>，这样就能看到实际的代码了。</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=YTA3MjVmZDA0NTZkYzNhOWYxNWI1ZmY5NDBkZmQ5MTdfZzRuWTBBckI1TXh5clp5TVd3TldxSDhMVVdBQkh5U25fVG9rZW46SDhpdWIyZUxabzgzbkR4NjZrcGNuMExNbnFmXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA" alt="img"></p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ol>
+<li>还需要调整 Dockerfile 方便挂载本地的源码位置，这样方便通过外部的 Git 管理开发代码。</li>
+<li>在配置 LLM 模型的使用有个支持的最大 Token 数，这个值应该怎么填呢？通过 <code>ollama show</code>查看对应模型的信息，其中 context length 就是模型的最大 Token 数了。</li>
+</ol>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=YzQ0ZDk4NjA4ZmFmZjMzOWU5YmVjZDczMDg5ZTYyOTNfcWdncmlJYzFTRm92OUkxN2p2dEJ2YjdoV0xvRndHWFBfVG9rZW46RGxtYWJ5djVBb1RMMUx4bVJ2ZmN6QnlZbldlXzE3NDIwMDMyODU6MTc0MjAwNjg4NV9WNA" alt="img"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ollama show deepseek-r1:7b</span><br><span class="line"></span><br><span class="line"><span class="comment"># </span></span><br><span class="line">  Model</span><br><span class="line">    architecture        qwen2     </span><br><span class="line">    parameters          7.6B      </span><br><span class="line">    context length      131072    </span><br><span class="line">    embedding length    3584      </span><br><span class="line">    quantization        Q4_K_M   </span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>因为 ollama 暂时不支持重排，需要安装 xinterface。目前通过容器安装 xinterface，可能镜像或者配置选错了，导致 xinterface 的镜像无法启动。 </li>
+<li>因为 OrbStack 也可以运行虚拟机，理论上来说，可以通过安装 Ubuntu 虚拟机的方式，照着 Dockerfile 文件安装相关的依赖。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"><i class="fa fa-tag"></i> AI</a>
+              <a href="/tags/RAG/" rel="tag"><i class="fa fa-tag"></i> RAG</a>
+              <a href="/tags/Ragflow/" rel="tag"><i class="fa fa-tag"></i> Ragflow</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/03/08/course100/036/" rel="prev" title="加餐 —— Spring Boot 项目转 Solon 项目工具">
+      <i class="fa fa-chevron-left"></i> 加餐 —— Spring Boot 项目转 Solon 项目工具
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91"><span class="nav-number">2.</span> <span class="nav-text">编译</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.1.</span> <span class="nav-text">步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">2.2.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C"><span class="nav-number">3.</span> <span class="nav-text">运行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.</span> <span class="nav-text">问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91"><span class="nav-number">4.</span> <span class="nav-text">开发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">5.</span> <span class="nav-text">其他</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">285</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">119</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">118</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">704k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:40</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '35f987c102b59a63d6c802743edf4a92',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

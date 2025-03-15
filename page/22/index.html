@@ -172,6 +172,854 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2020/02/15/misc/keywords/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/02/15/misc/keywords/" class="post-title-link" itemprop="url">编程语言能打印自己的保留关键字么？</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-15 15:33:56" itemprop="dateCreated datePublished" datetime="2020-02-15T15:33:56+08:00">2020-02-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>今天看到一段Python程序，打印Python的保留关键字。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> keyword</span><br><span class="line"><span class="built_in">print</span>(keyword.kwlist)</span><br></pre></td></tr></table></figure>
+<p>程序写了这么多年，也接触了一些语言（C++、Go、Java、Javascript(TypeScript)、Kotlin、Pyton），印象中都是说语言规范，记下来就好。突然就好奇了，有多少语言能利用自己的内置类库完成这个事情呢？于是拿自己接触的这些语言来做个对比。</p>
+<h2 id="能否打印关键字"><a href="#能否打印关键字" class="headerlink" title="能否打印关键字"></a>能否打印关键字</h2><p>其实在StackOverflow上也有人有类似的问题，比如：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/9642087/is-it-possible-to-get-a-list-of-keywords-in-python">Is it possible to get a list of keywords in Python?</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/24265110/get-a-list-of-all-java-reserved-keywords">Get a list of all Java reserved Keywords</a></li>
+</ul>
+<p>做了个简单的搜索，整理出下面这张表格，表格内容不一定准确，欢迎纠正。</p>
+<table>
+<thead>
+<tr>
+<th>Programming Languages</th>
+<th>Can print keys by SelfLib</th>
+<th>Keywords</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>C++</td>
+<td>No</td>
+<td><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/keyword">https://en.cppreference.com/w/cpp/keyword</a></td>
+</tr>
+<tr>
+<td>Go</td>
+<td>No</td>
+<td><a target="_blank" rel="noopener" href="https://golang.org/ref/spec#Keywords">https://golang.org/ref/spec#Keywords</a></td>
+</tr>
+<tr>
+<td>Java</td>
+<td>No</td>
+<td><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html">https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html</a></td>
+</tr>
+<tr>
+<td>JavaScript</td>
+<td>No</td>
+<td><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar</a></td>
+</tr>
+<tr>
+<td>TypeScript</td>
+<td>No</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Microsoft/TypeScript/issues/2536">https://github.com/Microsoft/TypeScript/issues/2536</a></td>
+</tr>
+<tr>
+<td>Kotlin</td>
+<td>No</td>
+<td><a target="_blank" rel="noopener" href="https://kotlinlang.org/docs/reference/keyword-reference.html">https://kotlinlang.org/docs/reference/keyword-reference.html</a></td>
+</tr>
+<tr>
+<td>Python</td>
+<td>Yes</td>
+<td><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/keyword.html">https://docs.python.org/3/library/keyword.html</a></td>
+</tr>
+</tbody></table>
+<p>一些补充：</p>
+<ul>
+<li>打印保留关键字本身并不难，维护一个列表就可以的。</li>
+<li>Java有个内置函数是可以判断是否为关键字的<code>SourceVersion.isKeyword(str)</code>。</li>
+</ul>
+<h2 id="语言关键字统计"><a href="#语言关键字统计" class="headerlink" title="语言关键字统计"></a>语言关键字统计</h2><p>在找不同语言关键字的时候找到这样一个统计库。<a target="_blank" rel="noopener" href="https://github.com/leighmcculloch/keywords">A list and count of keywords in programming languages</a></p>
+<blockquote>
+<p>The number of keywords in a programming language <em>can</em> be an indication to it’s simplicity/complexity, and that can impact the simplicity/complexity of the solutions that developers produce using it. Complex solutions can be more expensive to maintain and difficult to hire for. However, this is dependent on many factors and keyword count is only one; language idioms also play a massive part.</p>
+</blockquote>
+<h2 id="细节之处见真章"><a href="#细节之处见真章" class="headerlink" title="细节之处见真章"></a>细节之处见真章</h2><p>提供丰富的类库，在意细节，是否会是Python能这么流行的原因呢？</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/12/28/misc/RubiksCube/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/12/28/misc/RubiksCube/" class="post-title-link" itemprop="url">关于学习魔方的一些思考</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-28 20:51:11" itemprop="dateCreated datePublished" datetime="2019-12-28T20:51:11+08:00">2019-12-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%AD%94%E6%96%B9/" itemprop="url" rel="index"><span itemprop="name">魔方</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%AD%94%E6%96%B9/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">软件开发</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%AD%94%E6%96%B9/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">管理</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>事情大致是这样的，在此之前我基本算是零基础，有那么一两次玩是刚好看到同事在玩，顺手玩玩，甚至没完成过一个面。这次呢，因为儿子买了个魔方，玩了会就没玩了，自己就拾起来玩玩，找了视频教程来看，完成整个魔方的复原，现在处于教小孩玩魔方的阶段。在这个学习的过程中呢，有了一些杂七杂八的思考，主要和软件开发有关，于是记录了下来。</p>
+<blockquote>
+<p>如果你和我一样是魔方初学者，本文可能对你有点用，但这篇不是教程，建议看网上的视频教程。</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/12/28/misc/RubiksCube/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/12/12/bigdata/es/olap-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/12/12/bigdata/es/olap-2/" class="post-title-link" itemprop="url">Elasticsearch数据建模</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-12 23:46:17" itemprop="dateCreated datePublished" datetime="2019-12-12T23:46:17+08:00">2019-12-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>上一篇<a href="https://l4qiang.me/2018/09/28/es/olap-1/">《基于ElasticSearch的OLAP框架思路》</a>简单介绍了ES的存储结构，本文对ES的数据建模做些整理，是对上文的补充。</p>
+<h1 id="数据建模"><a href="#数据建模" class="headerlink" title="数据建模"></a>数据建模</h1><h2 id="范式化设计"><a href="#范式化设计" class="headerlink" title="范式化设计"></a>范式化设计</h2><p>在关系型数据库中会强调范式化设计（Normalization），其主要目标是“减少不必要的更新”，但也就带了一个问题“查询缓慢”，因为数据库越范式化，就需要Join越多的表。</p>
+<p>关系型数据库设计时，通常设计时做到3NF，但在必要时进行数据的冗余。以下是范式的简要描述：</p>
+<ul>
+<li>1NF——消除非主属性对键的部分函数依赖</li>
+<li>2NF——消除非主属性对键的传递函数依赖</li>
+<li>3NF——消除主属性对键的传递函数依赖</li>
+<li>BCNF——主属性不依赖主属性</li>
+</ul>
+<h2 id="反范式化设计"><a href="#反范式化设计" class="headerlink" title="反范式化设计"></a>反范式化设计</h2><p>范式化的另一个好处呢，就是减少了存储空间（也有可能是早些年存储成本大，才有了范式化设计）。但在存储越来越便宜和数据量越来越大，查询需求也越来越多的情况下，关系型数据库就越来越受到挑战，非关系型数据库不断的涌现出来。其实可以理解来范式化设计与反范式化设计的交锋和解决不同的应用场景问题。</p>
+<p>反范式化设计（Denormalization），就是尽量不去使用关联关系，而是在文档中保存存冗余的数据，将数据扁平化（Flattening）。这样做的优点很明显，就是数据读取性能好，缺点也很明显，不适合在数据频繁修改的场景，一条数据改动，会引起很多数据的更新，对数据一致性提出更高要求。</p>
+<p>ES数据库设计时通常会采用反范式化设计，因为ES并不擅长处理关联关系，一般采用以下四种方法来处理关联：</p>
+<ul>
+<li>对象类型（Object）</li>
+<li>嵌套对象（Nested Object）</li>
+<li>父子关系（Parent/Child）</li>
+<li>应用端关联</li>
+</ul>
+<p>其实应用端关联不属于ES设计的部分，在本文中不再赘述，另外基础的数据类型对数据建模影响不大，需要时参看ES相关文档进行设计即可。</p>
+<h2 id="对象类型"><a href="#对象类型" class="headerlink" title="对象类型"></a>对象类型</h2><p>ES采用JSON的文档化存储，而JSON文档天然就是有层级的，文档内可以包含对象（普通对象和数组对象），如果存储数组对象并需要进行查询或统计时，计算结果可能是错误的，这个时候就需要用到嵌套对象。</p>
+<h2 id="嵌套对象"><a href="#嵌套对象" class="headerlink" title="嵌套对象"></a>嵌套对象</h2><p>嵌套对象是对象类型的一个特例，允许对象数组中的对象独立索引，Nested文档会被保存在两个Lucene文档中，在查询时做Join处理，因此每次更新，需要重新索引整个对象（包括根对象和嵌套对象）。</p>
+<h2 id="父子关系"><a href="#父子关系" class="headerlink" title="父子关系"></a>父子关系</h2><p>ES提供了类似关系型数据库中Join的实现。使用Join数据类型实现，可能过维护Parent/Child的关系，从而分离两个对象。这样呢，父文档和子文档是两个独立的文档，更新父文档时无需重新索引子文档，子文档被添加，更新或者删除时也不会影响父文档和其他的子文档。需要额外的内存维护，读取性能相对差。</p>
+<h1 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h1><h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><ul>
+<li>对象类型，优先考虑。</li>
+<li>嵌套对象，当数据包含多数值对象，同时有查询需求</li>
+<li>父子关系，当关联文档更新非常频繁时。</li>
+</ul>
+<h2 id="避免过多字段"><a href="#避免过多字段" class="headerlink" title="避免过多字段"></a>避免过多字段</h2><ul>
+<li>过多字段不容易维护，Mapping保存在Cluster State中，数据量过大时会对集群性能造成影响。删除或修改需要reindex。</li>
+<li>默认1000，可通过index.mapping.total_fields.limit来进行设置</li>
+<li>Dynamic默认是打开的，只要有新的字段进入Mapping就会更新，导致文档膨胀，可能通过设置Stick，采用Nested Object和Key Value来解决这个问题。</li>
+</ul>
+<h2 id="避免正则查询"><a href="#避免正则查询" class="headerlink" title="避免正则查询"></a>避免正则查询</h2><ul>
+<li>正则，通配符查询，特别是前缀查询，性能不好。可以采用Netest字段方式将一个字段拆分成多个字段。</li>
+</ul>
+<h2 id="避免空值引起的聚合不准"><a href="#避免空值引起的聚合不准" class="headerlink" title="避免空值引起的聚合不准"></a>避免空值引起的聚合不准</h2><p>null值无论是在关系型数据库，还是在非关系型数据库，都是被特殊对待的。在ES中可以通过设置null_value，来指定字段为null时的默认值。</p>
+<h2 id="为索引的Mapping加入Meta信息"><a href="#为索引的Mapping加入Meta信息" class="headerlink" title="为索引的Mapping加入Meta信息"></a>为索引的Mapping加入Meta信息</h2><p>Mappings设置无论从功能，还是性能方面来说都非常的重要，Mappings的每一次变更的都可能造成功能和性能的变化或者数据迁移，因此需要增加Meta（版本）信息并利用版本化控制工具（如Git）进行管理。</p>
+<h2 id="重建索引"><a href="#重建索引" class="headerlink" title="重建索引"></a>重建索引</h2><p>可以通过update_by_query来对历史数据的新增字段进行索引的重建。因为ES不允许对已有字段修改数据类型，只能通过reindex的方式将一个索引重新索引到一个新的索引上，但可能通过指定别名的方法来使得减少应用程序的修改。</p>
+<h2 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h2><p>对于OLAP来说，数据的清洗和转换是不可避免的，而通过Ingest Node和Painless Script。相当于关系型数据库的存储过程或函数。</p>
+<p>Ingest Node：Pipeline&amp;Processor（可实现插件）。</p>
+<p>Painless Script：默认缓存100个。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html</a></p>
+<p>《Elasticsearch核心技术与实战》</p>
+<p><img src="/images/geek-time-ads/Elasticsearch%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98.jpeg"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/10/21/nginx/docker-deploy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/10/21/nginx/docker-deploy/" class="post-title-link" itemprop="url">基于Docker部署Nginx并配置反向代理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-10-21 10:21:48" itemprop="dateCreated datePublished" datetime="2019-10-21T10:21:48+08:00">2019-10-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nginx/" itemprop="url" rel="index"><span itemprop="name">nginx</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nginx/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们采用开发直接上线署的方式来快速开发，但因客户已经开始正式使用我司开发的小程序了，为了减少对客户的影响，现在需要额外部署一套开发环境。这个时候首先想到的就是通过Nginx来进行反向代理，开发环境使用二级域名，（如<a target="_blank" rel="noopener" href="https://dev.zai500.com),方便开发小程序时候使用.因为中间有一些部署前没有碰过的问题,记录下来,以便后期项目时注意./">https://dev.zai500.com），方便开发小程序时候使用。因为中间有一些部署前没有碰过的问题，记录下来，以便后期项目时注意。</a></p>
+<h2 id="证书转换"><a href="#证书转换" class="headerlink" title="证书转换"></a>证书转换</h2><p>公司项目是从SpringBoot转换到jfinal的，所以之前使用的是JKS格式的证书，需要进行转换，当然如果可以重新申请也能获得不同格式的证书。</p>
+<h3 id="jks格式转pkcs12"><a href="#jks格式转pkcs12" class="headerlink" title="jks格式转pkcs12"></a>jks格式转pkcs12</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -importkeystore -srckeystore server.keystore -destkeystore server.p12 -srcalias serverkey -destalias serverkey -srcstoretype jks -deststoretype pkcs12 -srcstorepass 111111 -deststorepass 111111 -noprompt</span><br></pre></td></tr></table></figure>
+
+<h4 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h4><ul>
+<li>importkeystore 指示导入导出keystore文件，可用于同类型或不同类型的导入导出</li>
+<li>srckeystore 指示源keystore文件</li>
+<li>srcalias 指示源实体别名</li>
+<li>srcstoretype 指示源store类型(jks/pkcs12..)</li>
+<li>srcstorepass 指示源store密码</li>
+<li>noprompt 不弹出提示</li>
+</ul>
+<h3 id="查看jks信息"><a href="#查看jks信息" class="headerlink" title="查看jks信息"></a>查看jks信息</h3><p>如果不清楚scralias可能通过如下命令来查看</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -list -keystore server.jks</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建Nginx容器"><a href="#创建Nginx容器" class="headerlink" title="创建Nginx容器"></a>创建Nginx容器</h2><p>因为我们的应用是使用Docker部署的，我们很自然的，使用Docker来部署Nginx。</p>
+<h3 id="拷贝配置"><a href="#拷贝配置" class="headerlink" title="拷贝配置"></a>拷贝配置</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 80:80 -p 443:443 --name nginx -it nginx:stable</span><br><span class="line">docker container cp nginx:/etc/nginx .</span><br></pre></td></tr></table></figure>
+
+<p>以上命令用将nginx的配置信息拷贝到宿主机的当前目录，之后可以将<code>nginx</code>改成<code>conf</code></p>
+<h3 id="重新创建容器"><a href="#重新创建容器" class="headerlink" title="重新创建容器"></a>重新创建容器</h3><p>现在映射配置目录，不采用文件映射的方式，因为我们需要配置证书。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker stop nginx</span><br><span class="line">docker rm nginx</span><br><span class="line">docker run -p 80:80 -p 443:443 --name nginx -v /data/nginx/conf:/etc/nginx -it nginx:stable</span><br></pre></td></tr></table></figure>
+
+<p>注意这里不使用文件的直接映射，因为需要配置证书。</p>
+<h3 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h3><h4 id="将证书文件放置在conf目录下"><a href="#将证书文件放置在conf目录下" class="headerlink" title="将证书文件放置在conf目录下"></a>将证书文件放置在<code>conf</code>目录下</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- zai500.com</span><br><span class="line">--- server.crt</span><br><span class="line">--- server.key</span><br><span class="line">- dev.zai500.com</span><br><span class="line">--- server.crt</span><br><span class="line">--- server.key</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改nginx-conf"><a href="#修改nginx-conf" class="headerlink" title="修改nginx.conf"></a>修改nginx.conf</h4><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="attribute">server_name</span> dev.zai500.com;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> dev.zai500.com/server.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> dev.zai500.com/server.key;</span><br><span class="line">    <span class="attribute">ssl_session_timeout</span> <span class="number">5m</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://172.17.0.1:9080;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Host $host:$server_port;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Real-IP $remote_addr;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Forwarded-Proto $scheme;</span><br><span class="line">            <span class="attribute">proxy_hide_header</span> Vary;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Accept-Encoding <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Referer $http_referer;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Cookie $http_cookie;</span><br><span class="line"></span><br><span class="line">            <span class="attribute">proxy_connect_timeout</span> <span class="number">300s</span>;</span><br><span class="line">            <span class="attribute">proxy_send_timeout</span> <span class="number">900</span>;</span><br><span class="line">            <span class="attribute">proxy_read_timeout</span> <span class="number">900</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">location</span> /im.ws &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://172.17.0.1:9080/im.ws;</span><br><span class="line">            <span class="attribute">proxy_http_version</span> <span class="number">1</span>.<span class="number">1</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Upgrade $http_upgrade;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Connection <span class="string">&quot;upgrade&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意事项</strong></p>
+<ul>
+<li>为减少对外暴露的端口，proxy_pass使用宿主机IP，可能通过<code>ip addr show docker0</code> 来查看，其中<code>inet 172.17.0.1/16</code>部分可获取。</li>
+<li>如查有静态资源的访问需要配置好X-Forwarded-Proto和undertow（我自己是修改来程序逻辑），否则会出现Mixed Content的错误。</li>
+<li>WebSocket的代理需要额外配置。</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本次Nginx的调整除了方便之后开发外，也加强了自己对Ng配置的理解。中间因为Mixed Content的处理多花费了不少时间。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><img src="/images/geek-time-ads/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Nginx.jpeg"></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/liuchuan_com/article/details/54376258">https://blog.csdn.net/liuchuan_com/article/details/54376258</a></p>
+<p><a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/617244">https://yq.aliyun.com/articles/617244</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mafly/p/websocket.html">https://www.cnblogs.com/mafly/p/websocket.html</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/09/30/java/replacing-class/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/30/java/replacing-class/" class="post-title-link" itemprop="url">替换jar包类实现</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-30 15:33:22" itemprop="dateCreated datePublished" datetime="2019-09-30T15:33:22+08:00">2019-09-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/jfinal/" itemprop="url" rel="index"><span itemprop="name">jfinal</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>471</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>因为开发中使用到了jfinal-weixin，但jfinal-weixin对多公众号（或者小程序）的支持还不是太好，需要自己增加一些处理来更好的使用。如果你使用Java有些时日了，一定会想到重写jar包的类方法。</p>
+<h1 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h1><ol>
+<li>确定需要重写类的包路径</li>
+<li>在项目的src目录下创建同名包</li>
+<li>将需要重写的类拷贝到刚创建的目录，有源码使用源码，无源码可采用反编译的代码(IDEA一般会帮你反编译)</li>
+<li>重写或者增加自己需要的方法</li>
+</ol>
+<h1 id="问题及处理"><a href="#问题及处理" class="headerlink" title="问题及处理"></a>问题及处理</h1><p>当你一套组合拳打完，准备部署收工的时候，却报错了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.lang.NoSuchMethodError:com....</span><br></pre></td></tr></table></figure>
+
+<p>教科书里总是骗人的。这个时候你需要看看下面的文档。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/java.html">https://docs.oracle.com/javase/7/docs/technotes/tools/windows/java.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/tools/windows/classpath.html">https://docs.oracle.com/javase/8/docs/technotes/tools/windows/classpath.html</a></p>
+<p>只是自己读书不够多而已，此时可能过指定-cp的方式来确定加载顺序。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/09/30/java/jdk8-apline/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/30/java/jdk8-apline/" class="post-title-link" itemprop="url">jdk8-apline需要注意的问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-30 15:02:13" itemprop="dateCreated datePublished" datetime="2019-09-30T15:02:13+08:00">2019-09-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>因为需要部署一台新的测试机，之前知道apline比较小巧，于是选用了java:jdk8-apline的基础镜像。但我们在部署Jfinal项目(采用undertow文件夹方式部署，通过start.sh启动并后台运行)的过程碰到一些问题。小巧注定很多组件需要自己安装。</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ul>
+<li><p>编写好Dockerfile后，无法启动容器</p>
+<blockquote>
+<ol>
+<li>apline未完装bash，需要安装<code>apk add bash</code></li>
+<li>start.sh为后台运行，需要改为直接运行，去掉启动命令中的<code>&amp;</code></li>
+</ol>
+</blockquote>
+</li>
+<li><p>时间为UTC，而不是北京时间</p>
+<blockquote>
+<p>这个问题实际是Docker镜像问题，和apline无关。因为编写Dockerfile时做了处理，所以一并列出。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apk add tzdata</span><br><span class="line">cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Asia/shanghai&quot;</span> &gt;&gt; /etc/timezone</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+<li><p>验证码无法使用，提示如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Caused by: java.lang.NullPointerException</span><br><span class="line">	at sun.awt.FontConfiguration.getVersion(FontConfiguration.java:1264)</span><br><span class="line">	at sun.awt.FontConfiguration.readFontConfigFile(FontConfiguration.java:219)</span><br><span class="line">	at sun.awt.FontConfiguration.init(FontConfiguration.java:107)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>网上搜索发现为apline缺少字库导致</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apk add font-adobe-100dpi ttf-dejavu fontconfig</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+<li><p>下载源速度慢</p>
+<blockquote>
+<p>使用阿里云镜像加速</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo http://mirrors.aliyun.com/alpine/v3.7/main/ &gt;&gt; /etc/apk/repositories</span><br><span class="line">apk update</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+</ul>
+<h2 id="镜像"><a href="#镜像" class="headerlink" title="镜像"></a>镜像</h2><p>最后的Dockerfile，需要增加的处理如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">FROM daocloud.io/library/java:8-jdk-alpine</span><br><span class="line">LABEL maintainer=<span class="string">&quot;L4qiang@gmail.com&quot;</span></span><br><span class="line"></span><br><span class="line">RUN <span class="built_in">echo</span> http://mirrors.aliyun.com/alpine/v3.7/main/ &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update</span><br><span class="line">RUN apk add bash tzdata font-adobe-100dpi ttf-dejavu fontconfig</span><br><span class="line">RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span><br><span class="line">RUN <span class="built_in">echo</span> <span class="string">&quot;Asia/shanghai&quot;</span> &gt;&gt; /etc/timezone</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/09/11/mysql/upgrade/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/11/mysql/upgrade/" class="post-title-link" itemprop="url">升级Mysql8</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-11 10:18:30" itemprop="dateCreated datePublished" datetime="2019-09-11T10:18:30+08:00">2019-09-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>最近项目迁移，顺便将Mysql数据库从5.7升级到8.0，记录下升级中的碰到的问题和一些处理。采用SpringBoot集成Jfinal，使用Druid管理数据库连接，同样适用于只使用Jfinal的用户。</p>
+<h1 id="准备Mysql"><a href="#准备Mysql" class="headerlink" title="准备Mysql"></a>准备Mysql</h1><p>使用Docker来完成Mysql8的环境准备（这里假设你已安装好Docker CE），可以到DockerHub上看是否有最新版本。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --name mysql8 -p 3306:3306 MYSQL_ROOT_PASSWORD=123456 -d mysql:8.0</span><br></pre></td></tr></table></figure>
+<h1 id="修改pom-xml"><a href="#修改pom-xml" class="headerlink" title="修改pom.xml"></a>修改pom.xml</h1><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.0.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h1 id="修改DruidPlugin配置"><a href="#修改DruidPlugin配置" class="headerlink" title="修改DruidPlugin配置"></a>修改DruidPlugin配置</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DruidPlugin druidPlugin = <span class="keyword">new</span> DruidPlugin(<span class="string">&quot;jdbcUrl&quot;</span>, <span class="string">&quot;user&quot;</span>, <span class="string">&quot;password&quot;</span>, <span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>此处一定要增加驱动名<code>com.mysql.cj.jdbc.Driver</code>，否则会报<code>Cannot resolve com.mysq.jdbc.Connection.ping method. Will use &#39;SELECT 1&#39; instead</code>错。</p>
+<h1 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h1><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">activerecord:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://ip:port/db?characterEncoding=utf8&amp;useSSL=false&amp;zeroDateTimeBehavior=CONVERT_TO_NULL&amp;serverTimezone=GMT</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">user</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">password</span></span><br></pre></td></tr></table></figure>
+<h2 id="问题-1"><a href="#问题-1" class="headerlink" title="问题"></a>问题</h2><ul>
+<li>5.7版本时使用<code>zeroDateTimeBehavior=convertToNull</code>，需要调整为<code>zeroDateTimeBehavior=CONVERT_TO_NULL</code>。</li>
+<li>如果提示<code>MySQLNonTransientConnectionException: Public Key Retrieval is not allowed</code>，增加<code>allowPublicKeyRetrieval=true</code>或者增加Timezone设置，如<code>serverTimezone=GMT</code>。具体原因可能参看<a target="_blank" rel="noopener" href="https://mysqlconnector.net/connection-options/">https://mysqlconnector.net/connection-options/</a>。</li>
+<li>如果使用了asText()，需要修改成ST_asText()。</li>
+</ul>
+<p>暂未发现其他问题，如遇到会进一步更新本文档。</p>
+<h1 id="Mysql8新特性"><a href="#Mysql8新特性" class="headerlink" title="Mysql8新特性"></a>Mysql8新特性</h1><p>以下简要列出Mysql8.0的一些新特性，主要参考<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/be29467c2b0c">这里</a>,建议直接看Mysql官网说明。</p>
+<ul>
+<li>默认字符集由latin1变为utf8mb4</li>
+<li>MyISAM系统表全部换成InnoDB表</li>
+<li>自增变量持久化</li>
+<li>DDL原子化</li>
+<li>参数修改持久化</li>
+<li>新增降序索引</li>
+<li>group by 不再隐式排序</li>
+<li>JSON特性增强</li>
+<li>redo &amp; undo 日志加密</li>
+<li>innodb select for update跳过锁等待</li>
+<li>增加SET_VAR语法</li>
+<li>支持不可见索引</li>
+<li>支持直方图</li>
+<li>新增innodb_dedicated_server参数</li>
+<li>日志分类更详细</li>
+<li>undo空间自动回收</li>
+<li>增加资源组</li>
+<li>增加角色管理</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/07/24/mysql/jsontype/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -500,787 +1348,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/30/virtualization/ovirt/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/05/30/virtualization/ovirt/" class="post-title-link" itemprop="url">CentOS安装oVirt4.3</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-30 14:08:31" itemprop="dateCreated datePublished" datetime="2019-05-30T14:08:31+08:00">2019-05-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-26 10:17:51" itemprop="dateModified" datetime="2023-01-26T10:17:51+08:00">2023-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CentOS/" itemprop="url" rel="index"><span itemprop="name">CentOS</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CentOS/oVirt/" itemprop="url" rel="index"><span itemprop="name">oVirt</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>本文描述最新版本CentOS(CentOS-7-x86_64-DVD-1810)单机安装oVirt及创建虚拟机的过程。<br>本文主要为自己做记录，以便下次重装时有参考。<br>本文主要参考oVirt官网的<a target="_blank" rel="noopener" href="https://www.ovirt.org/documentation/install-guide/chap-Installing_oVirt.html">安装指南</a></p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/05/30/virtualization/ovirt/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/30/misc/navicat/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/05/30/misc/navicat/" class="post-title-link" itemprop="url">解决Navicat打开连接并闲置一段时间后卡顿问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-30 09:54:53" itemprop="dateCreated datePublished" datetime="2019-05-30T09:54:53+08:00">2019-05-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/navicat/" itemprop="url" rel="index"><span itemprop="name">navicat</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>180</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>使用Navicat打开Mysql连接并闲置一段时间后卡顿（旧版本可能直接无响应或异常退出）。</p>
-<p>出现这种情况，可通过如下两种方式来调整：</p>
-<ul>
-<li>修改Mysql的Wait_timeout属性（默认设置下，当一个连接的空闲时间超过8小时后，MySQL 就会断开该连接）。</li>
-<li>设置Navicat连接属性中的高级选项，勾选保持连接间隔，并设置为30（小于wait_timeout即可）。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/21/finance/innovate/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/05/21/finance/innovate/" class="post-title-link" itemprop="url">金融创新的本质是思想革命</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-21 09:14:52" itemprop="dateCreated datePublished" datetime="2019-05-21T09:14:52+08:00">2019-05-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%87%91%E8%9E%8D/" itemprop="url" rel="index"><span itemprop="name">金融</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本文内容主要是对香帅北大金融学课《金融创新的本质是思想革命》的摘录。</p>
-<blockquote>
-<p>著名经济学家熊彼特这样定义创新，所谓创新，就是新的生产函数的建立。所谓新的生产函数，就包括新产品，新市场、新的组织方式。</p>
-</blockquote>
-<p>所以我们很容易判断，ATM机是金融创新，资产证券化是金融创新，股份制公司是新的组织方式，而支付宝等移动支付则是新的交易模式，也都是金融创新。</p>
-<blockquote>
-<p>香帅老师认为，熊彼特指的这类创新（新的生产函数的建立）是金融创新来讲是第一层含义，也就是工具创新，而金融创新的背后还有一层含义，金融创新的本质是思想革命。</p>
-<p>工具的革新，它是形，而思想革命才是灵魂。而这一部分，没有在主流的金融学中涉及，所以你在任何教科书上也看不到这些，但其实，这才是金融对人类文蝗的最大贡献所在。</p>
-</blockquote>
-<p>那么思想革命和金融创新到底是怎么相互影响，就需要从两个方面来讲，一个是12世纪开始的国债，一个是17世纪开始流行的股份制公司。</p>
-<blockquote>
-<p>股和债，是构筑金融市场的两个最基本的工具，实际上你不知道的是它们也是人类思想史上的两次飞跃。</p>
-</blockquote>
-<h2 id="债：时间货币化，将人从神那儿解放出来"><a href="#债：时间货币化，将人从神那儿解放出来" class="headerlink" title="债：时间货币化，将人从神那儿解放出来"></a>债：时间货币化，将人从神那儿解放出来</h2><p>这段解释是我觉得最神奇而又合理的地方，神奇是因为有一个全新的认识，合理呢是因为从历史的娓娓道来，让人信服。</p>
-<blockquote>
-<p>债务关系是人类最古老的关系。但是，你知道吗？债权人有欧洲很长时间内，都被为邪恶的代名词，利息是被视为违法的。</p>
-<p>为什么呢？你可以想一下，利息是什么？是资金使用的时间价值。所以，实际上利息是对时间的定价。这个概念你听上去很稀松平常，但你要知道，这个概念，在中世纪的欧洲是绝对的离经叛道。</p>
-</blockquote>
-<p>从这个角度，可以加深李笑来老师关于《概念是一切知识的基识》，我们继续。</p>
-<blockquote>
-<p>当时，我们的人类社会经历了长时间的低生产力的水平以后，对自然是又敬又畏，所以很多事情都被认为是神的安排。而生命的过程，就是对神的赎还过程。换句话说，人的时间是属于神的。</p>
-<p>好，这是插播一句，咱们古代中国其实是个非常有趣的地方，周王自称天子以为，诸神归位，世俗君主和神明合二为一。所有的中国老百姓都是天子臣民。所以，中国老百姓的时间是属于天子皇帝的。所以，古代没钱交税的时候，可以服徭役去抵，也就是用时间去抵税。</p>
-<p>但欧洲不一样，欧洲是群权神授，到现在为止，欧洲很多王室国家的国王登基的时候，仍然是主教为君主加冕。所以它象征君王的权力是神给予的。所以，人们的时间是属于神，属于上帝。</p>
-<p>好了。说到这的时候你就明白了，既然你的时间是属于神的，属于上帝的，那么收取利息，收取时间的价值，那就意味从上帝那里偷窃了时间，偷窃了价值。这不是我说的，这是欧洲的经典文献里面告诉我的。传教士说：收利息的人都是在上帝那儿偷时间、偷窃价值。</p>
-<p>所以说，在欧洲的中世纪，高利贷、收利息是被严格禁止的。即使有人干，也是小范围、小规模的。</p>
-<p>就这么一个传统，大大的限制了人的思想的活跃度。</p>
-<p>直到12世纪，这个传统终于被威尼斯这个城邦小国给打破了。威尼斯我们知道，是意大意北部一个商人传统浓厚的城邦小国。它因为战争的原故，就被逼向全体国民借钱，即发行公债，所有的威尼斯人都成为了国家的债权人。</p>
-<p>公（国）债它使得国民有了投资工具，可以分享国家成长，把国和民的利益统一起来。除了这个意义之外，更重的是，公债使所有的威尼斯的都接收到一个信息，即：金钱是可以繁衍生息的物品。</p>
-<p>不要小看这句话，在宗教氛围浓厚的当时，这是对神权的极大挑战，它意味着在上帝之外，我们人类创造了一个超越神权的生物，而这个生物居然可以替属于上帝的时间定价。换句话说，最具有神性的时间被货币化和世俗化了，这一步，对欧洲产生的整个震荡其实是不可想象的。</p>
-<p>尽管当时很多传教士斥责国债是对时间的偷窃。但是，因为国债太好用了，一下子帮欧洲的小国解决了筹资的问题，而国民也很喜欢。所以，欧洲各个小国开始争先恐后地发国债，甚至开始学会用国债做抵押，进行再融资。</p>
-<p>随着，国债在欧洲的推广，时间被大规模地世俗化和货币化。这种认知改变是全社会性的，也意味着将人从神那儿解放出来。而这种认知上的改变，才是社会变革的真正基础。所以，欧洲的思想启蒙是从金融概念、公债开始的。</p>
-</blockquote>
-<h2 id="股：将人从“人”这儿解放出来"><a href="#股：将人从“人”这儿解放出来" class="headerlink" title="股：将人从“人”这儿解放出来"></a>股：将人从“人”这儿解放出来</h2><blockquote>
-<p>很多人都知道，社会阶层，包括什么国王贵族、平民奴隶。抛开这些名词，你会发现，不同的社会阶层是由他们的资金集聚能力所决定的。</p>
-<p>你要仔细体会一下这句话。再想想，我们现代社会上什么富豪、权贵、平民的划分，其实根本区别也就在于我们的资金资源的集聚动员的能力不同，也就是广义上的个人信息不同。</p>
-</blockquote>
-<p>学习金融的一个好处就是能看到更本质的东西，这里需要注意的是，资金的集聚能力是具有马太效应的。</p>
-<blockquote>
-<p>在封建的欧洲，大部分人属于领主，所以他们是多少存在着附属的人身关系的，他们谈不上个体信用，更谈不上大规模集聚资金的能力，世俗贵族和国王例外。所以你要打破这种能力约束，就可能靠战争改变你的身份。</p>
-<p>但是，股份制出现了，它使得人和人之间产生一种利益共享、风险共担的机制。这种机制打破了资金调集能力的约束，你的身份不要紧，项目才要紧，只要你的项目能替大家赚到钱，就是募集到资金。很多海上贸易探险家，通过这样的方式完成了阶级的跨迁。</p>
-<p>后来随着股份制的推广，欧洲的工业革命也才有了资金基础，新兴的工业家、资本家也才能够登上历史舞台。</p>
-<p>欧洲那种固化的阶层被打破，一场深刻的社会革命从此开始。</p>
-<p>如果说“债”让时间货币化、世俗化，将人从神那里解放出来。那么，“股”就是打破了资源集聚能力的约束，将“人”从这儿解放出来。这才是欧洲自由义的根源所在，也是金融创新对人类文明的贡献所在。</p>
-</blockquote>
-<blockquote>
-<p>像希克斯就说过，工业革命一直在等待一场金融革命。工业革命的很多技术13世纪就有，为什么要等到18世纪才爆发？为什么要等到社会观念的转变，人力资本的释放，以及大规模资金聚集的约束的打破？这种思想革命，才是金融创新最大的力量，它不仅仅改变了欧洲的力量版图，也对未来世界的走向产生深远的，甚至是决定性的影响。</p>
-<p>我想，这才是金融创新最核心、最强大的力量所在。</p>
-</blockquote>
-<p>对于个人而言，如何改变自己资金聚集的能力呢？我想应该是成为有用的人，对他人有用（解决问题），对社会有用（纳税，创造就业机会），不断增加个人信用，创造影响力。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/14/spring/springboot-4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/05/14/spring/springboot-4/" class="post-title-link" itemprop="url">代码自动生成的注意事项</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-14 11:06:14" itemprop="dateCreated datePublished" datetime="2019-05-14T11:06:14+08:00">2019-05-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-12 14:27:07" itemprop="dateModified" datetime="2024-01-12T14:27:07+08:00">2024-01-12</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/Jfinal/" itemprop="url" rel="index"><span itemprop="name">Jfinal</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>654</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h2><p>在“SpringBoot与Jfinal合体”中说到，使用代码生成技术，大大简化了编码量。但在爽的时候也要时刻注意，自动生成的代码是可能存在问题的，排查问题时不要忽略。</p>
-<h2 id="记一次排查过程"><a href="#记一次排查过程" class="headerlink" title="记一次排查过程"></a>记一次排查过程</h2><p>在整合好了自动代码生成基础框架后，交给同事处理，具体业务需求。一开始一切正常，后面新增加了表，自动生成后，测试对应接口也是正常。</p>
-<p>中间因为有其他任务安排，这部分任务先停了一段时间，这两天回来重新实现业务时，发现接口调用不了，提示空指针。</p>
-<p>在排除了Maven依赖等问题之后，基本能判断是ActiveRecordPlugin的配置没有读到引起的，但查看ActivePlugin的注入的代码（包括SQL文件）都是正常的。</p>
-<p>感觉有点无解的时候，想到要不重新生成试试，因为主要是Model的问题，于是重新生成了Model。之后运行代码，一切正常了。<br>重新核对，发现是<code>_MappingKit</code>，是表和类的映射关系只有一张表。</p>
-<p>最后确认，当时看只要增加一张表，于是把之前的表屏蔽了，同时因为测试了新的接口是正常的，也就没有注意到生成的映射关系有问题。<br>而我自己呢因为是自动生成的代码没有注意排查。</p>
-<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><p>代码自动生成有好的一面，也有不足的一面（代码覆盖问题），而一个架构好用就在于能使用少犯错。在架构没有起来之前也就是靠人治，如规范，培训及惩罚等。</p>
-<ol>
-<li>代码自动生成，最好使用在新项目中。</li>
-<li>代码自动生成，应该区分可变不可变内容，让覆盖更合理，让编码更放心。</li>
-<li>代码自动生成，代码可能被覆盖或修改，排查问题时不要忽略。</li>
-<li>修改代码生成器配置时，一定在注意影响范围并测试。</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/13/frontend/vue/vue-error-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/05/13/frontend/vue/vue-error-2/" class="post-title-link" itemprop="url">VUE踩坑记-02</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-13 15:42:18" itemprop="dateCreated datePublished" datetime="2019-05-13T15:42:18+08:00">2019-05-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>上一篇说到使用vue-element-admin来做后端管理，经同事的介绍可以使用Muse-ui来做前端应用。查看了Muse的官网后，准备踩坑下。</p>
-<h2 id="快速入门"><a href="#快速入门" class="headerlink" title="快速入门"></a>快速入门</h2><p>在Github上看到MuseUI的模板<a target="_blank" rel="noopener" href="https://github.com/museui/nuxt-template">nuxt-template</a>。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vue init museui/nuxt-tempalte myproject</span><br><span class="line"><span class="built_in">cd</span> my-project</span><br><span class="line">yarn instll</span><br><span class="line">yarn run dev</span><br></pre></td></tr></table></figure>
-<p>一切看起来很美好，<a href="http://localhost:3000可直接看页面了。">http://localhost:3000可直接看页面了。</a></p>
-<h2 id="Nuxt-js"><a href="#Nuxt-js" class="headerlink" title="Nuxt.js"></a>Nuxt.js</h2><p>一看源码，连App.vue都没有，刚有点基础的我慌了。赶紧查查是什么？</p>
-<p>简单点说<a target="_blank" rel="noopener" href="https://github.com/nuxt/nuxt.js">Nuxt.js</a>是一个基于Vue.js的通用应用框架，重点关注应用的UI渲染（支持客户端和服务端渲染），另外它像Maven一样规定了项目的目录结构，对于初学者来说，看懂文档，还是相对容易创建一个新的项目的。这里有它的<a target="_blank" rel="noopener" href="https://zh.nuxtjs.org/">文档</a>，可以自行了解。</p>
-<h2 id="将项目转成TypeScript"><a href="#将项目转成TypeScript" class="headerlink" title="将项目转成TypeScript"></a>将项目转成TypeScript</h2><p>之前说过，ts更接近java，为了统一，我准备将项目转换成ts的，顺便多熟悉下Nuxt。</p>
-<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir myproject2</span><br></pre></td></tr></table></figure>
-<p>用VSCode打开空目录，<code>myproject2</code></p>
-<h3 id="新建package-json文件"><a href="#新建package-json文件" class="headerlink" title="新建package.json文件"></a>新建package.json文件</h3><p>package.json 文件用来设定如何运行 nuxt：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;myproject2&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;dev&quot;</span>: <span class="string">&quot;nuxt&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装Nux"><a href="#安装Nux" class="headerlink" title="安装Nux"></a>安装Nux</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add nuxt</span><br></pre></td></tr></table></figure>
-
-<h3 id="pages目录"><a href="#pages目录" class="headerlink" title="pages目录"></a>pages目录</h3><p>Nuxt.js 会依据 <code>pages</code> 目录中的所有 <code>*.vue</code> 文件生成应用的路由配置。</p>
-<p>创建 <code>pages</code> 目录：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir pages</span><br></pre></td></tr></table></figure>
-
-<p>创建我们的第一个页面 <code>pages/index.vue</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;h1&gt;Hello world!&lt;/h1&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn run dev</span><br></pre></td></tr></table></figure>
-
-<p>此时我们的应用运行在 <a target="_blank" rel="noopener" href="http://localhost:3000/">http://localhost:3000</a> 上运行。</p>
-<h3 id="支持TypeScript"><a href="#支持TypeScript" class="headerlink" title="支持TypeScript"></a>支持TypeScript</h3><p>为了能够在项目中使用TypeScript，您需要将<code>@nuxt/typescript</code>和<code>ts-node</code>作为开发依赖项安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yarn add -D @nuxt/typescript</span><br><span class="line">yarn add ts-node</span><br></pre></td></tr></table></figure>
-
-<p>需要创建一个空的<code>tsconfig.json</code>文件，<code>tsconfig.json</code>文件将在您第一次运行<code>nuxt</code>命令时使用默认值自动更新。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">touch tsconfig.json</span><br></pre></td></tr></table></figure>
-
-<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>为了能够在配置文件中使用TypeScript，您只需要将<code>nuxt.config.js</code>重命名为<code>nuxt.config.ts</code>。</p>
-<h3 id="使用ESLint"><a href="#使用ESLint" class="headerlink" title="使用ESLint"></a>使用ESLint</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add -D @typescript-eslint/eslint-plugin</span><br></pre></td></tr></table></figure>
-
-<p>然后，通过添加<code>@typescript-eslint</code>插件并使<code>@typescript-eslint/parser</code>作为默认解析器来编辑ESLint配置(<code>.eslintrc.js</code>)。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [<span class="string">&#x27;@typescript-eslint&#x27;</span>],</span><br><span class="line">  <span class="attr">parserOptions</span>: &#123;</span><br><span class="line">    <span class="attr">parser</span>: <span class="string">&#x27;@typescript-eslint/parser&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">extends</span>: [</span><br><span class="line">    <span class="string">&#x27;@nuxtjs&#x27;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">rules</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;@typescript-eslint/no-unused-vars&#x27;</span>: <span class="string">&#x27;error&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>最后，添加或编辑<code>package.json</code>的<code>lint</code>脚本：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;lint&quot;</span>: <span class="string">&quot;eslint --ext .ts,.js,.vue --ignore-path .gitignore .&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="使用MuseUI"><a href="#使用MuseUI" class="headerlink" title="使用MuseUI"></a>使用MuseUI</h3><h4 id="拷贝pages文件"><a href="#拷贝pages文件" class="headerlink" title="拷贝pages文件"></a>拷贝pages文件</h4><p>将myproject下的about.vue和index.vue拷到pages下</p>
-<h4 id="拷贝plugins文件"><a href="#拷贝plugins文件" class="headerlink" title="拷贝plugins文件"></a>拷贝plugins文件</h4><p>将myproject下的muse-ui.js拷贝过来并重命名为muse-ui.ts</p>
-<h4 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h4><p>将<code>nuxt.config.js</code>拷贝过来重命名为<code>nuxt.config.ts</code>。其中去掉eslint的相关配置。修改vendor为</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vendor: [</span><br><span class="line">  <span class="string">&#x27;~/plugins/muse-ui&#x27;</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><p>此时通过<code>yarn run dev</code>已经可正常编译，但运行时会页面会提示错误。大致错误</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SyntaxError</span><br><span class="line">Invalid or unexpected token</span><br><span class="line"></span><br><span class="line">vm.js</span><br><span class="line">Missing stack framesJS </span><br><span class="line">new Script@80:7</span><br></pre></td></tr></table></figure>
-
-<p>查官网<a target="_blank" rel="noopener" href="https://github.com/museui/muse-ui/issues/1347">issues</a>，说是还不支持ssr，调整plugins配置就可以了。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">plugins: [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">src</span>: <span class="string">&#x27;~plugins/muse-ui&#x27;</span>,</span><br><span class="line">    <span class="attr">ssr</span>: <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<p>最终的<code>nuxt.config.ts</code>文件</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  ** Headers of the page</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="attr">head</span>: &#123;</span><br><span class="line">    <span class="attr">title</span>: <span class="string">&#x27;myproject2&#x27;</span>,</span><br><span class="line">    <span class="attr">meta</span>: [</span><br><span class="line">      &#123; <span class="attr">charset</span>: <span class="string">&#x27;utf-8&#x27;</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">name</span>: <span class="string">&#x27;viewport&#x27;</span>, <span class="attr">content</span>: <span class="string">&#x27;width=device-width, initial-scale=1&#x27;</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">hid</span>: <span class="string">&#x27;description&#x27;</span>, <span class="attr">name</span>: <span class="string">&#x27;description&#x27;</span>, <span class="attr">content</span>: <span class="string">&#x27;Nuxt.js Muse-UI project&#x27;</span> &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">link</span>: [</span><br><span class="line">      &#123; <span class="attr">rel</span>: <span class="string">&#x27;icon&#x27;</span>, <span class="attr">type</span>: <span class="string">&#x27;image/x-icon&#x27;</span>, <span class="attr">href</span>: <span class="string">&#x27;/favicon.ico&#x27;</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">rel</span>: <span class="string">&#x27;stylesheet&#x27;</span>, <span class="attr">href</span>: <span class="string">&#x27;https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons&#x27;</span> &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  ** Customize the progress bar color</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="attr">loading</span>: &#123; <span class="attr">color</span>: <span class="string">&#x27;#3B8070&#x27;</span> &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">src</span>: <span class="string">&#x27;~plugins/muse-ui&#x27;</span>,</span><br><span class="line">      <span class="attr">ssr</span>: <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  ** Build configuration</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="attr">build</span>: &#123;</span><br><span class="line">    <span class="attr">babel</span>: &#123;</span><br><span class="line">      <span class="attr">plugins</span>: [</span><br><span class="line">        [<span class="string">&#x27;import&#x27;</span>, &#123;</span><br><span class="line">          <span class="attr">libraryName</span>: <span class="string">&#x27;muse-ui&#x27;</span>,</span><br><span class="line">          <span class="attr">libraryDirectory</span>: <span class="string">&#x27;lib&#x27;</span>,</span><br><span class="line">          <span class="attr">camel2DashComponentName</span>: <span class="literal">false</span></span><br><span class="line">        &#125;]</span><br><span class="line">      ]</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">vendor</span>: [</span><br><span class="line">      <span class="string">&#x27;~/plugins/muse-ui&#x27;</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">extractCSS</span>: <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>经过以上的修改已经可以通过nuxt来管理vue项目，并能过ts来写代码了。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/09/frontend/vue/vue-error-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/05/09/frontend/vue/vue-error-1/" class="post-title-link" itemprop="url">VUE踩坑记-01</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-09 13:36:47" itemprop="dateCreated datePublished" datetime="2019-05-09T13:36:47+08:00">2019-05-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>因为公司目前暂时没的前端，于是准备自己用Vue和TypeScript入手公司项目的管理后台。因为Vue已经有很多UI框架了（比如Element），而TypeScript呢，引入了类等概念，对于Java开发人员来说是比较容易入手的。而后端开发人员可能最头疼的是CSS布局吧，于是找了vue-element-admin来抄，当然有人改了个TypeScript版本<a target="_blank" rel="noopener" href="https://github.com/Armour/vue-typescript-admin-template">vue-typescript-admin-template</a>。</p>
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>经过一段时间的熟悉yarn和代码结构，我们开始了服务端的调用。</p>
-<h3 id="跨域问题"><a href="#跨域问题" class="headerlink" title="跨域问题"></a>跨域问题</h3><p>本地服务开发我们是可以设置Chrome的跨域的（–disable-web-security<br>–user-data-dir=），但为了后面更好的开发和及时发现问题，我们还是使用了Proxy方式，按vue-cli的文档，增加<code>vue.config.js</code>的devServer配置就要可以，如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * vue-cli3跨域的全配置！</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="attr">devServer</span>: &#123;</span><br><span class="line">     <span class="attr">proxy</span>:  <span class="string">&#x27;http://172.26.0.252:8881&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>但我们还是出现了问题，原来在<code>request.ts</code>中也设置了服务器地址</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> service = axios.create(&#123;</span><br><span class="line">  <span class="attr">baseURL</span>: <span class="string">&#x27;http://172.26.0.252:8881&#x27;</span>,</span><br><span class="line">  <span class="attr">timeout</span>: <span class="number">5000</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
-<p>其实呢这个值应该设置在<code>.env</code>中，设置VUE_APP_BASE_API</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">VUE_APP_BASE_API</span>=<span class="string">http://172.26.0.252:8881</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="远程调用"><a href="#远程调用" class="headerlink" title="远程调用"></a>远程调用</h3><p>解决了跨域之后，开始了实际的接口调用，修改的是登录页面，一测试，报这样的错。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">login error:<span class="built_in">Error</span>: ERR_ACTION_ACCESS_UNDEFINED: Are you trying to access <span class="built_in">this</span>.someMutation() or <span class="built_in">this</span>.someGetter inside an <span class="meta">@Action</span>? </span><br><span class="line">That works only <span class="keyword">in</span> dynamic modules. </span><br><span class="line">If not dynamic use <span class="built_in">this</span>.context.commit(<span class="string">&quot;mutationName&quot;</span>, payload) and <span class="built_in">this</span>.context.getters[<span class="string">&quot;getterName&quot;</span>]</span><br><span class="line"><span class="attr">Error</span>: Could not perform action Login</span><br><span class="line">    at Store.eval (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:333:37)</span></span><br><span class="line">    at step (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:114:23)</span></span><br><span class="line">    at <span class="built_in">Object</span>.eval [<span class="keyword">as</span> <span class="keyword">throw</span>] (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:95:53)</span></span><br><span class="line">    at rejected (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:86:65)</span></span><br><span class="line"><span class="built_in">Error</span>: error <span class="keyword">with</span> code: <span class="literal">undefined</span></span><br><span class="line">    at __webpack_exports__.default (webpack-internal:<span class="comment">///./src/utils/request.ts:48:133)</span></span><br></pre></td></tr></table></figure>
-
-<p>嗯，完全没在头绪，查了下呢看到这篇<a target="_blank" rel="noopener" href="https://github.com/championswimmer/vuex-module-decorators/issues/26">Rejected action throws ERR_ACTION_ACCESS_UNDEFINED</a>，说是增加rawError，因为对Vuex不熟悉，也还是不知道怎么加。</p>
-<p>之后查看了<a target="_blank" rel="noopener" href="https://championswimmer.in/vuex-module-decorators/pages/installation.html"><a target="_blank" rel="noopener" href="https://championswimmer.in/vuex-module-decorators/">vuex-module-decorators</a></a>的基本文档。</p>
-<p>回头重新看<a target="_blank" rel="noopener" href="https://github.com/championswimmer/vuex-module-decorators/issues">issues</a>，搜索<code>ERR_ACTION_ACCESS_UNDEFINED</code>，记录还是不少的，一条条的看，终于看到rawError如何设置。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Action</span>(&#123; <span class="attr">rawError</span>: <span class="literal">true</span> &#125;)</span><br></pre></td></tr></table></figure>
-
-<p>修改代码，测试这个时候报错</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">code undifined</span><br></pre></td></tr></table></figure>
-
-<p>问题于是又定位到了<code>request.ts</code>上。</p>
-<p>查看代码，如下：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">service.interceptors.response.use(</span><br><span class="line">  <span class="function">(<span class="params">response</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// Some example codes here:</span></span><br><span class="line">    <span class="comment">// code == 20000: valid</span></span><br><span class="line">    <span class="comment">// code == 50008: invalid token</span></span><br><span class="line">    <span class="comment">// code == 50012: already login in other place</span></span><br><span class="line">    <span class="comment">// code == 50014: token expired</span></span><br><span class="line">    <span class="comment">// code == 60204: account or password is incorrect</span></span><br><span class="line">    <span class="comment">// You can change this part for your own usage.</span></span><br><span class="line">    <span class="keyword">const</span> res = response.data</span><br><span class="line">    <span class="keyword">if</span> (res.code !== <span class="number">20000</span>) &#123;</span><br><span class="line">      Message(&#123;</span><br><span class="line">        <span class="attr">message</span>: res.message,</span><br><span class="line">        <span class="attr">type</span>: <span class="string">&#x27;error&#x27;</span>,</span><br><span class="line">        <span class="attr">duration</span>: <span class="number">5</span> * <span class="number">1000</span></span><br><span class="line">      &#125;)</span><br><span class="line">      <span class="keyword">if</span> (res.code === <span class="number">50008</span> || res.code === <span class="number">50012</span> || res.code === <span class="number">50014</span>) &#123;</span><br><span class="line">        MessageBox.confirm(</span><br><span class="line">          <span class="string">&#x27;你已被登出，可以取消继续留在该页面，或者重新登录&#x27;</span>,</span><br><span class="line">          <span class="string">&#x27;确定登出&#x27;</span>,</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">confirmButtonText</span>: <span class="string">&#x27;重新登录&#x27;</span>,</span><br><span class="line">            <span class="attr">cancelButtonText</span>: <span class="string">&#x27;取消&#x27;</span>,</span><br><span class="line">            <span class="attr">type</span>: <span class="string">&#x27;warning&#x27;</span></span><br><span class="line">          &#125;</span><br><span class="line">        ).then(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">          UserModule.FedLogOut().then(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            location.reload() <span class="comment">// To prevent bugs from vue-router</span></span><br><span class="line">          &#125;)</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;error with code: &#x27;</span> + res.code))</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> response.data</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">    Message(&#123;</span><br><span class="line">      <span class="attr">message</span>: error.message,</span><br><span class="line">      <span class="attr">type</span>: <span class="string">&#x27;error&#x27;</span>,</span><br><span class="line">      <span class="attr">duration</span>: <span class="number">5</span> * <span class="number">1000</span></span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(error)</span><br><span class="line">  &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>是的，我们的返回值没有返回code，错误被上一层的Module给捕获了，接下来改代码就好了。</p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>实操才会碰到问题，才能解决问题，看文档时你是不会知道有多少坑的，你以为你会了实际上你还不会。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/04/26/misc/handwriting/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/26/misc/handwriting/" class="post-title-link" itemprop="url">硬笔字-笔画</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-26 09:25:51" itemprop="dateCreated datePublished" datetime="2019-04-26T09:25:51+08:00">2019-04-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>382</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="点：如高峰坠石"><a href="#点：如高峰坠石" class="headerlink" title="点：如高峰坠石"></a>点：如高峰坠石</h3><p>右点是写好点的基础，空中落笔，不可太长。垂点像露珠，仰点是自左上到右下落笔顿笔后往左路上挑。</p>
-<h3 id="横：如千里阵云"><a href="#横：如千里阵云" class="headerlink" title="横：如千里阵云"></a>横：如千里阵云</h3><p>起笔要稳，略顿，收笔要顿笔回锋。长横要舒展，行笔速度稍快，中间微微上凸。短横顶着斜向上。</p>
-<h3 id="竖：如万岁枯藤"><a href="#竖：如万岁枯藤" class="headerlink" title="竖：如万岁枯藤"></a>竖：如万岁枯藤</h3><p>垂露竖起笔向左上方伸出，顿笔下行，轻顿收笔。悬针竖运笔沉着形如银针，中锋行笔。</p>
-<h3 id="撇：如陆断犀象"><a href="#撇：如陆断犀象" class="headerlink" title="撇：如陆断犀象"></a>撇：如陆断犀象</h3><p>长撇要舒展而飘逸，短撇要迅速而有力。写好撇，是关键的是要撑握好角度和弧度。</p>
-<h3 id="捺：如崩浪雷奔"><a href="#捺：如崩浪雷奔" class="headerlink" title="捺：如崩浪雷奔"></a>捺：如崩浪雷奔</h3><p>捺的出锋要重顿快收，力量要用得沉稳。斜捺是轻入笔，右下行笔出书锋，不要太直，忌生硬。</p>
-<h3 id="折：如劲弩筋节"><a href="#折：如劲弩筋节" class="headerlink" title="折：如劲弩筋节"></a>折：如劲弩筋节</h3><p>折在书写时候，要有一个明显的停顿，然后转笔和力量的变化，方圆兼备。</p>
-<h3 id="提：如策马扬鞭"><a href="#提：如策马扬鞭" class="headerlink" title="提：如策马扬鞭"></a>提：如策马扬鞭</h3><p>顿笔斜向上，形状像匕首，速度要快，有力量，有策马扬鞭的气势，但不要甩。</p>
-<h3 id="勾：如百钧弩发"><a href="#勾：如百钧弩发" class="headerlink" title="勾：如百钧弩发"></a>勾：如百钧弩发</h3><p>横勾出钩迅速，钩身宜短，出锋方向指向字心。卧钩像一口锅，向上环抱。斜钩像一张弓，行笔迅疾，力拔山河。</p>
-<p><img src="handwriting.jpg" alt="图"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/21/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/23/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/21/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" href="/page/23/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1346,20 +1417,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">278</span>
+          <span class="site-state-item-count">285</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">116</span>
+        <span class="site-state-item-count">119</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">115</span>
+        <span class="site-state-item-count">118</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1417,12 +1488,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">650k</span>
+    <span title="站点总字数">704k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:51</span>
+    <span title="站点阅读时长">10:40</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

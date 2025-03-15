@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="说明限流限流是控制系统的的并发流量，通过限制请求流量的手段防止过度的流量导致系统崩溃。限流的指标有TPS， HPS、QPS等，限流的方法有流量计数器，滑动时间窗口，漏桶算法，令牌桶算法等。 熔断熔断的概念来自电路保护，提供了断路开关，主要有三种状态，关闭状态，打开状态和半开状态。熔断可以防止应用程序不断地尝试可能超时和失败的服务，能达到应用程序执行而不必等待下游服务修正错误服务。 降级降级是指当自">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solon Cloud —— 熔断与限流">
+<meta property="og:url" content="http://l4qiang.me/2025/03/02/course100/033/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="说明限流限流是控制系统的的并发流量，通过限制请求流量的手段防止过度的流量导致系统崩溃。限流的指标有TPS， HPS、QPS等，限流的方法有流量计数器，滑动时间窗口，漏桶算法，令牌桶算法等。 熔断熔断的概念来自电路保护，提供了断路开关，主要有三种状态，关闭状态，打开状态和半开状态。熔断可以防止应用程序不断地尝试可能超时和失败的服务，能达到应用程序执行而不必等待下游服务修正错误服务。 降级降级是指当自">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=Njg4YzI3NTJlMzUyNjVlYmMyOGM2NDM5MzY5YmQ0ZGFfUkt6S3N3SVU0SXJVaDloaWdYc1ZodUl2NEZNUE0yRXZfVG9rZW46VW1VQmJ2WUNPb2xqRXh4V1lQYWNxR2xZblFjXzE3NDA4NzYxMDk6MTc0MDg3OTcwOV9WNA">
+<meta property="article:published_time" content="2025-03-02T00:41:08.000Z">
+<meta property="article:modified_time" content="2025-03-02T00:42:03.204Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="教程100">
+<meta property="article:tag" content="写作">
+<meta property="article:tag" content="Solon">
+<meta property="article:tag" content="Solon 实用教程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=Njg4YzI3NTJlMzUyNjVlYmMyOGM2NDM5MzY5YmQ0ZGFfUkt6S3N3SVU0SXJVaDloaWdYc1ZodUl2NEZNUE0yRXZfVG9rZW46VW1VQmJ2WUNPb2xqRXh4V1lQYWNxR2xZblFjXzE3NDA4NzYxMDk6MTc0MDg3OTcwOV9WNA">
+
+<link rel="canonical" href="http://l4qiang.me/2025/03/02/course100/033/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Solon Cloud —— 熔断与限流 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2613e7f510eebd12cf4d0d067e4ce195";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/03/02/course100/033/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solon Cloud —— 熔断与限流
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-03-02 08:41:08 / 修改时间：08:42:03" itemprop="dateCreated datePublished" datetime="2025-03-02T08:41:08+08:00">2025-03-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><h3 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h3><p>限流是控制系统的的并发流量，通过限制请求流量的手段防止过度的流量导致系统崩溃。限流的指标有TPS， HPS、QPS等，限流的方法有流量计数器，滑动时间窗口，漏桶算法，令牌桶算法等。</p>
+<h3 id="熔断"><a href="#熔断" class="headerlink" title="熔断"></a>熔断</h3><p>熔断的概念来自电路保护，提供了断路开关，主要有三种状态，关闭状态，打开状态和半开状态。熔断可以防止应用程序不断地尝试可能超时和失败的服务，能达到应用程序执行而不必等待下游服务修正错误服务。</p>
+<h3 id="降级"><a href="#降级" class="headerlink" title="降级"></a>降级</h3><p>降级是指当自身服务压力增大时，采取一些手段，增强自身服务的处理能力，以保障服务的持续可用。比如，下线非核心服务以保证核心服务的稳定、降低实时性、降低数据一致性等。</p>
+<h3 id="三者关系"><a href="#三者关系" class="headerlink" title="三者关系"></a>三者关系</h3><p>限流、熔断和服务降级是系统容错的重要设计模式，从一定意义上讲限流和熔断也是一种服务降级的手段。</p>
+<table>
+<thead>
+<tr>
+<th>措施</th>
+<th>产生原因</th>
+<th>针对服务</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>熔断</td>
+<td>下游服务不可用</td>
+<td>下游服务</td>
+</tr>
+<tr>
+<td>降级</td>
+<td>自身服务的处理能力不够</td>
+<td>自身服务</td>
+</tr>
+<tr>
+<td>限流</td>
+<td>上游服务请求增多</td>
+<td>上游服务</td>
+</tr>
+</tbody></table>
+<h3 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h3><p>Sentinel 是面向分布式、多语言异构化服务架构的流量治理组件，主要以流量为切入点，从流量路由、流量控制、流量整形、熔断降级、系统自适应过载保护、热点流量防护等多个维度来帮助开发者保障微服务的稳定性。</p>
+<p>之前使用的是Spring Cloud 默认带的是 Hystrix，之前也没有用过Sentinel，这次按理是尝试使用Setinel。</p>
+<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:demo-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-logging-logback&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-openapi2-knife4j&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:sentinel-solon-cloud-plugin&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;com.alibaba.csp:sentinel-transport-simple-http:1.8.8&quot;</span>)</span><br><span class="line"></span><br><span class="line">    annotationProcessor(<span class="string">&quot;org.mapstruct:mapstruct-processor:$&#123;mapstructVersion&#125;&quot;</span>)</span><br><span class="line"></span><br><span class="line">    testImplementation(<span class="string">&quot;org.noear:solon-test-junit5&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">solon.cloud.local:</span></span><br><span class="line">  <span class="attr">breaker:</span></span><br><span class="line">    <span class="attr">root:</span> <span class="number">1000</span></span><br><span class="line">    <span class="attr">hello:</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Controller"><a href="#Controller" class="headerlink" title="Controller"></a>Controller</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.solon.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Controller;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Mapping;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Param;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.cloud.annotation.CloudBreaker;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Api</span>(<span class="string">&quot;Demo&quot;</span>)</span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@ApiOperation</span>(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">  <span class="meta">@Mapping</span>(<span class="string">&quot;/hello&quot;</span>)</span><br><span class="line">  <span class="meta">@CloudBreaker</span>(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">String</span> <span class="function"><span class="title">hello</span>(<span class="params"><span class="meta">@Param</span>(defaultValue = <span class="string">&quot;world&quot;</span>) <span class="built_in">String</span> name</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">String</span>.format(<span class="string">&quot;Hello %s!&quot;</span>, name);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>需要通过多线程的方式来测试，写个单元测试。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.solon.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.junit.jupiter.api.Assertions.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.solon.DemoCloudBreakerApp;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.CountDownLatch;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.Utils;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.test.HttpTester;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.test.SolonTest;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@SolonTest(DemoCloudBreakerApp.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoControllerTest</span> <span class="keyword">extends</span> <span class="title">HttpTester</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Test</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    CountDownLatch count = <span class="keyword">new</span> CountDownLatch(<span class="number">100</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">      log.info(<span class="string">&quot;get hello start. i:&#123;&#125;&quot;</span>, i);</span><br><span class="line">      <span class="keyword">int</span> finalI = i;</span><br><span class="line">      Utils.async(</span><br><span class="line">          () -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">              path(<span class="string">&quot;/hello&quot;</span>).get();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">              log.error(<span class="string">&quot;&quot;</span>, e);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            log.info(<span class="string">&quot;get hello end. i:&#123;&#125;&quot;</span>, finalI);</span><br><span class="line">            count.countDown();</span><br><span class="line">          &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    count.await();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当超过限流时，提示错误。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=Njg4YzI3NTJlMzUyNjVlYmMyOGM2NDM5MzY5YmQ0ZGFfUkt6S3N3SVU0SXJVaDloaWdYc1ZodUl2NEZNUE0yRXZfVG9rZW46VW1VQmJ2WUNPb2xqRXh4V1lQYWNxR2xZblFjXzE3NDA4NzYxMDk6MTc0MDg3OTcwOV9WNA" alt="img"></p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ol>
+<li>当前使用的版本3.0.9及 3.1.0-M3版本暂时不能把 CloudBreaker 注解在类上。</li>
+<li>当前版本无法注册到 sentinel 的 dashboard 中，属于本地配置。</li>
+<li>当前支持限流，没有熔断的支持。</li>
+</ol>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>从测试使用的情况来看，Solon 目前只支持本地的限流处理，暂时不支持熔断，对 sentinel 的支持还不够完善，无法注册到 sentinel 的 dashboard 中。如果需要用于生产，需要自己扩展下对应的插件，或者再等一等官方的更新。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%95%99%E7%A8%8B100/" rel="tag"><i class="fa fa-tag"></i> 教程100</a>
+              <a href="/tags/%E5%86%99%E4%BD%9C/" rel="tag"><i class="fa fa-tag"></i> 写作</a>
+              <a href="/tags/Solon/" rel="tag"><i class="fa fa-tag"></i> Solon</a>
+              <a href="/tags/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" rel="tag"><i class="fa fa-tag"></i> Solon 实用教程</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/03/01/course100/032/" rel="prev" title="Solon AI —— 初体验">
+      <i class="fa fa-chevron-left"></i> Solon AI —— 初体验
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/03/03/course100/034/" rel="next" title="Solon AI —— 流程编排">
+      Solon AI —— 流程编排 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%90%E6%B5%81"><span class="nav-number">1.1.</span> <span class="nav-text">限流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%86%94%E6%96%AD"><span class="nav-number">1.2.</span> <span class="nav-text">熔断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%8D%E7%BA%A7"><span class="nav-number">1.3.</span> <span class="nav-text">降级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E8%80%85%E5%85%B3%E7%B3%BB"><span class="nav-number">1.4.</span> <span class="nav-text">三者关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sentinel"><span class="nav-number">1.5.</span> <span class="nav-text">Sentinel</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96"><span class="nav-number">2.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Controller"><span class="nav-number">4.</span> <span class="nav-text">Controller</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">5.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">285</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">119</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">118</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">704k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:40</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '73160461b256e705d2dc9003a6320557',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

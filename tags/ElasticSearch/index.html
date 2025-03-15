@@ -25,14 +25,14 @@
   <meta name="description" content="记录点滴，注重积累。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="CrazyAirhead">
-<meta property="og:url" content="http://l4qiang.me/tags/ElasticSearch/index.html">
+<meta property="og:url" content="http://l4qiang.me/tags/elasticsearch/index.html">
 <meta property="og:site_name" content="CrazyAirhead">
 <meta property="og:description" content="记录点滴，注重积累。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="L4qiang">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://l4qiang.me/tags/ElasticSearch/">
+<link rel="canonical" href="http://l4qiang.me/tags/elasticsearch/">
 
 
 <script id="page-configurations">
@@ -45,7 +45,7 @@
   };
 </script>
 
-  <title>标签: ElasticSearch | CrazyAirhead</title>
+  <title>标签: elasticsearch | CrazyAirhead</title>
   
 
 
@@ -175,14 +175,14 @@
   <div class="post-block">
     <div class="posts-collapse">
       <div class="collection-title">
-        <h2 class="collection-header">ElasticSearch
+        <h2 class="collection-header">elasticsearch
           <small>标签</small>
         </h2>
       </div>
 
       
     <div class="collection-year">
-      <span class="collection-header">2024</span>
+      <span class="collection-header">2022</span>
     </div>
 
   <article itemscope itemtype="http://schema.org/Article">
@@ -190,61 +190,15 @@
 
       <div class="post-meta">
         <time itemprop="dateCreated"
-              datetime="2024-07-20T20:52:14+08:00"
-              content="2024-07-20">
-          07-20
+              datetime="2022-10-30T21:25:42+08:00"
+              content="2022-10-30">
+          10-30
         </time>
       </div>
 
       <div class="post-title">
-          <a class="post-title-link" href="/2024/07/20/spring/saas-2/" itemprop="url">
-            <span itemprop="name">多租户的技术实现</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-    <div class="collection-year">
-      <span class="collection-header">2019</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2019-04-16T11:38:18+08:00"
-              content="2019-04-16">
-          04-16
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2019/04/16/bigdata/es/sniff/" itemprop="url">
-            <span itemprop="name">client.transport.sniff配置引起的问题</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-    <div class="collection-year">
-      <span class="collection-header">2018</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-09-28T11:22:43+08:00"
-              content="2018-09-28">
-          09-28
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2018/09/28/bigdata/es/olap-1/" itemprop="url">
-            <span itemprop="name">基于ElasticSearch的OLAP框架思路</span>
+          <a class="post-title-link" href="/2022/10/30/bigdata/tdengine/tdengine-1/" itemprop="url">
+            <span itemprop="name">系统升级TDengine3.0</span>
           </a>
       </div>
 
@@ -322,20 +276,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">278</span>
+          <span class="site-state-item-count">285</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">116</span>
+        <span class="site-state-item-count">119</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">115</span>
+        <span class="site-state-item-count">118</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -393,12 +347,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">650k</span>
+    <span title="站点总字数">704k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:51</span>
+    <span title="站点阅读时长">10:40</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -451,6 +405,75 @@ var pjax = new Pjax({
 });
 
 window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+
+    </div>
+</body>
+</html>
+ventListener('pjax:success', () => {
   document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
     var code = element.text || element.textContent || element.innerHTML || '';
     var parent = element.parentNode;
