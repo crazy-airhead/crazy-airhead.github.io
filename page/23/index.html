@@ -172,6 +172,583 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/09/30/java/jdk8-apline/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/30/java/jdk8-apline/" class="post-title-link" itemprop="url">jdk8-apline需要注意的问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-30 15:02:13" itemprop="dateCreated datePublished" datetime="2019-09-30T15:02:13+08:00">2019-09-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>因为需要部署一台新的测试机，之前知道apline比较小巧，于是选用了java:jdk8-apline的基础镜像。但我们在部署Jfinal项目(采用undertow文件夹方式部署，通过start.sh启动并后台运行)的过程碰到一些问题。小巧注定很多组件需要自己安装。</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ul>
+<li><p>编写好Dockerfile后，无法启动容器</p>
+<blockquote>
+<ol>
+<li>apline未完装bash，需要安装<code>apk add bash</code></li>
+<li>start.sh为后台运行，需要改为直接运行，去掉启动命令中的<code>&amp;</code></li>
+</ol>
+</blockquote>
+</li>
+<li><p>时间为UTC，而不是北京时间</p>
+<blockquote>
+<p>这个问题实际是Docker镜像问题，和apline无关。因为编写Dockerfile时做了处理，所以一并列出。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apk add tzdata</span><br><span class="line">cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Asia/shanghai&quot;</span> &gt;&gt; /etc/timezone</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+<li><p>验证码无法使用，提示如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Caused by: java.lang.NullPointerException</span><br><span class="line">	at sun.awt.FontConfiguration.getVersion(FontConfiguration.java:1264)</span><br><span class="line">	at sun.awt.FontConfiguration.readFontConfigFile(FontConfiguration.java:219)</span><br><span class="line">	at sun.awt.FontConfiguration.init(FontConfiguration.java:107)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>网上搜索发现为apline缺少字库导致</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apk add font-adobe-100dpi ttf-dejavu fontconfig</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+<li><p>下载源速度慢</p>
+<blockquote>
+<p>使用阿里云镜像加速</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo http://mirrors.aliyun.com/alpine/v3.7/main/ &gt;&gt; /etc/apk/repositories</span><br><span class="line">apk update</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+</ul>
+<h2 id="镜像"><a href="#镜像" class="headerlink" title="镜像"></a>镜像</h2><p>最后的Dockerfile，需要增加的处理如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">FROM daocloud.io/library/java:8-jdk-alpine</span><br><span class="line">LABEL maintainer=<span class="string">&quot;L4qiang@gmail.com&quot;</span></span><br><span class="line"></span><br><span class="line">RUN <span class="built_in">echo</span> http://mirrors.aliyun.com/alpine/v3.7/main/ &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update</span><br><span class="line">RUN apk add bash tzdata font-adobe-100dpi ttf-dejavu fontconfig</span><br><span class="line">RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span><br><span class="line">RUN <span class="built_in">echo</span> <span class="string">&quot;Asia/shanghai&quot;</span> &gt;&gt; /etc/timezone</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/09/11/mysql/upgrade/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/11/mysql/upgrade/" class="post-title-link" itemprop="url">升级Mysql8</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-11 10:18:30" itemprop="dateCreated datePublished" datetime="2019-09-11T10:18:30+08:00">2019-09-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>最近项目迁移，顺便将Mysql数据库从5.7升级到8.0，记录下升级中的碰到的问题和一些处理。采用SpringBoot集成Jfinal，使用Druid管理数据库连接，同样适用于只使用Jfinal的用户。</p>
+<h1 id="准备Mysql"><a href="#准备Mysql" class="headerlink" title="准备Mysql"></a>准备Mysql</h1><p>使用Docker来完成Mysql8的环境准备（这里假设你已安装好Docker CE），可以到DockerHub上看是否有最新版本。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --name mysql8 -p 3306:3306 MYSQL_ROOT_PASSWORD=123456 -d mysql:8.0</span><br></pre></td></tr></table></figure>
+<h1 id="修改pom-xml"><a href="#修改pom-xml" class="headerlink" title="修改pom.xml"></a>修改pom.xml</h1><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.0.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h1 id="修改DruidPlugin配置"><a href="#修改DruidPlugin配置" class="headerlink" title="修改DruidPlugin配置"></a>修改DruidPlugin配置</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DruidPlugin druidPlugin = <span class="keyword">new</span> DruidPlugin(<span class="string">&quot;jdbcUrl&quot;</span>, <span class="string">&quot;user&quot;</span>, <span class="string">&quot;password&quot;</span>, <span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>此处一定要增加驱动名<code>com.mysql.cj.jdbc.Driver</code>，否则会报<code>Cannot resolve com.mysq.jdbc.Connection.ping method. Will use &#39;SELECT 1&#39; instead</code>错。</p>
+<h1 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h1><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">activerecord:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://ip:port/db?characterEncoding=utf8&amp;useSSL=false&amp;zeroDateTimeBehavior=CONVERT_TO_NULL&amp;serverTimezone=GMT</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">user</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">password</span></span><br></pre></td></tr></table></figure>
+<h2 id="问题-1"><a href="#问题-1" class="headerlink" title="问题"></a>问题</h2><ul>
+<li>5.7版本时使用<code>zeroDateTimeBehavior=convertToNull</code>，需要调整为<code>zeroDateTimeBehavior=CONVERT_TO_NULL</code>。</li>
+<li>如果提示<code>MySQLNonTransientConnectionException: Public Key Retrieval is not allowed</code>，增加<code>allowPublicKeyRetrieval=true</code>或者增加Timezone设置，如<code>serverTimezone=GMT</code>。具体原因可能参看<a target="_blank" rel="noopener" href="https://mysqlconnector.net/connection-options/">https://mysqlconnector.net/connection-options/</a>。</li>
+<li>如果使用了asText()，需要修改成ST_asText()。</li>
+</ul>
+<p>暂未发现其他问题，如遇到会进一步更新本文档。</p>
+<h1 id="Mysql8新特性"><a href="#Mysql8新特性" class="headerlink" title="Mysql8新特性"></a>Mysql8新特性</h1><p>以下简要列出Mysql8.0的一些新特性，主要参考<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/be29467c2b0c">这里</a>,建议直接看Mysql官网说明。</p>
+<ul>
+<li>默认字符集由latin1变为utf8mb4</li>
+<li>MyISAM系统表全部换成InnoDB表</li>
+<li>自增变量持久化</li>
+<li>DDL原子化</li>
+<li>参数修改持久化</li>
+<li>新增降序索引</li>
+<li>group by 不再隐式排序</li>
+<li>JSON特性增强</li>
+<li>redo &amp; undo 日志加密</li>
+<li>innodb select for update跳过锁等待</li>
+<li>增加SET_VAR语法</li>
+<li>支持不可见索引</li>
+<li>支持直方图</li>
+<li>新增innodb_dedicated_server参数</li>
+<li>日志分类更详细</li>
+<li>undo空间自动回收</li>
+<li>增加资源组</li>
+<li>增加角色管理</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/07/24/mysql/jsontype/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/24/mysql/jsontype/" class="post-title-link" itemprop="url">Mysql的JSON类型01</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-24 19:44:32" itemprop="dateCreated datePublished" datetime="2019-07-24T19:44:32+08:00">2019-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Mysql从5.7.8版本开始支持JSON字段，可以高效的处理JSON文档。相比字符串字段，JSON字段有下面的几处优势：</p>
+<ul>
+<li>自动的校验JSON格式，无效的文档会产生错误</li>
+<li>优化的存储格式（结构化的二进制格式），访问数据时不需要额外的解析，可能通过键或者数组索引来直接该问数据，而不是读取整个字段。</li>
+</ul>
+<p>JSON字段的存储空间要求与LONGBLOB和LONGTEXT是一样的（<em>L</em> + 4 bytes, where <em>L</em> &lt; 2^32）。同时JSON字段的默认值只能是NULL。</p>
+<p>为了操作JSON字段，提供了一系列的JSON和GeoJSON函数。</p>
+<p>和其他的二进制类型一样，JSON字段不支持索引，但可以通过提取值的方式生成（虚拟）索引。</p>
+<h2 id="创建JSON值"><a href="#创建JSON值" class="headerlink" title="创建JSON值"></a>创建JSON值</h2><p>新增JSON类型字段与其他类型没什么不同，插入时可以直接按字符串的方式进行插入，但必须是合法的JSON格式，如果不是语法直接报错。另外需要注意的是JSON字段使用utf8mb4字符集和uft8mb4_bin排序，因此1.其他字符集的字符串会被转换，2.JSON文档旭大小写敏感的，null，true，false只能用小写。</p>
+<p>下面是官网的一些例子和自己的补充。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE TABLE t1 (jdoc JSON);</span><br><span class="line">Query OK, 0 rows affected (0.20 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; INSERT INTO t1 VALUES(&#x27;&#123;&quot;key1&quot;: &quot;value1&quot;, &quot;key2&quot;: &quot;value2&quot;&#125;&#x27;);</span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; INSERT INTO t1 VALUES(&#x27;[1, 2,&#x27;);</span><br><span class="line">ERROR 3140 (22032) at line 2: Invalid JSON text:</span><br><span class="line">&quot;Invalid value.&quot; at position 6 in value (or column) &#x27;[1, 2,&#x27;.</span><br><span class="line"></span><br><span class="line">--下面语法也是能成功插入</span><br><span class="line">mysql&gt; insert into t1 values(&#x27;true&#x27;);</span><br><span class="line">mysql&gt; insert into t1 VALUES(&#x27;1&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>对于不太确定是否是MySql中支持的json内容，可以通过JSON_TYPE()进行测试。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_TYPE(&#x27;[&quot;a&quot;, &quot;b&quot;, 1]&#x27;);</span><br><span class="line">+----------------------------+</span><br><span class="line">| JSON_TYPE(&#x27;[&quot;a&quot;, &quot;b&quot;, 1]&#x27;) |</span><br><span class="line">+----------------------------+</span><br><span class="line">| ARRAY                      |</span><br><span class="line">+----------------------------+</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT JSON_TYPE(&#x27;&quot;hello&quot;&#x27;);</span><br><span class="line">+----------------------+</span><br><span class="line">| JSON_TYPE(&#x27;&quot;hello&quot;&#x27;) |</span><br><span class="line">+----------------------+</span><br><span class="line">| STRING               |</span><br><span class="line">+----------------------+</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT JSON_TYPE(&#x27;hello&#x27;);</span><br><span class="line">ERROR 3146 (22032): Invalid data type for JSON data in argument 1</span><br><span class="line">to function json_type; a JSON string or JSON type is required.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql&gt; select JSON_TYPE(&#x27;true&#x27;);</span><br><span class="line">+----------------------+</span><br><span class="line">| JSON_TYPE(&#x27;true&#x27;)    |</span><br><span class="line">+----------------------+</span><br><span class="line">| BOOLEAN              |</span><br><span class="line">+----------------------+</span><br><span class="line">mysql&gt; select JSON_TYPE(&#x27;1&#x27;);</span><br><span class="line">+----------------------+</span><br><span class="line">| JSON_TYPE(&#x27;1&#x27;)       |</span><br><span class="line">+----------------------+</span><br><span class="line">| INTEGER              |</span><br><span class="line">+----------------------+</span><br><span class="line">mysql&gt; select JSON_TYPE(&#x27;2019-01-01&#x27;);</span><br><span class="line">ERROR 3141 (22032): Invalid JSON text in argument 1 to function json_type: &quot;The document root must not be followed by other values.&quot; at position 4.</span><br></pre></td></tr></table></figure>
+
+<p>通过JSON_ARRAY()可以生成JSON数组。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_ARRAY(&#x27;a&#x27;, 1, NOW());</span><br><span class="line">+----------------------------------------+</span><br><span class="line">| JSON_ARRAY(&#x27;a&#x27;, 1, NOW())              |</span><br><span class="line">+----------------------------------------+</span><br><span class="line">| [&quot;a&quot;, 1, &quot;2015-07-27 09:43:47.000000&quot;] |</span><br><span class="line">+----------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>通过JSON_OBJECT()可以生成JSON对象。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_OBJECT(&#x27;key1&#x27;, 1, &#x27;key2&#x27;, &#x27;abc&#x27;);</span><br><span class="line">+---------------------------------------+</span><br><span class="line">| JSON_OBJECT(&#x27;key1&#x27;, 1, &#x27;key2&#x27;, &#x27;abc&#x27;) |</span><br><span class="line">+---------------------------------------+</span><br><span class="line">| &#123;&quot;key1&quot;: 1, &quot;key2&quot;: &quot;abc&quot;&#125;            |</span><br><span class="line">+---------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>如果使用JSON_OBJECT()插入数据需要处理引号(“)。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE TABLE facts (sentence JSON);</span><br><span class="line"></span><br><span class="line">--官网中说这个会无效，实际测试中是有效的。</span><br><span class="line">mysql&gt; INSERT INTO facts VALUES</span><br><span class="line">     &gt;   (JSON_OBJECT(&quot;mascot&quot;, &quot;Our mascot is a dolphin named \&quot;Sakila\&quot;.&quot;));</span><br><span class="line"></span><br><span class="line">--官网中说需要使用这个，实际测试时却报错。</span><br><span class="line">mysql&gt; INSERT INTO facts VALUES</span><br><span class="line">     &gt;   (&#x27;&#123;&quot;mascot&quot;: &quot;Our mascot is a dolphin named \\&quot;Sakila\\&quot;.&quot;&#125;&#x27;);</span><br><span class="line">Unknown command &#x27;\\&#x27;.</span><br><span class="line">ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &#x27;\\&quot;.&quot;))&#x27; at line 1  </span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT sentence FROM facts;</span><br><span class="line">+---------------------------------------------------------+</span><br><span class="line">| sentence                                                |</span><br><span class="line">+---------------------------------------------------------+</span><br><span class="line">| &#123;&quot;mascot&quot;: &quot;Our mascot is a dolphin named \&quot;Sakila\&quot;.&quot;&#125; |</span><br><span class="line">+---------------------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT col-&gt;&quot;$.mascot&quot; FROM qtest;</span><br><span class="line">ERROR 1146 (42S02): Table &#x27;test.qtest&#x27; doesn&#x27;t exist</span><br><span class="line">mysql&gt; SELECT sentence-&gt;&quot;$.mascot&quot; FROM facts;</span><br><span class="line">+---------------------------------------------+</span><br><span class="line">| sentence-&gt;&quot;$.mascot&quot;                        |</span><br><span class="line">+---------------------------------------------+</span><br><span class="line">| &quot;Our mascot is a dolphin named \&quot;Sakila\&quot;.&quot; |</span><br><span class="line">+---------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT sentence-&gt;&gt;&quot;$.mascot&quot; FROM facts;</span><br><span class="line">+-----------------------------------------+</span><br><span class="line">| sentence-&gt;&gt;&quot;$.mascot&quot;                   |</span><br><span class="line">+-----------------------------------------+</span><br><span class="line">| Our mascot is a dolphin named &quot;Sakila&quot;. |</span><br><span class="line">+-----------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>其实如果要简单点就是用单引号(‘)。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; INSERT INTO facts VALUES(JSON_OBJECT(&#x27;mascot&#x27;, &#x27;Our mascot is a dolphin named &quot;Sakila&quot;.&#x27;));</span><br><span class="line">Query OK, 1 row affected (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>而通过JSON_MERGE()可以合并两个JSON文档。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_MERGE(&#x27;[&quot;a&quot;, 1]&#x27;, &#x27;&#123;&quot;key&quot;: &quot;value&quot;&#125;&#x27;);</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">| JSON_MERGE(&#x27;[&quot;a&quot;, 1]&#x27;, &#x27;&#123;&quot;key&quot;: &quot;value&quot;&#125;&#x27;) |</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">| [&quot;a&quot;, 1, &#123;&quot;key&quot;: &quot;value&quot;&#125;]                 |</span><br><span class="line">+--------------------------------------------+</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT JSON_MERGE(&#x27;&#123;&quot;key1&quot;:&quot;value1&quot;&#125;&#x27;, &#x27;&#123;&quot;key2&quot;:&quot;value2&quot;&#125;&#x27;);</span><br><span class="line">+------------------------------------------------------+</span><br><span class="line">| JSON_MERGE(&#x27;&#123;&quot;key1&quot;:&quot;value1&quot;&#125;&#x27;, &#x27;&#123;&quot;key2&quot;:&quot;value2&quot;&#125;&#x27;) |</span><br><span class="line">+------------------------------------------------------+</span><br><span class="line">| &#123;&quot;key1&quot;: &quot;value1&quot;, &quot;key2&quot;: &quot;value2&quot;&#125;                 |</span><br><span class="line">+------------------------------------------------------+</span><br><span class="line">1 row in set, 1 warning (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT JSON_MERGE(&#x27;1&#x27;, &#x27;&#123;&quot;key2&quot;:&quot;value2&quot;&#125;&#x27;);</span><br><span class="line">+--------------------------------------+</span><br><span class="line">| JSON_MERGE(&#x27;1&#x27;, &#x27;&#123;&quot;key2&quot;:&quot;value2&quot;&#125;&#x27;) |</span><br><span class="line">+--------------------------------------+</span><br><span class="line">| [1, &#123;&quot;key2&quot;: &quot;value2&quot;&#125;]              |</span><br><span class="line">+--------------------------------------+</span><br><span class="line">1 row in set, 1 warning (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>以上例子可以看出JSON_MEGER是根据两个JSON文档的类型来结构返回类型的，类型相同时不转换，类型不同时转为JSON数组。还有些细节可能参看官网<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/json.html#json-normalization">Normalization, Merging, and Autowrapping of JSON Values</a>。</p>
+<h2 id="查询和修改JSON值"><a href="#查询和修改JSON值" class="headerlink" title="查询和修改JSON值"></a>查询和修改JSON值</h2><p>通过JSON_EXTRACT()可以提取JSON文档值，具体语法说明参看<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/json.html#json-path-syntax">JSON Path Syntax</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_EXTRACT(&#x27;&#123;&quot;id&quot;: 14, &quot;name&quot;: &quot;Aztalan&quot;&#125;&#x27;, &#x27;$.name&#x27;);</span><br><span class="line">+---------------------------------------------------------+</span><br><span class="line">| JSON_EXTRACT(&#x27;&#123;&quot;id&quot;: 14, &quot;name&quot;: &quot;Aztalan&quot;&#125;&#x27;, &#x27;$.name&#x27;) |</span><br><span class="line">+---------------------------------------------------------+</span><br><span class="line">| &quot;Aztalan&quot;                                               |</span><br><span class="line">+---------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>通过JSON_SET()来修改值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET @j = &#x27;[&quot;a&quot;, &#123;&quot;b&quot;: [true, false]&#125;, [10, 20]]&#x27;;</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT JSON_SET(@j, &#x27;$[1].b[0]&#x27;, 1, &#x27;$[2][2]&#x27;, 2);</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">| JSON_SET(@j, &#x27;$[1].b[0]&#x27;, 1, &#x27;$[2][2]&#x27;, 2) |</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">| [&quot;a&quot;, &#123;&quot;b&quot;: [1, false]&#125;, [10, 20, 2]]      |</span><br><span class="line">+--------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>通过JSON_INSERT()来插入新值，但不替换旧值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_INSERT(@j, &#x27;$[1].b[0]&#x27;, 1, &#x27;$[2][2]&#x27;, 2);</span><br><span class="line">+-----------------------------------------------+</span><br><span class="line">| JSON_INSERT(@j, &#x27;$[1].b[0]&#x27;, 1, &#x27;$[2][2]&#x27;, 2) |</span><br><span class="line">+-----------------------------------------------+</span><br><span class="line">| [&quot;a&quot;, &#123;&quot;b&quot;: [true, false]&#125;, [10, 20, 2]]      |</span><br><span class="line">+-----------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>通过JSON_REPLACE()来替换旧值而忽略新值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_REPLACE(@j, &#x27;$[1].b[0]&#x27;, 1, &#x27;$[2][2]&#x27;, 2);</span><br><span class="line">+------------------------------------------------+</span><br><span class="line">| JSON_REPLACE(@j, &#x27;$[1].b[0]&#x27;, 1, &#x27;$[2][2]&#x27;, 2) |</span><br><span class="line">+------------------------------------------------+</span><br><span class="line">| [&quot;a&quot;, &#123;&quot;b&quot;: [1, false]&#125;, [10, 20]]             |</span><br><span class="line">+------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>通过JSON_REMOVE()来移除文档中的值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT JSON_REMOVE(@j, &#x27;$[2]&#x27;, &#x27;$[1].b[1]&#x27;, &#x27;$[1].b[1]&#x27;);</span><br><span class="line">+---------------------------------------------------+</span><br><span class="line">| JSON_REMOVE(@j, &#x27;$[2]&#x27;, &#x27;$[1].b[1]&#x27;, &#x27;$[1].b[1]&#x27;) |</span><br><span class="line">+---------------------------------------------------+</span><br><span class="line">| [&quot;a&quot;, &#123;&quot;b&quot;: [true]&#125;]                              |</span><br><span class="line">+---------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<h2 id="聚合查询"><a href="#聚合查询" class="headerlink" title="聚合查询"></a>聚合查询</h2><p>对于JSON文档的聚合查询（MIN，MAX，GROUP_CONCAT）没有什么实际意义，是不支持的。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/06/13/java/fastjson/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/06/13/java/fastjson/" class="post-title-link" itemprop="url">FastJson使用整理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-13 09:37:29" itemprop="dateCreated datePublished" datetime="2019-06-13T09:37:29+08:00">2019-06-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/fastjson/" itemprop="url" rel="index"><span itemprop="name">fastjson</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>139</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li>将对象序列化为String时出现<code>$ref</code>对象。<br>可能通过禁用，DisableCircularReferenceDetect来解决。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSON.toJSONString(object, SerializerFeature.DisableCircularReferenceDetect)</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/31/misc/exponential/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/31/misc/exponential/" class="post-title-link" itemprop="url">保持耐心做长期成长</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-31 09:46:25" itemprop="dateCreated datePublished" datetime="2019-05-31T09:46:25+08:00">2019-05-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8C%87%E6%95%B0%E5%A2%9E%E9%95%BF/" itemprop="url" rel="index"><span itemprop="name">指数增长</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>525</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在前一家公司的时候一次会议上，老板举了个例子，是从现在有多少荷花（具体多少已记不清了），荷花每天长一倍，问多少天长满池塘。这是一个奥数题的翻版：</p>
+<blockquote>
+<p>池塘里的荷花每天长一倍，30天长满一池塘，问多少天覆盖整个池塘的四分之一？   </p>
+</blockquote>
+<p>大家都抢着回答。我当时没有什么感觉，自己也不是智力出众型，不能马上答上来，所以把更多的注意力放了在如何做对这道题，而不显得那么傻上，现在想想也觉得好笑。</p>
+<p>而现在回想起来老板是希望我们关注以下几点吧：</p>
+<ol>
+<li><p>关注的是指数增长。但我除了课堂的学习从未将它与生活，工作联系起来。</p>
+</li>
+<li><p>体会时间的重要性。但因为是按天来算的，反而我低估了时间的力量。</p>
+</li>
+<li><p>关注增长率，但因为是成倍增长，让我高估了成长率。</p>
+</li>
+</ol>
+<p>一个例子被举出来时，听的人可能很大程度上不能感同身受，不能体会它的力量。但就像是种下一颗种子一样，在那等待生根发芽，静待花开，突然你会有一天发现，而后感叹。</p>
+<p>从近期的学习来看，我们的成长速度显然不大可能达不到荷花的程度，但保持足够的耐心，特别是接受自己起步时的不好，一定会看到一个指数的增长。</p>
+<p>另外需要记住70这个数字（Why not 42），如果成长率是1%，那么需要70年翻倍。（《清醒的思考艺术》P138，指数增长，计算倍增时间，请用数字70除以增长的百分比。）</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/30/virtualization/ovirt/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -203,7 +780,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-26 10:17:51" itemprop="dateModified" datetime="2023-01-26T10:17:51+08:00">2023-01-26</time>
+                <time title="修改时间：2025-05-20 21:28:13" itemprop="dateModified" datetime="2025-05-20T21:28:13+08:00">2025-05-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -743,496 +1320,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/05/09/frontend/vue/vue-error-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/05/09/frontend/vue/vue-error-1/" class="post-title-link" itemprop="url">VUE踩坑记-01</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-09 13:36:47" itemprop="dateCreated datePublished" datetime="2019-05-09T13:36:47+08:00">2019-05-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>因为公司目前暂时没的前端，于是准备自己用Vue和TypeScript入手公司项目的管理后台。因为Vue已经有很多UI框架了（比如Element），而TypeScript呢，引入了类等概念，对于Java开发人员来说是比较容易入手的。而后端开发人员可能最头疼的是CSS布局吧，于是找了vue-element-admin来抄，当然有人改了个TypeScript版本<a target="_blank" rel="noopener" href="https://github.com/Armour/vue-typescript-admin-template">vue-typescript-admin-template</a>。</p>
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>经过一段时间的熟悉yarn和代码结构，我们开始了服务端的调用。</p>
-<h3 id="跨域问题"><a href="#跨域问题" class="headerlink" title="跨域问题"></a>跨域问题</h3><p>本地服务开发我们是可以设置Chrome的跨域的（–disable-web-security<br>–user-data-dir=），但为了后面更好的开发和及时发现问题，我们还是使用了Proxy方式，按vue-cli的文档，增加<code>vue.config.js</code>的devServer配置就要可以，如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * vue-cli3跨域的全配置！</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="attr">devServer</span>: &#123;</span><br><span class="line">     <span class="attr">proxy</span>:  <span class="string">&#x27;http://172.26.0.252:8881&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>但我们还是出现了问题，原来在<code>request.ts</code>中也设置了服务器地址</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> service = axios.create(&#123;</span><br><span class="line">  <span class="attr">baseURL</span>: <span class="string">&#x27;http://172.26.0.252:8881&#x27;</span>,</span><br><span class="line">  <span class="attr">timeout</span>: <span class="number">5000</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
-<p>其实呢这个值应该设置在<code>.env</code>中，设置VUE_APP_BASE_API</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">VUE_APP_BASE_API</span>=<span class="string">http://172.26.0.252:8881</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="远程调用"><a href="#远程调用" class="headerlink" title="远程调用"></a>远程调用</h3><p>解决了跨域之后，开始了实际的接口调用，修改的是登录页面，一测试，报这样的错。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">login error:<span class="built_in">Error</span>: ERR_ACTION_ACCESS_UNDEFINED: Are you trying to access <span class="built_in">this</span>.someMutation() or <span class="built_in">this</span>.someGetter inside an <span class="meta">@Action</span>? </span><br><span class="line">That works only <span class="keyword">in</span> dynamic modules. </span><br><span class="line">If not dynamic use <span class="built_in">this</span>.context.commit(<span class="string">&quot;mutationName&quot;</span>, payload) and <span class="built_in">this</span>.context.getters[<span class="string">&quot;getterName&quot;</span>]</span><br><span class="line"><span class="attr">Error</span>: Could not perform action Login</span><br><span class="line">    at Store.eval (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:333:37)</span></span><br><span class="line">    at step (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:114:23)</span></span><br><span class="line">    at <span class="built_in">Object</span>.eval [<span class="keyword">as</span> <span class="keyword">throw</span>] (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:95:53)</span></span><br><span class="line">    at rejected (webpack-internal:<span class="comment">///./node_modules/vuex-module-decorators/dist/esm/index.js:86:65)</span></span><br><span class="line"><span class="built_in">Error</span>: error <span class="keyword">with</span> code: <span class="literal">undefined</span></span><br><span class="line">    at __webpack_exports__.default (webpack-internal:<span class="comment">///./src/utils/request.ts:48:133)</span></span><br></pre></td></tr></table></figure>
-
-<p>嗯，完全没在头绪，查了下呢看到这篇<a target="_blank" rel="noopener" href="https://github.com/championswimmer/vuex-module-decorators/issues/26">Rejected action throws ERR_ACTION_ACCESS_UNDEFINED</a>，说是增加rawError，因为对Vuex不熟悉，也还是不知道怎么加。</p>
-<p>之后查看了<a target="_blank" rel="noopener" href="https://championswimmer.in/vuex-module-decorators/pages/installation.html"><a target="_blank" rel="noopener" href="https://championswimmer.in/vuex-module-decorators/">vuex-module-decorators</a></a>的基本文档。</p>
-<p>回头重新看<a target="_blank" rel="noopener" href="https://github.com/championswimmer/vuex-module-decorators/issues">issues</a>，搜索<code>ERR_ACTION_ACCESS_UNDEFINED</code>，记录还是不少的，一条条的看，终于看到rawError如何设置。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Action</span>(&#123; <span class="attr">rawError</span>: <span class="literal">true</span> &#125;)</span><br></pre></td></tr></table></figure>
-
-<p>修改代码，测试这个时候报错</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">code undifined</span><br></pre></td></tr></table></figure>
-
-<p>问题于是又定位到了<code>request.ts</code>上。</p>
-<p>查看代码，如下：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">service.interceptors.response.use(</span><br><span class="line">  <span class="function">(<span class="params">response</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// Some example codes here:</span></span><br><span class="line">    <span class="comment">// code == 20000: valid</span></span><br><span class="line">    <span class="comment">// code == 50008: invalid token</span></span><br><span class="line">    <span class="comment">// code == 50012: already login in other place</span></span><br><span class="line">    <span class="comment">// code == 50014: token expired</span></span><br><span class="line">    <span class="comment">// code == 60204: account or password is incorrect</span></span><br><span class="line">    <span class="comment">// You can change this part for your own usage.</span></span><br><span class="line">    <span class="keyword">const</span> res = response.data</span><br><span class="line">    <span class="keyword">if</span> (res.code !== <span class="number">20000</span>) &#123;</span><br><span class="line">      Message(&#123;</span><br><span class="line">        <span class="attr">message</span>: res.message,</span><br><span class="line">        <span class="attr">type</span>: <span class="string">&#x27;error&#x27;</span>,</span><br><span class="line">        <span class="attr">duration</span>: <span class="number">5</span> * <span class="number">1000</span></span><br><span class="line">      &#125;)</span><br><span class="line">      <span class="keyword">if</span> (res.code === <span class="number">50008</span> || res.code === <span class="number">50012</span> || res.code === <span class="number">50014</span>) &#123;</span><br><span class="line">        MessageBox.confirm(</span><br><span class="line">          <span class="string">&#x27;你已被登出，可以取消继续留在该页面，或者重新登录&#x27;</span>,</span><br><span class="line">          <span class="string">&#x27;确定登出&#x27;</span>,</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">confirmButtonText</span>: <span class="string">&#x27;重新登录&#x27;</span>,</span><br><span class="line">            <span class="attr">cancelButtonText</span>: <span class="string">&#x27;取消&#x27;</span>,</span><br><span class="line">            <span class="attr">type</span>: <span class="string">&#x27;warning&#x27;</span></span><br><span class="line">          &#125;</span><br><span class="line">        ).then(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">          UserModule.FedLogOut().then(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            location.reload() <span class="comment">// To prevent bugs from vue-router</span></span><br><span class="line">          &#125;)</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;error with code: &#x27;</span> + res.code))</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> response.data</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">    Message(&#123;</span><br><span class="line">      <span class="attr">message</span>: error.message,</span><br><span class="line">      <span class="attr">type</span>: <span class="string">&#x27;error&#x27;</span>,</span><br><span class="line">      <span class="attr">duration</span>: <span class="number">5</span> * <span class="number">1000</span></span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(error)</span><br><span class="line">  &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>是的，我们的返回值没有返回code，错误被上一层的Module给捕获了，接下来改代码就好了。</p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>实操才会碰到问题，才能解决问题，看文档时你是不会知道有多少坑的，你以为你会了实际上你还不会。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/04/26/misc/handwriting/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/26/misc/handwriting/" class="post-title-link" itemprop="url">硬笔字-笔画</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-26 09:25:51" itemprop="dateCreated datePublished" datetime="2019-04-26T09:25:51+08:00">2019-04-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>382</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="点：如高峰坠石"><a href="#点：如高峰坠石" class="headerlink" title="点：如高峰坠石"></a>点：如高峰坠石</h3><p>右点是写好点的基础，空中落笔，不可太长。垂点像露珠，仰点是自左上到右下落笔顿笔后往左路上挑。</p>
-<h3 id="横：如千里阵云"><a href="#横：如千里阵云" class="headerlink" title="横：如千里阵云"></a>横：如千里阵云</h3><p>起笔要稳，略顿，收笔要顿笔回锋。长横要舒展，行笔速度稍快，中间微微上凸。短横顶着斜向上。</p>
-<h3 id="竖：如万岁枯藤"><a href="#竖：如万岁枯藤" class="headerlink" title="竖：如万岁枯藤"></a>竖：如万岁枯藤</h3><p>垂露竖起笔向左上方伸出，顿笔下行，轻顿收笔。悬针竖运笔沉着形如银针，中锋行笔。</p>
-<h3 id="撇：如陆断犀象"><a href="#撇：如陆断犀象" class="headerlink" title="撇：如陆断犀象"></a>撇：如陆断犀象</h3><p>长撇要舒展而飘逸，短撇要迅速而有力。写好撇，是关键的是要撑握好角度和弧度。</p>
-<h3 id="捺：如崩浪雷奔"><a href="#捺：如崩浪雷奔" class="headerlink" title="捺：如崩浪雷奔"></a>捺：如崩浪雷奔</h3><p>捺的出锋要重顿快收，力量要用得沉稳。斜捺是轻入笔，右下行笔出书锋，不要太直，忌生硬。</p>
-<h3 id="折：如劲弩筋节"><a href="#折：如劲弩筋节" class="headerlink" title="折：如劲弩筋节"></a>折：如劲弩筋节</h3><p>折在书写时候，要有一个明显的停顿，然后转笔和力量的变化，方圆兼备。</p>
-<h3 id="提：如策马扬鞭"><a href="#提：如策马扬鞭" class="headerlink" title="提：如策马扬鞭"></a>提：如策马扬鞭</h3><p>顿笔斜向上，形状像匕首，速度要快，有力量，有策马扬鞭的气势，但不要甩。</p>
-<h3 id="勾：如百钧弩发"><a href="#勾：如百钧弩发" class="headerlink" title="勾：如百钧弩发"></a>勾：如百钧弩发</h3><p>横勾出钩迅速，钩身宜短，出锋方向指向字心。卧钩像一口锅，向上环抱。斜钩像一张弓，行笔迅疾，力拔山河。</p>
-<p><img src="handwriting.jpg" alt="图"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/04/23/spring/start-error/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/23/spring/start-error/" class="post-title-link" itemprop="url">Spring boot无法启动</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-23 14:37:37" itemprop="dateCreated datePublished" datetime="2019-04-23T14:37:37+08:00">2019-04-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>286</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>今天启动Spring boot的一个项目时，提示“Process finished with exit code 1”，项目无法启动。<br>初步分析可能是没有配置环境变了，检查了下是有的，加了debug=true，也没出提示日志。</p>
-<p>于是上网查了下，确实说的是环境变量<code>spring.profiles.active</code>没在配置，重新检查配置时发现，之前的环境变量居然是<code>spring.active.profiles</code>。因为换电脑，没有在这台机器运行不同环境，没有发现错误。</p>
-<p>提醒下自己，检查配置内容还是要认真些。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://www.xttblog.com/?p=2992">解决 Spring boot 启动报 Process finished with exit code 1 问题</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/04/19/finance/mm-theory/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/19/finance/mm-theory/" class="post-title-link" itemprop="url">MM理论</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-19 09:38:53" itemprop="dateCreated datePublished" datetime="2019-04-19T09:38:53+08:00">2019-04-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%87%91%E8%9E%8D/" itemprop="url" rel="index"><span itemprop="name">金融</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>872</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h2><p>MM理论被称为是“公司金融学奠基石的理论”，这个理论是关于融资决策的。香帅把这个理论称为企业融资的地平线理论。</p>
-<p>两个M分别是两位作者名字的首个字母，米勒Miller和莫迪利亚尼Modiogian。米勒也因为他在MM理论中的贡献，在1990年和马科维茨、夏普分享了诺贝尔奖。莫迪利亚尼是因为在之前过世了，所以没有拿到诺奖。</p>
-<h2 id="推论"><a href="#推论" class="headerlink" title="推论"></a>推论</h2><ul>
-<li>一个企业的市场价格决定于它未来能创造的价值。</li>
-<li>在有税收存在的情况下，一个企业的价值会随着债务比例的上升而上升。而增加的那部分价值，就恰好等于利息乘以公司的税率。</li>
-<li>当债务存在着破产风险的时候，一个企业的价值会随着债务比例的上升而下降，而下降的价值就等于公司总价值乘以破产的概率。</li>
-</ul>
-<h2 id="为什么是地平线理论"><a href="#为什么是地平线理论" class="headerlink" title="为什么是地平线理论"></a>为什么是地平线理论</h2><p>这个理论看起来挺简单的，为什么这么一个听上去很简单的理论，就拿了诺奖，而且还被誉为“公司金融的奠基性的理论呢”？</p>
-<p>一个好理论的评价标准就是能否用一个最简洁（parsimonious）的框架模型解释最多（rich）的现象。</p>
-<p>MM定理很明显，完美地做到了这点，它先假设一个没有摩擦的世界，然后一步步地加入这个摩擦，让你可以估算这个摩擦对公司价值的影响。然后从里作为起点，你就可以动态地思考下去，用这个理论作为标尺（benchmark），去度量和评估不同条件下的融资决策。从一个最简洁，最干净的设定，得到最丰富的现实解释。这是理论的力量，也是MM定理做得特别好的地方。</p>
-<p>那更牛的地方在哪里呢？就是在MM定理动态演化发展的过程中，学界慢慢形成了一套企业投融资角度的体系化思想。比如说在股东价值最大化的目标下，我们该如何投资项目，该如何选择融资结构，该怎么考虑分红政策，分司的内部治理，哪种选择会更加提升公司的价值。这也是为什么香帅会说MM定理就像公司的地平线理论。</p>
-<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>金融学思维和架构设计的思维有时是相关的，比如KISS，Less Is More。基于一个好理论的评价标准，我们能否用来定义一个好技术架构呢？用一个最简单的框架服务最多的应用场景。</p>
-<h2 id="来源"><a href="#来源" class="headerlink" title="来源"></a>来源</h2><p>本文为我对《香帅的北大金融学课》的摘抄和整理，更多详细内容请在得到订阅的《香帅的北大金融学课》。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2019/04/16/bigdata/hbase-indexer/batch-indexing/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/16/bigdata/hbase-indexer/batch-indexing/" class="post-title-link" itemprop="url">batch-indexing - 批量索引</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-16 16:00:00" itemprop="dateCreated datePublished" datetime="2019-04-16T16:00:00+08:00">2019-04-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hbase/hbase-indexer/" itemprop="url" rel="index"><span itemprop="name">hbase indexer</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>961</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>In addition to indexing HBase updates in near-real-time, it’s also possible to run a batch indexing job that will index data already contained within an HBase table. The batch indexing tool operates with the same indexing semantics as the near-real-time indexer, and it is run as a MapReduce job.</p>
-<p>In its most basic running mode, the batch indexing can be run as multiple indexers that run over HBase regions and write data directly to Solr, as follows:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar hbase-indexer-mr-*-job.jar \ </span><br><span class="line">    --hbase-indexer-zk zk01 \</span><br><span class="line">    --hbase-indexer-name docindexer</span><br><span class="line">    --reducers 0</span><br></pre></td></tr></table></figure>
-<p>It is also possible to generate offline index shards in HDFS by supplying -1 or a positive integer for the –reducers argument, as shown below:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar hbase-indexer-mr-*-job.jar \ </span><br><span class="line">    --hbase-indexer-zk zk01 \</span><br><span class="line">    --hbase-indexer-name docindexer \</span><br><span class="line">    --reducers -1 \</span><br><span class="line">    --output-dir hdfs://namenode/solroutput</span><br></pre></td></tr></table></figure>
-<p>Finally, indexing shards can be generated offline and then merged into a running SolrCloud cluster using the –go-live flag as follows:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar hbase-indexer-mr-*-job.jar \</span><br><span class="line">    --hbase-indexer-zk zk01 \</span><br><span class="line">    --hbase-indexer-name docindexer \</span><br><span class="line">    --go-live</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1302,7 +1389,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">285</span>
+          <span class="site-state-item-count">290</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1373,12 +1460,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">704k</span>
+    <span title="站点总字数">762k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:40</span>
+    <span title="站点阅读时长">11:32</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="说明最近在做的事情就是把 Spring Boot 的项目迁移到 Solon 上来。我们的有一个 OA 系统，里面使用到了 Flowable 6.5。照例我还是从官网入手，其中说到是不需要适配可以直接使用。然后附带了例子，https:&#x2F;&#x2F;gitee.com&#x2F;hiro&#x2F;flowable-solon-web。 看起来还是比较简单，但也没那么简单，还好之前有看网友提供了 easy-flowable，htt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solon 集成 Flowable">
+<meta property="og:url" content="http://l4qiang.me/2025/05/15/course100/041/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="说明最近在做的事情就是把 Spring Boot 的项目迁移到 Solon 上来。我们的有一个 OA 系统，里面使用到了 Flowable 6.5。照例我还是从官网入手，其中说到是不需要适配可以直接使用。然后附带了例子，https:&#x2F;&#x2F;gitee.com&#x2F;hiro&#x2F;flowable-solon-web。 看起来还是比较简单，但也没那么简单，还好之前有看网友提供了 easy-flowable，htt">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NjgwNmQwNDA3N2M0MGJkYTA0MDA3NDc4NDdmYWMyYTFfcGZaYWk1eHZRdXZqNk1NVjVkdmFCbndXbUdWWGxZUG9fVG9rZW46UTBVeWJwNDJZb1RZNE94MWFaQ2N5NTU1bnpoXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OGE0NzlmYjNlMThlMjAyNzM4ZWRlMzVhNjc3NmEzZjlfQ1g2Y2JURENxSUZFWFFDek9BeUt3S2Fzc1NwNG9jMzVfVG9rZW46UVR2RWIxQllNbzRGVUF4dTNqTWNncm1sblJnXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YTk5ZWFlMWVkNTlmZjAyODVkZTk4Yjc1NWZmYmY4ZjJfeFVYaGRUMGdwS01DazNIQzZYdGF5ZGRYa1JxaUM0R2hfVG9rZW46UGVXdWIyemZnb2JqYUN4cEJUOGM2VldmbnJiXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA">
+<meta property="article:published_time" content="2025-05-15T02:16:28.000Z">
+<meta property="article:modified_time" content="2025-05-15T02:27:58.690Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="教程100">
+<meta property="article:tag" content="写作">
+<meta property="article:tag" content="Solon">
+<meta property="article:tag" content="Solon 实用教程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NjgwNmQwNDA3N2M0MGJkYTA0MDA3NDc4NDdmYWMyYTFfcGZaYWk1eHZRdXZqNk1NVjVkdmFCbndXbUdWWGxZUG9fVG9rZW46UTBVeWJwNDJZb1RZNE94MWFaQ2N5NTU1bnpoXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA">
+
+<link rel="canonical" href="http://l4qiang.me/2025/05/15/course100/041/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Solon 集成 Flowable | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2613e7f510eebd12cf4d0d067e4ce195";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/05/15/course100/041/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solon 集成 Flowable
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-05-15 10:16:28 / 修改时间：10:27:58" itemprop="dateCreated datePublished" datetime="2025-05-15T10:16:28+08:00">2025-05-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>最近在做的事情就是把 Spring Boot 的项目迁移到 Solon 上来。我们的有一个 OA 系统，里面使用到了 Flowable 6.5。照例我还是从官网入手，其中说到是不需要适配可以直接使用。然后附带了例子，<a target="_blank" rel="noopener" href="https://gitee.com/hiro/flowable-solon-web%E3%80%82">https://gitee.com/hiro/flowable-solon-web。</a></p>
+<p>看起来还是比较简单，但也没那么简单，还好之前有看网友提供了 easy-flowable，<a target="_blank" rel="noopener" href="https://gitee.com/iajie/easy-flowable%EF%BC%8C%E4%B8%AD%E9%97%B4%E4%B9%9F%E6%9C%89%E8%AF%B7%E6%95%99%E4%BD%9C%E8%80%85%E5%87%A0%E4%B8%AA%E9%97%AE%E9%A2%98%EF%BC%8C%E6%84%9F%E8%B0%A2%E3%80%82%E5%A6%82%E6%9E%9C%E6%98%AF%E6%96%B0%E9%A1%B9%E7%9B%AE%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%EF%BC%8Ceasy-flowable">https://gitee.com/iajie/easy-flowable，中间也有请教作者几个问题，感谢。如果是新项目推荐使用，easy-flowable</a> 不仅提供了封装和增强，还提供了不错的 UI编排界面，使得 flowable 更简单易用。</p>
+<p>在统一看了相关的代码之后，主要的适配工作，就是根据配置设置ProcessEngineConfiguration， 并创建 ProcessEngine 及相关的 Service 的 bean 对象。 </p>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>在我们的系统中为一些基础组件采用 Solon 插件的方式封装一部分初始化工作。</p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@Inject(value = &quot;$&#123;flowable&#125;&quot;, autoRefreshed = true)</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FlowableProperties</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> String databaseSchemaUpdate = <span class="string">&quot;true&quot;</span>;</span><br><span class="line">  <span class="keyword">private</span> Boolean asyncExecutorActivate = <span class="keyword">false</span>;</span><br><span class="line">  <span class="keyword">private</span> String historyLevel = <span class="string">&quot;audit&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="构建-Bean"><a href="#构建-Bean" class="headerlink" title="构建 Bean"></a>构建 Bean</h3><p>根据配置设置ProcessEngineConfiguration， 并创建 ProcessEngine 及相关的 Service 的 bean 对象。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">XPluginImp</span> <span class="keyword">implements</span> <span class="title">Plugin</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> AppContext appContext;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">(AppContext context)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    appContext = context;</span><br><span class="line"></span><br><span class="line">    appContext.beanScan(FlowableProperties.class);</span><br><span class="line"></span><br><span class="line">    appContext.getBeanAsync(</span><br><span class="line">        DataSource.class,</span><br><span class="line">        dataSource -&gt; &#123;</span><br><span class="line">          FlowableProperties flowableProperties = appContext.getBean(FlowableProperties.class);</span><br><span class="line"></span><br><span class="line">          ProcessEngineConfigurationImpl engineConfiguration =</span><br><span class="line">              (ProcessEngineConfigurationImpl)</span><br><span class="line">                  ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration();</span><br><span class="line"></span><br><span class="line">          engineConfiguration.setDataSource(dataSource);</span><br><span class="line">          engineConfiguration.setDatabaseSchemaUpdate(<span class="string">&quot;false&quot;</span>);</span><br><span class="line">          <span class="comment">// 设置流程历史级别</span></span><br><span class="line">          engineConfiguration.setHistoryLevel(</span><br><span class="line">              HistoryLevel.getHistoryLevelForKey(flowableProperties.getHistoryLevel()));</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 设置表达式管理器</span></span><br><span class="line">          ExpressionManager ficusExpressionManager = <span class="keyword">new</span> SolonExpressionManager(appContext, <span class="keyword">null</span>);</span><br><span class="line">          engineConfiguration.setExpressionManager(ficusExpressionManager);</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 定时任务开关</span></span><br><span class="line">          engineConfiguration.setAsyncExecutorActivate(</span><br><span class="line">              flowableProperties.getAsyncExecutorActivate());</span><br><span class="line">          appContext.wrapAndPut(ProcessEngineConfiguration.class, engineConfiguration);</span><br><span class="line"></span><br><span class="line">          ProcessEngine processEngine = engineConfiguration.buildProcessEngine();</span><br><span class="line">          appContext.wrapAndPut(ProcessEngine.class, processEngine);</span><br><span class="line"></span><br><span class="line">          RuntimeService runtimeService = processEngine.getRuntimeService();</span><br><span class="line">          appContext.wrapAndPut(RuntimeService.class, runtimeService);</span><br><span class="line"></span><br><span class="line">          RepositoryService repositoryService = processEngine.getRepositoryService();</span><br><span class="line">          appContext.wrapAndPut(RepositoryService.class, repositoryService);</span><br><span class="line"></span><br><span class="line">          IdentityService identityService = processEngine.getIdentityService();</span><br><span class="line">          appContext.wrapAndPut(IdentityService.class, identityService);</span><br><span class="line"></span><br><span class="line">          TaskService taskService = processEngine.getTaskService();</span><br><span class="line">          appContext.wrapAndPut(TaskService.class, taskService);</span><br><span class="line"></span><br><span class="line">          HistoryService historyService = processEngine.getHistoryService();</span><br><span class="line">          appContext.wrapAndPut(HistoryService.class, historyService);</span><br><span class="line"></span><br><span class="line">          ManagementService managementService = processEngine.getManagementService();</span><br><span class="line">          appContext.wrapAndPut(ManagementService.class, managementService);</span><br><span class="line"></span><br><span class="line">          FormService formService = processEngine.getFormService();</span><br><span class="line">          appContext.wrapAndPut(FormService.class, formService);</span><br><span class="line"></span><br><span class="line">          DynamicBpmnService dynamicBpmnService = processEngine.getDynamicBpmnService();</span><br><span class="line">          appContext.wrapAndPut(DynamicBpmnService.class, dynamicBpmnService);</span><br><span class="line">        &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stop</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    Plugin.<span class="keyword">super</span>.stop();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="表达管理器-ProcessExpressionManager"><a href="#表达管理器-ProcessExpressionManager" class="headerlink" title="表达管理器 (ProcessExpressionManager)"></a>表达管理器 (ProcessExpressionManager)</h3><p>重要，如果没有添加自己的表达式管理，一些流程在执行的时候可能出错。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SolonExpressionManager</span> <span class="keyword">extends</span> <span class="title">ProcessExpressionManager</span> </span>&#123;</span><br><span class="line">  <span class="keyword">protected</span> AppContext appContext;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">SolonExpressionManager</span><span class="params">(AppContext appContext, Map&lt;Object, Object&gt; beans)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(beans);</span><br><span class="line">    <span class="keyword">this</span>.appContext = appContext;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> ELResolver <span class="title">createElResolver</span><span class="params">(VariableContainer variableContainer)</span> </span>&#123;</span><br><span class="line">    List&lt;ELResolver&gt; elResolvers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    elResolvers.add(createVariableElResolver(variableContainer));</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> AppContextElResolver(<span class="keyword">this</span>.appContext));</span><br><span class="line">    <span class="keyword">if</span> (beans != <span class="keyword">null</span>) &#123;</span><br><span class="line">      elResolvers.add(<span class="keyword">new</span> ReadOnlyMapELResolver(beans));</span><br><span class="line">    &#125;</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> ArrayELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> ListELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> MapELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> JsonNodeELResolver());</span><br><span class="line">    ELResolver beanElResolver = createBeanElResolver();</span><br><span class="line">    <span class="keyword">if</span> (beanElResolver != <span class="keyword">null</span>) &#123;</span><br><span class="line">      elResolvers.add(beanElResolver);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    configureResolvers(elResolvers);</span><br><span class="line"></span><br><span class="line">    CompositeELResolver compositeElResolver = <span class="keyword">new</span> CompositeELResolver();</span><br><span class="line">    <span class="keyword">for</span> (ELResolver elResolver : elResolvers) &#123;</span><br><span class="line">      compositeElResolver.add(elResolver);</span><br><span class="line">    &#125;</span><br><span class="line">    compositeElResolver.add(<span class="keyword">new</span> CouldNotResolvePropertyELResolver());</span><br><span class="line">    <span class="keyword">return</span> compositeElResolver;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ELResolver"><a href="#ELResolver" class="headerlink" title="ELResolver"></a>ELResolver</h3><p>EL 表达式执行器，用于处理 Solon bean 对象的获取。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppContextElResolver</span> <span class="keyword">extends</span> <span class="title">ELResolver</span> </span>&#123;</span><br><span class="line">  <span class="keyword">protected</span> AppContext appContext;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="function"><span class="title">AppContextElResolver</span>(<span class="params">AppContext appContext</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.appContext = appContext;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> Class&lt;?&gt; <span class="function"><span class="title">getCommonPropertyType</span>(<span class="params">ELContext context, <span class="built_in">Object</span> arg</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Object</span>.class;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> Iterator&lt;FeatureDescriptor&gt; <span class="function"><span class="title">getFeatureDescriptors</span>(<span class="params">ELContext context, <span class="built_in">Object</span> arg</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> Class&lt;?&gt; <span class="function"><span class="title">getType</span>(<span class="params">ELContext context, <span class="built_in">Object</span> arg1, <span class="built_in">Object</span> arg2</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Object</span>.class;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">Object</span> <span class="function"><span class="title">getValue</span>(<span class="params">ELContext context, <span class="built_in">Object</span> base, <span class="built_in">Object</span> property</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (base == <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="built_in">String</span> key = property.toString();</span><br><span class="line">      <span class="built_in">Object</span> bean = appContext.getBean(key);</span><br><span class="line">      <span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">        context.setPropertyResolved(<span class="literal">true</span>);</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">boolean</span> <span class="function"><span class="title">isReadOnly</span>(<span class="params">ELContext context, <span class="built_in">Object</span> base, <span class="built_in">Object</span> property</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setValue</span>(<span class="params">ELContext context, <span class="built_in">Object</span> base, <span class="built_in">Object</span> property, <span class="built_in">Object</span> value</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (base == <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="built_in">String</span> key = (<span class="built_in">String</span>) property;</span><br><span class="line">      <span class="built_in">this</span>.appContext.getBeanAsync(</span><br><span class="line">          key,</span><br><span class="line">          (bean) -&gt; &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> FlowableException(</span><br><span class="line">                <span class="string">&quot;Cannot set value of &#x27;&quot;</span></span><br><span class="line">                    + property</span><br><span class="line">                    + <span class="string">&quot;&#x27;, it resolves to a bean defined in the Solon application-context.&quot;</span>);</span><br><span class="line">          &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ol>
+<li>提示模型注册失败，并提示 <code>java.time.LocalDateTime cannot be cast to java.lang.String</code></li>
+</ol>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NjgwNmQwNDA3N2M0MGJkYTA0MDA3NDc4NDdmYWMyYTFfcGZaYWk1eHZRdXZqNk1NVjVkdmFCbndXbUdWWGxZUG9fVG9rZW46UTBVeWJwNDJZb1RZNE94MWFaQ2N5NTU1bnpoXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA" alt="img"></p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OGE0NzlmYjNlMThlMjAyNzM4ZWRlMzVhNjc3NmEzZjlfQ1g2Y2JURENxSUZFWFFDek9BeUt3S2Fzc1NwNG9jMzVfVG9rZW46UVR2RWIxQllNbzRGVUF4dTNqTWNncm1sblJnXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA" alt="img"></p>
+<blockquote>
+<p>主要的问题，集成的是 6.5.0的 Flowable，不支持高版本的 MySQL 驱动。检查发现Spring 版本使用的是 8.0.20的MySQL 驱动，而 Solon 使用的是 8.0.30 版本的驱动。把MySQL  驱动版本恢复为8.0.20，服务启动成功。</p>
+</blockquote>
+<ol>
+<li>提示找不到对象 TaskListener 相关的表达式对象，一些流程条件的时候提示如下的错误。</li>
+</ol>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YTk5ZWFlMWVkNTlmZjAyODVkZTk4Yjc1NWZmYmY4ZjJfeFVYaGRUMGdwS01DazNIQzZYdGF5ZGRYa1JxaUM0R2hfVG9rZW46UGVXdWIyemZnb2JqYUN4cEJUOGM2VldmbnJiXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA" alt="img"></p>
+<blockquote>
+<p>原因是虽然通过 Component 注册了 Bean 对象，但 Flowable 无法获取，需有重写 ExpressionManager，增加Solon bean 对象的获取。</p>
+<p>这里需要注意，注册 ExpressionManager 时，需要在 <code>ProcessEngine processEngine = engineConfiguration.buildProcessEngine()</code>之前否则可能构建了两个ExpressionManager，在执行获取 TaskListener 的对象时仍然可能报错。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置表达式管理器</span></span><br><span class="line">ExpressionManager ficusExpressionManager = <span class="keyword">new</span> SolonExpressionManager(appContext, <span class="keyword">null</span>);</span><br><span class="line">engineConfiguration.setExpressionManager(ficusExpressionManager);</span><br></pre></td></tr></table></figure>
+
+<p>增加 SolonExpressionManager，继承自 ProcessExpressionManager。重写 EL 表达式执行器，多增加AppContextElResolver。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> ELResolver <span class="title">createElResolver</span><span class="params">(VariableContainer variableContainer)</span> </span>&#123;</span><br><span class="line">    List&lt;ELResolver&gt; elResolvers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    elResolvers.add(createVariableElResolver(variableContainer));</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> AppContextElResolver(<span class="keyword">this</span>.appContext));</span><br><span class="line">    <span class="keyword">if</span> (beans != <span class="keyword">null</span>) &#123;</span><br><span class="line">      elResolvers.add(<span class="keyword">new</span> ReadOnlyMapELResolver(beans));</span><br><span class="line">    &#125;</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> ArrayELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> ListELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> MapELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> JsonNodeELResolver());</span><br><span class="line">    ELResolver beanElResolver = createBeanElResolver();</span><br><span class="line">    <span class="keyword">if</span> (beanElResolver != <span class="keyword">null</span>) &#123;</span><br><span class="line">      elResolvers.add(beanElResolver);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    configureResolvers(elResolvers);</span><br><span class="line"></span><br><span class="line">    CompositeELResolver compositeElResolver = <span class="keyword">new</span> CompositeELResolver();</span><br><span class="line">    <span class="keyword">for</span> (ELResolver elResolver : elResolvers) &#123;</span><br><span class="line">      compositeElResolver.add(elResolver);</span><br><span class="line">    &#125;</span><br><span class="line">    compositeElResolver.add(<span class="keyword">new</span> CouldNotResolvePropertyELResolver());</span><br><span class="line">    <span class="keyword">return</span> compositeElResolver;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>增加 AppContextElResolver，继承自 ELResolver，获取 Bean 对象的代码，这里需要注意如果对象创建了，需要设置<code>context.setPropertyResolved(true)</code>。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="built_in">Object</span> <span class="function"><span class="title">getValue</span>(<span class="params">ELContext context, <span class="built_in">Object</span> base, <span class="built_in">Object</span> property</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (base == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="built_in">String</span> key = property.toString();</span><br><span class="line">    <span class="built_in">Object</span> bean = appContext.getBean(key);</span><br><span class="line">    <span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">      context.setPropertyResolved(<span class="literal">true</span>);</span><br><span class="line">      <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%95%99%E7%A8%8B100/" rel="tag"><i class="fa fa-tag"></i> 教程100</a>
+              <a href="/tags/%E5%86%99%E4%BD%9C/" rel="tag"><i class="fa fa-tag"></i> 写作</a>
+              <a href="/tags/Solon/" rel="tag"><i class="fa fa-tag"></i> Solon</a>
+              <a href="/tags/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" rel="tag"><i class="fa fa-tag"></i> Solon 实用教程</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/04/30/course100/040/" rel="prev" title="Solon Cloud Gateway 补充">
+      <i class="fa fa-chevron-left"></i> Solon Cloud Gateway 补充
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/06/28/course100/042/" rel="next" title="Solon 项目无法启动或者启动慢问题">
+      Solon 项目无法启动或者启动慢问题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">2.1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA-Bean"><span class="nav-number">2.2.</span> <span class="nav-text">构建 Bean</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E8%BE%BE%E7%AE%A1%E7%90%86%E5%99%A8-ProcessExpressionManager"><span class="nav-number">2.3.</span> <span class="nav-text">表达管理器 (ProcessExpressionManager)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ELResolver"><span class="nav-number">2.4.</span> <span class="nav-text">ELResolver</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">问题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">290</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">119</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">118</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">762k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">11:32</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '930c7f953743d4b2f5ffcb0f3d46482e',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
