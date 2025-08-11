@@ -172,6 +172,157 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/09/28/bigdata/es/olap-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/09/28/bigdata/es/olap-1/" class="post-title-link" itemprop="url">基于ElasticSearch的OLAP框架思路</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-09-28 11:22:43" itemprop="dateCreated datePublished" datetime="2018-09-28T11:22:43+08:00">2018-09-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/OLAP/" itemprop="url" rel="index"><span itemprop="name">OLAP</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="OLAP基本概念"><a href="#OLAP基本概念" class="headerlink" title="OLAP基本概念"></a>OLAP基本概念</h1><h2 id="联机分析处理（On-Line-Analytical-Processing，OLAP）"><a href="#联机分析处理（On-Line-Analytical-Processing，OLAP）" class="headerlink" title="联机分析处理（On-Line Analytical Processing，OLAP）"></a>联机分析处理（On-Line Analytical Processing，OLAP）</h2><p>联机分析处理的概念最早是由关系数据库之父爱德华·库德（E·F·Codd）博士于1993年提出的，是一种用于组织大型商务数据库和支持商务智能的技术。OLAP 数据库分为一个或多个多维数据集，每个多维数据集都由多维数据集管理员组织和设计以适应用户检索和分析数据的方式，从而更易于创建和使用所需的数据透视表和数据透视图。</p>
+<h2 id="维（Dimension）"><a href="#维（Dimension）" class="headerlink" title="维（Dimension）"></a>维（Dimension）</h2><p>是人们观察数据的特定角度，是考虑问题时的一类属性，属性集合构成一个维（时间维、地理维等）。</p>
+<h2 id="维的层次（Level）"><a href="#维的层次（Level）" class="headerlink" title="维的层次（Level）"></a>维的层次（Level）</h2><p>人们观察数据的某个特定角度（即某个维）还可以存在细节程度不同的各个描述方面（时间维：日期、月份、季度、年）。</p>
+<h2 id="维的成员（Member）"><a href="#维的成员（Member）" class="headerlink" title="维的成员（Member）"></a>维的成员（Member）</h2><p>维的一个取值，是数据项在某维中位置的描述。（“某年某月某日”是在时间维上位置的描述）。</p>
+<h2 id="度量（Measure）"><a href="#度量（Measure）" class="headerlink" title="度量（Measure）"></a>度量（Measure）</h2><p>多维数组的取值。（2000年1月，上海，笔记本电脑，$100000）。</p>
+<h2 id="指标（Quota），补充"><a href="#指标（Quota），补充" class="headerlink" title="指标（Quota），补充"></a>指标（Quota），补充</h2><p>可度量的属性。一般为某种值，如费用，入院人次。</p>
+<h2 id="典型操作"><a href="#典型操作" class="headerlink" title="典型操作"></a>典型操作</h2><p>OLAP的基本多维分析操作有钻取（Drill-up和Drill-down）、切片（Slice）和切块（Dice）、以及旋转（Pivot）等。</p>
+<h3 id="钻取"><a href="#钻取" class="headerlink" title="钻取"></a>钻取</h3><p>是改变维的层次，变换分析的粒度。它包括向下钻取（Drill-down）和向上钻取（Drill-up）/上卷(Roll-up)。Drill- up是在某一维上将低层次的细节数据概括到高层次的汇总数据，或者减少维数；而Drill-down则相反，它从汇总数据深入到细节数据进行观察或增加新维。</p>
+<h3 id="切片和切块"><a href="#切片和切块" class="headerlink" title="切片和切块"></a>切片和切块</h3><p>是在一部分维上选定值后，关心度量数据在剩余维上的分布。如果剩余的维只有两个，则是切片；如果有三个或以上，则是切块。</p>
+<h3 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h3><p>是变换维的方向，即在表格中重新安排维的放置（例如行列互换）。</p>
+<h1 id="ElasticSearch"><a href="#ElasticSearch" class="headerlink" title="ElasticSearch"></a>ElasticSearch</h1><p>Apache Lucene™可能是目前存在的，不论开源还是私有的，拥有最先进，高性能和全功能搜索引擎功能的库。但Lucene是很复杂的。 Elasticsearch是一个使用Java编写的开源的搜索引擎，它的内部使用 Lucene 做索引与搜索，但是它的目标是使全文检索变得简单， 通过隐藏 Lucene 的复杂性，取而代之的提供一套简单一致的 RESTful API。</p>
+<p>然而，Elasticsearch不仅仅是 Lucene，并且也不仅仅只是一个全文搜索引擎。 它可以被下面这样准确的形容：</p>
+<ul>
+<li>一个分布式的实时文档存储，每个字段可以被索引与搜索</li>
+<li>一个分布式实时分析搜索引擎</li>
+<li>能胜任上百个服务节点的扩展，并支持PB级别的结构化或者非结构化数据</li>
+</ul>
+<p>Elasticsearch将所有的功能打包成一个单独的服务，这样你可以通过程序去访问它提供的简单的RESTful API服务， 不论你是使用自己喜欢的编程语言还是直接使用命令行。</p>
+<p>Elasticsearch是一个实时的分布式搜索分析引擎， 它能让你以一个之前从未有过的速度和规模，去探索你的数据。 它被用作全文检索、结构化搜索、分析以及这三个功能的组合：</p>
+<ul>
+<li>Wikipedia 使用 Elasticsearch 提供带有高亮片段的全文搜索，还有 search-as-you-type 和 did-you-mean 的建议。</li>
+<li>卫报 使用 Elasticsearch 将网络社交数据结合到访客日志中，实时的给它的编辑们提供公众对于新文章的反馈。</li>
+<li>Stack Overflow 将地理位置查询融入全文检索中去，并且使用 more-like-this 接口去查找相关的问题与答案。</li>
+<li>GitHub 使用 Elasticsearch 对1300亿行代码进行查询。</li>
+</ul>
+<h2 id="ES文档和多维数据集"><a href="#ES文档和多维数据集" class="headerlink" title="ES文档和多维数据集"></a>ES文档和多维数据集</h2><h3 id="ES的存储结构"><a href="#ES的存储结构" class="headerlink" title="ES的存储结构"></a>ES的存储结构</h3><p>ES文档通过JSON格式来表示。文档是可以被索引的基本单元，文档需要索引需要指定类型。ES能支持索引的数据类型有，其中的数组类型，对象类型和内嵌类型的支持，使得ES能存储更复杂的文档。</p>
+<h3 id="多维联机分析处理（MOLAP）"><a href="#多维联机分析处理（MOLAP）" class="headerlink" title="多维联机分析处理（MOLAP）"></a>多维联机分析处理（MOLAP）</h3><p>MOLAP将OLAP分析所用到的多维数据物理上存储为多维数组的形式，形成“立方体”的结构。维的属性值被映射成多维数组的下标值或下标的范围，而总结数据作为多维数组的值存储在数组的单元中。由于MOLAP采用了新的存储结构，从物理层实现起，因此又称为物理OLAP（PhysicalOLAP）；而 ROLAP主要通过一些软件工具或中间软件实现，物理层仍采用关系数据库的存储结构，因此称为虚拟OLAP（VirtualOLAP）。</p>
+<p>我们可以看到基于复杂数据类型（Complex datatypes）构建的ES文档与MOLAP的概念是非常接近的，利用ElasticSearch的聚合的能力，我们能相对简单的实现OLAP框架。</p>
+<h1 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h1><p>要实现整个OLAP框架主要需要处理以下几个环节</p>
+<ol>
+<li>数据建模</li>
+<li>数据ETL</li>
+<li>数据分析</li>
+<li>数据展示</li>
+</ol>
+<p>大致思路如下：<br><img src="olap.png" alt="OLAP"></p>
+<h2 id="数据建模"><a href="#数据建模" class="headerlink" title="数据建模"></a>数据建模</h2><p>数据建模就是建立多维数据集的过程，同时为了能更有效的利用ES的索引，不建议过深的JSON层次，所以对应到维度建模时采用的是星形模式。</p>
+<p>正常情况，是先进行数据建模，之后才能进行数据ETL，首先需要知道抽取的源数据的结构，即数据元数据之后，才能进一步分析数据模型。对于ES来说，实际上就是建立Index/Type的过程。</p>
+<h3 id="维度管理"><a href="#维度管理" class="headerlink" title="维度管理"></a>维度管理</h3><h3 id="元数据管理"><a href="#元数据管理" class="headerlink" title="元数据管理"></a>元数据管理</h3><p>元数据管理维护了原始数据的元数据结构，简单来说就是原始数据有哪些库，哪些表，表之间有什么关系。</p>
+<h3 id="映射管理"><a href="#映射管理" class="headerlink" title="映射管理"></a>映射管理</h3><p>映射管理是指定了需要抽取的数据范围及方法和确定了多维数据集的模型。</p>
+<h2 id="数据ETL"><a href="#数据ETL" class="headerlink" title="数据ETL"></a>数据ETL</h2><p>正常情况，是先进行数据建模，之后才能进行数据ETL，而实际过程中，是一般需要知道源数据的结构，即数据元数据之后，才能进一步分析数据模型。</p>
+<p>数据ETL，实质就是从各个数据源提取数据，对数据进行转换，并最终加载填充数据到数据仓库维度建模后的表中。只有当多维数据集被填充好，ETL工作才算完成。</p>
+<p>数据加载主要分为两种，一种是首次加载，一种是刷新加载（增量加载）。当前产品中主要涉及两种数据库，Mysql和Hbase。</p>
+<h3 id="首次加载"><a href="#首次加载" class="headerlink" title="首次加载"></a>首次加载</h3><p>通过Quartz Job或MapRedurce Job将数据转换为Kafka消息，由数据加载组件来进行数据处理。</p>
+<h3 id="刷新加载"><a href="#刷新加载" class="headerlink" title="刷新加载"></a>刷新加载</h3><p>通过扩展mysql-binlog-connector-java和HBase Side-Effect Processor，可以实现数据的实时增量更新。本方案中通过Kafka消息中间件来统一转发不同类型的数据更新，此处需要定义好Kafka的消息格式，以便数据加载组件能较简单的处理数据。</p>
+<h3 id="数据转换"><a href="#数据转换" class="headerlink" title="数据转换"></a>数据转换</h3><p>转换步骤主要是指对提取好了的数据的结构进行转换，以满足目标数据仓库模型的过程。此外，转换过程也负责数据质量工作，这部分也被称为数据清洗(data cleaning)。转换过程可以通过逐步实现转换算法，动态上线的方式进行。</p>
+<h2 id="统计分析"><a href="#统计分析" class="headerlink" title="统计分析"></a>统计分析</h2><p>统计分析其实就是从事实表中统计任意组合维度的指标，也就是过滤、分组、聚合，其中，聚合除了一般的SUM、COUNT、AVG、MAX、MIN等，还有一个重要的COUNT(DISTINCT)。ElasticSearch本来就是做实时搜索的，过滤自然不是问题，现在也支持各种聚合以及Pipeline aggregations（相当于SQL子查询的功能）。</p>
+<p>统计分析是根据模板配置和页面操作时的条件生成ES语法，执行语法，返回结果数据的过程。从表面看，该过程不难，然而为了生成的ES语法的准确性，ES语法的生成引擎是非常重要的一个环节，通过在模板管理来增加一些配置来辅助ES的语法生成，如行维度，列维度，维的层次等等。</p>
+<h2 id="数据展示"><a href="#数据展示" class="headerlink" title="数据展示"></a>数据展示</h2><p>通过模板的动态配置，利用Echart和Vue可以实现，动态布局和各种仪表盘的展示，这部分内容也可参看Kibana。</p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>ES的文档结构符合MOLAP的概念，它提供的聚合功能可以实现OLAP的各种操作，基于Lucene和分布式架构在性能上也能得到保障。通过定义一定的规则和开发一系列的辅助功能，可比较容易的实现一套通用的实时OLAP的框架。本文主要讲解的是基于ES构建OLAP框架的思路，而非完整的构建方案。</p>
+<h2 id="参考连接"><a href="#参考连接" class="headerlink" title="参考连接"></a>参考连接</h2><ul>
+<li>联机分析处理</li>
+<li>Elasticsearch Basic Concepts</li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/products/hadoop">https://www.elastic.co/products/hadoop</a></li>
+<li>Hbase Indexer SEP</li>
+<li>使用ElasticSearch作为大数据平台的实时OLAP框架</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/fighting_one_piece/article/details/51765383">https://blog.csdn.net/fighting_one_piece/article/details/51765383</a></li>
+<li><a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/575991">https://yq.aliyun.com/articles/575991</a></li>
+<li>Mapping Types</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/09/19/git/git-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1953,123 +2104,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/05/12/frontend/security/cors/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/05/12/frontend/security/cors/" class="post-title-link" itemprop="url">CORS 跨域资源共享</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-05-12 11:09:50" itemprop="dateCreated datePublished" datetime="2018-05-12T11:09:50+08:00">2018-05-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/frontend/" itemprop="url" rel="index"><span itemprop="name">frontend</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/frontend/security/" itemprop="url" rel="index"><span itemprop="name">security</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h1><p>因为使用Angular来调用ipfs的API时出现403禁止访问错误，首先判断的是跨域问题，尝试如下内容：直接在浏览器中输入URL访问可以，通过代理或浏览器的允许跨域设置依然是403错误。<br>通过查看ipfs的文档（<a target="_blank" rel="noopener" href="https://github.com/ipfs/js-ipfs-api%EF%BC%89%EF%BC%8CIPFS%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%BB%98%E8%AE%A4%E4%B8%8D%E6%94%AF%E6%8C%81%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82%EF%BC%8C%E9%9C%80%E8%A6%81%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E3%80%82">https://github.com/ipfs/js-ipfs-api），IPFS服务器默认不支持跨域请求，需要修改配置文件。</a></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin <span class="string">&quot;[\&quot;http://example.com\&quot;]&quot;</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials <span class="string">&quot;[\&quot;true\&quot;]&quot;</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods <span class="string">&quot;[\&quot;PUT\&quot;, \&quot;POST\&quot;, \&quot;GET\&quot;]&quot;</span></span></span><br></pre></td></tr></table></figure>
-<p>修改配置，重启IPFS之后正常访问IPFS的API。</p>
-<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>对于CORS没有理解，通过查看Wiki整理下对CORS，加深理解。为什么浏览器中可以访问而前端调用不行？<br>直接在浏览器中可以直接访问是因为他是第一下资源地址，是一个GET请求，不是跨域请求。<br>Angular中请求时，是一个XHR请求，且与第一个资源地址不同，是跨域请求。</p>
-<h1 id="跨域资源共享"><a href="#跨域资源共享" class="headerlink" title="跨域资源共享"></a>跨域资源共享</h1><p>跨域资源共享是一种机制，它允许受限的访问第一个访问资源域以外的资源（如字体）的机制。一张网页通常包含了很多跨域的图片，样式，脚本，iframes，或者视频。一些跨域请求，尤其是Ajax请求，会因为默认的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Same-origin_policy">同源安全策略</a>而被禁止访问。</p>
-<p>CORS定义了浏览器和服务器如何来决定一个跨域请求是安全的。它比完全同源请求有更多的自由和功能，但不要只是简单地允许所有跨源请求。CORS规范最初是作为W3C推荐标准发布的，但该文档已经过时。 <a target="_blank" rel="noopener" href="https://fetch.spec.whatwg.org/">Fetch Living Standard</a>是当前维护活跃的规范。</p>
-<h2 id="同源判断规则"><a href="#同源判断规则" class="headerlink" title="同源判断规则"></a>同源判断规则</h2><p>绝对路径，需要是协议，域名，端口号三者与第一个访问的资源（浏览器中输入的URL）相同，才被认为是同源。</p>
-<h2 id="CORS工作机制"><a href="#CORS工作机制" class="headerlink" title="CORS工作机制"></a>CORS工作机制</h2><p>CORS标准新增了一组HTTP消息头，它为浏览器和服务器之间提供了一种有权限时才请求远程URL的方法。虽然服务器可以执行一些验证和授权，但浏览器通常有责任支持这些消息头并执行相关限制。</p>
-<p>对于可以修改数据的Ajax和HTTP请求方法(通常是GET以外的HTTP方法，或者用于某些MIME类型的POST使用)，规范要求浏览器“预先执行”请求，使用HTTP的OPTIONS方法从服务器请求受支持的方法，然后在服务器“批准”后，使用实际的HTTP请求方法发送实际请求。服务器还可以通知客户端是否应该通过请求发送“凭据”(包括Cookies和HTTP身份验证数据)。<br><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/File:Flowchart_showing_Simple_and_Preflight_XHR.svg">cors</a></p>
-<h2 id="CORS相关消息头"><a href="#CORS相关消息头" class="headerlink" title="CORS相关消息头"></a>CORS相关消息头</h2><h3 id="请求头"><a href="#请求头" class="headerlink" title="请求头"></a>请求头</h3><ul>
-<li>Origin</li>
-<li>Access-Control-Request-Method</li>
-<li>Access-Control-Request-Headers<h3 id="响应头"><a href="#响应头" class="headerlink" title="响应头"></a>响应头</h3></li>
-<li>Access-Control-Allow-Origin</li>
-<li>Access-Control-Allow-Credentials</li>
-<li>Access-Control-Expose-Headers</li>
-<li>Access-Control-Max-Age</li>
-<li>Access-Control-Allow-Methods</li>
-<li>Access-Control-Allow-Headers</li>
-</ul>
-<p>Access-Control-Allow-Origin: *</p>
-<p>“*”的值是特殊的，因为它不允许请求提供凭据，这意味着不允许发送HTTP身份验证、客户端SSL证书和Cookie等原因。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/27/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><span class="page-number current">28</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" href="/page/29/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/27/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><span class="page-number current">28</span><a class="page-number" href="/page/29/">29</a><a class="page-number" href="/page/30/">30</a><a class="extend next" rel="next" href="/page/29/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2135,7 +2173,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">290</span>
+          <span class="site-state-item-count">291</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2206,12 +2244,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">762k</span>
+    <span title="站点总字数">766k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:32</span>
+    <span title="站点阅读时长">11:36</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

@@ -172,6 +172,140 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/08/10/course100/043/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/08/10/course100/043/" class="post-title-link" itemprop="url">升级 JDK 17 碰到的请求 https 问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-08-10 15:49:39 / 修改时间：15:51:10" itemprop="dateCreated datePublished" datetime="2025-08-10T15:49:39+08:00">2025-08-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>升级 JDK 17 后，一个自定义请求，提示 <code>The server selected protocol version TLS10 is not accepted</code>的异常，这个问题，在之前应该是碰到过的，所以有记录了对应的链接，<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2127522%E3%80%82%E4%BD%86%E8%BF%99%E6%AC%A1%E5%9C%A8%E5%AE%A2%E6%88%B7%E9%82%A3%E9%83%A8%E7%BD%B2%EF%BC%8C%E8%99%BD%E7%84%B6%E8%B0%83%E6%95%B4%E4%BA%86%E5%AF%B9%E5%BA%94%E7%9A%84%E5%8F%82%E6%95%B0%EF%BC%8C%E4%BD%86%E4%BE%9D%E7%84%B6%E8%BF%98%E6%98%AF%E8%AF%B7%E6%B1%82%E5%A4%B1%E8%B4%A5%E3%80%82%E8%B6%81%E7%9D%80%E5%91%A8%E6%9C%AB%E9%87%8D%E6%96%B0%E9%AA%8C%E8%AF%81%E4%BA%86%E8%BF%99%E4%B8%AA">https://cloud.tencent.com/developer/article/2127522。但这次在客户那部署，虽然调整了对应的参数，但依然还是请求失败。趁着周末重新验证了这个</a> TLSv1 的请求。</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=OWY5MmRiYzdhZDg2NDdlZjRiMjFmMjI0MzU0Y2YxZGNfejh3dEhJNFlxc1hVYUVOVFM5VWpCSEZmcDJlRjRyWklfVG9rZW46V1R5V2JQQW5Pb1lQU214cWJXOWNVWm1tbndKXzE3NTQ4MTIxOTU6MTc1NDgxNTc5NV9WNA" alt="img"></p>
+<h2 id="处理"><a href="#处理" class="headerlink" title="处理"></a>处理</h2><h3 id="解封-TLSv1"><a href="#解封-TLSv1" class="headerlink" title="解封 TLSv1"></a>解封 TLSv1</h3><p>因为 TLSv1，TLSv1.1 有已知的安全漏洞，所以在高版本的 JDK里面默认的禁用了 TLSv1，TLSv1.1 的安全算法。通过whereis 和 ll 等命令可以定位 JAVA_HOME 目录（也可以直接尝试 echo $JAVA_HOME 看看是否有配置对应的目录），接着定位到<code>$JAVA_HOME/conf/security/java.security</code> 文件。</p>
+<p>找到 <code>jdk.tls.disabledAlgorithms</code>部分，旧内容如下：（不同JDK 版本可能略有不同）</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">jdk.tls.disabledAlgorithms</span>=<span class="string">SSLv3, TLSv1, TLSv1.1, RC4, DES, MD5withRSA, \</span></span><br><span class="line"><span class="string">    DH keySize &lt; 1024, EC keySize &lt; 224, 3DES_EDE_CBC, anon, NULL</span></span><br></pre></td></tr></table></figure>
+
+<p>去除 <code>TLSv1, TLSv1.1, </code>，修改如下：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">jdk.tls.disabledAlgorithms</span>=<span class="string">SSLv3, RC4, DES, MD5withRSA, \</span></span><br><span class="line"><span class="string">    DH keySize &lt; 1024, EC keySize &lt; 224, 3DES_EDE_CBC, anon, NULL</span></span><br></pre></td></tr></table></figure>
+
+<p>如果不想修改这个配置，也可以尝试的程序运行时指定参数。</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">java</span> <span class="string">-Djdk.tls.client.protocols=&quot;TLSv1,TLSv1.1,TLSv1.2,TLSv1.3&quot; -Djdk.tls.server.protocols=&quot;TLSv1,TLSv1.1,TLSv1.2,TLSv1.3&quot; -jar app.jar</span></span><br></pre></td></tr></table></figure>
+
+<p>通常情况下，此时应该能正常使用，但发到现场后发现还是上面的错误。</p>
+<h3 id="模拟环境"><a href="#模拟环境" class="headerlink" title="模拟环境"></a>模拟环境</h3><p>从提示中我们可以看到，应该是对方的https 服务使用的是 TLSv1 版本的协议，于是修改自己的 nginx 服务强制指定ssl_protocols 为 TLSv1;</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">ssl_protocols</span> TLSv1;</span><br><span class="line"><span class="attribute">ssl_ciphers</span>  HIGH:!aNULL:!MD5;</span><br></pre></td></tr></table></figure>
+
+<p>此时浏览器范围页面也是异常的。</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=ZTA0ZmU5ZGYxZTNlY2ZlNWM2NDYyZDgzODVlZjZiNGJfUWtrUVNkS1Y2TXNUTG1NMDV3d055U0M1MFYzelM0cXpfVG9rZW46WmZrR2JyMDRIb1IyVWR4WGt2bWNPZWJsbnpmXzE3NTQ4MTIxOTU6MTc1NDgxNTc5NV9WNA" alt="img"></p>
+<p>此时通过程序测试，提示的异常虽然有些不同，但基本可以看出是同一个问题引起的了。</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=NjljMzQwMjU5ZjljYzNjZThlY2RhNzE4ZTcwOTQzYWNfZFZoOWFJa2ozZklBVWJBcE51TVEwcVRIWGhNcXdkb1lfVG9rZW46V1FtbmI0Wktyb3ZPclh4VERxa2NuYTBnbkdtXzE3NTQ4MTIxOTU6MTc1NDgxNTc5NV9WNA" alt="img"></p>
+<h3 id="尝试切换-hutool-的-httputil"><a href="#尝试切换-hutool-的-httputil" class="headerlink" title="尝试切换 hutool 的 httputil"></a>尝试切换 hutool 的 httputil</h3><p>切换 httputil 后发现服务请求自定义证书，提示下面的错误。</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=ZGVlZGUzNjVmNWEyMTEwY2VhYTA3OWNmMTViYzU3MDhfRk5Bazh1ekJOemtmUEJvUFFSd2ZSaTNlV3RoS29GcFlfVG9rZW46U1R5dmJUM3N6bzFVZ2d4eHpxM2N3QTJjbnllXzE3NTQ4MTIxOTU6MTc1NDgxNTc5NV9WNA" alt="img"></p>
+<p>经过一番查看源代码后，发现 hutool 支持设置一个全局参数<code>HttpGlobalConfig.</code><em><code>setTrustAnyHost</code></em><code>(true)</code>，设置了全局参数之后发现，请求正常了。</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=NDE2Y2EzM2JlYTQyNDBkNTkxY2EyMTQzZGUyZjQ4MTVfNnlidndBMFNOR0dqZFlTVmRybEpOdEREM1pDSE9leXhfVG9rZW46TUQ5OWJjQ1RlbzZUY0N4V2lCeGN5QzNCbkllXzE3NTQ4MTIxOTU6MTc1NDgxNTc5NV9WNA" alt="img"></p>
+<h3 id="为什么-httputils-不行呢？"><a href="#为什么-httputils-不行呢？" class="headerlink" title="为什么 httputils 不行呢？"></a>为什么 httputils 不行呢？</h3><p>一开始以为是创建的 SSLContext 不同，更换成 hutool 工具创建的 SSLContext <code>SSLContextUtil.createTrustAnySSLContext</code> 依然还是不行。于是对比了下 hutool 和 solon 的是请求默认的类库不同，hutool 默认使用的是httpclient4，solon默认使用的是okhttp。当把 hutool 的默认请求切换到 okhttp 时，虽然一样也设置了*<code>setTrustAnyHost</code>*<code>(true)</code>，但请求一样是报错的。</p>
+<p>接着跟踪到 hutool 中 httpclient4 里面的一个关键设置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> SSLConnectionSocketFactory <span class="title">buildSocketFactory</span><span class="params">(SSLInfo sslInfo)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span> == sslInfo ? SSLConnectionSocketFactory.getSocketFactory() : <span class="keyword">new</span> SSLConnectionSocketFactory(sslInfo.getSslContext(), sslInfo.getProtocols(), (String[])<span class="keyword">null</span>, sslInfo.getHostnameVerifier());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时可以比较明确的确定是连接客户也需要设置的问题，于是找到 OkHttpClient 创建的位置，增加设置<code>connectionSpecs</code>：</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=N2ZiYTgxMjc4YWVlNDZiYmZhNjQxNGNmYWZhOTA2OWFfb0UyeW1Tak11RnZRMWFLSlpWVGd0M09iREZXU0xmUjJfVG9rZW46QkZEb2JpdVVlb1lPdVV4ajI3bmNoUWdMbktiXzE3NTQ4MTIxOTU6MTc1NDgxNTc5NV9WNA" alt="img"></p>
+<p>solon 作者说按上述设置会导致 http 无法访问，同时还发现 okhttp 还提供了一些常量，换成如下写法兼容性更好。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">connectionSpecs(Arrays.asList(ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.CLEARTEXT))</span><br></pre></td></tr></table></figure>
+
+<h3 id="临时处理"><a href="#临时处理" class="headerlink" title="临时处理"></a>临时处理</h3><h4 id="扩展-OkHttpUtilsFactory"><a href="#扩展-OkHttpUtilsFactory" class="headerlink" title="扩展 OkHttpUtilsFactory"></a>扩展 OkHttpUtilsFactory</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OkHttpUtilsFactoryExt</span> <span class="keyword">extends</span> <span class="title">OkHttpUtilsFactory</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">final</span> Logger log = LoggerFactory.getLogger(OkHttpUtilsFactory.class);</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> OkHttpUtilsFactory instance = <span class="keyword">new</span> OkHttpUtilsFactory();</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> OkHttpDispatcher dispatcher = <span class="keyword">new</span> OkHttpDispatcher();</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> OkHttpClient defaultClient = createHttpClient(<span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> OkHttpClient <span class="title">createHttpClient</span><span class="params">(Proxy proxy, HttpSslSupplier sslProvider)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sslProvider == <span class="keyword">null</span>) &#123;</span><br><span class="line">      sslProvider = HttpSslSupplierDefault.getInstance();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    OkHttpClient.Builder builder =</span><br><span class="line">        (<span class="keyword">new</span> OkHttpClient.Builder())</span><br><span class="line">            .connectTimeout(<span class="number">10L</span>, TimeUnit.SECONDS)</span><br><span class="line">            .writeTimeout(<span class="number">60L</span>, TimeUnit.SECONDS)</span><br><span class="line">            .readTimeout(<span class="number">60L</span>, TimeUnit.SECONDS)</span><br><span class="line">            .dispatcher(dispatcher.getDispatcher())</span><br><span class="line">            .addInterceptor(OkHttpInterceptor.instance)</span><br><span class="line">            .sslSocketFactory(sslProvider.getSocketFactory(), sslProvider.getX509TrustManager())</span><br><span class="line">            .connectionSpecs(Arrays.asList(ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.CLEARTEXT))</span><br><span class="line">            .hostnameVerifier(sslProvider.getHostnameVerifier());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (proxy != <span class="keyword">null</span>) &#123;</span><br><span class="line">      builder.proxy(proxy);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> builder.build();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> OkHttpClient <span class="title">getClient</span><span class="params">(Proxy proxy, HttpSslSupplier sslProvider)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> createHttpClient(proxy, sslProvider);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="扩展-HttpSslSupplier"><a href="#扩展-HttpSslSupplier" class="headerlink" title="扩展 HttpSslSupplier"></a>扩展 HttpSslSupplier</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExtensionHttp</span> <span class="keyword">extends</span> <span class="title">HttpSslSupplierDefault</span></span></span><br><span class="line"><span class="class">    <span class="title">implements</span> <span class="title">HttpExtension</span>, <span class="title">HttpSslSupplier</span> </span>&#123;</span><br><span class="line">  <span class="comment">// for HttpSslSupplier</span></span><br><span class="line">  <span class="keyword">private</span> SSLContext sslContext;</span><br><span class="line">  <span class="keyword">private</span> <span class="built_in">String</span>[] protocols;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// for HttpExtension</span></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">onInit</span>(<span class="params">HttpUtils httpUtils, <span class="built_in">String</span> url</span>)</span> &#123;</span><br><span class="line">    httpUtils.ssl(<span class="built_in">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> SSLContext <span class="function"><span class="title">getSslContext</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> SSLContextUtil.createTrustAnySSLContext();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>如果指定了 HttpExtension的扩展为 Component，默认情况是会自动注册扩展的，测试时可能需要自己通过<em>addExtension 的方式添加扩展。</em></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HttpConfiguration.setFactory(<span class="keyword">new</span> OkHttpUtilsFactoryExt());</span><br><span class="line">HttpConfiguration.addExtension(<span class="keyword">new</span> ExtensionHttp());</span><br></pre></td></tr></table></figure>
+
+<h3 id="正式处理"><a href="#正式处理" class="headerlink" title="正式处理"></a>正式处理</h3><p>等待 solon 3.5.0 版本的发布，之后切换 <code>SSLContextUtil.</code><em><code>createTrustAnySSLContext</code></em><code>()</code>，替换默认的SSLContext。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/06/28/course100/042/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1524,150 +1658,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/03/02/course100/033/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/03/02/course100/033/" class="post-title-link" itemprop="url">Solon Cloud —— 熔断与限流</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-03-02 08:41:08 / 修改时间：08:42:03" itemprop="dateCreated datePublished" datetime="2025-03-02T08:41:08+08:00">2025-03-02</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><h3 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h3><p>限流是控制系统的的并发流量，通过限制请求流量的手段防止过度的流量导致系统崩溃。限流的指标有TPS， HPS、QPS等，限流的方法有流量计数器，滑动时间窗口，漏桶算法，令牌桶算法等。</p>
-<h3 id="熔断"><a href="#熔断" class="headerlink" title="熔断"></a>熔断</h3><p>熔断的概念来自电路保护，提供了断路开关，主要有三种状态，关闭状态，打开状态和半开状态。熔断可以防止应用程序不断地尝试可能超时和失败的服务，能达到应用程序执行而不必等待下游服务修正错误服务。</p>
-<h3 id="降级"><a href="#降级" class="headerlink" title="降级"></a>降级</h3><p>降级是指当自身服务压力增大时，采取一些手段，增强自身服务的处理能力，以保障服务的持续可用。比如，下线非核心服务以保证核心服务的稳定、降低实时性、降低数据一致性等。</p>
-<h3 id="三者关系"><a href="#三者关系" class="headerlink" title="三者关系"></a>三者关系</h3><p>限流、熔断和服务降级是系统容错的重要设计模式，从一定意义上讲限流和熔断也是一种服务降级的手段。</p>
-<table>
-<thead>
-<tr>
-<th>措施</th>
-<th>产生原因</th>
-<th>针对服务</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>熔断</td>
-<td>下游服务不可用</td>
-<td>下游服务</td>
-</tr>
-<tr>
-<td>降级</td>
-<td>自身服务的处理能力不够</td>
-<td>自身服务</td>
-</tr>
-<tr>
-<td>限流</td>
-<td>上游服务请求增多</td>
-<td>上游服务</td>
-</tr>
-</tbody></table>
-<h3 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h3><p>Sentinel 是面向分布式、多语言异构化服务架构的流量治理组件，主要以流量为切入点，从流量路由、流量控制、流量整形、熔断降级、系统自适应过载保护、热点流量防护等多个维度来帮助开发者保障微服务的稳定性。</p>
-<p>之前使用的是Spring Cloud 默认带的是 Hystrix，之前也没有用过Sentinel，这次按理是尝试使用Setinel。</p>
-<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:demo-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-logging-logback&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-openapi2-knife4j&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:sentinel-solon-cloud-plugin&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;com.alibaba.csp:sentinel-transport-simple-http:1.8.8&quot;</span>)</span><br><span class="line"></span><br><span class="line">    annotationProcessor(<span class="string">&quot;org.mapstruct:mapstruct-processor:$&#123;mapstructVersion&#125;&quot;</span>)</span><br><span class="line"></span><br><span class="line">    testImplementation(<span class="string">&quot;org.noear:solon-test-junit5&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">solon.cloud.local:</span></span><br><span class="line">  <span class="attr">breaker:</span></span><br><span class="line">    <span class="attr">root:</span> <span class="number">1000</span></span><br><span class="line">    <span class="attr">hello:</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="Controller"><a href="#Controller" class="headerlink" title="Controller"></a>Controller</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.solon.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Controller;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Mapping;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Param;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.cloud.annotation.CloudBreaker;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Api</span>(<span class="string">&quot;Demo&quot;</span>)</span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@ApiOperation</span>(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">  <span class="meta">@Mapping</span>(<span class="string">&quot;/hello&quot;</span>)</span><br><span class="line">  <span class="meta">@CloudBreaker</span>(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">String</span> <span class="function"><span class="title">hello</span>(<span class="params"><span class="meta">@Param</span>(defaultValue = <span class="string">&quot;world&quot;</span>) <span class="built_in">String</span> name</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">String</span>.format(<span class="string">&quot;Hello %s!&quot;</span>, name);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>需要通过多线程的方式来测试，写个单元测试。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.solon.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.junit.jupiter.api.Assertions.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.solon.DemoCloudBreakerApp;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.CountDownLatch;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.Utils;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.test.HttpTester;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.test.SolonTest;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@SolonTest(DemoCloudBreakerApp.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoControllerTest</span> <span class="keyword">extends</span> <span class="title">HttpTester</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Test</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    CountDownLatch count = <span class="keyword">new</span> CountDownLatch(<span class="number">100</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">      log.info(<span class="string">&quot;get hello start. i:&#123;&#125;&quot;</span>, i);</span><br><span class="line">      <span class="keyword">int</span> finalI = i;</span><br><span class="line">      Utils.async(</span><br><span class="line">          () -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">              path(<span class="string">&quot;/hello&quot;</span>).get();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">              log.error(<span class="string">&quot;&quot;</span>, e);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            log.info(<span class="string">&quot;get hello end. i:&#123;&#125;&quot;</span>, finalI);</span><br><span class="line">            count.countDown();</span><br><span class="line">          &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    count.await();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>当超过限流时，提示错误。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=Njg4YzI3NTJlMzUyNjVlYmMyOGM2NDM5MzY5YmQ0ZGFfUkt6S3N3SVU0SXJVaDloaWdYc1ZodUl2NEZNUE0yRXZfVG9rZW46VW1VQmJ2WUNPb2xqRXh4V1lQYWNxR2xZblFjXzE3NDA4NzYxMDk6MTc0MDg3OTcwOV9WNA" alt="img"></p>
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ol>
-<li>当前使用的版本3.0.9及 3.1.0-M3版本暂时不能把 CloudBreaker 注解在类上。</li>
-<li>当前版本无法注册到 sentinel 的 dashboard 中，属于本地配置。</li>
-<li>当前支持限流，没有熔断的支持。</li>
-</ol>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>从测试使用的情况来看，Solon 目前只支持本地的限流处理，暂时不支持熔断，对 sentinel 的支持还不够完善，无法注册到 sentinel 的 dashboard 中。如果需要用于生产，需要自己扩展下对应的插件，或者再等一等官方的更新。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/30/">30</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1733,7 +1727,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">290</span>
+          <span class="site-state-item-count">291</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1804,12 +1798,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">762k</span>
+    <span title="站点总字数">766k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:32</span>
+    <span title="站点阅读时长">11:36</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
