@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="说明《Solon 实用教程》是有计划写一个管理系统的完整示例的，但代码更新比较慢，也就没有迁移到示例仓库中。在调试前端代码的时候发现，对我来说，因为不熟悉前端，即便有了SoyBean 和 alovajs 开发起来也挺不容易。这段时间利用系统提供的代码生成功能，在 AI 的加持下，完成了内容管理的功能，算是验证了这个管理系统的基本可用。于是退而求其次，先把管理系统当前的功能做了些截图，也相当于是一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="44">
+<meta property="og:url" content="http://l4qiang.me/2025/09/13/course100/044/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="说明《Solon 实用教程》是有计划写一个管理系统的完整示例的，但代码更新比较慢，也就没有迁移到示例仓库中。在调试前端代码的时候发现，对我来说，因为不熟悉前端，即便有了SoyBean 和 alovajs 开发起来也挺不容易。这段时间利用系统提供的代码生成功能，在 AI 的加持下，完成了内容管理的功能，算是验证了这个管理系统的基本可用。于是退而求其次，先把管理系统当前的功能做了些截图，也相当于是一个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MTI0ODJkYWZlZDdkMmFlNDczM2M5MzUxZDVjM2FlNjNfUG5VbThzR2lJN2RCMG5GUHZ2ZG1wRDFPYXpvQnU3cUhfVG9rZW46Q2lFaWIzbTFNb29qNmJ4eDk0V2NmcWhwbjJnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NWQ2NjUwYzNiMjg5N2YzYzE0ZjVmY2FmNDI3YzVjMmFfUEpqU1BUdkZvbEFIUFZuMzlleTVjaVBqcTJqVDdNdGdfVG9rZW46VXBRZmJyZWxTb3RhMVZ4dWtuNWNWNXpUbm1iXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=Mjc3Y2FiYTFjY2EzMTgxM2UyMmJlMTNiOThkMWQxZGVfMHRMOHkyanRQVnRZZ09EQnBVblBwS1hxS0lpa3UxNEZfVG9rZW46QnZtZWJRQmMxb3MydU54SmJPUmNnTzN3bmpnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NTg4ZDA1YjE1MGQ0YTI1M2FkZjJmNWQzZjcxMDNjMzRfWU15Q3F3cElNUWRSWUg2Z241Q3VrY0FwZk83Z1BKTThfVG9rZW46TzBXWGJRTmFBb05qcmV4WHEzcGNIb0ozbjNkXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OTQ4YmUzMTRlNmM4YTZlYmYxYjlmZjlkNmUwNjk1ODlfNU9kdzZSMVVyd2NFaG5UZVZtYm5GSHEwbjFOWTNoaE9fVG9rZW46T1J2SmJYc1p3b25GcTF4ekhJMWNwV3o5bndjXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZTIxM2MzODYwZmMyOWM5MGM1Y2NhNDZjYjJjMmI4NjhfWTQ5QmlaZXFMUmg1TkxMb1RrdklSWHhXN2lySUVIbVRfVG9rZW46WGlBQ2J5a2FGb2FKZFF4V0dJMWNMMk96bm9jXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NWVhMmQ5YjA4NTk4NTM4ZWUzYjA3Y2JlMmY3MTEyZGNfQ3B0SDZhQmxDa3cxMFlqUHphWjU0dHJENmd3eEhubGdfVG9rZW46Q1p0SWJUR3NkbzVnVG54bWY5cGNJYk1hblNnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZmU3MTU4YmMwMWNhZTczMmVkNjMxZDczOWZkNDQyNDdfQ09qOHFxQlZOblVTdE5QdXlBWGNabld5TFpjUzRtV2xfVG9rZW46Vno2emIwaWxMb1M5VGJ4SFFpeGNFd1cybkdmXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NTA4M2Q0ZmUwMjJjZjg4ZTUxYWU5MTg4OTdiMjIxZTlfNnIwMXZsdVFoVGxncjVuZExCTmdiUTQyakhsdGtjMDRfVG9rZW46T2FwSGI1SWZnb3BsZWt4ZFVRdmNzc3hlbmRjXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YzNmMDIyYzY5Y2FmMzcwZjYxZTMxZjA0NDBiZDA3NDlfMDZJajJTWWlUZlRSZWJDbWQxVUNrMDROQUVsbXF4WXZfVG9rZW46SDdkbGJDdlgxb1VaN3R4aDJPeWNYb2Q0blRnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YjkzMmFiZGI4NWVhOThhOWRjOGYyNDcxOWRhYzA3OGNfaXFnUUFLRXhBakNxSk1qMm8xYjZ2eUJDYzlna3U5REtfVG9rZW46UlM3Q2JDNnFJbzBzMW14bFRFWGNkMzVGbjFiXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NDY1MTAzMWY3NTlhNGU4MWI3N2RhNDFiY2U1OTNiZGVfMWVTcFJSUzQzMzl3R2lxU2xwRURBS2JZUG5pSjFoVE5fVG9rZW46Vnd0a2JQWFM5b29xOHh4TVFCY2NabVVQbnExXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZDBiNjc4N2JiNTE2NWY5MGJmYWM1MDhmYjI3NGRjOGRfRTNZS0lOb0J0T3J2NjVmbVZpN2M2elFhZ2k2WDlselpfVG9rZW46WmNzZGJsNDF2b0xNa0J4c1R0MGNnTlR5bnNiXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OGRhODM0Y2QyYzExYTdkNTY2Mzk0OGJiZTVhZjc0OTVfeHJiUDJGTUdtV1B3WUFXTVd5NlJFeFF0Q1ZLR2FvSlhfVG9rZW46V3NZY2JMREt4b0xrQUN4eFhqM2NoRHVrbjBkXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MDgzMDBmM2U0MzVkMDU1YjM1ODYxYTY3ODcwMzljYTdfaVJaU0FZYmxqd0cxdjdBYUpDWkV3OEE2a2NCbVpLWkdfVG9rZW46WUhWU2IyT3lYb0ZoZjV4Zll5NGNobHhlbldkXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NDkyMDcwYTRkODY5NTQ3ODEwZWFmYTExZGIzYjQ4YjZfSlI3bnI5elhROFJMVWxQWjBkU2x4YkFFcXVaenlEOTZfVG9rZW46R1dWNGJiQ3Rlb0hTaFd4RGkwMmNiemdUblFiXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZThiODRlNjU4MGFkMWNjMDI0YTNmN2FjNzgwZDczYjFfUkVobHhqczhOOWlDd1M3eEhBaGRDYjh2R1ZRT3hrVFNfVG9rZW46TUtsSWJ0YjI1b24xQjd4NDBoZ2NkcW5tbnNlXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MzkxMTVlNThiZWExYmYyMzRjOTVkYjJkZDY5ZTRkNTlfS0ZCcmhmZ1B0bXRPc0xpNFVJRW85ejN3SU1xVjFwQVdfVG9rZW46UEY4SmJwcnU4b1RyOVZ4cWFrVmNvZ01XbmZkXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YmYyNjJlNzhmMzJjNjkwZjVlNjlkZjIwYmQ1ZjIyMTdfamI2aWZOM1I4UFB4TmduV0NPWUdPM0dpS0NJa0NmdTFfVG9rZW46UE0yMGJtbVZmb3VCMTh4ZG5sbGNOTG9kbnk0XzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MWNkZDc5NmE1ZDE3OGM2MGNjNzg3OTNkMjgyZWQ1MzdfM1ZQTmpNWWZMa3JIN0pTNFdGYzZaRFlCNEo4MEtnaVZfVG9rZW46UUZqOWJlb05Tb21OYnN4THZjUGN2ajVobjlnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MDAyNDE3M2EzM2FhOGM5NGViZWU0MWYwMzllMjAzYzBfamtFRVFDTzZHaU1XZ1NpRGxaWmY0c2Z1ZHJuMDY1YWtfVG9rZW46TldEMGJXVTlOb3NPeUV4OXBsc2M5TlJxbmxnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+<meta property="article:published_time" content="2025-09-13T12:17:59.000Z">
+<meta property="article:modified_time" content="2025-09-13T12:28:37.004Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="教程100">
+<meta property="article:tag" content="写作">
+<meta property="article:tag" content="Solon">
+<meta property="article:tag" content="Solon 实用教程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MTI0ODJkYWZlZDdkMmFlNDczM2M5MzUxZDVjM2FlNjNfUG5VbThzR2lJN2RCMG5GUHZ2ZG1wRDFPYXpvQnU3cUhfVG9rZW46Q2lFaWIzbTFNb29qNmJ4eDk0V2NmcWhwbjJnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA">
+
+<link rel="canonical" href="http://l4qiang.me/2025/09/13/course100/044/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>44 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2613e7f510eebd12cf4d0d067e4ce195";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/09/13/course100/044/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          44
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-09-13 20:17:59 / 修改时间：20:28:37" itemprop="dateCreated datePublished" datetime="2025-09-13T20:17:59+08:00">2025-09-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>439</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>《Solon 实用教程》是有计划写一个管理系统的完整示例的，但代码更新比较慢，也就没有迁移到示例仓库中。在调试前端代码的时候发现，对我来说，因为不熟悉前端，即便有了SoyBean 和 alovajs 开发起来也挺不容易。这段时间利用系统提供的代码生成功能，在 AI 的加持下，完成了内容管理的功能，算是验证了这个管理系统的基本可用。于是退而求其次，先把管理系统当前的功能做了些截图，也相当于是一个预览版本。如果公布了预览版本，也可以逼迫自己继续花时间来整理和开发这个管理端系统。</p>
+<h2 id="功能列表"><a href="#功能列表" class="headerlink" title="功能列表"></a>功能列表</h2><ul>
+<li>系统管理<ul>
+<li>用户管理</li>
+<li>角色管理</li>
+<li>权限管理</li>
+<li>配置管理</li>
+<li>字典管理</li>
+</ul>
+</li>
+<li>基础设施<ul>
+<li>存储管理<ul>
+<li>存储配置</li>
+<li>存储文件</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>开发管理<ul>
+<li>代码生成<ul>
+<li>数据源配置</li>
+<li>生成配置</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>内容管理<ul>
+<li>文章管理</li>
+<li>栏目管理</li>
+<li>菜单管理</li>
+<li>站点管理</li>
+<li>模板管理</li>
+</ul>
+</li>
+<li>AI （进行中）<ul>
+<li>聊天</li>
+<li>工作流</li>
+</ul>
+</li>
+</ul>
+<h2 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h2><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MTI0ODJkYWZlZDdkMmFlNDczM2M5MzUxZDVjM2FlNjNfUG5VbThzR2lJN2RCMG5GUHZ2ZG1wRDFPYXpvQnU3cUhfVG9rZW46Q2lFaWIzbTFNb29qNmJ4eDk0V2NmcWhwbjJnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h2 id="首页"><a href="#首页" class="headerlink" title="首页"></a>首页</h2><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NWQ2NjUwYzNiMjg5N2YzYzE0ZjVmY2FmNDI3YzVjMmFfUEpqU1BUdkZvbEFIUFZuMzlleTVjaVBqcTJqVDdNdGdfVG9rZW46VXBRZmJyZWxTb3RhMVZ4dWtuNWNWNXpUbm1iXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h2 id="系统管理"><a href="#系统管理" class="headerlink" title="系统管理"></a>系统管理</h2><h3 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=Mjc3Y2FiYTFjY2EzMTgxM2UyMmJlMTNiOThkMWQxZGVfMHRMOHkyanRQVnRZZ09EQnBVblBwS1hxS0lpa3UxNEZfVG9rZW46QnZtZWJRQmMxb3MydU54SmJPUmNnTzN3bmpnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NTg4ZDA1YjE1MGQ0YTI1M2FkZjJmNWQzZjcxMDNjMzRfWU15Q3F3cElNUWRSWUg2Z241Q3VrY0FwZk83Z1BKTThfVG9rZW46TzBXWGJRTmFBb05qcmV4WHEzcGNIb0ozbjNkXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h3 id="角色管理"><a href="#角色管理" class="headerlink" title="角色管理"></a>角色管理</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OTQ4YmUzMTRlNmM4YTZlYmYxYjlmZjlkNmUwNjk1ODlfNU9kdzZSMVVyd2NFaG5UZVZtYm5GSHEwbjFOWTNoaE9fVG9rZW46T1J2SmJYc1p3b25GcTF4ekhJMWNwV3o5bndjXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h3 id="权限管理"><a href="#权限管理" class="headerlink" title="权限管理"></a>权限管理</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZTIxM2MzODYwZmMyOWM5MGM1Y2NhNDZjYjJjMmI4NjhfWTQ5QmlaZXFMUmg1TkxMb1RrdklSWHhXN2lySUVIbVRfVG9rZW46WGlBQ2J5a2FGb2FKZFF4V0dJMWNMMk96bm9jXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h3 id="配置管理"><a href="#配置管理" class="headerlink" title="配置管理"></a>配置管理</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NWVhMmQ5YjA4NTk4NTM4ZWUzYjA3Y2JlMmY3MTEyZGNfQ3B0SDZhQmxDa3cxMFlqUHphWjU0dHJENmd3eEhubGdfVG9rZW46Q1p0SWJUR3NkbzVnVG54bWY5cGNJYk1hblNnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h3 id="字典管理"><a href="#字典管理" class="headerlink" title="字典管理"></a>字典管理</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZmU3MTU4YmMwMWNhZTczMmVkNjMxZDczOWZkNDQyNDdfQ09qOHFxQlZOblVTdE5QdXlBWGNabld5TFpjUzRtV2xfVG9rZW46Vno2emIwaWxMb1M5VGJ4SFFpeGNFd1cybkdmXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h2 id="基础设施"><a href="#基础设施" class="headerlink" title="基础设施"></a>基础设施</h2><h3 id="存储管理"><a href="#存储管理" class="headerlink" title="存储管理"></a>存储管理</h3><h4 id="存储配置"><a href="#存储配置" class="headerlink" title="存储配置"></a>存储配置</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NTA4M2Q0ZmUwMjJjZjg4ZTUxYWU5MTg4OTdiMjIxZTlfNnIwMXZsdVFoVGxncjVuZExCTmdiUTQyakhsdGtjMDRfVG9rZW46T2FwSGI1SWZnb3BsZWt4ZFVRdmNzc3hlbmRjXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h4 id="存储文件"><a href="#存储文件" class="headerlink" title="存储文件"></a>存储文件</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YzNmMDIyYzY5Y2FmMzcwZjYxZTMxZjA0NDBiZDA3NDlfMDZJajJTWWlUZlRSZWJDbWQxVUNrMDROQUVsbXF4WXZfVG9rZW46SDdkbGJDdlgxb1VaN3R4aDJPeWNYb2Q0blRnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h2 id="开发管理"><a href="#开发管理" class="headerlink" title="开发管理"></a>开发管理</h2><h3 id="代码生成"><a href="#代码生成" class="headerlink" title="代码生成"></a>代码生成</h3><h4 id="数据源配置"><a href="#数据源配置" class="headerlink" title="数据源配置"></a>数据源配置</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YjkzMmFiZGI4NWVhOThhOWRjOGYyNDcxOWRhYzA3OGNfaXFnUUFLRXhBakNxSk1qMm8xYjZ2eUJDYzlna3U5REtfVG9rZW46UlM3Q2JDNnFJbzBzMW14bFRFWGNkMzVGbjFiXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h4 id="生成配置"><a href="#生成配置" class="headerlink" title="生成配置"></a>生成配置</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NDY1MTAzMWY3NTlhNGU4MWI3N2RhNDFiY2U1OTNiZGVfMWVTcFJSUzQzMzl3R2lxU2xwRURBS2JZUG5pSjFoVE5fVG9rZW46Vnd0a2JQWFM5b29xOHh4TVFCY2NabVVQbnExXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZDBiNjc4N2JiNTE2NWY5MGJmYWM1MDhmYjI3NGRjOGRfRTNZS0lOb0J0T3J2NjVmbVZpN2M2elFhZ2k2WDlselpfVG9rZW46WmNzZGJsNDF2b0xNa0J4c1R0MGNnTlR5bnNiXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h2 id="内容管理"><a href="#内容管理" class="headerlink" title="内容管理"></a>内容管理</h2><h3 id="文章管理"><a href="#文章管理" class="headerlink" title="文章管理"></a>文章管理</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OGRhODM0Y2QyYzExYTdkNTY2Mzk0OGJiZTVhZjc0OTVfeHJiUDJGTUdtV1B3WUFXTVd5NlJFeFF0Q1ZLR2FvSlhfVG9rZW46V3NZY2JMREt4b0xrQUN4eFhqM2NoRHVrbjBkXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h3 id="栏目管理"><a href="#栏目管理" class="headerlink" title="栏目管理"></a>栏目管理</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MDgzMDBmM2U0MzVkMDU1YjM1ODYxYTY3ODcwMzljYTdfaVJaU0FZYmxqd0cxdjdBYUpDWkV3OEE2a2NCbVpLWkdfVG9rZW46WUhWU2IyT3lYb0ZoZjV4Zll5NGNobHhlbldkXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h3 id="菜单管理"><a href="#菜单管理" class="headerlink" title="菜单管理"></a>菜单管理</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NDkyMDcwYTRkODY5NTQ3ODEwZWFmYTExZGIzYjQ4YjZfSlI3bnI5elhROFJMVWxQWjBkU2x4YkFFcXVaenlEOTZfVG9rZW46R1dWNGJiQ3Rlb0hTaFd4RGkwMmNiemdUblFiXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h3 id="站点管理"><a href="#站点管理" class="headerlink" title="站点管理"></a>站点管理</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZThiODRlNjU4MGFkMWNjMDI0YTNmN2FjNzgwZDczYjFfUkVobHhqczhOOWlDd1M3eEhBaGRDYjh2R1ZRT3hrVFNfVG9rZW46TUtsSWJ0YjI1b24xQjd4NDBoZ2NkcW5tbnNlXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h3 id="模版管理"><a href="#模版管理" class="headerlink" title="模版管理"></a>模版管理</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MzkxMTVlNThiZWExYmYyMzRjOTVkYjJkZDY5ZTRkNTlfS0ZCcmhmZ1B0bXRPc0xpNFVJRW85ejN3SU1xVjFwQVdfVG9rZW46UEY4SmJwcnU4b1RyOVZ4cWFrVmNvZ01XbmZkXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YmYyNjJlNzhmMzJjNjkwZjVlNjlkZjIwYmQ1ZjIyMTdfamI2aWZOM1I4UFB4TmduV0NPWUdPM0dpS0NJa0NmdTFfVG9rZW46UE0yMGJtbVZmb3VCMTh4ZG5sbGNOTG9kbnk0XzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p>AI 部分是正在尝试去做的功能。</p>
+<h3 id="聊天"><a href="#聊天" class="headerlink" title="聊天"></a>聊天</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MWNkZDc5NmE1ZDE3OGM2MGNjNzg3OTNkMjgyZWQ1MzdfM1ZQTmpNWWZMa3JIN0pTNFdGYzZaRFlCNEo4MEtnaVZfVG9rZW46UUZqOWJlb05Tb21OYnN4THZjUGN2ajVobjlnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+<h3 id="工作流"><a href="#工作流" class="headerlink" title="工作流"></a>工作流</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MDAyNDE3M2EzM2FhOGM5NGViZWU0MWYwMzllMjAzYzBfamtFRVFDTzZHaU1XZ1NpRGxaWmY0c2Z1ZHJuMDY1YWtfVG9rZW46TldEMGJXVTlOb3NPeUV4OXBsc2M5TlJxbmxnXzE3NTc3NjU5OTQ6MTc1Nzc2OTU5NF9WNA" alt="img"></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%95%99%E7%A8%8B100/" rel="tag"><i class="fa fa-tag"></i> 教程100</a>
+              <a href="/tags/%E5%86%99%E4%BD%9C/" rel="tag"><i class="fa fa-tag"></i> 写作</a>
+              <a href="/tags/Solon/" rel="tag"><i class="fa fa-tag"></i> Solon</a>
+              <a href="/tags/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" rel="tag"><i class="fa fa-tag"></i> Solon 实用教程</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/08/10/course100/043/" rel="prev" title="升级 JDK 17 碰到的请求 https 问题">
+      <i class="fa fa-chevron-left"></i> 升级 JDK 17 碰到的请求 https 问题
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E5%88%97%E8%A1%A8"><span class="nav-number">2.</span> <span class="nav-text">功能列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%99%BB%E5%BD%95"><span class="nav-number">3.</span> <span class="nav-text">登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A6%96%E9%A1%B5"><span class="nav-number">4.</span> <span class="nav-text">首页</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86"><span class="nav-number">5.</span> <span class="nav-text">系统管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86"><span class="nav-number">5.1.</span> <span class="nav-text">用户管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%92%E8%89%B2%E7%AE%A1%E7%90%86"><span class="nav-number">5.2.</span> <span class="nav-text">角色管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="nav-number">5.3.</span> <span class="nav-text">权限管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86"><span class="nav-number">5.4.</span> <span class="nav-text">配置管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E5%85%B8%E7%AE%A1%E7%90%86"><span class="nav-number">5.5.</span> <span class="nav-text">字典管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD"><span class="nav-number">6.</span> <span class="nav-text">基础设施</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86"><span class="nav-number">6.1.</span> <span class="nav-text">存储管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">6.1.1.</span> <span class="nav-text">存储配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E6%96%87%E4%BB%B6"><span class="nav-number">6.1.2.</span> <span class="nav-text">存储文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%AE%A1%E7%90%86"><span class="nav-number">7.</span> <span class="nav-text">开发管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90"><span class="nav-number">7.1.</span> <span class="nav-text">代码生成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%BA%90%E9%85%8D%E7%BD%AE"><span class="nav-number">7.1.1.</span> <span class="nav-text">数据源配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E9%85%8D%E7%BD%AE"><span class="nav-number">7.1.2.</span> <span class="nav-text">生成配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AE%B9%E7%AE%A1%E7%90%86"><span class="nav-number">8.</span> <span class="nav-text">内容管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E7%AB%A0%E7%AE%A1%E7%90%86"><span class="nav-number">8.1.</span> <span class="nav-text">文章管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%8F%E7%9B%AE%E7%AE%A1%E7%90%86"><span class="nav-number">8.2.</span> <span class="nav-text">栏目管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8F%9C%E5%8D%95%E7%AE%A1%E7%90%86"><span class="nav-number">8.3.</span> <span class="nav-text">菜单管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%99%E7%82%B9%E7%AE%A1%E7%90%86"><span class="nav-number">8.4.</span> <span class="nav-text">站点管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E7%89%88%E7%AE%A1%E7%90%86"><span class="nav-number">8.5.</span> <span class="nav-text">模版管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AI"><span class="nav-number">9.</span> <span class="nav-text">AI</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%8A%E5%A4%A9"><span class="nav-number">9.1.</span> <span class="nav-text">聊天</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="nav-number">9.2.</span> <span class="nav-text">工作流</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">292</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">119</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">118</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">766k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">11:36</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '50536f974c564907bd8242c7b364e72c',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

@@ -172,6 +172,175 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/16/course100/024/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/16/course100/024/" class="post-title-link" itemprop="url">Web 开发 —— 高阶 WebSocket 和 SSE</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-16 10:14:21 / 修改时间：10:15:45" itemprop="dateCreated datePublished" datetime="2025-02-16T10:14:21+08:00">2025-02-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>随着大语言模型的流行，因为使用了 SSE 或者 Websocket的技术进行流式的交换，使得 SSE 和 Websocket也火了起来，今天我们来讲解，如何在 Solon 中实现 Websocket  服务端和 SSE 服务端。</p>
+<h2 id="Websocket"><a href="#Websocket" class="headerlink" title="Websocket"></a>Websocket</h2><p>WebSocket 是 HTML5 开始提供的一种在单个 TCP 连接上进行全双工通讯的协议。它使得客户端和服务器之间的数据交换变得更加简单，允许服务端主动向客户端推送数据。在 WebSocket API 中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建持久性的连接，并进行双向数据传输。</p>
+<p>我们这里通过一个简易的 im 的服务做为例子。</p>
+<h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><p>如果使用了solon-web，默认使用的是smart-http，已经集成了 websocket，不需要添加其他的依赖。</p>
+<table>
+<thead>
+<tr>
+<th>插件</th>
+<th>适配框架</th>
+<th>包大小</th>
+<th>信号协议支持</th>
+<th>端口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://solon.noear.org/article/90">solon-boot-smarthttp</a></td>
+<td>smart-http (aio)</td>
+<td>0.4Mb</td>
+<td>http, ws</td>
+<td>相同端口</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://solon.noear.org/article/91">solon-boot-jetty</a> + solon-boot-jetty-add-websocket</td>
+<td>jetty (nio)</td>
+<td>1.9Mb</td>
+<td>http, ws</td>
+<td>相同端口</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://solon.noear.org/article/92">solon-boot-undertow</a></td>
+<td>undertow (nio)</td>
+<td>4.3Mb</td>
+<td>http, ws</td>
+<td>相同端口</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://solon.noear.org/article/93">solon-boot-websocket</a></td>
+<td>websocket (nio)</td>
+<td>0.4Mb</td>
+<td>ws</td>
+<td>独立端口</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://solon.noear.org/article/551">solon-boot-websocket-netty</a></td>
+<td>netty (nio)</td>
+<td></td>
+<td>ws</td>
+<td>独立端口</td>
+</tr>
+</tbody></table>
+<p>独立的 WebSocket 插件，会使用独立的端口，且默认为：主端口 + 10000，但都可以通过配置进行修改。</p>
+<h3 id="启用"><a href="#启用" class="headerlink" title="启用"></a>启用</h3><p>在主类开启 Websocket。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.noear.solon.Solon;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.SolonMain;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SolonMain</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoWeb05App</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Solon.start(</span><br><span class="line">        DemoWeb05App.class,</span><br><span class="line">        args,</span><br><span class="line">        app -&gt; &#123;</span><br><span class="line">          app.enableWebSocket(<span class="keyword">true</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="开放端点"><a href="#开放端点" class="headerlink" title="开放端点"></a>开放端点</h3><p>这里集成了 SimpleWebSocketListener，已经提供了基本的实现，可以根据实际的需要实现需要的接口。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.im.endpoint;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.im.service.ImService;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.net.annotation.ServerEndpoint;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.net.websocket.WebSocket;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.net.websocket.listener.SimpleWebSocketListener;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@ServerEndpoint(&quot;/im.ws&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ImWebsocket</span> <span class="keyword">extends</span> <span class="title">SimpleWebSocketListener</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> ImService service;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onOpen</span><span class="params">(WebSocket socket)</span> </span>&#123;</span><br><span class="line">    service.onOpen(socket);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMessage</span><span class="params">(WebSocket socket, String text)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    service.onMessage(socket, text);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现逻辑"><a href="#实现逻辑" class="headerlink" title="实现逻辑"></a>实现逻辑</h3><p>此处只是做简单的鉴权，和消息的回复，如果要实现完整的 IM 服务，还需要做会话的管理的逻辑。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.im.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> org.dromara.hutool.core.text.StrUtil;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.net.websocket.WebSocket;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ImService</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onOpen</span><span class="params">(WebSocket socket)</span> </span>&#123;</span><br><span class="line">    String token = socket.param(<span class="string">&quot;token&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (StrUtil.isBlank(token)) &#123;</span><br><span class="line">      socket.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 省略了管理 socket 的管理</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMessage</span><span class="params">(WebSocket socket, String text)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    socket.send(<span class="string">&quot;&gt; &quot;</span> + text + <span class="string">&quot;\r\n&quot;</span> + <span class="string">&quot;消息已阅&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=N2U0ZmI3YjBjOWVjOGE4ZDdjOTNkN2ViZTA1MzkyMmFfNTZ0aUlXbzVyZG5hcUNMMFhOY1h6aUlhZ255MllqVllfVG9rZW46Skg1YmI5VmlMb21ydGd4OTJZMmMxQVBHbjJlXzE3Mzk2NzIxMDg6MTczOTY3NTcwOF9WNA" alt="img"></p>
+<h2 id="SSE"><a href="#SSE" class="headerlink" title="SSE"></a>SSE</h2><p>SSE 全称是 Server-Sent Event，网页自动获取来自服务器的更新，SSE 是单向消息传递。</p>
+<p>我们这里通过一个简易的 LLM 的服务做为例子。</p>
+<h3 id="依赖-1"><a href="#依赖-1" class="headerlink" title="依赖"></a>依赖</h3><p>要实现 SSE 需要引入 solon-web-sse。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    <span class="function">implementation <span class="title">platform</span><span class="params">(project(<span class="string">&quot;:demo-parent&quot;</span>)</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="title">implementation</span><span class="params">(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span></span></span><br><span class="line"><span class="function">    <span class="title">implementation</span><span class="params">(<span class="string">&quot;org.noear:solon-web-sse&quot;</span>)</span></span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="开放端点-1"><a href="#开放端点-1" class="headerlink" title="开放端点"></a>开放端点</h3><p>客户端先要调用 open 方法，初始化 SseEmitter 连接，之后就可以通过 SseEmitter 给客户端发送消息了，为了方便测试这里还提供了 send 方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.chat.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.chat.service.ChatService;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Controller;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Mapping;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.web.sse.SseEmitter;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/chat&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChatController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> ChatService service;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(value = &quot;/open/&#123;id&#125;&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> SseEmitter <span class="title">open</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.open(id);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(&quot;/send/&#123;id&#125;&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">send</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.send(id);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(&quot;/close/&#123;id&#125;&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">close</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.close(id);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现逻辑-1"><a href="#实现逻辑-1" class="headerlink" title="实现逻辑"></a>实现逻辑</h3><p>与 Websocket 不同的是，SSE 是单向连接，请求的过程是不带会话连接的，所以需要自己管理好会话。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.chat.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.noear.snack.ONode;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.Utils;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.Result;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.web.sse.SseEmitter;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.web.sse.SseEvent;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChatService</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> Map&lt;String, SseEmitter&gt; emitterMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> SseEmitter <span class="title">open</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">    SseEmitter sseEmitter =</span><br><span class="line">        <span class="keyword">new</span> SseEmitter(<span class="number">60</span> * <span class="number">1000L</span>)</span><br><span class="line">            .onCompletion(() -&gt; emitterMap.remove(id))</span><br><span class="line">            .onError(e -&gt; log.error(<span class="string">&quot;初始化 sse 错误&quot;</span>, e))</span><br><span class="line">            .onInited(s -&gt; emitterMap.put(id, s));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      sseEmitter.send(<span class="string">&quot;Ok&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      log.error(<span class="string">&quot;发送 sse 错误&quot;</span>, e);</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化后，才能使用</span></span><br><span class="line">    <span class="keyword">return</span> sseEmitter;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">send</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">    SseEmitter emitter = emitterMap.get(id);</span><br><span class="line">    <span class="keyword">if</span> (emitter == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">&quot;No user: &quot;</span> + id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String msg = <span class="string">&quot;test msg -&gt; &quot;</span> + System.currentTimeMillis();</span><br><span class="line">    System.out.println(msg);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      emitter.send(msg);</span><br><span class="line">      <span class="comment">// reconnectTime 用于提示前端重连时间</span></span><br><span class="line">      emitter.send(<span class="keyword">new</span> SseEvent().id(Utils.guid()).data(msg).reconnectTime(<span class="number">1000L</span>));</span><br><span class="line">      emitter.send(ONode.stringify(Result.succeed(msg)));</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      log.error(<span class="string">&quot;发送 sse 错误&quot;</span>, e);</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Ok&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">close</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">    SseEmitter emitter = emitterMap.get(id);</span><br><span class="line">    <span class="keyword">if</span> (emitter != <span class="keyword">null</span>) &#123;</span><br><span class="line">      emitter.complete();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Ok&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="验证-1"><a href="#验证-1" class="headerlink" title="验证"></a>验证</h3><p>ApiFox 支持测试 SSE，连接成功之后就可以调用 send 方法。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=Nzk1OTVkMjM1Y2JkNTYzNjM2NzE2NmUzOGNhOWY0YzdfT3V4MUVvWkp4ZGswNFl5SjJ3ZHV2bExjakZjUFk3N1VfVG9rZW46SkFHV2JJbHhUb1lZQ3l4UnhNRGNGZUtabktjXzE3Mzk2NzIxMDg6MTczOTY3NTcwOF9WNA" alt="img"></p>
+<p>也可以直接使用 curl 进行测试</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NDk5NTNlOGQ3NDM1ZDAxMjc3MjBhYmYwZDI1ZjkxYWJfWDlaaU1PWkpNUlN6d3lHemo0WklhY3R2eldrMWxxVklfVG9rZW46VzVUc2IzSmpEbzBHelR4ZHNCcWNIZHV4bmZjXzE3Mzk2NzIxMDg6MTczOTY3NTcwOF9WNA" alt="img"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/15/course100/023/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1624,130 +1793,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/05/course100/014/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/02/05/course100/014/" class="post-title-link" itemprop="url">Solon 实用教程 —— 介绍</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-02-05 21:08:21" itemprop="dateCreated datePublished" datetime="2025-02-05T21:08:21+08:00">2025-02-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-02-06 22:15:47" itemprop="dateModified" datetime="2025-02-06T22:15:47+08:00">2025-02-06</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>一次在 Jfinal 的群聊中，无意中发现 Solon 的，说「 Solon只需要几M」。于是搜索到官网，看了官网内容。抱着试一试的态度，于是按着官方文档写例子，发现挺好用的，生态也很完整，自己想要的东西基本都有。</p>
-<p>目前自己在尝试构建 Solon 版的快速开发框架，算是学习环境。在公司使用 Solon 和 Solon Cloud 开发安全运营平台，算是实践环境。</p>
-<p>在学习实践 Solon 的过程中，也是会碰到问题的，我就会把问题和处理过程记录下来。本着「教是最好的学」的原则，于是整理本教程《Solon 实用教程》，以便自己能更好的理解和使用 Solon。</p>
-<p>由于我还在学习和实践 Solon 的过程中，因此本教程会持续更新。同时，由于我的学习可能不够深入或使用不当，教程中难免会出现错误，欢迎大家指正。</p>
-<h2 id="Solon-是什么"><a href="#Solon-是什么" class="headerlink" title="Solon 是什么"></a>Solon 是什么</h2><p>以下是Solon在开放原子开源基金会的<a target="_blank" rel="noopener" href="https://www.openatom.cn/project/YNjOOt50Swn2">介绍</a>（<a target="_blank" rel="noopener" href="https://www.openatom.cn/project/YNjOOt50Swn2%EF%BC%89%E3%80%82">https://www.openatom.cn/project/YNjOOt50Swn2）。</a></p>
-<h3 id="项目简介"><a href="#项目简介" class="headerlink" title="项目简介"></a>项目简介</h3><p>Solon 一个是新的Java “生态型”应用开发框架。相对目前主流解决方案。Solon并发高 2～ 3 倍；内存省 50%；启动快 5 ～ 10 倍；打包小 50% ~ 90%；同时兼容 java8 ~ java22 运行时。</p>
-<h3 id="项目特点"><a href="#项目特点" class="headerlink" title="项目特点"></a>项目特点</h3><h4 id="技术价值"><a href="#技术价值" class="headerlink" title="技术价值"></a>技术价值</h4><p>Solon 提供了更高的计算性价比；更好的软件开发效率；快的生产与部署体验；更灵活的兼容选择。</p>
-<h4 id="业务价值"><a href="#业务价值" class="headerlink" title="业务价值"></a>业务价值</h4><p>Solon解决了Spring 的历史包袱重，架构臃肿，计算资源浪费，学习曲线复杂，以及不再支持java17之前版本等问题。</p>
-<h4 id="生态价值"><a href="#生态价值" class="headerlink" title="生态价值"></a>生态价值</h4><p>Solon 给Java 生态整合提供了更先进的底座支持。灵活的架构，即可适配传统的java-ee体系，又可以支持最新的技术发展成果。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZjVhMDI1OWI2NTQzODk2MGE2MjY0M2I2ZWQ5ZDY1MmZfTHNhRURJV0tmMEFHbmJuaXp1N0E3d3ppNXl6ejVDbVhfVG9rZW46Skl4U2JMREJGb3RzQzR4MlF1N2N6OTNhbmNiXzE3Mzg3NjA5ODY6MTczODc2NDU4Nl9WNA" alt="img"></p>
-<h2 id="为什么要学-Solon"><a href="#为什么要学-Solon" class="headerlink" title="为什么要学 Solon"></a>为什么要学 Solon</h2><ul>
-<li>更快、更小、更简单。Solon并发高 2～ 3 倍；启动快 5 ～ 10 倍；打包小 50% ~ 90%；内存省 50%；最小 Web 完整开发单位 1Mb。除了注解模式之外，还可以按需手动，生态丰富，选择自由。同时兼容 java8 ~ java22 运行时。</li>
-<li>国产框架，生态完整。随着国产信创的推荐，使用国产框架将更有优势。</li>
-<li>交流方便，容易理解。有官方的沟通交流群和使用 Gitee，沟通交流方面，文档使用中文编写，容易理解。</li>
-</ul>
-<h2 id="教程内容"><a href="#教程内容" class="headerlink" title="教程内容"></a>教程内容</h2><p>在学习和实践 Solon 的过程中，会发现自己一开始更关注怎么用？接着才会关注为什么要这么用？之后才会想这样设计的好处？如何用 Solon 进行 Web 开发是本教程的主线，本教程不会讲解 Solon 的源码。本教程的主要来源为 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/learn-start">Solon 官网</a> 、 <a target="_blank" rel="noopener" href="https://gitee.com/noear/solon">Solon 源码</a>和自己的实践（<a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/projects?sort=&amp;scope=&amp;state=public&amp;search=solon">https://gitee.com/CrazyAirhead/projects?sort=&amp;scope=&amp;state=public&amp;search=solon</a> 和 <a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/porpoise-demo%EF%BC%89%E3%80%82">https://gitee.com/CrazyAirhead/porpoise-demo）。</a></p>
-<p>本教程主要以下几个部分：</p>
-<ul>
-<li>初识 Solon</li>
-<li>数据操作</li>
-<li>Web 开发</li>
-<li>Solon Boot</li>
-<li>Solon Cloud</li>
-</ul>
-<p>本教程使用 IDEA、JDK17 和 Gradle，需要有这些基础知识。本教程于官网资料的主要不同在于，官网面向的读者更宽泛，会涉及各种不同版本 JDK，Maven 和 Gradle 的配置，不同的编程习惯，比如注解或手动获取 Bean 等，不同的技术偏好，比如多种 ORM 组件等。本教程则更面向实践，并限定了选择，这样可以比较快速简单的入门，实际使用 Solon 进行开发工作。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1817,7 +1862,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">291</span>
+          <span class="site-state-item-count">292</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
