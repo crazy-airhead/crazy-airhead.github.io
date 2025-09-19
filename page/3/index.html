@@ -172,6 +172,147 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/18/course100/025/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/18/course100/025/" class="post-title-link" itemprop="url">Solon —— 配置</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-18 19:54:02 / 修改时间：19:59:06" itemprop="dateCreated datePublished" datetime="2025-02-18T19:54:02+08:00">2025-02-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>Spring Boot 流行起来的一个原因是简化了配置，其中约定优于配置减少了开发者的配置负担，无需配置或者少量的配置就可以启动项目；自动化配置根据项目依赖自动配置应用程序，简化了开发流程。Solon 作为后起之秀也是采用了约定优于配置和自动配置的方式来简化配置。</p>
+<h2 id="约定"><a href="#约定" class="headerlink" title="约定"></a>约定</h2><h3 id="配置分类"><a href="#配置分类" class="headerlink" title="配置分类"></a>配置分类</h3><h4 id="启动参数"><a href="#启动参数" class="headerlink" title="启动参数"></a>启动参数</h4><p>启动参数，在应用启动后会被静态化，也就是不能再修改。在Java 启动时指定，通过<code>--key=value</code>的形式指定。</p>
+<h4 id="系统属性"><a href="#系统属性" class="headerlink" title="系统属性"></a>系统属性</h4><p>系统属性，在应用启动后会被静态化，也就是不能再修改。在Java 启动时指定，通过<code>-Dkey=value</code>的形式指定。</p>
+<h4 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h4><p>操作系统的环境变量。”solon” 开头的环境变量，会被框架同步到系统属性（System::getProperties）与应用属性（Solon::cfg）。</p>
+<h4 id="应用配置"><a href="#应用配置" class="headerlink" title="应用配置"></a>应用配置</h4><p>应用通过配置文件加载进来的配置。</p>
+<h3 id="主配置文件"><a href="#主配置文件" class="headerlink" title="主配置文件"></a>主配置文件</h3><p>应用配置文件为 <code>resources/app.yml</code> 或者 <code>app.properties</code>，文件名不能修改也不能配置。</p>
+<h3 id="配置加载规则"><a href="#配置加载规则" class="headerlink" title="配置加载规则"></a>配置加载规则</h3><p>应用配置的加载主要分了六个层级，其加载规则为：</p>
+<ul>
+<li>越静态的越前面</li>
+<li>越动态的越后面</li>
+</ul>
+<p>因为配置是以“键”为单位，且后面加载的会盖掉前面加载的，所以最终效果就是配置以最后加载为准。</p>
+<p>加载顺序为：</p>
+<ol>
+<li>主配置文件，先是主配置文件（app.yml），之后是带环境的主配置（app-{env}.yml）,这里不特别区分（yml或者properties）。</li>
+<li>内部配置文件，通过 <code>solon.config.load</code>加载的 <code>classpath</code> 目录下的配置文件。</li>
+<li>外部配置文件，通过 <code>solon.config.add</code> 加载的配置文件。</li>
+<li>动态配置，启动应用时的配置，先是启动参数（–key=value），之后是系统属性（-Dkey=value），最后是环境变量（系统环境设置，或者docker -e 等方式指定）</li>
+<li>启动时加载，通过 <code>app.cfg().loadAdd</code> 或者 <code>app.cfg().loadEnv</code>加载。</li>
+<li>云端配置，通过分布式配置获取，如nacos。</li>
+</ol>
+<h3 id="配置引用规则"><a href="#配置引用规则" class="headerlink" title="配置引用规则"></a>配置引用规则</h3><p>配置文件（或配置块）解析时，Solon.cfg() 已经存在的变量（或者配置块内的变量），可以被引用。属性之间的引用，使用 <code>$&#123;...&#125;</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">test.demo1:</span> <span class="string">&quot;$&#123;db1.url&#125;&quot;</span>                          <span class="comment">#引用应用属性</span></span><br><span class="line"><span class="attr">test.demo2:</span> <span class="string">&quot;jdbc:mysql:$&#123;db1.server&#125;&quot;</span>            <span class="comment">#引用应用属性并组合</span></span><br><span class="line"><span class="attr">test.demo3:</span> <span class="string">&quot;jdbc:mysql:$&#123;db1.server&#125;/$&#123;db1.db&#125;&quot;</span>  <span class="comment">#引用多个应用属性并组合</span></span><br><span class="line"><span class="attr">test.demo4:</span> <span class="string">&quot;$&#123;JAVA_HOME&#125;&quot;</span>                        <span class="comment">#引用环境变量test.demo5: &quot;$&#123;.demo4&#125;&quot;                           #引用本级其它变量（v2.9.0 后支持）</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="常用配置"><a href="#常用配置" class="headerlink" title="常用配置"></a>常用配置</h3><p>配置可能变更，所以直接看官网 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/174">https://solon.noear.org/article/174</a> 。</p>
+<h2 id="注入配置"><a href="#注入配置" class="headerlink" title="注入配置"></a>注入配置</h2><p>配置注入使用 <code>$&#123;...&#125;</code>的表达式，支持如下具体的配置：</p>
+<ul>
+<li><code>$&#123;xxx&#125;</code> 注入字段。</li>
+<li><code>$&#123;xxx:def&#125;</code> 注入字段，如果没有则提供 def 默认值，此时只支持单值接收，不支持集合或实体。</li>
+<li><code>$&#123;classpath:xxx.yml&#125;</code> 注入资源目录下的配置文件 xxx.xml</li>
+</ul>
+<h3 id="注入字段"><a href="#注入字段" class="headerlink" title="注入字段"></a>注入字段</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoService</span></span>&#123;</span><br><span class="line">    <span class="comment">//注入值（带默认值：demoApi），并开启自动更新（注意：如果不是单例，请不要开启自动刷新）</span></span><br><span class="line">    <span class="meta">@Inject(value=&quot;$&#123;track.name:demoApi&#125;&quot;, autoRefreshed=true)</span></span><br><span class="line">    <span class="keyword">static</span> String trackName; <span class="comment">//v3.0 后支持静态字段注入//注入值（没有时，不覆盖字段初始值）</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Inject(&quot;$&#123;track.url&#125;&quot;)</span></span><br><span class="line">    String trackUrl = <span class="string">&quot;http://x.x.x/track&quot;</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//注入配置集合</span></span><br><span class="line">    <span class="meta">@Inject(&quot;$&#123;track.db1&#125;&quot;)</span></span><br><span class="line">    Properties trackDbCfg;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//注入Bean（根据对应的配置集合自动生成并注入）</span></span><br><span class="line">    <span class="meta">@Inject(&quot;$&#123;track.db1&#125;&quot;)</span></span><br><span class="line">    HikariDataSource trackDs;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="注入类"><a href="#注入类" class="headerlink" title="注入类"></a>注入类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Inject(&quot;$&#123;user.config&#125;&quot;)</span>  </span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserProperties</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">    <span class="keyword">public</span> List&lt;String&gt; tags;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@BindProps(prefix=&quot;user.config&quot;)</span>  <span class="comment">//或者用绑定属性注解。v3.0.7 后支持</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserProperties</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">    <span class="keyword">public</span> List&lt;String&gt; tags;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span> </span>&#123;</span><br><span class="line">    <span class="meta">@BindProps(prefix=&quot;user.config&quot;)</span> <span class="comment">//或者用绑定属性注解。v3.0.7 后支持</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> UserProperties <span class="title">userProperties</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> UserProperties();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="注入参数"><a href="#注入参数" class="headerlink" title="注入参数"></a>注入参数</h3><p>当注入到参数的时候，不支持自动刷新。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configurationpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span></span>&#123;</span><br><span class="line">    <span class="comment">//提示：@Bean 只能与 @Configuration 配合@Bean </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> DataSource <span class="title">db1</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;track.db1&#125;&quot;)</span> HikariDataSource ds)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ds;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Beanpublic</span> <span class="function">DataSourceWrap <span class="title">db1w</span><span class="params">(<span class="meta">@Inject</span> DataSource ds, <span class="meta">@Inject(&quot;$&#123;wrap&#125;&quot;)</span> WrapConfig wc)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DataSourceWrap(ds, wc);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//也可以带条件处理@Bean@Condition(onProperty=&quot;$&#123;cache.enable&#125; = true&quot;) //有 &quot;cache.enable&quot; 属性值，且等于truepublic CacheService cache(@Inject(&quot;$&#123;cache.config&#125;&quot;) CacheServiceSupplier supper)&#123;</span></span><br><span class="line">       <span class="keyword">return</span> supper.get();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="自动更新"><a href="#自动更新" class="headerlink" title="自动更新"></a>自动更新</h3><p>自动刷新只适合于字段注入，以及单例的类。注意：<strong>如果不是单例，请不要开启自动刷新</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Componentpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoService</span></span>&#123;</span><br><span class="line">    <span class="comment">//注入值（带默认值：demoApi），并开启自动更新</span></span><br><span class="line">    <span class="meta">@Inject(value=&quot;$&#123;track.name:demoApi&#125;&quot;, autoRefreshed=true)</span></span><br><span class="line">    String trackName;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//通过函数时时获取最新的（静态或动态，按需设定）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">trackName2</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Solon.cfg().get(<span class="string">&quot;track.name:demoApi&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="手动配置"><a href="#手动配置" class="headerlink" title="手动配置"></a>手动配置</h2><p>通过 Solon.cfg() 获取 SolonProps 后进行操作。这里不做过多的描述，如果需要可以参看官网文档。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://solon.noear.org/article/31%EF%BC%8C%E6%89%8B%E5%8A%A8%E8%8E%B7%E5%8F%96%E9%85%8D%E7%BD%AE%E5%8F%8A%E8%AE%A2%E9%98%85%E5%8F%98%E6%9B%B4%E7%9A%84%E5%86%85%E5%AE%B9%E3%80%82">https://solon.noear.org/article/31，手动获取配置及订阅变更的内容。</a></li>
+<li><a target="_blank" rel="noopener" href="https://solon.noear.org/article/910%EF%BC%8CSolonProps">https://solon.noear.org/article/910，SolonProps</a> 接口参看</li>
+</ul>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>配置本身相关简单，记住对应的配置加载规则和注入的方法，基本不会有什么太多的问题。这里不对示例做过多说明，更多需要参看，参看具体的代码 demo-solon01 。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要主要介绍了 Solon 的配置配置规则和自动化配置的方法。在理解了 Solon 的配置后，就可以更动态的做部署的配置。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/16/course100/024/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1658,141 +1799,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/06/course100/015/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/02/06/course100/015/" class="post-title-link" itemprop="url">初始 Solon —— Solon 体系</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-02-06 22:13:02 / 修改时间：22:25:29" itemprop="dateCreated datePublished" datetime="2025-02-06T22:13:02+08:00">2025-02-06</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本部分内容建议直接看官网 <a target="_blank" rel="noopener" href="https://solon.noear.org,以便能看到最新的内容.这里只是简单的罗列./">https://solon.noear.org，以便能看到最新的内容。这里只是简单的罗列。</a></p>
-<h2 id="Solon-体系"><a href="#Solon-体系" class="headerlink" title="Solon 体系"></a>Solon 体系</h2><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NzU2YWQ2MDY4OTViOGE2ZDIxNjhkNjk1ZTNjOTc3ZDZfWW55QW5ZYVdlZVBPQjhGcWtUc2VyZUJRYjZOb0FqVUNfVG9rZW46TmZBeGJ2bnVzbzhVRnB4T2ZkUmNqUVB3bkhoXzE3Mzg4NTE0NTM6MTczODg1NTA1M19WNA" alt="img"></p>
-<h3 id="Solon-Core"><a href="#Solon-Core" class="headerlink" title="Solon Core"></a>Solon Core</h3><p>Solon 核心库，主要分成，容器、插件、上下文处理。</p>
-<ul>
-<li>Ioc / Aop 容器，提供基于注入依赖的自动装配体系</li>
-<li>插件扩展机制，提供“编码风格”的扩展体系</li>
-<li>通用上下文处理接口，提供开放式网络协议对接适配体系（俗称，三元合一）</li>
-</ul>
-<h3 id="Solon-Boot"><a href="#Solon-Boot" class="headerlink" title="Solon Boot"></a>Solon Boot</h3><p>服务启动器，处理网络协议，三元合一。</p>
-<h3 id="Solon-Serialization"><a href="#Solon-Serialization" class="headerlink" title="Solon Serialization"></a>Solon Serialization</h3><p>序列化体系及相关适配插件。</p>
-<h3 id="Solon-View"><a href="#Solon-View" class="headerlink" title="Solon View"></a>Solon View</h3><p>Solon Web 的后端视图体系及相关适配插件。</p>
-<h3 id="Solon-Data"><a href="#Solon-Data" class="headerlink" title="Solon Data"></a>Solon Data</h3><p>Solon 数据处理，包括事务、缓存、Orm 框架、NoSQL相关的插件。</p>
-<h3 id="Solon-Doc"><a href="#Solon-Doc" class="headerlink" title="Solon Doc"></a>Solon Doc</h3><p>Solon 文档相关的插件。</p>
-<h3 id="Solon-Log"><a href="#Solon-Log" class="headerlink" title="Solon Log"></a>Solon Log</h3><p>Solon 日志相关的插件。</p>
-<h3 id="Solon-Test"><a href="#Solon-Test" class="headerlink" title="Solon Test"></a>Solon Test</h3><p>Solon 单元测试等开发辅助相关的插件。</p>
-<h3 id="Solon-Security"><a href="#Solon-Security" class="headerlink" title="Solon Security"></a>Solon Security</h3><p>Solon 安全，鉴权、校验、加密等安全相关的插件。</p>
-<h3 id="Solon-I18n"><a href="#Solon-I18n" class="headerlink" title="Solon I18n"></a>Solon I18n</h3><p>Solon 国际化相关的插件。</p>
-<h3 id="Solon-Native"><a href="#Solon-Native" class="headerlink" title="Solon Native"></a>Solon Native</h3><p>Solon Native 是可以让 Solon 应用程序以 GraalVM 原生镜像的方式运行的技术方案。</p>
-<h3 id="Solon-AI"><a href="#Solon-AI" class="headerlink" title="Solon AI"></a>Solon AI</h3><p>Solon 使用 AI 的相关插件。</p>
-<h3 id="Solon-Remoting"><a href="#Solon-Remoting" class="headerlink" title="Solon Remoting"></a>Solon Remoting</h3><p>Solon 远程服务相关的插件及其应用。</p>
-<h3 id="Solon-Web"><a href="#Solon-Web" class="headerlink" title="Solon Web"></a>Solon Web</h3><p>Solon Web 一个虚拟的项目，是相关依赖项目的组合。</p>
-<h3 id="Solon-Scheduling"><a href="#Solon-Scheduling" class="headerlink" title="Solon Scheduling"></a>Solon Scheduling</h3><p>Solon 任务调度相关的插件。</p>
-<h3 id="Solon-FaaS"><a href="#Solon-FaaS" class="headerlink" title="Solon FaaS"></a>Solon FaaS</h3><p>Solon 即时运行函数（一个文件，即为一个函数）的技术方案。</p>
-<h3 id="Solon-Flow"><a href="#Solon-Flow" class="headerlink" title="Solon Flow"></a>Solon Flow</h3><p>Solon 流程引擎、规则引擎 等相关的插件。</p>
-<h3 id="Solon-Cloud"><a href="#Solon-Cloud" class="headerlink" title="Solon Cloud"></a>Solon Cloud</h3><p>Solon 分布式与微服务开发相关的插件，主要包括：</p>
-<ul>
-<li>Solon Cloud Gateway 分布式网关相关插件</li>
-<li>Solon Cloud Config 分布式配置相关插件</li>
-<li>Solon Cloud Discovery 分布式注册与发现相关插件</li>
-<li>Solon Cloud Event 分布式时间总线相关插件</li>
-<li>Solon Cloud Job 分布式任务调度插件</li>
-<li>Solon Cloud File 分布式文件插件</li>
-<li>Solon Cloud Log 分布式日志插件</li>
-<li>Solon Cloud Trace 分布式跟踪插件</li>
-<li>Solon Cloud Metrics 分布式监控插件</li>
-<li>Solon Cloud Breaker 分布式熔断插件</li>
-<li>Solon Cloud Id 分布式 ID 插件</li>
-<li>Solon Cloud I18n 分布式国际化配置插件</li>
-<li>Solon Cloud List 分布式名单，白名单、黑名单等</li>
-<li>Solon Cloud Lock 分布式锁插件</li>
-</ul>
-<h2 id="技术趋势"><a href="#技术趋势" class="headerlink" title="技术趋势"></a>技术趋势</h2><p>我们关注 Spring Boot3 的话，当前已经只支持 JDK17 以上版本，对 WebFlux，异步编程的支持越来越好。而且因为云原生的发展，Native 项目。随着大语言模型的发展，对构建 AI 应用的需求也会增加。在这些方面 Solon 都是有完整支持的，跟进 Solon 也能保持自己在技术方面的更新迭代。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1862,7 +1868,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">292</span>
+          <span class="site-state-item-count">293</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1933,12 +1939,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">766k</span>
+    <span title="站点总字数">771k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:36</span>
+    <span title="站点阅读时长">11:41</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

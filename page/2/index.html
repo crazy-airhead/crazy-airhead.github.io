@@ -172,6 +172,147 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/03/05/course100/035/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/03/05/course100/035/" class="post-title-link" itemprop="url">Solon AI —— RAG</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-03-05 22:39:05 / 修改时间：22:40:28" itemprop="dateCreated datePublished" datetime="2025-03-05T22:39:05+08:00">2025-03-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>当前大模型与外部打交道的方式有两种，一种是 Prompt，一种是 Fuction Call。在 Prompt 方面，应用系统可以通过 Prompt 模版和补充上下文的方式，调整用户输入的提示语，使得大模型生成的回答更加准确。</p>
+<h3 id="RAG"><a href="#RAG" class="headerlink" title="RAG"></a>RAG</h3><p>RAG （Retrieval-Augmented Generation 检索增强生成）是一种结合了信息检索和大模型生成的技术框架，是通过相似度等算法从外部知识库中检索相关的信息，并将其作为 Prompt 输入大模型，以增强大模型处理知识密集型任务的能力。</p>
+<p>系统是传统 RAG 和 智能体 RAG 的一个架构图（图片来源网络）。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OWJkNDYwYjhkNjVkOTk1ZTQwZGM3N2IyYTIxODJiMjBfUFVQS2VqZ2dpZ2xIMkdlR2FFYWpzRWZmb3llTklFWktfVG9rZW46QWR0Z2IzUFZMb1BKY2l4WTEyaGNRYzBzbkNmXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
+<h3 id="知识库"><a href="#知识库" class="headerlink" title="知识库"></a>知识库</h3><p>FastGPT 的《知识库基础原理的介绍》说明挺好的，<a target="_blank" rel="noopener" href="https://doc.fastgpt.cn/docs/guide/knowledge_base/rag/">https://doc.fastgpt.cn/docs/guide/knowledge_base/rag/</a> 。</p>
+<p>相对于大模型，我们的系统称为应用。对于应用来说，主要做的是检索工作，就是从知识库（提供文档索检服务的对象）中找到相应的知识（文档）。</p>
+<p>为了存储和读取文档，需要用到文档加载器和文档分割器。</p>
+<ul>
+<li>文档加载器，比如，纯文本，PDF，Word， Markdown， html， excel 等格式的处理与加载。</li>
+<li>文档分割器，当文档太大时，可以按文档的字数，段落，章节，主题等来分块。因此也就有了 JSON 格式拆分，正则表达式拆分，大小分割，拆分流水线等等。</li>
+</ul>
+<p>为了查询相关文档，就需要检索算法的加持。主要分为向量检索和传统检索。在实际的应用是可以多种方式结合的，只要能检索到尽可能相关的数据即可。</p>
+<ul>
+<li>向量检索：如 BERT向量等，它通过将文档和查询转化为向量空间中的表示，并使用相似度计算来进行匹配。向量检索的优势在于能够更好地捕捉语义相似性，而不仅仅是依赖于词汇匹配。</li>
+<li>传统检索：如BM25，主要基于词频和逆文档频率（TF-IDF）的加权搜索模型来对文档进行排序和检索。BM25适用于处理较为简单的匹配任务，尤其是当查询和文档中的关键词有直接匹配时。</li>
+</ul>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>这里我们继续使用 demo-ai02 中诊断的例子，尝试模拟一次简单的诊断，相对于demo-ai02，增加了获取病人的历史病人和病人自述相关的知识，用于演示知识库增加的例子。注意这里只是示例，并非真正的诊断流程。</p>
+<h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><h4 id="build-gradle"><a href="#build-gradle" class="headerlink" title="build.gradle"></a>build.gradle</h4><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:demo-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-view-enjoy&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-ai&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-ai-repo-redis&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-logging-logback&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-openapi2-knife4j&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web-rx&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web-sse&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-flow&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.dromara.hutool:hutool-all&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    testImplementation(<span class="string">&quot;org.noear:solon-test&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h4><p>这里需要用的redis的向量查询，需要安装 redis-stack 版本。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name redis-stack -p <span class="number">6379</span>:<span class="number">6379</span> -p <span class="number">8001</span>:<span class="number">8001</span> swr.cn-north-<span class="number">4.</span>myhuaweicloud.com/ddn-k8s/docker.io/redis/redis-stack:latest</span><br></pre></td></tr></table></figure>
+
+<h4 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h4><p>这里需要向量化，需要增加嵌入模型，这些选了<code>nomic-embed-text</code>，自己根据实际情况选项，<code>deepseek-r1:32b</code>，也是一样的，根据需要调整。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ollama run deepseek-r1:32b</span><br><span class="line">ollama run qwen2<span class="number">.5</span>:7b</span><br><span class="line">ollama run nomic-embed-text</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="app-yml"><a href="#app-yml" class="headerlink" title="app.yml"></a>app.yml</h4><p>增加嵌入模型和 reids 知识库的配置，其他的模型配置在流程编排中获取。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">solon.flow:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;classpath:flow/*&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">demo.llm:</span></span><br><span class="line">  <span class="attr">embed:</span></span><br><span class="line">    <span class="attr">apiUrl:</span> <span class="string">&quot;http://127.0.0.1:11434/api/embed&quot;</span> <span class="comment"># 使用完整地址（而不是 api_base）</span></span><br><span class="line">    <span class="attr">provider:</span> <span class="string">&quot;ollama&quot;</span> <span class="comment"># 使用 ollama 服务时，需要配置 provider</span></span><br><span class="line">    <span class="attr">model:</span> <span class="string">&quot;nomic-embed-text&quot;</span></span><br><span class="line">  <span class="attr">repo:</span></span><br><span class="line">    <span class="attr">redis:</span></span><br><span class="line">      <span class="attr">server:</span> <span class="string">&quot;127.0.0.1:16379&quot;</span>  <span class="comment"># 改为你的 Redis  地址</span></span><br><span class="line">      <span class="attr">db:</span> <span class="number">0</span></span><br><span class="line">      <span class="attr">maxTotal:</span> <span class="number">200</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="LlmConfig"><a href="#LlmConfig" class="headerlink" title="LlmConfig"></a>LlmConfig</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.noear.redisx.RedisClient;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.embedding.EmbeddingConfig;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.embedding.EmbeddingModel;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.rag.repository.RedisRepository;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LlmConfig</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="keyword">public</span> EmbeddingModel <span class="function"><span class="title">embeddingModel</span>(<span class="params"><span class="meta">@Inject</span>(<span class="string">&quot;$&#123;demo.llm.embed&#125;&quot;</span>) EmbeddingConfig config</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> EmbeddingModel.of(config).build();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="keyword">public</span> RedisRepository <span class="function"><span class="title">repository</span>(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="function">      EmbeddingModel embeddingModel, <span class="meta">@Inject</span>(<span class="string">&quot;$&#123;solon.llm.repo.redis&#125;&quot;</span>) RedisClient client</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RedisRepository(embeddingModel, client.openSession().jedis());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span>: <span class="string">&quot;ai-flow-01&quot;</span></span><br><span class="line">layout:</span><br><span class="line">  - <span class="built_in">id</span>: <span class="string">&quot;开始&quot;</span></span><br><span class="line">    <span class="built_in">type</span>: <span class="string">&quot;start&quot;</span></span><br><span class="line">  - <span class="built_in">id</span>: <span class="string">&quot;病史&quot;</span></span><br><span class="line">    <span class="built_in">type</span>: <span class="string">&quot;execute&quot;</span></span><br><span class="line">    task: <span class="string">&quot;@searchTask&quot;</span></span><br><span class="line">  - <span class="built_in">id</span>: <span class="string">&quot;诊断&quot;</span></span><br><span class="line">    <span class="built_in">type</span>: <span class="string">&quot;execute&quot;</span></span><br><span class="line">    meta.model: <span class="string">&quot;deepseek-r1:32b&quot;</span></span><br><span class="line">    meta.apiUrl: <span class="string">&quot;http://127.0.0.1:11434/api/chat&quot;</span></span><br><span class="line">    meta.provider: <span class="string">&quot;ollama&quot;</span></span><br><span class="line">    meta.<span class="built_in">input</span>: <span class="string">&quot;prompt&quot;</span></span><br><span class="line">    meta.output: <span class="string">&quot;intention&quot;</span></span><br><span class="line">    meta.systemTpl: <span class="string">&quot;## 上下文\n\n#(ctx)\n\n## 任务\n\n根据用户的描述，判断用户最可能的三个健康问题，只要诊断名称，不需要其他解释，用 Markdown 的列表格式返回。\n\n&quot;</span></span><br><span class="line">    meta.userTpl: <span class="string">&quot;## 病人自述\n\n#(prompt)\n\n## 历史病情\n\n#(history)\n\n&quot;</span></span><br><span class="line">    task: <span class="string">&quot;@intentionTask&quot;</span></span><br><span class="line">  - <span class="built_in">id</span>: <span class="string">&quot;治疗建议&quot;</span></span><br><span class="line">    <span class="built_in">type</span>: <span class="string">&quot;execute&quot;</span></span><br><span class="line">    meta.model: <span class="string">&quot;qwen2.5:7b&quot;</span></span><br><span class="line">    meta.apiUrl: <span class="string">&quot;http://127.0.0.1:11434/api/chat&quot;</span></span><br><span class="line">    meta.provider: <span class="string">&quot;ollama&quot;</span></span><br><span class="line">    meta.<span class="built_in">input</span>: <span class="string">&quot;intention&quot;</span></span><br><span class="line">    meta.output: <span class="string">&quot;suggestion&quot;</span></span><br><span class="line">    meta.system: <span class="string">&quot;## 角色\n\n你是一个经验丰富的医生\n\n## 任务\n根据用户提供的诊断信息，提供治疗建议&quot;</span></span><br><span class="line">    task: <span class="string">&quot;@suggestionTask&quot;</span></span><br><span class="line">  - <span class="built_in">type</span>: <span class="string">&quot;end&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="知识库管理"><a href="#知识库管理" class="headerlink" title="知识库管理"></a>知识库管理</h3><h4 id="RepositoryController"><a href="#RepositoryController" class="headerlink" title="RepositoryController"></a>RepositoryController</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.ai.llm.service.RepositoryService;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping</span>(<span class="string">&quot;/repository&quot;</span>)</span><br><span class="line"><span class="meta">@Api</span>(<span class="string">&quot;知识库&quot;</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RepositoryController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> RepositoryService service;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation</span>(<span class="string">&quot;addDoc&quot;</span>)</span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping</span>(<span class="string">&quot;addDoc&quot;</span>)</span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">Boolean</span> <span class="function"><span class="title">addDoc</span>(<span class="params"><span class="built_in">String</span> content</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> service.addDoc(content);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation</span>(<span class="string">&quot;search&quot;</span>)</span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping</span>(<span class="string">&quot;search&quot;</span>)</span><br><span class="line">  <span class="keyword">public</span> List&lt;<span class="built_in">String</span>&gt; <span class="function"><span class="title">search</span>(<span class="params"><span class="built_in">String</span> query</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> service.search(query);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RepositoryService"><a href="#RepositoryService" class="headerlink" title="RepositoryService"></a>RepositoryService</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.Collections;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.rag.Document;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.rag.repository.RedisRepository;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RepositoryService</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> RedisRepository repository;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">Boolean</span> <span class="function"><span class="title">addDoc</span>(<span class="params"><span class="built_in">String</span> content</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      Document <span class="built_in">document</span> = <span class="keyword">new</span> Document(content);</span><br><span class="line">      repository.insert(Collections.singletonList(<span class="built_in">document</span>));</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> List&lt;<span class="built_in">String</span>&gt; <span class="function"><span class="title">search</span>(<span class="params"><span class="built_in">String</span> query</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      List&lt;Document&gt; list = repository.search(query);</span><br><span class="line">      <span class="keyword">return</span> list.stream().map(Document::getContent).toList();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">String</span> <span class="function"><span class="title">history</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;无其他慢性病&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="诊断"><a href="#诊断" class="headerlink" title="诊断"></a>诊断</h3><h4 id="LlmDiagController"><a href="#LlmDiagController" class="headerlink" title="LlmDiagController"></a>LlmDiagController</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.ai.llm.service.LlmService;</span><br><span class="line"><span class="keyword">import</span> com.jfinal.kit.Kv;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping</span>(<span class="string">&quot;/llm&quot;</span>)</span><br><span class="line"><span class="meta">@Api</span>(<span class="string">&quot;聊天&quot;</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LlmDiagController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> LlmService service;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation</span>(<span class="string">&quot;diag&quot;</span>)</span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping</span>(<span class="string">&quot;diag&quot;</span>)</span><br><span class="line">  <span class="keyword">public</span> Kv <span class="function"><span class="title">diag</span>(<span class="params"><span class="built_in">String</span> prompt</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> service.diag(prompt);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="LlmDiagService"><a href="#LlmDiagService" class="headerlink" title="LlmDiagService"></a>LlmDiagService</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.ai.llm.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.jfinal.kit.Kv;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.flow.ChainContext;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.flow.FlowEngine;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LlmDiagService</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> FlowEngine flowEngine;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Kv <span class="title">diag</span><span class="params">(String prompt)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      ChainContext chainContext = <span class="keyword">new</span> ChainContext();</span><br><span class="line">      chainContext.put(<span class="string">&quot;prompt&quot;</span>, prompt);</span><br><span class="line">      Kv kv = Kv.create();</span><br><span class="line">      chainContext.put(<span class="string">&quot;result&quot;</span>, kv);</span><br><span class="line">      flowEngine.eval(<span class="string">&quot;ai-flow-01&quot;</span>, chainContext);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> kv;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><h4 id="知识管理"><a href="#知识管理" class="headerlink" title="知识管理"></a>知识管理</h4><p>通过接口写入一些文档，这里是一些睡眠的方法。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZWU4NTc4M2NhYjVjMjUyZDAzYWE5NWM5NTU2ZmRlOGNfZFJ2UGV2TUxkZ2JtbzFuMjlDWmF3emV2UVI4SURtaE1fVG9rZW46SmhsZmJROUM4b2ZSdUh4anIwTWN4MVJVbm1lXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
+<h4 id="知识查询"><a href="#知识查询" class="headerlink" title="知识查询"></a>知识查询</h4><p>通过查询水名</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OWFmYmQzNzgwOGFjMTMwZTMwNjcxYTcwY2E1YzIyODZfc0t5c2xjcHRZN3NjZmE2VVBkcmVvWFJMTWdCNWNWTWZfVG9rZW46T0Vnc2JDeEpib1dFVFZ4OWc2UGNvcDV4bmFjXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
+<h4 id="诊断服务"><a href="#诊断服务" class="headerlink" title="诊断服务"></a>诊断服务</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MDUyYWYwNjdmMGRkZWYzNTE1Y2U5YjdkMDljOTM1ZWRfaTRPdmVmblNVN1A0WUttelJ3eXZoNUhWV2VsZDlkejNfVG9rZW46UmVWd2I4clE5b0cwYkJ4Zk90ZmNvMzlSbmdnXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
+<p>中间的调试信息，我们可以看到我们添加的知识库的信息被追加到提示信息中，提交给大模型。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YzhjOGQ2MWMzY2Q5YzkzMWRlOWZjMjk4OWI5OTFhMWRfVVF5NlZjOTNIQjdYUHhzb2FjYVhhQldFOVpDN3JDRFVfVG9rZW46QUhvbmJrVU9Vb0dOQkx4dk1BZWNTU0YyblRjXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>示例中没有对文档的拆分和文档不同文档类型的加载，但我们可以看到 Solon-ai 结合 solon-flow 已经能完整的支持 RAG 的知识库的开发了。当然如果要做一个完整的知识库系统还需要很多工作要做。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/03/03/course100/034/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1786,147 +1927,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/18/course100/025/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/02/18/course100/025/" class="post-title-link" itemprop="url">Solon —— 配置</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-02-18 19:54:02 / 修改时间：19:59:06" itemprop="dateCreated datePublished" datetime="2025-02-18T19:54:02+08:00">2025-02-18</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>Spring Boot 流行起来的一个原因是简化了配置，其中约定优于配置减少了开发者的配置负担，无需配置或者少量的配置就可以启动项目；自动化配置根据项目依赖自动配置应用程序，简化了开发流程。Solon 作为后起之秀也是采用了约定优于配置和自动配置的方式来简化配置。</p>
-<h2 id="约定"><a href="#约定" class="headerlink" title="约定"></a>约定</h2><h3 id="配置分类"><a href="#配置分类" class="headerlink" title="配置分类"></a>配置分类</h3><h4 id="启动参数"><a href="#启动参数" class="headerlink" title="启动参数"></a>启动参数</h4><p>启动参数，在应用启动后会被静态化，也就是不能再修改。在Java 启动时指定，通过<code>--key=value</code>的形式指定。</p>
-<h4 id="系统属性"><a href="#系统属性" class="headerlink" title="系统属性"></a>系统属性</h4><p>系统属性，在应用启动后会被静态化，也就是不能再修改。在Java 启动时指定，通过<code>-Dkey=value</code>的形式指定。</p>
-<h4 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h4><p>操作系统的环境变量。”solon” 开头的环境变量，会被框架同步到系统属性（System::getProperties）与应用属性（Solon::cfg）。</p>
-<h4 id="应用配置"><a href="#应用配置" class="headerlink" title="应用配置"></a>应用配置</h4><p>应用通过配置文件加载进来的配置。</p>
-<h3 id="主配置文件"><a href="#主配置文件" class="headerlink" title="主配置文件"></a>主配置文件</h3><p>应用配置文件为 <code>resources/app.yml</code> 或者 <code>app.properties</code>，文件名不能修改也不能配置。</p>
-<h3 id="配置加载规则"><a href="#配置加载规则" class="headerlink" title="配置加载规则"></a>配置加载规则</h3><p>应用配置的加载主要分了六个层级，其加载规则为：</p>
-<ul>
-<li>越静态的越前面</li>
-<li>越动态的越后面</li>
-</ul>
-<p>因为配置是以“键”为单位，且后面加载的会盖掉前面加载的，所以最终效果就是配置以最后加载为准。</p>
-<p>加载顺序为：</p>
-<ol>
-<li>主配置文件，先是主配置文件（app.yml），之后是带环境的主配置（app-{env}.yml）,这里不特别区分（yml或者properties）。</li>
-<li>内部配置文件，通过 <code>solon.config.load</code>加载的 <code>classpath</code> 目录下的配置文件。</li>
-<li>外部配置文件，通过 <code>solon.config.add</code> 加载的配置文件。</li>
-<li>动态配置，启动应用时的配置，先是启动参数（–key=value），之后是系统属性（-Dkey=value），最后是环境变量（系统环境设置，或者docker -e 等方式指定）</li>
-<li>启动时加载，通过 <code>app.cfg().loadAdd</code> 或者 <code>app.cfg().loadEnv</code>加载。</li>
-<li>云端配置，通过分布式配置获取，如nacos。</li>
-</ol>
-<h3 id="配置引用规则"><a href="#配置引用规则" class="headerlink" title="配置引用规则"></a>配置引用规则</h3><p>配置文件（或配置块）解析时，Solon.cfg() 已经存在的变量（或者配置块内的变量），可以被引用。属性之间的引用，使用 <code>$&#123;...&#125;</code>：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">test.demo1:</span> <span class="string">&quot;$&#123;db1.url&#125;&quot;</span>                          <span class="comment">#引用应用属性</span></span><br><span class="line"><span class="attr">test.demo2:</span> <span class="string">&quot;jdbc:mysql:$&#123;db1.server&#125;&quot;</span>            <span class="comment">#引用应用属性并组合</span></span><br><span class="line"><span class="attr">test.demo3:</span> <span class="string">&quot;jdbc:mysql:$&#123;db1.server&#125;/$&#123;db1.db&#125;&quot;</span>  <span class="comment">#引用多个应用属性并组合</span></span><br><span class="line"><span class="attr">test.demo4:</span> <span class="string">&quot;$&#123;JAVA_HOME&#125;&quot;</span>                        <span class="comment">#引用环境变量test.demo5: &quot;$&#123;.demo4&#125;&quot;                           #引用本级其它变量（v2.9.0 后支持）</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="常用配置"><a href="#常用配置" class="headerlink" title="常用配置"></a>常用配置</h3><p>配置可能变更，所以直接看官网 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/174">https://solon.noear.org/article/174</a> 。</p>
-<h2 id="注入配置"><a href="#注入配置" class="headerlink" title="注入配置"></a>注入配置</h2><p>配置注入使用 <code>$&#123;...&#125;</code>的表达式，支持如下具体的配置：</p>
-<ul>
-<li><code>$&#123;xxx&#125;</code> 注入字段。</li>
-<li><code>$&#123;xxx:def&#125;</code> 注入字段，如果没有则提供 def 默认值，此时只支持单值接收，不支持集合或实体。</li>
-<li><code>$&#123;classpath:xxx.yml&#125;</code> 注入资源目录下的配置文件 xxx.xml</li>
-</ul>
-<h3 id="注入字段"><a href="#注入字段" class="headerlink" title="注入字段"></a>注入字段</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoService</span></span>&#123;</span><br><span class="line">    <span class="comment">//注入值（带默认值：demoApi），并开启自动更新（注意：如果不是单例，请不要开启自动刷新）</span></span><br><span class="line">    <span class="meta">@Inject(value=&quot;$&#123;track.name:demoApi&#125;&quot;, autoRefreshed=true)</span></span><br><span class="line">    <span class="keyword">static</span> String trackName; <span class="comment">//v3.0 后支持静态字段注入//注入值（没有时，不覆盖字段初始值）</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Inject(&quot;$&#123;track.url&#125;&quot;)</span></span><br><span class="line">    String trackUrl = <span class="string">&quot;http://x.x.x/track&quot;</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//注入配置集合</span></span><br><span class="line">    <span class="meta">@Inject(&quot;$&#123;track.db1&#125;&quot;)</span></span><br><span class="line">    Properties trackDbCfg;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//注入Bean（根据对应的配置集合自动生成并注入）</span></span><br><span class="line">    <span class="meta">@Inject(&quot;$&#123;track.db1&#125;&quot;)</span></span><br><span class="line">    HikariDataSource trackDs;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="注入类"><a href="#注入类" class="headerlink" title="注入类"></a>注入类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Inject(&quot;$&#123;user.config&#125;&quot;)</span>  </span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserProperties</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">    <span class="keyword">public</span> List&lt;String&gt; tags;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@BindProps(prefix=&quot;user.config&quot;)</span>  <span class="comment">//或者用绑定属性注解。v3.0.7 后支持</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserProperties</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">    <span class="keyword">public</span> List&lt;String&gt; tags;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span> </span>&#123;</span><br><span class="line">    <span class="meta">@BindProps(prefix=&quot;user.config&quot;)</span> <span class="comment">//或者用绑定属性注解。v3.0.7 后支持</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> UserProperties <span class="title">userProperties</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> UserProperties();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="注入参数"><a href="#注入参数" class="headerlink" title="注入参数"></a>注入参数</h3><p>当注入到参数的时候，不支持自动刷新。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configurationpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span></span>&#123;</span><br><span class="line">    <span class="comment">//提示：@Bean 只能与 @Configuration 配合@Bean </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> DataSource <span class="title">db1</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;track.db1&#125;&quot;)</span> HikariDataSource ds)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ds;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Beanpublic</span> <span class="function">DataSourceWrap <span class="title">db1w</span><span class="params">(<span class="meta">@Inject</span> DataSource ds, <span class="meta">@Inject(&quot;$&#123;wrap&#125;&quot;)</span> WrapConfig wc)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DataSourceWrap(ds, wc);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//也可以带条件处理@Bean@Condition(onProperty=&quot;$&#123;cache.enable&#125; = true&quot;) //有 &quot;cache.enable&quot; 属性值，且等于truepublic CacheService cache(@Inject(&quot;$&#123;cache.config&#125;&quot;) CacheServiceSupplier supper)&#123;</span></span><br><span class="line">       <span class="keyword">return</span> supper.get();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="自动更新"><a href="#自动更新" class="headerlink" title="自动更新"></a>自动更新</h3><p>自动刷新只适合于字段注入，以及单例的类。注意：<strong>如果不是单例，请不要开启自动刷新</strong>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Componentpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoService</span></span>&#123;</span><br><span class="line">    <span class="comment">//注入值（带默认值：demoApi），并开启自动更新</span></span><br><span class="line">    <span class="meta">@Inject(value=&quot;$&#123;track.name:demoApi&#125;&quot;, autoRefreshed=true)</span></span><br><span class="line">    String trackName;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//通过函数时时获取最新的（静态或动态，按需设定）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">trackName2</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Solon.cfg().get(<span class="string">&quot;track.name:demoApi&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="手动配置"><a href="#手动配置" class="headerlink" title="手动配置"></a>手动配置</h2><p>通过 Solon.cfg() 获取 SolonProps 后进行操作。这里不做过多的描述，如果需要可以参看官网文档。</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://solon.noear.org/article/31%EF%BC%8C%E6%89%8B%E5%8A%A8%E8%8E%B7%E5%8F%96%E9%85%8D%E7%BD%AE%E5%8F%8A%E8%AE%A2%E9%98%85%E5%8F%98%E6%9B%B4%E7%9A%84%E5%86%85%E5%AE%B9%E3%80%82">https://solon.noear.org/article/31，手动获取配置及订阅变更的内容。</a></li>
-<li><a target="_blank" rel="noopener" href="https://solon.noear.org/article/910%EF%BC%8CSolonProps">https://solon.noear.org/article/910，SolonProps</a> 接口参看</li>
-</ul>
-<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>配置本身相关简单，记住对应的配置加载规则和注入的方法，基本不会有什么太多的问题。这里不对示例做过多说明，更多需要参看，参看具体的代码 demo-solon01 。</p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要主要介绍了 Solon 的配置配置规则和自动化配置的方法。在理解了 Solon 的配置后，就可以更动态的做部署的配置。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1996,7 +1996,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">292</span>
+          <span class="site-state-item-count">293</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2067,12 +2067,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">766k</span>
+    <span title="站点总字数">771k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:36</span>
+    <span title="站点阅读时长">11:41</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

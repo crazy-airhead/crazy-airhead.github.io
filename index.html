@@ -172,6 +172,144 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/09/18/course100/045/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/09/18/course100/045/" class="post-title-link" itemprop="url">使用 AI 代码工具的一次升级</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-09-18 22:23:57 / 修改时间：23:25:36" itemprop="dateCreated datePublished" datetime="2025-09-18T22:23:57+08:00">2025-09-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近找同事学习了些 AI 代码生成工具的使用，算是我的一次升级。先看下我生成代码的效果，从点击 「AI生成」开始的界面都是由 AI 生成的。如果觉得效果还可以的话，可以继续往下看。</p>
+<p><video src="/Users/airhead/Desktop/Screen Recording 2025-09-18 at 16.31.03.mov" controls=""></video></p>
+<p>作为一个普通开发人员，在使用先进的 AI 模型的时候，还是需要跨过几个门槛，比如网络，比如支付，比如封号等问题。我自己就是好不容易搞定支付之后，刚想用用 OpenAI 就被封号了。于是有一段时间虽然看到一些比较好的代码生成效果，自己也没有特别实践，导致自己使用 AI 变成工具非常原始。这次和同事聊天，他说到，自己写一个功能，自己就没写过代码。于是非常好奇他的工作流是怎么样的，然后过去学习了下，自己也验证了一番之后，果然有效。</p>
+<p>我之前的使用方式是这样的，使用VS Code，然后 ROO CODE 插件，配置的是 DeepSeek。在使用时，直接在 Prompt 里面说要什么功能，然后等大模型生成，然后除了接受就是接受，最终完成的东西很大程度都没办法完成，需要自己继续修改。于是最终主体代码都是自己写，然后就是让ROO CODE 帮忙完成一些小功能，或者修复直接的报错的问题。</p>
+<p>同事说，之前他也这么用，但是发现效果不好，后面就是让 AI 先整理自己的需求，然后提供方案，而不是直接提供代码。可以对方案提供质疑，然后进一步完善方案，方案完成后才让 AI 写代码。</p>
+<p>在看了同事的直接操作之后，于是回家开始使用 Claud Code 插件，如果没有注册 Claude Code，可以使用下面的两种方式替代：</p>
+<ol>
+<li>使用 Claude 镜像站，<a target="_blank" rel="noopener" href="https://www.aigocode.com/%EF%BC%8C%E5%90%8C%E4%BA%8B%E7%94%A8%E7%9A%84%E6%98%AF%E8%BF%99%E4%B8%AA%E6%96%B9%E5%BC%8F%E3%80%82">https://www.aigocode.com/，同事用的是这个方式。</a></li>
+<li>使用 Kimi 替代，我自己用的是这种方式。</li>
+</ol>
+<p>大家可以根据实际的情况自己选择，我这里简单描述下使用 Kimi 替代的操作。</p>
+<ol>
+<li>注册好 <a target="_blank" rel="noopener" href="https://platform.moonshot.cn/">https://platform.moonshot.cn/</a> 账号，充值解除限速，并配置好 <code>API Key</code></li>
+<li>安装好 Node.js</li>
+<li>安装 Claude</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g @anthropic-ai/claude</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>配置环境变量，导出 <code>ANTHROPIC_BASE_URL</code> 和 <code>ANTHROPIC_AUTH_TOKEN</code></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 如果是其他操作系统，自己用对应的方式修改。</span><br><span class="line">vi .zshrc</span><br><span class="line"></span><br><span class="line">export ANTHROPIC_BASE_URL=https://api.moonshot.cn/anthropic</span><br><span class="line">export ANTHROPIC_AUTH_TOKEN=sk-xxxxxxxxx</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>安装 VS Code 的 <code>Claude Code for VS Code</code> 插件</li>
+<li>打开项目，通过/init 进行初始化。</li>
+<li>接着可以通过对话的方式进行代码编写了。</li>
+</ol>
+<p>以下是演示的生成界面的主体过程（中间有关闭窗口，没有完整的记录），这个界面首先来自，<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/tafopd82apfEtCk2DXU0sg%EF%BC%8C%E6%88%91%E6%9C%9F%E6%9C%9B%E7%9A%84%E6%98%AF%E9%80%9A%E8%BF%87">https://mp.weixin.qq.com/s/tafopd82apfEtCk2DXU0sg，我期望的是通过</a> AI 生成配置之后生成 CMS 站点的模版。这里主要就是生成配置页面的功能。</p>
+<p>我的需求文档整理如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">我现在想做为内容管理模块增加 AI 生成站点模板的功能。</span><br><span class="line">通过模板管理的，[AI 模板] 进入对应的功能页面。</span><br><span class="line"></span><br><span class="line">整个页面的核心就是两个部分一个是调整样式，一个是修改提示词，生成站点模板。</span><br><span class="line"></span><br><span class="line">首先可以在页面左侧对网页样式进行调整，比如主题色、辅助色、字体、大小、字间距、按钮样式等。为了简化网页样式的调整，需要有兜底方案，首先你可以选择预设的各种风格模板，另外的话可以点击「随机生成」按钮，点完所有的元素都会变化，用户可以多点几次挑选自己喜欢的配置。</span><br><span class="line"></span><br><span class="line">可以在右侧预览，预览需要做了三个页面首页、产品、博客，方便在不同的页面内容上预览，通过 Tab 进行切换。另外预览的部分还支持手机、电脑、平板不同页面宽度的预览，需要支持夜间模式。</span><br><span class="line"></span><br><span class="line">最后用户可以设置补充默认的提示词内容，点击生成，把设置好的 JSON 和提示词调用 AI 接口生成对应的模板页面。</span><br></pre></td></tr></table></figure>
+
+<p>可以让 Claude 之间生成到 doc 目录下，初步返回的内容如下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br></pre></td><td class="code"><pre><span class="line">1. 功能模块划分</span><br><span class="line"></span><br><span class="line">  核心模块：</span><br><span class="line">  - 样式配置器（左侧）</span><br><span class="line">  - 实时预览器（右侧）</span><br><span class="line">  - AI生成引擎</span><br><span class="line"></span><br><span class="line">2. 样式配置器设计</span><br><span class="line"></span><br><span class="line">  预设风格模板：</span><br><span class="line">  - 现代简约（Linear风格）</span><br><span class="line">  - 商务专业</span><br><span class="line">  - 创意艺术</span><br><span class="line">  - 科技感</span><br><span class="line">  - 温暖亲和</span><br><span class="line"></span><br><span class="line">  样式配置维度：</span><br><span class="line">  interface StyleConfig &#123;</span><br><span class="line">    theme: &#123;</span><br><span class="line">      primaryColor: string;</span><br><span class="line">      secondaryColor: string;</span><br><span class="line">      accentColor: string;</span><br><span class="line">      backgroundColor: string;</span><br><span class="line">      surfaceColor: string;</span><br><span class="line">    &#125;;</span><br><span class="line">    typography: &#123;</span><br><span class="line">      fontFamily: string;</span><br><span class="line">      baseFontSize: number;</span><br><span class="line">      headingScale: number;</span><br><span class="line">      lineHeight: number;</span><br><span class="line">      letterSpacing: number;</span><br><span class="line">    &#125;;</span><br><span class="line">    layout: &#123;</span><br><span class="line">      borderRadius: number;</span><br><span class="line">      spacing: number;</span><br><span class="line">      maxWidth: number;</span><br><span class="line">      gridGap: number;</span><br><span class="line">    &#125;;</span><br><span class="line">    components: &#123;</span><br><span class="line">      buttonStyle: &#x27;filled&#x27; | &#x27;outlined&#x27; | &#x27;ghost&#x27;;</span><br><span class="line">      cardElevation: number;</span><br><span class="line">      inputStyle: &#x27;underline&#x27; | &#x27;outline&#x27; | &#x27;filled&#x27;;</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">3. 预览器设计</span><br><span class="line"></span><br><span class="line">  多页面预览：</span><br><span class="line">  - 首页（Landing Page）</span><br><span class="line">  - 产品页（Product Showcase）</span><br><span class="line">  - 博客页（Blog Layout）</span><br><span class="line"></span><br><span class="line">  响应式预览：</span><br><span class="line">  - 手机（375px）</span><br><span class="line">  - 平板（768px）</span><br><span class="line">  - 桌面（1440px）</span><br><span class="line"></span><br><span class="line">  主题切换：</span><br><span class="line">  - 浅色模式</span><br><span class="line">  - 深色模式</span><br><span class="line">  - 自动跟随系统</span><br><span class="line"></span><br><span class="line">4. AI生成引擎优化</span><br><span class="line"></span><br><span class="line">  提示词结构：</span><br><span class="line">  interface AIPrompt &#123;</span><br><span class="line">    basePrompt: string; // 来自bootstrap-prompt.txt</span><br><span class="line">    styleConfig: StyleConfig;</span><br><span class="line">    contentType: &#x27;landing&#x27; | &#x27;product&#x27; | &#x27;blog&#x27;;</span><br><span class="line">    additionalRequirements: string[];</span><br><span class="line">    authorInfo: &#123;</span><br><span class="line">      name: string;</span><br><span class="line">      socialLinks: string[];</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  生成流程：</span><br><span class="line">  1. 用户配置样式参数</span><br><span class="line">  2. 系统生成标准化JSON配置</span><br><span class="line">  3. 结合提示词调用AI接口</span><br><span class="line">  4. 生成完整HTML模板</span><br><span class="line"></span><br><span class="line">5. 用户界面设计</span><br><span class="line"></span><br><span class="line">  左侧配置面板：</span><br><span class="line">  ┌─────────────────────────────────────┐</span><br><span class="line">  │ 预设模板选择器                      │</span><br><span class="line">  ├─────────────────────────────────────┤</span><br><span class="line">  │ 主题色彩配置                        │</span><br><span class="line">  │ ├── 主色调  ■ #3B82F6               │</span><br><span class="line">  │ ├── 辅助色  ■ #10B981               │</span><br><span class="line">  │ └── 背景色  ■ #FFFFFF               │</span><br><span class="line">  ├─────────────────────────────────────┤</span><br><span class="line">  │ 字体排版设置                        │</span><br><span class="line">  │ ├── 字体族  [Inter] ▼              │</span><br><span class="line">  │ ├── 基础字号  16px [-][+]          │</span><br><span class="line">  │ └── 行高     1.5 [-][+]            │</span><br><span class="line">  ├─────────────────────────────────────┤</span><br><span class="line">  │ 组件样式                            │</span><br><span class="line">  │ ├── 按钮样式 [填充] ▼               │</span><br><span class="line">  │ └── 圆角半径  8px [-][+]           │</span><br><span class="line">  ├─────────────────────────────────────┤</span><br><span class="line">  │ [🎲 随机生成] [💾 保存配置]         │</span><br><span class="line">  └─────────────────────────────────────┘</span><br><span class="line"></span><br><span class="line">  右侧预览面板：</span><br><span class="line">  ┌─────────────────────────────────────┐</span><br><span class="line">  │ [首页] [产品] [博客] | 📱 💻 🖥️ 🌓 │</span><br><span class="line">  ├─────────────────────────────────────┤</span><br><span class="line">  │                                     │</span><br><span class="line">  │         实时预览区域                 │</span><br><span class="line">  │                                     │</span><br><span class="line">  │    ╔═══════════════════════╗       │</span><br><span class="line">  │    ║                       ║       │</span><br><span class="line">  │    ║   模板预览内容         ║       │</span><br><span class="line">  │    ║                       ║       │</span><br><span class="line">  │    ╚═══════════════════════╝       │</span><br><span class="line">  │                                     │</span><br><span class="line">  └─────────────────────────────────────┘</span><br><span class="line"></span><br><span class="line">6. 技术实现方案</span><br><span class="line"></span><br><span class="line">  前端架构：</span><br><span class="line">  - Vue 3 Composition API</span><br><span class="line">  - Naive UI组件库</span><br><span class="line">  - UnoCSS样式框架</span><br><span class="line">  - Pinia状态管理</span><br><span class="line"></span><br><span class="line">  配置持久化：</span><br><span class="line">  - LocalStorage保存用户配置</span><br><span class="line">  - 支持导出/导入JSON配置</span><br><span class="line">  - 版本管理支持</span><br><span class="line"></span><br><span class="line">  AI集成：</span><br><span class="line">  - 封装通用AI调用接口</span><br><span class="line">  - 支持多种AI服务提供商</span><br><span class="line">  - 缓存机制优化性能</span><br><span class="line"></span><br><span class="line">7. 交互优化</span><br><span class="line"></span><br><span class="line">  用户体验增强：</span><br><span class="line">  - 配置变更实时预览</span><br><span class="line">  - 撤销/重做功能</span><br><span class="line">  - 键盘快捷键支持</span><br><span class="line">  - 拖拽调整参数</span><br><span class="line">  - 批量应用样式</span><br><span class="line"></span><br><span class="line">  性能优化：</span><br><span class="line">  - 虚拟滚动长列表</span><br><span class="line">  - 防抖处理频繁操作</span><br><span class="line">  - 懒加载预览内容</span><br><span class="line">  - 压缩传输数据</span><br><span class="line"></span><br><span class="line">8. 扩展功能</span><br><span class="line"></span><br><span class="line">  高级功能：</span><br><span class="line">  - 自定义CSS注入</span><br><span class="line">  - JavaScript交互增强</span><br><span class="line">  - SEO优化配置</span><br><span class="line">  - 性能指标监控</span><br><span class="line">  - A/B测试支持</span><br><span class="line"></span><br><span class="line">这个设计方案充分考虑了用户友好性、技术可行性和扩展性，能够满足内容管理系统中AI生成站点模板的核心需求。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>当时感觉已经和细化了，特别是有同事提到的 ascii 的 ui，于是让 Claude 继续生成。</p>
+<p><img src="/Users/airhead/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_h7x4z881f5vc31_fc60/temp/RWTemp/2025-09/148aa71160a681782d032359d835ccb7/63407f72e3b7c378f582db235b50aaff.png" alt="63407f72e3b7c378f582db235b50aaff"></p>
+<p>一开始生成的页面是这样的，配置在左侧，Prompt在下面，不是太好的利用页面，于是让大模型把配置和提示词配置都放到右侧，用Tab 进行切换。</p>
+<p>接下来发现一些交互的问题，直接发给Claude 进行修改。</p>
+<p>![image-20250918230352310](/Users/airhead/Library/Application Support/typora-user-images/image-20250918230352310.png)</p>
+<p>在这个过程中当中，注意即使提交 Git，以保留修改的成果，毕竟 AI 生成的也还是有些随机。另外一个就是因为项目是由 lint check的，如果 Claude 自己不能修改的情况，可以用 ROO CODE。一个模型发现不了的问题，另一个模型能发现。</p>
+<p>整个环境验证下拉自己基本没有写代码，都是交给了 Claude Code 插件来处理的。</p>
+<p>下面是完成这个功能，修改其中的BUG，产生的消费记录。</p>
+<p>![image-20250918230945685](/Users/airhead/Library/Application Support/typora-user-images/image-20250918230945685.png)</p>
+<p>通过这次AI 代码生成工具使用方法的调整，让我实现了一些我之前肯定做不出来的效果，而且我也基本上没有写代码，更重要的省钱省时间。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/09/13/course100/044/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -186,7 +324,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2025/09/13/course100/044/" class="post-title-link" itemprop="url">44</a>
+            <a href="/2025/09/13/course100/044/" class="post-title-link" itemprop="url">《Solon 实用教程》示例系统预览</a>
         </h2>
 
         <div class="post-meta">
@@ -195,10 +333,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-09-13 20:17:59 / 修改时间：20:28:37" itemprop="dateCreated datePublished" datetime="2025-09-13T20:17:59+08:00">2025-09-13</time>
+              <time title="创建时间：2025-09-13 20:17:59" itemprop="dateCreated datePublished" datetime="2025-09-13T20:17:59+08:00">2025-09-13</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-09-18 22:24:37" itemprop="dateModified" datetime="2025-09-18T22:24:37+08:00">2025-09-18</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -1382,147 +1526,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/03/05/course100/035/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/03/05/course100/035/" class="post-title-link" itemprop="url">Solon AI —— RAG</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-03-05 22:39:05 / 修改时间：22:40:28" itemprop="dateCreated datePublished" datetime="2025-03-05T22:39:05+08:00">2025-03-05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>7.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>当前大模型与外部打交道的方式有两种，一种是 Prompt，一种是 Fuction Call。在 Prompt 方面，应用系统可以通过 Prompt 模版和补充上下文的方式，调整用户输入的提示语，使得大模型生成的回答更加准确。</p>
-<h3 id="RAG"><a href="#RAG" class="headerlink" title="RAG"></a>RAG</h3><p>RAG （Retrieval-Augmented Generation 检索增强生成）是一种结合了信息检索和大模型生成的技术框架，是通过相似度等算法从外部知识库中检索相关的信息，并将其作为 Prompt 输入大模型，以增强大模型处理知识密集型任务的能力。</p>
-<p>系统是传统 RAG 和 智能体 RAG 的一个架构图（图片来源网络）。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OWJkNDYwYjhkNjVkOTk1ZTQwZGM3N2IyYTIxODJiMjBfUFVQS2VqZ2dpZ2xIMkdlR2FFYWpzRWZmb3llTklFWktfVG9rZW46QWR0Z2IzUFZMb1BKY2l4WTEyaGNRYzBzbkNmXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
-<h3 id="知识库"><a href="#知识库" class="headerlink" title="知识库"></a>知识库</h3><p>FastGPT 的《知识库基础原理的介绍》说明挺好的，<a target="_blank" rel="noopener" href="https://doc.fastgpt.cn/docs/guide/knowledge_base/rag/">https://doc.fastgpt.cn/docs/guide/knowledge_base/rag/</a> 。</p>
-<p>相对于大模型，我们的系统称为应用。对于应用来说，主要做的是检索工作，就是从知识库（提供文档索检服务的对象）中找到相应的知识（文档）。</p>
-<p>为了存储和读取文档，需要用到文档加载器和文档分割器。</p>
-<ul>
-<li>文档加载器，比如，纯文本，PDF，Word， Markdown， html， excel 等格式的处理与加载。</li>
-<li>文档分割器，当文档太大时，可以按文档的字数，段落，章节，主题等来分块。因此也就有了 JSON 格式拆分，正则表达式拆分，大小分割，拆分流水线等等。</li>
-</ul>
-<p>为了查询相关文档，就需要检索算法的加持。主要分为向量检索和传统检索。在实际的应用是可以多种方式结合的，只要能检索到尽可能相关的数据即可。</p>
-<ul>
-<li>向量检索：如 BERT向量等，它通过将文档和查询转化为向量空间中的表示，并使用相似度计算来进行匹配。向量检索的优势在于能够更好地捕捉语义相似性，而不仅仅是依赖于词汇匹配。</li>
-<li>传统检索：如BM25，主要基于词频和逆文档频率（TF-IDF）的加权搜索模型来对文档进行排序和检索。BM25适用于处理较为简单的匹配任务，尤其是当查询和文档中的关键词有直接匹配时。</li>
-</ul>
-<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>这里我们继续使用 demo-ai02 中诊断的例子，尝试模拟一次简单的诊断，相对于demo-ai02，增加了获取病人的历史病人和病人自述相关的知识，用于演示知识库增加的例子。注意这里只是示例，并非真正的诊断流程。</p>
-<h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><h4 id="build-gradle"><a href="#build-gradle" class="headerlink" title="build.gradle"></a>build.gradle</h4><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:demo-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-view-enjoy&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-ai&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-ai-repo-redis&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-logging-logback&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-openapi2-knife4j&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web-rx&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web-sse&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-flow&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.dromara.hutool:hutool-all&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    testImplementation(<span class="string">&quot;org.noear:solon-test&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h4><p>这里需要用的redis的向量查询，需要安装 redis-stack 版本。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name redis-stack -p <span class="number">6379</span>:<span class="number">6379</span> -p <span class="number">8001</span>:<span class="number">8001</span> swr.cn-north-<span class="number">4.</span>myhuaweicloud.com/ddn-k8s/docker.io/redis/redis-stack:latest</span><br></pre></td></tr></table></figure>
-
-<h4 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h4><p>这里需要向量化，需要增加嵌入模型，这些选了<code>nomic-embed-text</code>，自己根据实际情况选项，<code>deepseek-r1:32b</code>，也是一样的，根据需要调整。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ollama run deepseek-r1:32b</span><br><span class="line">ollama run qwen2<span class="number">.5</span>:7b</span><br><span class="line">ollama run nomic-embed-text</span><br></pre></td></tr></table></figure>
-
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="app-yml"><a href="#app-yml" class="headerlink" title="app.yml"></a>app.yml</h4><p>增加嵌入模型和 reids 知识库的配置，其他的模型配置在流程编排中获取。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">solon.flow:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;classpath:flow/*&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">demo.llm:</span></span><br><span class="line">  <span class="attr">embed:</span></span><br><span class="line">    <span class="attr">apiUrl:</span> <span class="string">&quot;http://127.0.0.1:11434/api/embed&quot;</span> <span class="comment"># 使用完整地址（而不是 api_base）</span></span><br><span class="line">    <span class="attr">provider:</span> <span class="string">&quot;ollama&quot;</span> <span class="comment"># 使用 ollama 服务时，需要配置 provider</span></span><br><span class="line">    <span class="attr">model:</span> <span class="string">&quot;nomic-embed-text&quot;</span></span><br><span class="line">  <span class="attr">repo:</span></span><br><span class="line">    <span class="attr">redis:</span></span><br><span class="line">      <span class="attr">server:</span> <span class="string">&quot;127.0.0.1:16379&quot;</span>  <span class="comment"># 改为你的 Redis  地址</span></span><br><span class="line">      <span class="attr">db:</span> <span class="number">0</span></span><br><span class="line">      <span class="attr">maxTotal:</span> <span class="number">200</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="LlmConfig"><a href="#LlmConfig" class="headerlink" title="LlmConfig"></a>LlmConfig</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.noear.redisx.RedisClient;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.embedding.EmbeddingConfig;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.embedding.EmbeddingModel;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.rag.repository.RedisRepository;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LlmConfig</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="keyword">public</span> EmbeddingModel <span class="function"><span class="title">embeddingModel</span>(<span class="params"><span class="meta">@Inject</span>(<span class="string">&quot;$&#123;demo.llm.embed&#125;&quot;</span>) EmbeddingConfig config</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> EmbeddingModel.of(config).build();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="keyword">public</span> RedisRepository <span class="function"><span class="title">repository</span>(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="function">      EmbeddingModel embeddingModel, <span class="meta">@Inject</span>(<span class="string">&quot;$&#123;solon.llm.repo.redis&#125;&quot;</span>) RedisClient client</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RedisRepository(embeddingModel, client.openSession().jedis());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span>: <span class="string">&quot;ai-flow-01&quot;</span></span><br><span class="line">layout:</span><br><span class="line">  - <span class="built_in">id</span>: <span class="string">&quot;开始&quot;</span></span><br><span class="line">    <span class="built_in">type</span>: <span class="string">&quot;start&quot;</span></span><br><span class="line">  - <span class="built_in">id</span>: <span class="string">&quot;病史&quot;</span></span><br><span class="line">    <span class="built_in">type</span>: <span class="string">&quot;execute&quot;</span></span><br><span class="line">    task: <span class="string">&quot;@searchTask&quot;</span></span><br><span class="line">  - <span class="built_in">id</span>: <span class="string">&quot;诊断&quot;</span></span><br><span class="line">    <span class="built_in">type</span>: <span class="string">&quot;execute&quot;</span></span><br><span class="line">    meta.model: <span class="string">&quot;deepseek-r1:32b&quot;</span></span><br><span class="line">    meta.apiUrl: <span class="string">&quot;http://127.0.0.1:11434/api/chat&quot;</span></span><br><span class="line">    meta.provider: <span class="string">&quot;ollama&quot;</span></span><br><span class="line">    meta.<span class="built_in">input</span>: <span class="string">&quot;prompt&quot;</span></span><br><span class="line">    meta.output: <span class="string">&quot;intention&quot;</span></span><br><span class="line">    meta.systemTpl: <span class="string">&quot;## 上下文\n\n#(ctx)\n\n## 任务\n\n根据用户的描述，判断用户最可能的三个健康问题，只要诊断名称，不需要其他解释，用 Markdown 的列表格式返回。\n\n&quot;</span></span><br><span class="line">    meta.userTpl: <span class="string">&quot;## 病人自述\n\n#(prompt)\n\n## 历史病情\n\n#(history)\n\n&quot;</span></span><br><span class="line">    task: <span class="string">&quot;@intentionTask&quot;</span></span><br><span class="line">  - <span class="built_in">id</span>: <span class="string">&quot;治疗建议&quot;</span></span><br><span class="line">    <span class="built_in">type</span>: <span class="string">&quot;execute&quot;</span></span><br><span class="line">    meta.model: <span class="string">&quot;qwen2.5:7b&quot;</span></span><br><span class="line">    meta.apiUrl: <span class="string">&quot;http://127.0.0.1:11434/api/chat&quot;</span></span><br><span class="line">    meta.provider: <span class="string">&quot;ollama&quot;</span></span><br><span class="line">    meta.<span class="built_in">input</span>: <span class="string">&quot;intention&quot;</span></span><br><span class="line">    meta.output: <span class="string">&quot;suggestion&quot;</span></span><br><span class="line">    meta.system: <span class="string">&quot;## 角色\n\n你是一个经验丰富的医生\n\n## 任务\n根据用户提供的诊断信息，提供治疗建议&quot;</span></span><br><span class="line">    task: <span class="string">&quot;@suggestionTask&quot;</span></span><br><span class="line">  - <span class="built_in">type</span>: <span class="string">&quot;end&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="知识库管理"><a href="#知识库管理" class="headerlink" title="知识库管理"></a>知识库管理</h3><h4 id="RepositoryController"><a href="#RepositoryController" class="headerlink" title="RepositoryController"></a>RepositoryController</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.ai.llm.service.RepositoryService;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping</span>(<span class="string">&quot;/repository&quot;</span>)</span><br><span class="line"><span class="meta">@Api</span>(<span class="string">&quot;知识库&quot;</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RepositoryController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> RepositoryService service;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation</span>(<span class="string">&quot;addDoc&quot;</span>)</span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping</span>(<span class="string">&quot;addDoc&quot;</span>)</span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">Boolean</span> <span class="function"><span class="title">addDoc</span>(<span class="params"><span class="built_in">String</span> content</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> service.addDoc(content);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation</span>(<span class="string">&quot;search&quot;</span>)</span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping</span>(<span class="string">&quot;search&quot;</span>)</span><br><span class="line">  <span class="keyword">public</span> List&lt;<span class="built_in">String</span>&gt; <span class="function"><span class="title">search</span>(<span class="params"><span class="built_in">String</span> query</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> service.search(query);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="RepositoryService"><a href="#RepositoryService" class="headerlink" title="RepositoryService"></a>RepositoryService</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.Collections;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.rag.Document;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.rag.repository.RedisRepository;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RepositoryService</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> RedisRepository repository;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">Boolean</span> <span class="function"><span class="title">addDoc</span>(<span class="params"><span class="built_in">String</span> content</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      Document <span class="built_in">document</span> = <span class="keyword">new</span> Document(content);</span><br><span class="line">      repository.insert(Collections.singletonList(<span class="built_in">document</span>));</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> List&lt;<span class="built_in">String</span>&gt; <span class="function"><span class="title">search</span>(<span class="params"><span class="built_in">String</span> query</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      List&lt;Document&gt; list = repository.search(query);</span><br><span class="line">      <span class="keyword">return</span> list.stream().map(Document::getContent).toList();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">String</span> <span class="function"><span class="title">history</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;无其他慢性病&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="诊断"><a href="#诊断" class="headerlink" title="诊断"></a>诊断</h3><h4 id="LlmDiagController"><a href="#LlmDiagController" class="headerlink" title="LlmDiagController"></a>LlmDiagController</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.ai.llm.service.LlmService;</span><br><span class="line"><span class="keyword">import</span> com.jfinal.kit.Kv;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping</span>(<span class="string">&quot;/llm&quot;</span>)</span><br><span class="line"><span class="meta">@Api</span>(<span class="string">&quot;聊天&quot;</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LlmDiagController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> LlmService service;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation</span>(<span class="string">&quot;diag&quot;</span>)</span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping</span>(<span class="string">&quot;diag&quot;</span>)</span><br><span class="line">  <span class="keyword">public</span> Kv <span class="function"><span class="title">diag</span>(<span class="params"><span class="built_in">String</span> prompt</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> service.diag(prompt);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="LlmDiagService"><a href="#LlmDiagService" class="headerlink" title="LlmDiagService"></a>LlmDiagService</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.ai.llm.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.jfinal.kit.Kv;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.flow.ChainContext;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.flow.FlowEngine;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LlmDiagService</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> FlowEngine flowEngine;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Kv <span class="title">diag</span><span class="params">(String prompt)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      ChainContext chainContext = <span class="keyword">new</span> ChainContext();</span><br><span class="line">      chainContext.put(<span class="string">&quot;prompt&quot;</span>, prompt);</span><br><span class="line">      Kv kv = Kv.create();</span><br><span class="line">      chainContext.put(<span class="string">&quot;result&quot;</span>, kv);</span><br><span class="line">      flowEngine.eval(<span class="string">&quot;ai-flow-01&quot;</span>, chainContext);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> kv;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><h4 id="知识管理"><a href="#知识管理" class="headerlink" title="知识管理"></a>知识管理</h4><p>通过接口写入一些文档，这里是一些睡眠的方法。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZWU4NTc4M2NhYjVjMjUyZDAzYWE5NWM5NTU2ZmRlOGNfZFJ2UGV2TUxkZ2JtbzFuMjlDWmF3emV2UVI4SURtaE1fVG9rZW46SmhsZmJROUM4b2ZSdUh4anIwTWN4MVJVbm1lXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
-<h4 id="知识查询"><a href="#知识查询" class="headerlink" title="知识查询"></a>知识查询</h4><p>通过查询水名</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OWFmYmQzNzgwOGFjMTMwZTMwNjcxYTcwY2E1YzIyODZfc0t5c2xjcHRZN3NjZmE2VVBkcmVvWFJMTWdCNWNWTWZfVG9rZW46T0Vnc2JDeEpib1dFVFZ4OWc2UGNvcDV4bmFjXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
-<h4 id="诊断服务"><a href="#诊断服务" class="headerlink" title="诊断服务"></a>诊断服务</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MDUyYWYwNjdmMGRkZWYzNTE1Y2U5YjdkMDljOTM1ZWRfaTRPdmVmblNVN1A0WUttelJ3eXZoNUhWV2VsZDlkejNfVG9rZW46UmVWd2I4clE5b0cwYkJ4Zk90ZmNvMzlSbmdnXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
-<p>中间的调试信息，我们可以看到我们添加的知识库的信息被追加到提示信息中，提交给大模型。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YzhjOGQ2MWMzY2Q5YzkzMWRlOWZjMjk4OWI5OTFhMWRfVVF5NlZjOTNIQjdYUHhzb2FjYVhhQldFOVpDN3JDRFVfVG9rZW46QUhvbmJrVU9Vb0dOQkx4dk1BZWNTU0YyblRjXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>示例中没有对文档的拆分和文档不同文档类型的加载，但我们可以看到 Solon-ai 结合 solon-flow 已经能完整的支持 RAG 的知识库的开发了。当然如果要做一个完整的知识库系统还需要很多工作要做。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1592,7 +1595,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">292</span>
+          <span class="site-state-item-count">293</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1663,12 +1666,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">766k</span>
+    <span title="站点总字数">771k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:36</span>
+    <span title="站点阅读时长">11:41</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
