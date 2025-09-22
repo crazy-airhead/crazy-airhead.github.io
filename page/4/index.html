@@ -172,6 +172,160 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/07/course100/016/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/07/course100/016/" class="post-title-link" itemprop="url">初识 Solon —— 第一个应用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-07 19:56:06 / 修改时间：20:10:12" itemprop="dateCreated datePublished" datetime="2025-02-07T19:56:06+08:00">2025-02-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>994</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>使用<strong>Solon Initializr（</strong><a target="_blank" rel="noopener" href="https://solon.noear.org/start/%EF%BC%89,%E5%88%9B%E5%BB%BA%E5%9F%BA%E7%A1%80%E9%A1%B9%E7%9B%AE%E3%80%82%E4%B9%9F%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8">https://solon.noear.org/start/）,创建基础项目。也可以使用</a> IDEA 的 Solon 插件，<a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/21380-solon%EF%BC%8C%E5%8A%9F%E8%83%BD%E7%B1%BB%E4%BC%BC%EF%BC%8C%E7%94%A8%E5%85%B6%E4%B8%AD%E4%B8%80%E7%A7%8D%E6%96%B9%E5%BC%8F%E5%B0%B1%E5%8F%AF%E4%BB%A5%E4%BA%86%E3%80%82">https://plugins.jetbrains.com/plugin/21380-solon，功能类似，用其中一种方式就可以了。</a></p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MTJkZGI0OWQ0NzE1YTc3YmVlZWU2Mjk2NmI5YmRkYTdfS2JOM2U4c0pva0c1RmZ0anpFWmEzSlZJeFJaQmhmTU1fVG9rZW46TzA5c2JiUlFzbzZHOUV4bFcxZ2NSRE95bmtnXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
+<p>这里选择Gradle-Groovey，Java， 3.0.6，jar，jdk17，Solon Web。</p>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><p>解压下载的demo.zip，用 IDEA 打开目录的 <code>build.gradle</code> 文件，弹窗选择open as project。</p>
+<p>生成的代码已经包含了一个服务接口，无须额外编写代码。</p>
+<p>等 IDEA 加载依赖完毕，即可直接运行 App.java的main函数。</p>
+<p>打开浏览器，输入<a target="_blank" rel="noopener" href="http://localhost:8080/hello">http://localhost:8080/hello</a></p>
+<p>你的第一个 Solon 的 web 应用就完成了。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MDcxMGIzNTU4ZmFmZGI2ZDUxNWVlMjIwYmFhNGM3YzFfeG04anJJS3BBUERYYk1VYjdjWEJrSWcxc2NJMHY5Ym9fVG9rZW46SzNSRmI0OWhnb01QZWJ4YmpkR2NhOUtvblBkXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>默认生成的Demo 已经提供测试，可以点击后看到如下效果。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NmQ0NGY2ZDEyNThkNTIwZDdlNjZjMTljMzZjOWNmMTlfMExUQ2lKVWc2VDBtS0d5NGZSdHVTR3dqb0FBemxLZ0tfVG9rZW46SVpuVmJjR2lnb1Y4ZWV4OUZyT2NJeTlMbm1iXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NTU5ZWZmN2U3ODgyZWRkZDdmNzc5NGM5YWM1NzAwM2ZfV3ZCTzNqaTlMSlJrdWp4a25HZWhveWtTa3RYQ1pNeEVfVG9rZW46UkpKT2JLZWZQbzdkTXF4VXdpUGNHR0NoblFkXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
+<p>如果提示不存在任何测试的错误，调整 IDEA 的配置。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">No matching tests found <span class="keyword">in</span> any candidate <span class="built_in">test</span> task.</span><br><span class="line">    Requested tests:</span><br><span class="line">        Test pattern features.HelloTest.hello <span class="keyword">in</span> task :demo:<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZmQ4YmZkNGEzODM2M2FkNjc3ZDE2MzY0MTM5M2Y0NDFfVXQ0OW5hbzBFOU83Sjl4Zkw3UmpDbkRPQU1HWVVpOHpfVG9rZW46QXRDM2JPRGczb0dKeDF4QTNvaWNVOTRybjdmXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NzVlMGQxY2Y4NjgxOGMxOTZhOGQxZmYyODJkM2Y1ZWVfdURKZFBnWXA0T0FHOWZtd0JXclpzS0V0ZnZidzFpQXlfVG9rZW46Vkx5VWJ1VlJybzI0OE14elZWWmNrZXpFblRkXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>默认生成的代码可以从下面的分支获取。</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/porpoise-demo/tree/start-up/">https://gitee.com/CrazyAirhead/porpoise-demo/tree/start-up/</a></p>
+<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>Solon 作者针对的提供了多个性能的测试对比，具体看链接 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/737">https://solon.noear.org/article/737</a> 的文章。这里不逻辑所有的性能对比，只例出<code>Spring VS Javalin VS Solon</code>的对比，另外测试只是做个参考。不同的环境、场景，效果不同。</p>
+<h3 id="测试记录"><a href="#测试记录" class="headerlink" title="测试记录"></a>测试记录</h3><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>SpringBoot2</th>
+<th>SpringBoot3</th>
+<th>Javalin</th>
+<th>Solon</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>运行时</td>
+<td>java 17</td>
+<td>java 17</td>
+<td>java 17</td>
+<td>java 17</td>
+</tr>
+<tr>
+<td>测试前状态/内存</td>
+<td>101.1Mb</td>
+<td>112.9Mb</td>
+<td>66.1Mb</td>
+<td>45.6Mb</td>
+</tr>
+<tr>
+<td>测试后状态/内存</td>
+<td>996.3Mb</td>
+<td>326.9Mb</td>
+<td>457.3Mb</td>
+<td>369.2Mb</td>
+</tr>
+<tr>
+<td>测试后状态/并发</td>
+<td>2万</td>
+<td>2.6万</td>
+<td>12万</td>
+<td>17万</td>
+</tr>
+</tbody></table>
+<h3 id="测试视频"><a href="#测试视频" class="headerlink" title="测试视频"></a>测试视频</h3><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1nJ4m1h79P/">https://www.bilibili.com/video/BV1nJ4m1h79P/</a></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>通过 Solon Initializr 可以直接创建基础可运行的应用。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/06/course100/015/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1227,104 +1381,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/09/02/mixin/mixin-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/02/mixin/mixin-1/" class="post-title-link" itemprop="url">「定投搜索」工具的一些分享</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2024-09-02 00:17:27 / 修改时间：16:05:56" itemprop="dateCreated datePublished" datetime="2024-09-02T00:17:27+08:00">2024-09-02</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/mixin/" itemprop="url" rel="index"><span itemprop="name">mixin</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>「定投搜索」工具是 Mixin 的机器人（Mixin 号「7000103414」），以 Mixin 聊天的方式提供「定投人生」课堂的全文搜索，并返回匹配的课程列表或者课程卡片。</p>
-<p>最近学习AI，发现可以用AI技术对「定投搜索」进行些优化改造，然后在查看文档时发现之前写了这篇技术总结，现在稍作调整分享这个「定投搜索」Mixin的机器人制作过程，顺便预告下新版功能。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/09/02/mixin/mixin-1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1394,7 +1450,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">293</span>
+          <span class="site-state-item-count">294</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1465,12 +1521,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">771k</span>
+    <span title="站点总字数">793k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:41</span>
+    <span title="站点阅读时长">12:01</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

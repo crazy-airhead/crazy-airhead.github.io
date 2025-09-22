@@ -172,6 +172,307 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/19/course100/026/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/19/course100/026/" class="post-title-link" itemprop="url">Solon —— 容器</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-19 22:46:49 / 修改时间：22:48:20" itemprop="dateCreated datePublished" datetime="2025-02-19T22:46:49+08:00">2025-02-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>Solon 的核心概念有 IoC、AOP 和本地事件总线。有人常常有误解以为 IoC 和 AOP 是 Spring 提出的，其实这两种思想在Spring 之前就已经有了，但 Spring 把这两个思想在技术上落地和推广做得很好，让 Ioc 和 AOP 广为人知。</p>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><h3 id="IoC"><a href="#IoC" class="headerlink" title="IoC"></a>IoC</h3><p>Ioc 的全称是 Inversion of Control，是控制反转或者反转控制的意思。它是一种思想，主要解决的是对象创建和管理的问题，用于解耦依赖。Ioc有时也被称为 DI （Dependency Injection），依赖注入。在使用 IoC 的过程中，我们是通过容器来创建和管理对象的，我们也是从容器中获取对象，所以，有时我们会听到 IoC 就是容器的说法，可能只是简化的一种说法。</p>
+<h3 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h3><p>AOP， 全称 Aspect Oriented Programming，是面向切面编程。AOP 的目的是将横切关注点（如日志记录、事务管理、权限控制、接口限流、接口幂等等）从核心业务逻辑中分离出来，通过动态代理、字节码操作等技术，实现代码的复用和解耦，提高代码的可维护性和可扩展性。其中涉及的核心有代理，切点，切面。</p>
+<h3 id="本地事件总线"><a href="#本地事件总线" class="headerlink" title="本地事件总线"></a>本地事件总线</h3><p>本地事件总线是 Solon 在应用生命周期提供的扩展机制，应用可以根据需要的事件时机点，订阅响应的事件。本地事件总线支持自定义的事件。</p>
+<p>注意：</p>
+<ol>
+<li>本地事件总线是基于应用生命周期的（应用的启停，插件的启停，bean 创建等），而不是基于业务，如果是涉及业务，可以使用使用作者的另一个作品 DamiBus。</li>
+<li>要在事件发生前订阅事件，否则会错过时机，无法接收到事件消息。</li>
+</ol>
+<h2 id="应用生命周期"><a href="#应用生命周期" class="headerlink" title="应用生命周期"></a>应用生命周期</h2><p>应用生命周期，是应用程序从 启动到最后停止的整个过程。应用生命周期当中存在一些关键点，可称为时机点。</p>
+<p>SolonApp 的应用生命周期如下图所示，其中时机点包括有：一个初始化函数时机点 + 六个应用事件时机点 + 三个插件生命时机点 + 两个容器生命时机点。</p>
+<p>作者的这张图画的很细致，一步步的把这个图走完，能加深对 Solon 的理解。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YzEwOWMxN2RlZjZhZDdhNjEyYTU4YjBmNGM0MjBlNzZfS2xQRTJaWEZZbGlNaVU5Q3VNM0lwakpncUs0R0dUMDZfVG9rZW46SjBNRmJrc3I4b05KbGp4ZGUzZ2NsS01qblRjXzE3Mzk5NzY0NDk6MTczOTk4MDA0OV9WNA" alt="img"></p>
+<h3 id="一个初始化函数时机点"><a href="#一个初始化函数时机点" class="headerlink" title="一个初始化函数时机点"></a>一个初始化函数时机点</h3><p>应用开发时可扩展的时机。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SolonMain</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Solon.start(App.class, args, (app) -&gt; &#123;</span><br><span class="line">            <span class="comment">//应用初始化时机点</span></span><br><span class="line">        &#125;);</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="六个应用事件时机点"><a href="#六个应用事件时机点" class="headerlink" title="六个应用事件时机点"></a>六个应用事件时机点</h3><p>应用开发时可扩展的时机。</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>说明</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>6.AppInitEndEvent</td>
+<td>应用初始化完成事件</td>
+<td>只支持手动订阅</td>
+</tr>
+<tr>
+<td>8.AppPluginLoadEndEvent</td>
+<td>应用插件加载完成事件</td>
+<td>只支持手动订阅</td>
+</tr>
+<tr>
+<td>b.AppBeanLoadEndEvent</td>
+<td>应用Bean加载完成事件（即扫描完成）</td>
+<td></td>
+</tr>
+<tr>
+<td>e.AppLoadEndEvent</td>
+<td>应用加载完成事件（即启动完成）</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>::运行</td>
+<td></td>
+</tr>
+<tr>
+<td>g.AppPrestopEndEvent</td>
+<td>应用预停止事件</td>
+<td></td>
+</tr>
+<tr>
+<td>j.AppStopEndEvent</td>
+<td>应用停止事件</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="三个插件生命时机点"><a href="#三个插件生命时机点" class="headerlink" title="三个插件生命时机点"></a>三个插件生命时机点</h3><p>插件开发时可扩展的时机。</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>执行时机</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>7.start</td>
+<td>在应用初始化完成后执行</td>
+<td>启动</td>
+</tr>
+<tr>
+<td>f.prestop</td>
+<td>在 ::stop 前执行</td>
+<td>预停止</td>
+</tr>
+<tr>
+<td>h.stop</td>
+<td>在 Solon::stop 时执行</td>
+<td>停止（启用安全停止时，prestop 后等几秒再执行 stop）</td>
+</tr>
+</tbody></table>
+<h3 id="两个容器生命时机点"><a href="#两个容器生命时机点" class="headerlink" title="两个容器生命时机点"></a>两个容器生命时机点</h3><p>Solon 内部的时机点，应用开发不可扩展。</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>执行时机</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>d.start</td>
+<td>在扫描完成之后执行</td>
+<td>启动</td>
+</tr>
+<tr>
+<td>i.stop</td>
+<td>在 Solon::stop 时执行，在插件（h.stop）后执行</td>
+<td>停止</td>
+</tr>
+</tbody></table>
+<h2 id="Bean-生命周期"><a href="#Bean-生命周期" class="headerlink" title="Bean 生命周期"></a>Bean 生命周期</h2><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZDk4YjliYzk4OGEzMzkxZjM3MjlhMDdhMjIwM2Y3YjJfTzZzdEFmc0wyRVc3d1JRaGNqNWVydFlVNnA2MkdDMjdfVG9rZW46VTlRV2JpTkREb011Rlp4UjZKR2NhdHJlbmloXzE3Mzk5NzY0NDk6MTczOTk4MDA0OV9WNA" alt="img"></p>
+<p>被容器托管的 Bean，它的生命周期只限定在容器内部。</p>
+<h4 id="new"><a href="#new" class="headerlink" title="::new()"></a>::new()</h4><p>就是调用构造函数，是在 Bean 被扫描时，且符合条件才会执行。</p>
+<p>注意，这个时候，Bean 还注册到容器中，还不能使用注入的字段（还未注入）。如果要初始化，推荐使用<code>@Init</code> 函数。</p>
+<h4 id="Inject"><a href="#Inject" class="headerlink" title="@Inject"></a>@Inject</h4><p>开始执行注入。之后就会注册到容器，并通知订阅者。</p>
+<h4 id="start-或-Init"><a href="#start-或-Init" class="headerlink" title="start() 或 @Init"></a>start() 或 @Init</h4><p>执行初始化动作，在 AppContext::start() 开始处被执行。如果使用 start() 需要实现 LifecycleBean 接口。此时 Bean 扫描已完成，理论上所有的 Bean 都已进入容器（某些特殊的 Bean 是在 AppContext.start() 时才生产的），并且所有 Bean 的字段都已完成注入。</p>
+<h4 id="postStart"><a href="#postStart" class="headerlink" title="postStart()"></a>postStart()</h4><p>开始之后，AppContext::start() 结束处被执行，一般用于启动一些任务。如果使用 postStart() 需要实现 LifecycleBean 接口。</p>
+<h4 id="preStop"><a href="#preStop" class="headerlink" title="preStop()"></a>preStop()</h4><p>预停止，AppContext::preStop() 时被执行。一般用来做分布式服务注销之类。如果使用 preStop() 需要实现 LifecycleBean 接口。</p>
+<h4 id="stop-或-Destroy"><a href="#stop-或-Destroy" class="headerlink" title="stop() 或 @Destroy"></a>stop() 或 @Destroy</h4><p>停止，AppContext::stop() 时被执行。一般用来做安全停止。如果使用 stop() 需要实现 LifecycleBean 接口。</p>
+<h2 id="容器应用"><a href="#容器应用" class="headerlink" title="容器应用"></a>容器应用</h2><p>在 Solon 中，我们可以自由的选择用注解的方式，还是手动的方式来实现想要的功能。但在这里我们主要讲解注解的使用方式。</p>
+<h3 id="扫描"><a href="#扫描" class="headerlink" title="扫描"></a>扫描</h3><p>扫描一般是深度遍历指定“包名”下的 <code>.class</code> 文件获取类名，再通过类名从类加载器里获取元信息。</p>
+<p>默认情况下，主类所在包名新的类都会扫描。如果需要修改导入的范围可以使用 @Import 注解，增加扫描的包名，或者导入需要的类名。</p>
+<h3 id="构建-注入"><a href="#构建-注入" class="headerlink" title="构建 / 注入"></a>构建 / 注入</h3><p>在 Solon 中，我们通过Singleton，Configuration，Bean，Component，Controller，Remoting等方式产生Bean，在Bean 对象中，我们可以 @Inject 注解注入字段。在构建和注入中需要注意的可能是条件构建和依赖注入的部分了。</p>
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>@Inject *</td>
+<td>注入托管对象（by type）</td>
+</tr>
+<tr>
+<td>@Inject(“name”)</td>
+<td>注入托管对象（by name）</td>
+</tr>
+<tr>
+<td>@Inject(“${name}”)</td>
+<td>注入配置（可由基础类型或结构体接收）</td>
+</tr>
+<tr>
+<td>@Singleton</td>
+<td>单例申明（Solon 默认是单例）</td>
+</tr>
+<tr>
+<td>@Singleton(false)</td>
+<td>非单例</td>
+</tr>
+<tr>
+<td>@Configuration</td>
+<td>托管配置组件类（与 @Inject, @Bean 共同完成初始化配置、构建托管对象等）</td>
+</tr>
+<tr>
+<td>@Bean</td>
+<td>配置托管对象（作用在 @Configuration 类的函数上，才有效）</td>
+</tr>
+<tr>
+<td>@Component</td>
+<td>托管组件（支持自动代理，v2.5.2 开始支持自动代理）</td>
+</tr>
+<tr>
+<td>@Controller</td>
+<td>控制器组件类（支持函数拦截）</td>
+</tr>
+<tr>
+<td>@Remoting</td>
+<td>远程控制器类（有类代理；即RPC服务端）</td>
+</tr>
+</tbody></table>
+<h4 id="条件构建"><a href="#条件构建" class="headerlink" title="条件构建"></a>条件构建</h4><p>条件构建的意思是满足了指定条件才会构建。通过使用 @Condition 来实现，它包含如下的属性：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>onClass</td>
+<td>有类（只能一个；其实没必要多个）</td>
+</tr>
+<tr>
+<td>onClassName</td>
+<td>有类名</td>
+</tr>
+<tr>
+<td>onProperty</td>
+<td>有属性</td>
+</tr>
+<tr>
+<td>onMissingBean</td>
+<td>没有 Bean</td>
+</tr>
+<tr>
+<td>onMissingBeanName</td>
+<td>没有 Bean Name</td>
+</tr>
+<tr>
+<td>onBean</td>
+<td>有 Bean</td>
+</tr>
+<tr>
+<td>onBeanName</td>
+<td>有 Bean Name</td>
+</tr>
+</tbody></table>
+<p>更多细节，查看官网 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/434">https://solon.noear.org/article/434</a> 。</p>
+<h4 id="依赖注入"><a href="#依赖注入" class="headerlink" title="依赖注入"></a>依赖注入</h4><p>依赖注入的意思是，在构建时需要使用到其他 Bean 对象。依赖注入通常使用@Configuration，配合@Bean 来实现，其中 @Bean 的函数通过参数注入的方式来获取需要的 Bean 对象。另外就是使用手动模式通过异步订阅的方式获取依赖的 Bean 对象。</p>
+<p>以下注入的例子来自官网，更多细节，查看官网 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/587">https://solon.noear.org/article/587</a> 。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean(name=&quot;db1&quot;, typed=true)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> DataSource <span class="title">db1</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;demo.db1&#125;&quot;)</span> DataSource ds)</span></span>&#123; </span><br><span class="line">        <span class="keyword">return</span> ds;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">db1Test</span><span class="params">(<span class="meta">@Db(&quot;db1&quot;)</span> UserMapper mapper)</span> </span>&#123; <span class="comment">//这个注入，依赖“db1”的数据源</span></span><br><span class="line">        <span class="keyword">return</span> mapper.initUsers();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/18/course100/025/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1645,160 +1946,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/07/course100/016/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/02/07/course100/016/" class="post-title-link" itemprop="url">初识 Solon —— 第一个应用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-02-07 19:56:06 / 修改时间：20:10:12" itemprop="dateCreated datePublished" datetime="2025-02-07T19:56:06+08:00">2025-02-07</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>994</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>使用<strong>Solon Initializr（</strong><a target="_blank" rel="noopener" href="https://solon.noear.org/start/%EF%BC%89,%E5%88%9B%E5%BB%BA%E5%9F%BA%E7%A1%80%E9%A1%B9%E7%9B%AE%E3%80%82%E4%B9%9F%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8">https://solon.noear.org/start/）,创建基础项目。也可以使用</a> IDEA 的 Solon 插件，<a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/21380-solon%EF%BC%8C%E5%8A%9F%E8%83%BD%E7%B1%BB%E4%BC%BC%EF%BC%8C%E7%94%A8%E5%85%B6%E4%B8%AD%E4%B8%80%E7%A7%8D%E6%96%B9%E5%BC%8F%E5%B0%B1%E5%8F%AF%E4%BB%A5%E4%BA%86%E3%80%82">https://plugins.jetbrains.com/plugin/21380-solon，功能类似，用其中一种方式就可以了。</a></p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MTJkZGI0OWQ0NzE1YTc3YmVlZWU2Mjk2NmI5YmRkYTdfS2JOM2U4c0pva0c1RmZ0anpFWmEzSlZJeFJaQmhmTU1fVG9rZW46TzA5c2JiUlFzbzZHOUV4bFcxZ2NSRE95bmtnXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
-<p>这里选择Gradle-Groovey，Java， 3.0.6，jar，jdk17，Solon Web。</p>
-<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><p>解压下载的demo.zip，用 IDEA 打开目录的 <code>build.gradle</code> 文件，弹窗选择open as project。</p>
-<p>生成的代码已经包含了一个服务接口，无须额外编写代码。</p>
-<p>等 IDEA 加载依赖完毕，即可直接运行 App.java的main函数。</p>
-<p>打开浏览器，输入<a target="_blank" rel="noopener" href="http://localhost:8080/hello">http://localhost:8080/hello</a></p>
-<p>你的第一个 Solon 的 web 应用就完成了。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MDcxMGIzNTU4ZmFmZGI2ZDUxNWVlMjIwYmFhNGM3YzFfeG04anJJS3BBUERYYk1VYjdjWEJrSWcxc2NJMHY5Ym9fVG9rZW46SzNSRmI0OWhnb01QZWJ4YmpkR2NhOUtvblBkXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>默认生成的Demo 已经提供测试，可以点击后看到如下效果。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NmQ0NGY2ZDEyNThkNTIwZDdlNjZjMTljMzZjOWNmMTlfMExUQ2lKVWc2VDBtS0d5NGZSdHVTR3dqb0FBemxLZ0tfVG9rZW46SVpuVmJjR2lnb1Y4ZWV4OUZyT2NJeTlMbm1iXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NTU5ZWZmN2U3ODgyZWRkZDdmNzc5NGM5YWM1NzAwM2ZfV3ZCTzNqaTlMSlJrdWp4a25HZWhveWtTa3RYQ1pNeEVfVG9rZW46UkpKT2JLZWZQbzdkTXF4VXdpUGNHR0NoblFkXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
-<p>如果提示不存在任何测试的错误，调整 IDEA 的配置。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">No matching tests found <span class="keyword">in</span> any candidate <span class="built_in">test</span> task.</span><br><span class="line">    Requested tests:</span><br><span class="line">        Test pattern features.HelloTest.hello <span class="keyword">in</span> task :demo:<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZmQ4YmZkNGEzODM2M2FkNjc3ZDE2MzY0MTM5M2Y0NDFfVXQ0OW5hbzBFOU83Sjl4Zkw3UmpDbkRPQU1HWVVpOHpfVG9rZW46QXRDM2JPRGczb0dKeDF4QTNvaWNVOTRybjdmXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
-<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NzVlMGQxY2Y4NjgxOGMxOTZhOGQxZmYyODJkM2Y1ZWVfdURKZFBnWXA0T0FHOWZtd0JXclpzS0V0ZnZidzFpQXlfVG9rZW46Vkx5VWJ1VlJybzI0OE14elZWWmNrZXpFblRkXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>默认生成的代码可以从下面的分支获取。</p>
-<p><a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/porpoise-demo/tree/start-up/">https://gitee.com/CrazyAirhead/porpoise-demo/tree/start-up/</a></p>
-<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>Solon 作者针对的提供了多个性能的测试对比，具体看链接 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/737">https://solon.noear.org/article/737</a> 的文章。这里不逻辑所有的性能对比，只例出<code>Spring VS Javalin VS Solon</code>的对比，另外测试只是做个参考。不同的环境、场景，效果不同。</p>
-<h3 id="测试记录"><a href="#测试记录" class="headerlink" title="测试记录"></a>测试记录</h3><table>
-<thead>
-<tr>
-<th>项目</th>
-<th>SpringBoot2</th>
-<th>SpringBoot3</th>
-<th>Javalin</th>
-<th>Solon</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>运行时</td>
-<td>java 17</td>
-<td>java 17</td>
-<td>java 17</td>
-<td>java 17</td>
-</tr>
-<tr>
-<td>测试前状态/内存</td>
-<td>101.1Mb</td>
-<td>112.9Mb</td>
-<td>66.1Mb</td>
-<td>45.6Mb</td>
-</tr>
-<tr>
-<td>测试后状态/内存</td>
-<td>996.3Mb</td>
-<td>326.9Mb</td>
-<td>457.3Mb</td>
-<td>369.2Mb</td>
-</tr>
-<tr>
-<td>测试后状态/并发</td>
-<td>2万</td>
-<td>2.6万</td>
-<td>12万</td>
-<td>17万</td>
-</tr>
-</tbody></table>
-<h3 id="测试视频"><a href="#测试视频" class="headerlink" title="测试视频"></a>测试视频</h3><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1nJ4m1h79P/">https://www.bilibili.com/video/BV1nJ4m1h79P/</a></p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>通过 Solon Initializr 可以直接创建基础可运行的应用。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1868,7 +2015,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">293</span>
+          <span class="site-state-item-count">294</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1939,12 +2086,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">771k</span>
+    <span title="站点总字数">793k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:41</span>
+    <span title="站点阅读时长">12:01</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
