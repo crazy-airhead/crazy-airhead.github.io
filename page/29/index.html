@@ -172,6 +172,1125 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/09/28/bigdata/es/olap-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/09/28/bigdata/es/olap-1/" class="post-title-link" itemprop="url">基于ElasticSearch的OLAP框架思路</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-09-28 11:22:43" itemprop="dateCreated datePublished" datetime="2018-09-28T11:22:43+08:00">2018-09-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/OLAP/" itemprop="url" rel="index"><span itemprop="name">OLAP</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="OLAP基本概念"><a href="#OLAP基本概念" class="headerlink" title="OLAP基本概念"></a>OLAP基本概念</h1><h2 id="联机分析处理（On-Line-Analytical-Processing，OLAP）"><a href="#联机分析处理（On-Line-Analytical-Processing，OLAP）" class="headerlink" title="联机分析处理（On-Line Analytical Processing，OLAP）"></a>联机分析处理（On-Line Analytical Processing，OLAP）</h2><p>联机分析处理的概念最早是由关系数据库之父爱德华·库德（E·F·Codd）博士于1993年提出的，是一种用于组织大型商务数据库和支持商务智能的技术。OLAP 数据库分为一个或多个多维数据集，每个多维数据集都由多维数据集管理员组织和设计以适应用户检索和分析数据的方式，从而更易于创建和使用所需的数据透视表和数据透视图。</p>
+<h2 id="维（Dimension）"><a href="#维（Dimension）" class="headerlink" title="维（Dimension）"></a>维（Dimension）</h2><p>是人们观察数据的特定角度，是考虑问题时的一类属性，属性集合构成一个维（时间维、地理维等）。</p>
+<h2 id="维的层次（Level）"><a href="#维的层次（Level）" class="headerlink" title="维的层次（Level）"></a>维的层次（Level）</h2><p>人们观察数据的某个特定角度（即某个维）还可以存在细节程度不同的各个描述方面（时间维：日期、月份、季度、年）。</p>
+<h2 id="维的成员（Member）"><a href="#维的成员（Member）" class="headerlink" title="维的成员（Member）"></a>维的成员（Member）</h2><p>维的一个取值，是数据项在某维中位置的描述。（“某年某月某日”是在时间维上位置的描述）。</p>
+<h2 id="度量（Measure）"><a href="#度量（Measure）" class="headerlink" title="度量（Measure）"></a>度量（Measure）</h2><p>多维数组的取值。（2000年1月，上海，笔记本电脑，$100000）。</p>
+<h2 id="指标（Quota），补充"><a href="#指标（Quota），补充" class="headerlink" title="指标（Quota），补充"></a>指标（Quota），补充</h2><p>可度量的属性。一般为某种值，如费用，入院人次。</p>
+<h2 id="典型操作"><a href="#典型操作" class="headerlink" title="典型操作"></a>典型操作</h2><p>OLAP的基本多维分析操作有钻取（Drill-up和Drill-down）、切片（Slice）和切块（Dice）、以及旋转（Pivot）等。</p>
+<h3 id="钻取"><a href="#钻取" class="headerlink" title="钻取"></a>钻取</h3><p>是改变维的层次，变换分析的粒度。它包括向下钻取（Drill-down）和向上钻取（Drill-up）/上卷(Roll-up)。Drill- up是在某一维上将低层次的细节数据概括到高层次的汇总数据，或者减少维数；而Drill-down则相反，它从汇总数据深入到细节数据进行观察或增加新维。</p>
+<h3 id="切片和切块"><a href="#切片和切块" class="headerlink" title="切片和切块"></a>切片和切块</h3><p>是在一部分维上选定值后，关心度量数据在剩余维上的分布。如果剩余的维只有两个，则是切片；如果有三个或以上，则是切块。</p>
+<h3 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h3><p>是变换维的方向，即在表格中重新安排维的放置（例如行列互换）。</p>
+<h1 id="ElasticSearch"><a href="#ElasticSearch" class="headerlink" title="ElasticSearch"></a>ElasticSearch</h1><p>Apache Lucene™可能是目前存在的，不论开源还是私有的，拥有最先进，高性能和全功能搜索引擎功能的库。但Lucene是很复杂的。 Elasticsearch是一个使用Java编写的开源的搜索引擎，它的内部使用 Lucene 做索引与搜索，但是它的目标是使全文检索变得简单， 通过隐藏 Lucene 的复杂性，取而代之的提供一套简单一致的 RESTful API。</p>
+<p>然而，Elasticsearch不仅仅是 Lucene，并且也不仅仅只是一个全文搜索引擎。 它可以被下面这样准确的形容：</p>
+<ul>
+<li>一个分布式的实时文档存储，每个字段可以被索引与搜索</li>
+<li>一个分布式实时分析搜索引擎</li>
+<li>能胜任上百个服务节点的扩展，并支持PB级别的结构化或者非结构化数据</li>
+</ul>
+<p>Elasticsearch将所有的功能打包成一个单独的服务，这样你可以通过程序去访问它提供的简单的RESTful API服务， 不论你是使用自己喜欢的编程语言还是直接使用命令行。</p>
+<p>Elasticsearch是一个实时的分布式搜索分析引擎， 它能让你以一个之前从未有过的速度和规模，去探索你的数据。 它被用作全文检索、结构化搜索、分析以及这三个功能的组合：</p>
+<ul>
+<li>Wikipedia 使用 Elasticsearch 提供带有高亮片段的全文搜索，还有 search-as-you-type 和 did-you-mean 的建议。</li>
+<li>卫报 使用 Elasticsearch 将网络社交数据结合到访客日志中，实时的给它的编辑们提供公众对于新文章的反馈。</li>
+<li>Stack Overflow 将地理位置查询融入全文检索中去，并且使用 more-like-this 接口去查找相关的问题与答案。</li>
+<li>GitHub 使用 Elasticsearch 对1300亿行代码进行查询。</li>
+</ul>
+<h2 id="ES文档和多维数据集"><a href="#ES文档和多维数据集" class="headerlink" title="ES文档和多维数据集"></a>ES文档和多维数据集</h2><h3 id="ES的存储结构"><a href="#ES的存储结构" class="headerlink" title="ES的存储结构"></a>ES的存储结构</h3><p>ES文档通过JSON格式来表示。文档是可以被索引的基本单元，文档需要索引需要指定类型。ES能支持索引的数据类型有，其中的数组类型，对象类型和内嵌类型的支持，使得ES能存储更复杂的文档。</p>
+<h3 id="多维联机分析处理（MOLAP）"><a href="#多维联机分析处理（MOLAP）" class="headerlink" title="多维联机分析处理（MOLAP）"></a>多维联机分析处理（MOLAP）</h3><p>MOLAP将OLAP分析所用到的多维数据物理上存储为多维数组的形式，形成“立方体”的结构。维的属性值被映射成多维数组的下标值或下标的范围，而总结数据作为多维数组的值存储在数组的单元中。由于MOLAP采用了新的存储结构，从物理层实现起，因此又称为物理OLAP（PhysicalOLAP）；而 ROLAP主要通过一些软件工具或中间软件实现，物理层仍采用关系数据库的存储结构，因此称为虚拟OLAP（VirtualOLAP）。</p>
+<p>我们可以看到基于复杂数据类型（Complex datatypes）构建的ES文档与MOLAP的概念是非常接近的，利用ElasticSearch的聚合的能力，我们能相对简单的实现OLAP框架。</p>
+<h1 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h1><p>要实现整个OLAP框架主要需要处理以下几个环节</p>
+<ol>
+<li>数据建模</li>
+<li>数据ETL</li>
+<li>数据分析</li>
+<li>数据展示</li>
+</ol>
+<p>大致思路如下：<br><img src="olap.png" alt="OLAP"></p>
+<h2 id="数据建模"><a href="#数据建模" class="headerlink" title="数据建模"></a>数据建模</h2><p>数据建模就是建立多维数据集的过程，同时为了能更有效的利用ES的索引，不建议过深的JSON层次，所以对应到维度建模时采用的是星形模式。</p>
+<p>正常情况，是先进行数据建模，之后才能进行数据ETL，首先需要知道抽取的源数据的结构，即数据元数据之后，才能进一步分析数据模型。对于ES来说，实际上就是建立Index/Type的过程。</p>
+<h3 id="维度管理"><a href="#维度管理" class="headerlink" title="维度管理"></a>维度管理</h3><h3 id="元数据管理"><a href="#元数据管理" class="headerlink" title="元数据管理"></a>元数据管理</h3><p>元数据管理维护了原始数据的元数据结构，简单来说就是原始数据有哪些库，哪些表，表之间有什么关系。</p>
+<h3 id="映射管理"><a href="#映射管理" class="headerlink" title="映射管理"></a>映射管理</h3><p>映射管理是指定了需要抽取的数据范围及方法和确定了多维数据集的模型。</p>
+<h2 id="数据ETL"><a href="#数据ETL" class="headerlink" title="数据ETL"></a>数据ETL</h2><p>正常情况，是先进行数据建模，之后才能进行数据ETL，而实际过程中，是一般需要知道源数据的结构，即数据元数据之后，才能进一步分析数据模型。</p>
+<p>数据ETL，实质就是从各个数据源提取数据，对数据进行转换，并最终加载填充数据到数据仓库维度建模后的表中。只有当多维数据集被填充好，ETL工作才算完成。</p>
+<p>数据加载主要分为两种，一种是首次加载，一种是刷新加载（增量加载）。当前产品中主要涉及两种数据库，Mysql和Hbase。</p>
+<h3 id="首次加载"><a href="#首次加载" class="headerlink" title="首次加载"></a>首次加载</h3><p>通过Quartz Job或MapRedurce Job将数据转换为Kafka消息，由数据加载组件来进行数据处理。</p>
+<h3 id="刷新加载"><a href="#刷新加载" class="headerlink" title="刷新加载"></a>刷新加载</h3><p>通过扩展mysql-binlog-connector-java和HBase Side-Effect Processor，可以实现数据的实时增量更新。本方案中通过Kafka消息中间件来统一转发不同类型的数据更新，此处需要定义好Kafka的消息格式，以便数据加载组件能较简单的处理数据。</p>
+<h3 id="数据转换"><a href="#数据转换" class="headerlink" title="数据转换"></a>数据转换</h3><p>转换步骤主要是指对提取好了的数据的结构进行转换，以满足目标数据仓库模型的过程。此外，转换过程也负责数据质量工作，这部分也被称为数据清洗(data cleaning)。转换过程可以通过逐步实现转换算法，动态上线的方式进行。</p>
+<h2 id="统计分析"><a href="#统计分析" class="headerlink" title="统计分析"></a>统计分析</h2><p>统计分析其实就是从事实表中统计任意组合维度的指标，也就是过滤、分组、聚合，其中，聚合除了一般的SUM、COUNT、AVG、MAX、MIN等，还有一个重要的COUNT(DISTINCT)。ElasticSearch本来就是做实时搜索的，过滤自然不是问题，现在也支持各种聚合以及Pipeline aggregations（相当于SQL子查询的功能）。</p>
+<p>统计分析是根据模板配置和页面操作时的条件生成ES语法，执行语法，返回结果数据的过程。从表面看，该过程不难，然而为了生成的ES语法的准确性，ES语法的生成引擎是非常重要的一个环节，通过在模板管理来增加一些配置来辅助ES的语法生成，如行维度，列维度，维的层次等等。</p>
+<h2 id="数据展示"><a href="#数据展示" class="headerlink" title="数据展示"></a>数据展示</h2><p>通过模板的动态配置，利用Echart和Vue可以实现，动态布局和各种仪表盘的展示，这部分内容也可参看Kibana。</p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>ES的文档结构符合MOLAP的概念，它提供的聚合功能可以实现OLAP的各种操作，基于Lucene和分布式架构在性能上也能得到保障。通过定义一定的规则和开发一系列的辅助功能，可比较容易的实现一套通用的实时OLAP的框架。本文主要讲解的是基于ES构建OLAP框架的思路，而非完整的构建方案。</p>
+<h2 id="参考连接"><a href="#参考连接" class="headerlink" title="参考连接"></a>参考连接</h2><ul>
+<li>联机分析处理</li>
+<li>Elasticsearch Basic Concepts</li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/products/hadoop">https://www.elastic.co/products/hadoop</a></li>
+<li>Hbase Indexer SEP</li>
+<li>使用ElasticSearch作为大数据平台的实时OLAP框架</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/fighting_one_piece/article/details/51765383">https://blog.csdn.net/fighting_one_piece/article/details/51765383</a></li>
+<li><a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/575991">https://yq.aliyun.com/articles/575991</a></li>
+<li>Mapping Types</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/09/19/git/git-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/09/19/git/git-1/" class="post-title-link" itemprop="url">管理多个Github帐号</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-09-19 08:15:40" itemprop="dateCreated datePublished" datetime="2018-09-19T08:15:40+08:00">2018-09-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/git/GitHub/" itemprop="url" rel="index"><span itemprop="name">GitHub</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/git/GitHub/ssh/" itemprop="url" rel="index"><span itemprop="name">ssh</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>之前通过GithubPages和Hexo搭建了个人博客，在<a href="https://l4qiang.me/2016/10/05/hexo/">这里</a>可看到搭建的方法。现在呢，希望用另一个帐号，管理一个不同内容的<a target="_blank" rel="noopener" href="http://goldyear.info/">博客</a>。有了之前的经验，整个搭建的过程还是比较顺利，主要碰到的问题就是代码发布。之前github帐号，是通过Windows的<a target="_blank" rel="noopener" href="https://www.howto-connect.com/how-to-use-credential-manager-windows-10/">凭证管理</a>来实现的，按理说Github配置了多个帐号也是可以管理的。如图：</p>
+<p><img src="crdential.png" alt="crdential.png"></p>
+<p>但是两套博客在发布代码的时候都出现了问题。</p>
+<h2 id="初步方案"><a href="#初步方案" class="headerlink" title="初步方案"></a>初步方案</h2><p>将用户名和密码配置在Hexo的<code>_config.yml</code>的配置项中，形如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://enderjo:xyz@github.com/enderjo/enderjo.github.io</span><br></pre></td></tr></table></figure>
+
+<p>虽然这样配置是解决了发布问题，但密码安全问题就暴露出来了，想想之前有了解到Github有ssh功能，但也没用过，初步试了下一样发现两个帐号配置的问题，github不支持同一个公钥用于不同的帐号，会提示公钥已经被使用了，请教了下前同事事了解到ssh有个config的配置。</p>
+<h2 id="最终方案"><a href="#最终方案" class="headerlink" title="最终方案"></a>最终方案</h2><p>基于同事的提示刚开始创建的config如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Host github:enderjo</span><br><span class="line"> Hostname github.com</span><br><span class="line"> User git</span><br><span class="line"> PreferredAuthentications publickey</span><br><span class="line"> IdentityFile ~/.ssh/github-enderjo/id_rsa</span><br></pre></td></tr></table></figure>
+
+<p>Window中在用户目录<code>%USERPROFILE%</code>下。之后使用ssh测试也是通的。<br>如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh -T github.com:enderjo</span></span><br><span class="line">Hi enderjo! You&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span><br></pre></td></tr></table></figure>
+
+<p>但测试Git Clone的时候提示无法</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">clone</span> git@github.com:enderjo/enderjo.github.io.git</span></span><br><span class="line">Cloning into &#x27;enderjo.github.io&#x27;...</span><br><span class="line">git@github.com: Permission denied (publickey).</span><br><span class="line">fatal: Could not read from remote repository.</span><br><span class="line"></span><br><span class="line">Please make sure you have the correct access rights</span><br><span class="line">and the repository exists.</span><br></pre></td></tr></table></figure>
+
+<p>参考<a target="_blank" rel="noopener" href="https://help.github.com/articles/error-permission-denied-publickey/">Error: Permission denied (publickey)</a>通过ssh-add证书的方式，能正常git clone。此时已可初步判断，git clone没有正常取到config的配置。<br>接着同事发来这篇文章<br><a target="_blank" rel="noopener" href="https://gitlab.com/gitlab-org/gitlab-ce/issues/45593">https://gitlab.com/gitlab-org/gitlab-ce/issues/45593</a><br>其中提到，可通过如下命令查看git clone的实际执行过程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GIT_TRACE=1 GIT_SSH_COMMAND=&quot;ssh -vvv&quot; git clone git@gitlab.example.com:my-group/my-project.git</span><br></pre></td></tr></table></figure>
+
+<p>测试后的部分代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ GIT_TRACE=1 GIT_SSH_COMMAND=&quot;ssh -vvv&quot; git clone git@github.com:enderjo/enderjo.github.io.git</span><br><span class="line">14:03:51.164492 exec-cmd.c:236          trace: resolved executable dir: C:/Program Files/Git/mingw64/bin</span><br><span class="line">14:03:51.165492 git.c:415               trace: built-in: git clone git@github.com:enderjo/enderjo.github.io.git</span><br><span class="line">Cloning into &#x27;enderjo.github.io&#x27;...</span><br><span class="line">14:03:51.225463 run-command.c:637       trace: run_command: unset GIT_DIR; &#x27;ssh -vvv&#x27; git@github.com &#x27;git-upload-pack &#x27;\&#x27;&#x27;enderjo/enderjo.github.io.git&#x27;\&#x27;&#x27;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>此时我们可以看到，实际执行的地址和测试的地址是不一样的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -T git@github.com:enderjo</span><br><span class="line">$ ssh -vvv git@github.com</span><br></pre></td></tr></table></figure>
+
+<p>ssh命令是根据config文件中Host记录与ssh命令时所输入的主机名来进行匹配的，而git clone因为使用<code>:</code>分隔用户名。</p>
+<p>之后查到<a target="_blank" rel="noopener" href="https://blog.csdn.net/huasonl88/article/details/52166876">这篇</a>文章。config文件中的Host就是一个别名。</p>
+<p>调整config</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Host gh-enderjo</span><br><span class="line"> Hostname github.com</span><br><span class="line"> User git</span><br><span class="line"> PreferredAuthentications publickey</span><br><span class="line"> IdentityFile ~/.ssh/github-enderjo/id_rsa</span><br></pre></td></tr></table></figure>
+
+<p>修改git clone命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git clone gh-enderjo:enderjo/enderjo.github.io.git</span><br><span class="line">Cloning into &#x27;enderjo.github.io&#x27;...</span><br><span class="line">remote: Counting objects: 4822, done.</span><br><span class="line">remote: Compressing objects: 100% (386/386), done.</span><br><span class="line">remote: Total 4822 (delta 873), reused 2292 (delta 846), pack-reused 2496</span><br><span class="line">Receiving objects: 100% (4822/4822), 5.20 MiB | 215.00 KiB/s, done.</span><br><span class="line">Resolving deltas: 100% (1686/1686), done.</span><br></pre></td></tr></table></figure>
+
+<p>测试正常，修改Hexo的_config.yml也能正常发布代码了。</p>
+<h2 id="增加Mac的配置"><a href="#增加Mac的配置" class="headerlink" title="增加Mac的配置"></a>增加Mac的配置</h2><p>因为之前配置过了Windows，这里我需要把Windows中的ssh配置先拷贝到Mac上（~/.ssh）。<br>测试，此时会提示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Permissions 0755 for &#x27;/Users/airhead/.ssh/github-enderjo/id_rsa&#x27; are too open.</span><br><span class="line">It is required that your private key files are NOT accessible by others.</span><br><span class="line">This private key will be ignored.</span><br><span class="line">Load key &quot;/Users/airhead/.ssh/github-enderjo/id_rsa&quot;: bad permissions</span><br><span class="line">git@github.com: Permission denied (publickey).</span><br><span class="line">fatal: Could not read from remote repository.</span><br><span class="line"></span><br><span class="line">Please make sure you have the correct access rights</span><br></pre></td></tr></table></figure>
+
+<p>需要修改权限为400（600也可以），注意修改路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 400 /Users/airhead/.ssh/github-enderjo/id_rsa</span><br></pre></td></tr></table></figure>
+
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>利用ssh的config功能可以很好的管理Git的多帐号问题，但需要注意修改Git仓库的获取地址。</p>
+<p>虽然一直有使用Git，但对于Git和ssh还是有很多不了解的地方。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://help.github.com/articles/error-permission-denied-publickey/">Error: Permission denied (publickey)</a><br><a target="_blank" rel="noopener" href="https://gitlab.com/gitlab-org/gitlab-ce/issues/45593">https://gitlab.com/gitlab-org/gitlab-ce/issues/45593</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/huasonl88/article/details/52166876">ssh-config配置</a><br><a target="_blank" rel="noopener" href="https://deepzz.com/post/how-to-setup-ssh-config.html">SSH Config 那些你所知道和不知道的事</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/09/08/frontend/news/news-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/09/08/frontend/news/news-1/" class="post-title-link" itemprop="url">(翻译)GitHub.com前端移除jQuery库</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-09-08 06:42:30" itemprop="dateCreated datePublished" datetime="2018-09-08T06:42:30+08:00">2018-09-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/frentend/" itemprop="url" rel="index"><span itemprop="name">frentend</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/frentend/news/" itemprop="url" rel="index"><span itemprop="name">news</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>因本人能力有限，理解不到位，翻译内容可能存在偏差。如果可能，请尽量读<a target="_blank" rel="noopener" href="https://githubengineering.com/removing-jquery-from-github-frontend/?utm_source=wanqu.co&utm_campaign=Wanqu+Daily&utm_medium=website">原文</a>。</p>
+</blockquote>
+<p>We have recently completed a milestone where we were able to drop jQuery as a dependency of the frontend code for GitHub.com. This marks the end of a gradual, years-long transition of increasingly decoupling from jQuery until we were able to completely remove the library. In this post, we will explain a bit of history of how we started depending on jQuery in the first place, how we realized when it was no longer needed, and point out that—instead of replacing it with another library or framework—we were able to achieve everything that we needed using standard browser APIs.</p>
+<p>我们最近完成了一个里程碑，就是将jQuery从我们Github.com的前端依赖库中移了。直到完全移除了jQuery库才意味着一个逐步的、长达数年的去jQuery化的结束。在这篇文章中，我们会解释为一些历史，为什么我们一开始会引入jQuery，我们是何时意识到已经不再需要jQuery了，以及找出可替代它的类库或者框架，我需要使用浏览器的标准API来达到目的。</p>
+<h2 id="为什么jQuery之前是有用的（Why-jQuery-made-sense-early-on）"><a href="#为什么jQuery之前是有用的（Why-jQuery-made-sense-early-on）" class="headerlink" title="为什么jQuery之前是有用的（Why jQuery made sense early on）"></a>为什么jQuery之前是有用的（Why jQuery made sense early on）</h2><p>GitHub.com pulled in <a target="_blank" rel="noopener" href="https://blog.jquery.com/2007/09/16/jquery-1-2-1-released/">jQuery 1.2.1</a> as a dependency in late 2007. For a bit of context, that was a year before Google released the first version of their Chrome browser. There was no standard way to query DOM elements by a CSS selector, no standard way to animate visual styles of an element, and the 【XMLHttpRequest interface](<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest">https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest</a>) pioneered by Internet Explorer was, like many other APIs, inconsistent between browsers.</p>
+<p>GitHub.com在2007年底时引入了<a target="_blank" rel="noopener" href="https://blog.jquery.com/2007/09/16/jquery-1-2-1-released/">jQuery 1.2.1</a>。因为这样的一些背景，当时距Google发布第一个版本还有一年时间。通过CSS选择器来查询DOM元素没有标准的方式，将元素视觉动画化也没有标准的样式，IE提供<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest">XMLHttpRequest接口</a>，和其他API一样，在不同的浏览器之间也是不同。</p>
+<p>jQuery made it simple to manipulate the DOM, define animations, and make “AJAX” requests— basically, it enabled web developers to create more modern, dynamic experiences that stood out from the rest. Most importantly of all, the JavaScript features built in one browser with jQuery would generally work in other browsers, too. In those early days of GitHub when most of its features were still getting fleshed out, this allowed the small development team to prototype rapidly and get new features out the door without having to adjust code specifically for each web browser.</p>
+<p>jQuery使得操作DOM，定义动画，发起“AJAX”请求变得简单——基本上，它使Web开发人员能够创建出更现代、更动态的体验，这些体验在其他方面都非常突出。更为重要的是，使用了jQuery的JavaScript特性在不同的浏览器都可正常工作。在GitHub早期，它的大部分功能还在不断充实，这使得小型开发团队能够快速地进行原型，而无需为每个Web浏览器专门调整代码来实现新的特性。</p>
+<p>The simple interface of jQuery also served as a blueprint to craft extension libraries that would later serve as building blocks for the rest of GitHub.com frontend: <a target="_blank" rel="noopener" href="https://github.com/defunkt/jquery-pjax">pjax</a> and <a target="_blank" rel="noopener" href="https://github.com/defunkt/facebox">facebox</a>.</p>
+<p>jQuery的简单接口为设计扩展库提供了蓝图，GitHub.com扩展前端的基础模块： <a target="_blank" rel="noopener" href="https://github.com/defunkt/jquery-pjax">pjax</a>和<a target="_blank" rel="noopener" href="https://github.com/defunkt/facebox">facebox</a>。</p>
+<p>We will always be thankful to John Resig and the jQuery contributors for creating and maintaining such a useful and, for the time, essential library.</p>
+<p>我们将一直感激John Resig和jQuery的贡献者创建和维护了这样一个有用的，对于当时来说，必不可少的类库。</p>
+<h2 id="近年来的Web标准（Web-standards-in-the-later-years）"><a href="#近年来的Web标准（Web-standards-in-the-later-years）" class="headerlink" title="近年来的Web标准（Web standards in the later years）"></a>近年来的Web标准（Web standards in the later years）</h2><p>Over the years, GitHub grew into a company with hundreds of engineers and a dedicated team gradually formed to take responsibility for the size and quality of JavaScript code that we serve to web browsers. One of the things that we’re constantly on the lookout for is technical debt, and sometimes technical debt grows around dependenices that once provided value, but whose value dropped over time.</p>
+<p>这些年来，Github成长为一家拥有数百名工程师的公司，并逐渐形成了一只专门负责我们运行在Web浏览器上的JavaScript代码的大小和质量的团队。其中一件我们一直在做的事情就是找出技术债务，有时技术债务会随着曾经提供价值的附属物而增长，但其价值会随着时间的推移而下降。</p>
+<p>When it came to jQuery, we compared it against the rapid evolution of supported web standard in modern browsers and realized:</p>
+<p>The $(selector) pattern can easily be replaced with querySelectorAll();<br>CSS classname switching can now be achieved using Element.classList;<br>CSS now supports defining visual animations in stylesheets rather than in JavaScript;<br>$.ajax requests can be performed using the Fetch Standard;<br>The addEventListener() interface is stable enough for cross-platform use;<br>We could easily encapsulate the event delegation pattern with a lighweight library;<br>Some syntactic sugar that jQuery provides has become reduntant with the evolution of JavaScript language.<br>Furthermore, the chaining syntax didn’t satisfy how we wanted to write code going forward. For example:</p>
+<p>$(‘.js-widget’)<br>  .addClass(‘is-loading’)<br>  .show()<br>This syntax is simple to write, but to our standards, doesn’t communicate intent really well. Did the author expect one or more js-widget elements on this page? Also, if we update our page markup and accidentally leave out the js-widget classname, will an exception in the browser inform us that something went wrong? By default, jQuery silently skips the whole expresion when nothing matched the initial selector; but to us, such behavior was a bug rather than a feature.</p>
+<p>Finally, we wanted to start annotating types with Flow to perform static type checking at build time, and we concluded that the chaining syntax doesn’t lend itself well to static analysis, since almost every result of a jQuery method call is of the same type. We chose Flow over alternatives because, at the time, features such as @flow weak mode allowed us to progressively and efficiently start applying types to a codebase which was largely untyped.</p>
+<p>All in all, decoupling from jQuery would mean that we could rely on web standards more, have MDN web docs be de-facto default documentation for our frontend developers, maintain more resilient code in the future, and eventually drop a 30 kB dependency from our packaged bundles, speeding up page load times and JavaScript execution times.</p>
+<p>Incremental decoupling<br>Even with an end goal in sight, we knew that it wouldn’t be feasible to just allocate all resources we had to rewriting everything from jQuery to vanilla JS. If anything, such a rushed endeavor would likely lead to many regressions in site functionality that we would later have to weed out. Instead, we:</p>
+<p>Set up metrics that tracked ratio of jQuery calls used per overall line of code and monitored that graph over time to make sure that it’s either staying constant or going down, not up.</p>
+<p>Graph of jQuery usage going down over time.</p>
+<p>We discouraged importing jQuery in any new code. To facilitate that using automation, we created eslint-plugin-jquery which would fail CI checks if anyone tried to use jQuery features, for example $.ajax.</p>
+<p>There were now plenty of violations of eslint rules in old code, all of which we’ve annotated with specific eslint-disable rules in code comments. To the reader of that code, those comments would serve as a clear signal that this code doesn’t represent our current coding practices.</p>
+<p>We created a pull request bot that would leave a review comment on a pull request pinging our team whenever somebody tried to add a new eslint-disable rule. This way we would get involved in code review early and suggest alternatives.</p>
+<p>A lot of old code had explicit coupling to external interfaces of pjax and facebox jQuery plugins, so we’ve kept their interfaces relatively the same while we’ve internally replaced their implementation with vanilla JS. Having static type checking helped us have greater confidence around those refactorings.</p>
+<p>Plenty of old code interfaced with rails-behaviors, our adapter for the Ruby on Rails approach to “unobtrusive” JS, in a way that they would attach an AJAX lifecycle handler to certain forms:</p>
+<p>  // LEGACY APPROACH<br>  $(document).on(‘ajaxSuccess’, ‘form.js-widget’, function(event, xhr, settings, data) {<br>    // insert response data somewhere into the DOM<br>  })<br>Instead of having to rewrite all of those call sites at once to the new approach, we’ve opted to trigger fake ajax* lifecycle events and keep these forms submitting their contents asynchronously as before; only this time fetch() was used internally.</p>
+<p>We maintained a custom build of jQuery and whenever we’ve identified that we’re not using a certain module of jQuery anymore, we would remove it from the custom build and ship a slimmer version. For instance, after we have removed the final usage of jQuery-specific CSS pseudo-selectors such as :visible or :checkbox, we were able to remove the Sizzle module; and when the last $.ajax call was replaced with fetch(), we were able to remove the AJAX module. This served a dual purpose: speeding up JavaScript execution times while at the same time ensuring that no new code is created that would try using the removed functionality.</p>
+<p>We kept dropping support for old Internet Explorer versions as soon as it would be feasible to, as informed by our site analytics. Whenever use of a certain IE version dropped below a certain treshold, we would stop serving JavaScript to it and focus on testing against and supporting more modern browsers. Dropping support for IE 8–9 early on allowed us to adopt many native browser features that would otherwise be hard to polyfill.</p>
+<p>As part of our refined approach to building frontend features on GitHub.com, we focused on getting away with regular HTML foundation as much as we could, and only adding JavaScript behaviors as progressive enhancement. As a result, even those web forms and other UI elements that were enhanced using JS would usually also work with JavaScript disabled in the browser. In some cases, we were able to delete certain legacy behaviors altogether instead of having to rewrite them in vanilla JS.</p>
+<p>With these and similar efforts combined over the years, we were able gradually reduce our dependence on jQuery until there was not a single line of code referencing it anymore.</p>
+<p>Custom Elements<br>One technology that has been making waves in the recent years is Custom Elements: a component library native to the browser, which means that there are no additional bytes of a framework for the user to download, parse and compile.</p>
+<p>We had created a few Custom Elements based on the v0 specification since 2014. However, as standards were still in flux back then, we did not invest as much. It was not until 2017 when the Web Components v1 spec was released and implemented in both Chrome and Safari that we began to adopt Custom Elements on a wider scale.</p>
+<p>During the jQuery migration, we looked for patterns that would be suitable for extraction as custom elements. For example, we converted our facebox usage for displaying modal dialogs to the <details-dialog> element.</p>
+<p>Our general philosophy of striving for progressive enhancement extends to custom elements as well. This means that we keep as much of the content in markup as possible and only add behaviors on top of that. For example, <local-time> shows the raw timestamp by default and gets upgraded to translate the time to the local timezone, while <details-dialog>, when nested in the <details> element, is interactive even without JavaScript, but gets upgraded with accessibility enhancements.</p>
+<p>Here is an example of how a <local-time> custom element could be implemented:</p>
+<p>// The local-time element displays time in the user’s current timezone<br>// and locale.<br>//<br>// Example:<br>//   <local-time datetime="2018-09-06T08:22:49Z">Sep 6, 2018</local-time><br>//<br>class LocalTimeElement extends HTMLElement {<br>  static get observedAttributes() {<br>    return [‘datetime’]<br>  }</p>
+<p>  attributeChangedCallback(attrName, oldValue, newValue) {<br>    if (attrName === ‘datetime’) {<br>      const date = new Date(newValue)<br>      this.textContent = date.toLocaleString()<br>    }<br>  }<br>}</p>
+<p>if (!window.customElements.get(‘local-time’)) {<br>  window.LocalTimeElement = LocalTimeElement<br>  window.customElements.define(‘local-time’, LocalTimeElement)<br>}</p>
+<p>One aspect of Web Components that we’re looking forward to adopting is Shadow DOM. The powerful nature of Shadow DOM has the potential to unlock a lot of possibilities for the web, but that also makes it harder to polyfill. Because polyfilling it today incurs a performance penalty even for code that manipulates parts of the DOM unrelated to web components, it is unfeasible for us to start using it in production.</p>
+<p>Polyfills<br>These are the polyfills that helped us transition to using standard browser features. We try to serve most of these polyfills only when absolutely necessary, i.e. to outdated browsers as part of a separate “compatibility” JavaScript bundle.</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/github/eventlistener-polyfill#readme">github/eventlistener-polyfill</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/github/fetch#readme">github/fetch</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/github/form-data-entries#readme">github/form-data-entries</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/iamdustan/smoothscroll#readme">iamdustan/smoothscroll</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/javan/details-element-polyfill#readme">javan/details-element-polyfill</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/jonathantneal/closest#readme">jonathantneal/closest</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kumarharsh/custom-event-polyfill#readme">kumarharsh/custom-event-polyfill</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/marvinhagemeister/request-idle-polyfill#readme">marvinhagemeister/request-idle-polyfill</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mathiasbynens/Array.from#readme">mathiasbynens/Array.from</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mathiasbynens/String.prototype.codePointAt#readme">mathiasbynens/String.prototype.codePointAt</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mathiasbynens/String.prototype.endsWith#readme">mathiasbynens/String.prototype.endsWith</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mathiasbynens/String.prototype.startsWith#readme">mathiasbynens/String.prototype.startsWith</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/medikoo/es6-symbol#readme">medikoo/es6-symbol</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/nicjansma/usertiming.js#readme">nicjansma/usertiming.js</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/rubennorte/es6-object-assign#readme">rubennorte/es6-object-assign</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/stefanpenner/es6-promise#readme">stefanpenner/es6-promise</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/webcomponents/template#template">webcomponents/template</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/webcomponents/URL#readme">webcomponents/URL</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/webcomponents/webcomponentsjs#readme">webcomponents/webcomponentsjs</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/WebReflection/url-search-params#readme">WebReflection/url-search-params</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/yola/classlist-polyfill#readme">yola/classlist-polyfill</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/24/android/android-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/24/android/android-3/" class="post-title-link" itemprop="url">个推透传消息打开指定页面</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-24 06:40:18" itemprop="dateCreated datePublished" datetime="2018-08-24T06:40:18+08:00">2018-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>公司IM项目采用个推进行消息推送，之前使用Hbuilder在线打包的方式集成。这次采用Hbuilder插件开发并离线打包的方式新增视频功能（视频使用WebRTC协议），其中的呼入消息需要使用到个推的推送（主要考量就是复用，减少开发量）。<br>通过个推官网的文档<a target="_blank" rel="noopener" href="http://docs.getui.com/getui/mobile/android/androidstudio_maven/">Android Studio快速集成（推荐）</a>，能很快的将个推SDK集成进来。</p>
+<h2 id="实现及问题"><a href="#实现及问题" class="headerlink" title="实现及问题"></a>实现及问题</h2><h3 id="业务逻辑"><a href="#业务逻辑" class="headerlink" title="业务逻辑"></a>业务逻辑</h3><ol>
+<li>视频发起者，发起视频邀请。</li>
+<li>服务器接到请求后，推送个推透传消息给视频接收者。</li>
+<li>视频接收者，弹出的呼入页面，点击接收开始视频会话，或拒绝视频邀请。<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3>需要继承自com.igexin.sdk.GTIntentService的类，用于接收CID、透传消息。以下为对应的事件回调方法：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoIntentService</span> <span class="keyword">extends</span> <span class="title">GTIntentService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceiveMessageData</span><span class="params">(Context context, GTTransmitMessage msg)</span> </span>&#123;</span><br><span class="line">         <span class="comment">//省略其他业务逻辑</span></span><br><span class="line">        Intent intent = <span class="keyword">new</span> Intent(getBaseContext(), XxxActivity.class);</span><br><span class="line">        getApplication().startActivity(intent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceiveClientId</span><span class="params">(Context context, String clientid)</span> </span>&#123;</span><br><span class="line">        Log.e(TAG, <span class="string">&quot;onReceiveClientId -&gt; &quot;</span> + <span class="string">&quot;clientid = &quot;</span> + clientid);</span><br><span class="line">        <span class="comment">//省略注册个推与用户信息</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3>正常情况，此时应该能弹出指定的XxxActivity页面，然而并未弹出。经过一段资料查找和测试验证。需要增加<code>Intent.FLAG_ACTIVITY_NEW_TASK</code>的设置，代码如下：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceiveMessageData</span><span class="params">(Context context, GTTransmitMessage msg)</span> </span>&#123;</span><br><span class="line">     <span class="comment">//省略其他业务逻辑</span></span><br><span class="line">    Intent intent = <span class="keyword">new</span> Intent(getBaseContext(), XxxActivity.class);</span><br><span class="line">    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);</span><br><span class="line">    getApplication().startActivity(intent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="FLAG-ACTIVITY-NEW-TASK"><a href="#FLAG-ACTIVITY-NEW-TASK" class="headerlink" title="FLAG_ACTIVITY_NEW_TASK"></a>FLAG_ACTIVITY_NEW_TASK</h3><blockquote>
+<p>int FLAG_ACTIVITY_NEW_TASK<br>If set, this activity will become the start of a new task on this history stack.</p>
+</blockquote>
+</li>
+</ol>
+<p>如果设置了<code>FLAG_ACTIVITY_NEW_TASK</code>，页面会被置顶。从文档来看主要还是对Android开发的基础知识不够了解。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>算是Android开发中的一个小坑吧，记录下来，方便日后查找。希望本文对采用类似方案的朋友有所帮助。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Monkey_King_Bar/article/details/78568582">个推-点击推送跳转至指定页面（透传）</a><br><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/content/Intent">Intent</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/10/android/android-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/10/android/android-2/" class="post-title-link" itemprop="url">Hbuilder Android平台第三方插件开发指导</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-10 11:25:05" itemprop="dateCreated datePublished" datetime="2018-08-10T11:25:05+08:00">2018-08-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>官方文档为兼容各个版本，看起来比较杂乱，不容易读懂。自己根据实际的开发情况，整理了本文。本文参考官方文档<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/66">Android平台第三方插件开发指导</a>， 对官方文档有理解不到位之处未能说明清楚，请参看官方文档。</p>
+<p>下载最新版本5+SDK,<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/103">下载地址</a>， 将SDK解压到任意目录，目录结构如下，以下统称为5+SDK目录。</p>
+<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder12.png"></p>
+<h2 id="术语字典"><a href="#术语字典" class="headerlink" title="术语字典"></a>术语字典</h2><h3 id="JS-Plugin-Bridge"><a href="#JS-Plugin-Bridge" class="headerlink" title="JS Plugin Bridge"></a>JS Plugin Bridge</h3><p>H5+ Plugin Bridge层JS部分API，插件调用者通过调用API，触发Native层扩展插件相应方法的调用。</p>
+<h3 id="Native-Plugin-Bridge"><a href="#Native-Plugin-Bridge" class="headerlink" title="Native Plugin Bridge"></a>Native Plugin Bridge</h3><p>H5+ Plugin Bridge层Native部分API，插件开发者通过实现接口类方法，实现扩展插件业务逻辑。插件开发者调用API，实现Native扩展方法运行结果的返回。</p>
+<h3 id="Native层扩展插件"><a href="#Native层扩展插件" class="headerlink" title="Native层扩展插件"></a>Native层扩展插件</h3><p>开发者使用原生语言实现的5+扩展插件，可被JS层通知调用。</p>
+<h3 id="插件类别名（插件别名）"><a href="#插件类别名（插件别名）" class="headerlink" title="插件类别名（插件别名）"></a>插件类别名（插件别名）</h3><p>读时需要按插件类|别名的方式来断句。JS层字符串，用来声明JS层和Native层插件的对应关系。</p>
+<h2 id="技术架构"><a href="#技术架构" class="headerlink" title="技术架构"></a>技术架构</h2><p>HTML5+ 基座扩展采用三层结构，JS层、PluginBridge层和Native层。 三层功能分别是： </p>
+<ul>
+<li>JS层： 在Webview页面调用，触发Native层代码，获取执行结果。 </li>
+<li>PluginBridge层： 将JS层请求进行处理，触发Native层扩展插件代码。 </li>
+<li>Native层： 插件扩展的平台原生代码，负责执行业务逻辑并执行结果返回到请求页面。</li>
+<li><img src="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/6e2bd27ff777bed57750a5b3b6143a0f.png"></li>
+</ul>
+<p>插件开发者在开发扩展插件时需要为扩展插件编写对应的JS API，JS API将在HTML页面中触发调用对应Native扩展方法的请求，并负责接收运行结果。</p>
+<p>插件调用者（也可能为插件调用者）通过调用Javascript Plugin Bridge的API用来完成对Native层代码的调用和运行结果的返回。</p>
+<p>在实际应用中，插件开发者可以根据扩展方法的实际需求不同，提供同步或者异步JS API，插件调用者根据JS API将设置为同步执行或异步执行。</p>
+<h2 id="扩展插件工作流程"><a href="#扩展插件工作流程" class="headerlink" title="扩展插件工作流程"></a>扩展插件工作流程</h2><h3 id="同步执行"><a href="#同步执行" class="headerlink" title="同步执行"></a>同步执行</h3><p>同步执行的扩展方法会阻塞当前JS代码的执行，直到Native层插件扩展方法执行完毕。<br><img src="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/095b9c2bdb95d1d9ef68ddeeb610b883.png"></p>
+<h3 id="异步执行"><a href="#异步执行" class="headerlink" title="异步执行"></a>异步执行</h3><p>异步扩展方法不会阻塞当前JS代码的执行，插件调用者需要设置回调方法接收Native层返回的执行结果。插件开发者需要在插件中调用 Native plugin brigde的方法将执行结果返回到请求页面。<br><img src="http://img-cdn-qiniu.dcloud.net.cn/uploads/article/20141017/e7b481bc1dc1caf69cda678f92587cd9.png"></p>
+<p>工程示例请参考SDK内包含的HBuilder-Integrate-AS工程，工程里已经整合了插件开发和集成方式的示例。</p>
+<h2 id="插件实现方式"><a href="#插件实现方式" class="headerlink" title="插件实现方式"></a>插件实现方式</h2><h3 id="创建插件类"><a href="#创建插件类" class="headerlink" title="创建插件类"></a>创建插件类</h3><p>创建一个继承自StandardFeature的类，实现第三方插件扩展。</p>
+<p>创建插件类需要引入的包 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">importio.dcloud.common.DHInterface.IWebview;</span><br><span class="line">importio.dcloud.common.DHInterface.StandardFeature;</span><br><span class="line">importio.dcloud.common.util.JSUtil;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现扩展方法"><a href="#实现扩展方法" class="headerlink" title="实现扩展方法"></a>实现扩展方法</h3><h4 id="插件初始化"><a href="#插件初始化" class="headerlink" title="插件初始化"></a>插件初始化</h4><p>重写onStart方法，需要设置dcloud_properties.xml的Service节点，该方法才会被调用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStart</span><span class="params">(Contextcontext,Bundlebundle,String[]strings)</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="扩展插件方法声明"><a href="#扩展插件方法声明" class="headerlink" title="扩展插件方法声明"></a>扩展插件方法声明</h4><p>Native层扩展插件的方法声明如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">methodName</span><span class="params">(IWebview webView, JSONArray array)</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h4><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>webView</td>
+<td>IWebview</td>
+<td>发起请求的webview</td>
+</tr>
+<tr>
+<td>array</td>
+<td>JSONArray</td>
+<td>JS请求传入的参数</td>
+</tr>
+</tbody></table>
+<p>只有符合以上函数声明的方法，才可被JS层调用。</p>
+<h3 id="决定执行方法"><a href="#决定执行方法" class="headerlink" title="决定执行方法"></a>决定执行方法</h3><p>插件开发者对返回值的不同调用方式决定了JS API的执行方法。不同的执行方法对入参array(JSONArray)的要求也会有所有不同。</p>
+<h4 id="同步执行方法"><a href="#同步执行方法" class="headerlink" title="同步执行方法"></a>同步执行方法</h4><p>插件开发者通过JSUtil.wrapJsVar返回时为同步执行。同步执行方法在返回结果时可以直接将结果以return的形式返回给js层。</p>
+<h5 id="方法声明"><a href="#方法声明" class="headerlink" title="方法声明"></a>方法声明</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">wrapJsVar</span><span class="params">(String value)</span></span>;</span><br></pre></td></tr></table></figure>
+<h5 id="参数说明-1"><a href="#参数说明-1" class="headerlink" title="参数说明"></a>参数说明</h5><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>value</td>
+<td>String</td>
+<td>要返回到JS层的值</td>
+</tr>
+</tbody></table>
+<p>查看io.dclod.util.JSUtil了解更多的返回值类型的处理(boolean,Number, String, JSONArray, JSONObject)。</p>
+<h5 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSUtil.wrapJsVar(<span class="string">&quot;Html5 Plus Plugin Hello1!&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="异步执行方法"><a href="#异步执行方法" class="headerlink" title="异步执行方法"></a>异步执行方法</h4><p>插件开发者调用JSUtil.execCallback返回时为异步执行。通过CallbackId实现回调函数的关联处理，对于CallbackId的传入由插件开发者具体约定入参array(JSONArray)中的位置，通常使用第一个。</p>
+<h5 id="方法声明-1"><a href="#方法声明-1" class="headerlink" title="方法声明"></a>方法声明</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">execCallback</span><span class="params">(IWebview pWebView, String pCallbackId, String pMessage, <span class="keyword">int</span> pStatus, <span class="keyword">boolean</span> isJson, <span class="keyword">boolean</span> pKeepCallback)</span></span>;</span><br></pre></td></tr></table></figure>
+<h5 id="参数说明-2"><a href="#参数说明-2" class="headerlink" title="参数说明"></a>参数说明</h5><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pWebView</td>
+<td>IWebview</td>
+<td>扩展插件方法运行的窗口</td>
+</tr>
+<tr>
+<td>pCallbackId</td>
+<td>String</td>
+<td>回调函数的唯一标识</td>
+</tr>
+<tr>
+<td>pMessage</td>
+<td>String</td>
+<td>回调函数的参数，即返回结果</td>
+</tr>
+<tr>
+<td>pStatus</td>
+<td>int</td>
+<td>操作是否成功，成功则使用JSUtil.OK，否则使用错误代码</td>
+</tr>
+<tr>
+<td>isJson</td>
+<td>boolean</td>
+<td>回调函数参数是否为JSON数据</td>
+</tr>
+<tr>
+<td>pKeepCallback</td>
+<td>boolean</td>
+<td>是否可多次触发回调函数</td>
+</tr>
+</tbody></table>
+<h5 id="示例代码-1"><a href="#示例代码-1" class="headerlink" title="示例代码"></a>示例代码</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSUtil.execCallback(pWebview, cbId, (which==AlertDialog.BUTTON_POSITIVE)?<span class="string">&quot;ok&quot;</span>:<span class="string">&quot;cancel&quot;</span>, JSUtil.OK, <span class="keyword">false</span>, <span class="keyword">false</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="完整代码示例"><a href="#完整代码示例" class="headerlink" title="完整代码示例"></a>完整代码示例</h4><p>该示例只展示同步或异步方法，完整内容参考官网或者SDK中示例工程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.H5PlusPlugin;</span><br><span class="line"><span class="keyword">import</span> io.dcloud.common.DHInterface.IWebview;</span><br><span class="line"><span class="keyword">import</span> io.dcloud.common.DHInterface.StandardFeature;</span><br><span class="line"><span class="keyword">import</span> io.dcloud.common.util.JSUtil;</span><br><span class="line"><span class="keyword">import</span> org.json.JSONArray;</span><br><span class="line"><span class="keyword">import</span> org.json.JSONException;</span><br><span class="line"><span class="keyword">import</span> org.json.JSONObject;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PGPlugintest</span> <span class="keyword">extends</span> <span class="title">StandardFeature</span></span></span><br><span class="line"><span class="class"></span>&#123;   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">PluginTestFunction</span><span class="params">(IWebview pWebview, JSONArray array)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        String CallBackID = array.optString(<span class="number">0</span>);</span><br><span class="line">        JSONArray newArray = <span class="keyword">new</span> JSONArray();</span><br><span class="line">        newArray.put(array.optString(<span class="number">1</span>));</span><br><span class="line">        newArray.put(array.optString(<span class="number">2</span>));</span><br><span class="line">        newArray.put(array.optString(<span class="number">3</span>));</span><br><span class="line">        newArray.put(array.optString(<span class="number">4</span>));</span><br><span class="line">        JSUtil.execCallback(pWebview, CallBackID, newArray, JSUtil.OK, <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">PluginTestFunctionSync</span><span class="params">(IWebview pWebview, JSONArray array)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        String inValue1 = array.optString(<span class="number">0</span>);</span><br><span class="line">        String inValue2 = array.optString(<span class="number">1</span>);</span><br><span class="line">        String inValue3 = array.optString(<span class="number">2</span>);</span><br><span class="line">        String inValue4 = array.optString(<span class="number">3</span>);</span><br><span class="line">        String ReturnValue = inValue1 + <span class="string">&quot;-&quot;</span> + inValue2 + <span class="string">&quot;-&quot;</span> + inValue3 + <span class="string">&quot;-&quot;</span> + inValue4;</span><br><span class="line">        <span class="keyword">return</span> JSUtil.wrapJsVar(ReturnValue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="插件调用方法"><a href="#插件调用方法" class="headerlink" title="插件调用方法"></a>插件调用方法</h2><h3 id="设置插件类别名"><a href="#设置插件类别名" class="headerlink" title="设置插件类别名"></a>设置插件类别名</h3><p>插件调用者在实现JS API时首先要定义一个插件类别名，在Android工程的assets\data\dcloud_properties.xml文件中声明插件类别名和Native层扩展插件类的对应关系。feature节点下声明的插件将会在调用时创建相应的对象。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">features</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">feature</span> <span class="attr">name</span>=<span class="string">&quot;plugintest&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.example.H5PlusPlugin.PGPlugintest&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">feature</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">features</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如果开发的插件有应用启动时初始化的需求，需要同时配置service节点。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">services</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">service</span> <span class="attr">name</span>=<span class="string">&quot;plugintest&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.example.H5PlusPlugin.PGPlugintest&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">service</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">services</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="调用方式实现"><a href="#调用方式实现" class="headerlink" title="调用方式实现"></a>调用方式实现</h3><h4 id="同步调用"><a href="#同步调用" class="headerlink" title="同步调用"></a>同步调用</h4><p>插件调用者需要调用JS Plugin Bridge的window.plus.bridge.execSync()方法，该方法可同步获取Native插件返回的运行结果。</p>
+<h5 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> plus.bridge.execSync( <span class="built_in">String</span> service, <span class="built_in">String</span> action, <span class="built_in">Array</span>&lt;<span class="built_in">String</span>&gt; args );</span><br></pre></td></tr></table></figure>
+<h5 id="参数说明-3"><a href="#参数说明-3" class="headerlink" title="参数说明"></a>参数说明</h5><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>service</td>
+<td>String</td>
+<td>插件类别名</td>
+</tr>
+<tr>
+<td>action</td>
+<td>String</td>
+<td>调用Native层插件方法名称</td>
+</tr>
+<tr>
+<td>args</td>
+<td>Array<String></td>
+<td>参数列表</td>
+</tr>
+</tbody></table>
+<h4 id="异步调用"><a href="#异步调用" class="headerlink" title="异步调用"></a>异步调用</h4><p>插件调用者需要调用JS Plugin Bridge的plus.bridge.exec()方法，该方法会通知Native层插件执行指定方法，运行结果会通过回调的方式通知JS层。</p>
+<h5 id="函数声明-1"><a href="#函数声明-1" class="headerlink" title="函数声明"></a>函数声明</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> plus.bridge.exec( <span class="built_in">String</span> service, <span class="built_in">String</span> action, <span class="built_in">Array</span>&lt;<span class="built_in">String</span>&gt; args );</span><br></pre></td></tr></table></figure>
+<h5 id="参数说明-4"><a href="#参数说明-4" class="headerlink" title="参数说明"></a>参数说明</h5><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>service</td>
+<td>String</td>
+<td>插件类别名</td>
+</tr>
+<tr>
+<td>action</td>
+<td>String</td>
+<td>调用Native层插件方法名称</td>
+</tr>
+<tr>
+<td>args</td>
+<td>Array<String></td>
+<td>参数列表</td>
+</tr>
+<tr>
+<td>为了接收和处理结果，插件调用者需要调用window.plus.bridge.callbackId（）生成callbackId，并通过args（ Array<String> ）传入。对JS不是很了解，个人认为应该类似一个Map（回调函数表），提供回调函数注册。</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="实际使用及示例代码"><a href="#实际使用及示例代码" class="headerlink" title="实际使用及示例代码"></a>实际使用及示例代码</h2><p>根据业务的需要和使用的方便，可以在JS层进行插件调用的封装使用。</p>
+<h3 id="封装示例"><a href="#封装示例" class="headerlink" title="封装示例"></a>封装示例</h3><p>该示例只展示同步或异步方法，完整内容参考官网或者SDK中示例工程。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.addEventListener( <span class="string">&quot;plusready&quot;</span>,  <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="comment">// 声明的JS“扩展插件别名”</span></span><br><span class="line">    <span class="keyword">var</span> _BARCODE = <span class="string">&#x27;plugintest&#x27;</span>,</span><br><span class="line">        B = <span class="built_in">window</span>.plus.bridge;</span><br><span class="line">    <span class="keyword">var</span> plugintest = </span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 声明异步返回方法</span></span><br><span class="line">        <span class="attr">PluginTestFunction</span> : <span class="function"><span class="keyword">function</span> (<span class="params">Argus1, Argus2, Argus3, Argus4, successCallback, errorCallback </span>) </span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="keyword">var</span> success = <span class="keyword">typeof</span> successCallback !== <span class="string">&#x27;function&#x27;</span> ? <span class="literal">null</span> : <span class="function"><span class="keyword">function</span>(<span class="params">args</span>) </span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                successCallback(args);</span><br><span class="line">            &#125;,</span><br><span class="line">            fail = <span class="keyword">typeof</span> errorCallback !== <span class="string">&#x27;function&#x27;</span> ? <span class="literal">null</span> : <span class="function"><span class="keyword">function</span>(<span class="params">code</span>) </span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                errorCallback(code);</span><br><span class="line">            &#125;;</span><br><span class="line">            callbackID = B.callbackId(success, fail);</span><br><span class="line"><span class="comment">// 通知Native层plugintest扩展插件运行”PluginTestFunction”方法</span></span><br><span class="line">            <span class="keyword">return</span> B.exec(_BARCODE, <span class="string">&quot;PluginTestFunction&quot;</span>, [callbackID, Argus1, Argus2, Argus3, Argus4]);</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="comment">// 声明同步返回方法</span></span><br><span class="line">        <span class="attr">PluginTestFunctionSync</span> : <span class="function"><span class="keyword">function</span> (<span class="params">Argus1, Argus2, Argus3, Argus4</span>) </span></span><br><span class="line"><span class="function">        </span>&#123;            </span><br><span class="line">            <span class="comment">// 通知Native层plugintest扩展插件运行“PluginTestFunctionSync”方法并同步返回结果                       </span></span><br><span class="line">            <span class="keyword">return</span> B.execSync(_BARCODE, <span class="string">&quot;PluginTestFunctionSync&quot;</span>, [Argus1, Argus2, Argus3, Argus4]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">window</span>.plus.plugintest = plugintest;</span><br><span class="line">&#125;, <span class="literal">true</span> );</span><br></pre></td></tr></table></figure>
+<h3 id="HTML使用示例"><a href="#HTML使用示例" class="headerlink" title="HTML使用示例"></a>HTML使用示例</h3><p>该示例只展示同步或异步方法，完整内容参考官网或者SDK中示例工程。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">HTML</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;HandheldFriendly&quot;</span> <span class="attr">content</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;MobileOptimized&quot;</span> <span class="attr">content</span>=<span class="string">&quot;320&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>H5Plugin<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;./js/common.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;./js/test.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">pluginShow</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            plus.plugintest.PluginTestFunction(<span class="string">&quot;Html5&quot;</span>,<span class="string">&quot;Plus&quot;</span>,<span class="string">&quot;AsyncFunction&quot;</span>,<span class="string">&quot;MultiArgument!&quot;</span>, <span class="function"><span class="keyword">function</span>(<span class="params"> result </span>) </span>&#123;alert( result[<span class="number">0</span>]  + <span class="string">&quot;_&quot;</span> + result[<span class="number">1</span>]  + <span class="string">&quot;_&quot;</span> + result[<span class="number">2</span>]  + <span class="string">&quot;_&quot;</span> + result[<span class="number">3</span>] );&#125;,<span class="function"><span class="keyword">function</span>(<span class="params">result</span>)</span>&#123;alert(result)&#125;);</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">pluginGetString</span>(<span class="params"></span>)</span></span></span><br><span class="line"><span class="function"><span class="javascript">        </span>&#123;</span></span><br><span class="line"><span class="javascript">            alert(plus.plugintest.PluginTestFunctionSync(<span class="string">&quot;Html5&quot;</span>,<span class="string">&quot;Plus&quot;</span>,<span class="string">&quot;SyncFunction&quot;</span>,<span class="string">&quot;MultiArgument!&quot;</span>));</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;./css/common.css&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text/css&quot;</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">header</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;nvbt&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;back();&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;iback&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;nvtt&quot;</span>&gt;</span>PluginTest<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">header</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;dcontent&quot;</span> <span class="attr">class</span>=<span class="string">&quot;dcontent&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span>/&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;button&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;pluginShow()&quot;</span>&gt;</span>PluginTestFunction()<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;button&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;pluginGetString()&quot;</span>&gt;</span>PluginTestFunctionSync()<span class="tag">&lt;/<span class="name">div</span>&gt;</span>   </span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/66">Android平台第三方插件开发指导</a><br><a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/80">Android平台以WebView方式集成HTML5+SDK方法</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/09/ipfs/ipfs-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/09/ipfs/ipfs-1/" class="post-title-link" itemprop="url">IPFS私有网络</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-09 22:53:13" itemprop="dateCreated datePublished" datetime="2018-08-09T22:53:13+08:00">2018-08-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ipfs/" itemprop="url" rel="index"><span itemprop="name">ipfs</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>本文来源<a target="_blank" rel="noopener" href="https://github.com/ipfs/go-ipfs/blob/master/docs/experimental-features.md#private-networks">Private Networks</a></p>
+<h2 id="私有网络（Private-Networks）"><a href="#私有网络（Private-Networks）" class="headerlink" title="私有网络（Private Networks）"></a>私有网络（Private Networks）</h2><p>Allows ipfs to only connect to other peers who have a shared secret key.</p>
+<p>IPFS只有共享密钥的节点才可互相连接。</p>
+<h2 id="状态（State）"><a href="#状态（State）" class="headerlink" title="状态（State）"></a>状态（State）</h2><p>Experimental</p>
+<p> 实验性</p>
+<h2 id="In-Version"><a href="#In-Version" class="headerlink" title="In Version"></a>In Version</h2><p>master, 0.4.7</p>
+<h2 id="如何启用（How-to-enable）"><a href="#如何启用（How-to-enable）" class="headerlink" title="如何启用（How to enable）"></a>如何启用（How to enable）</h2><p>Generate a pre-shared-key using <a target="_blank" rel="noopener" href="https://github.com/Kubuxu/go-ipfs-swarm-key-gen">ipfs-swarm-key-gen</a>:</p>
+<p>通过<a target="_blank" rel="noopener" href="https://github.com/Kubuxu/go-ipfs-swarm-key-gen">ipfs-swarm-key-gen</a>生成一个共享密钥：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen</span><br><span class="line">ipfs-swarm-key-gen &gt; ~/.ipfs/swarm.key</span><br></pre></td></tr></table></figure>
+
+<p>To join a given private network, get the key file from someone in the network and save it to ~/.ipfs/swarm.key (If you are using a custom $IPFS_PATH, put it in there instead).</p>
+<p>加入私有网络，需要从网络中的其他人中获取密钥文件并把它保存为<code>~/.ipfs/swarm.key</code>（如果你设置了$IPFS_PATH，替换为设置的目录）。</p>
+<p>When using this feature, you will not be able to connect to the default bootstrap nodes (Since we aren’t part of your private network) so you will need to set up your own bootstrap nodes.</p>
+<p>当你使用这个功能的时候，你不可以使用默认的启动节点（因为不是私有网络的一部分），因此你需要设置你自己的启动节点。</p>
+<p>First, to prevent your node from even trying to connect to the default bootstrap nodes, run:</p>
+<p>首先为了防止你的节点尝试连接默认的启动节点，你需要运行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipfs bootstrap rm --all</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意，这里有个BUG，可能会导致当前节点也被移除，而启动错误，需要手动重新添加。</strong></p>
+<p>Then add your own bootstrap peers with:</p>
+<p>然后添加你自己的启动节点</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipfs bootstrap add &lt;multiaddr&gt;</span><br></pre></td></tr></table></figure>
+
+<p>For example:</p>
+<p>例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipfs bootstrap add /ip4/104.236.76.40/tcp/4001/ipfs/QmSoLV4Bbm51jM9C4gDYZQ9Cy3U6aXMJDAbzgu2fzaDs64</span><br></pre></td></tr></table></figure>
+
+<p>Bootstrap nodes are no different from all other nodes in the network apart from the function they serve.</p>
+<p>除了提供启动功能外，启动节点和网络中的其他节点没有什么不同。</p>
+<p>To be extra cautious, You can also set the LIBP2P_FORCE_PNET environment variable to 1 to force the usage of private networks. If no private network is configured, the daemon will fail to start.</p>
+<p>为了更安全，你也可以设置LIBP2P_FORCE_PNET环境变量为1来强制使用私用网络。如果没有配置私有网络，ipfs守护进程就会无法启动。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/35141862">https://zhuanlan.zhihu.com/p/35141862</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/09/android/android-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/09/android/android-1/" class="post-title-link" itemprop="url">Hbuilder 5+SDKAndroid原生工程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-09 21:32:12" itemprop="dateCreated datePublished" datetime="2018-08-09T21:32:12+08:00">2018-08-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>本文主要参考<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/13232">使用新版本5+SDK创建最简Android原生工程（Android studio）</a>和 <a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/38">Android离线打包</a>。如有未说明清楚之处，参看官方文档。</p>
+<p>下载最新版本5+SDK,<a target="_blank" rel="noopener" href="http://ask.dcloud.net.cn/article/103">下载地址</a>， 将SDK解压到任意目录，目录结构如下，以下统称为5+SDK目录。</p>
+<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder12.png"></p>
+<h2 id="新建Android工程"><a href="#新建Android工程" class="headerlink" title="新建Android工程"></a>新建Android工程</h2><p>从欢迎界面或者文件&gt;新建工程，选择Android类型的项目，使用默认配置或者根据需要做相关调整。创建Anroid应用本身不是本文重点。如果有问题可以删了重来，建个一两次基本没问题了。<br><img src="http://of73u2ed9.bkt.clouddn.com/android%20project.png" alt="新建Android工程"></p>
+<h2 id="配置Hbuilder"><a href="#配置Hbuilder" class="headerlink" title="配置Hbuilder"></a>配置Hbuilder</h2><p><strong>注意将项目树使用Project方式显示，以便说明内容不引起误解</strong>。</p>
+<h3 id="删除原生文件"><a href="#删除原生文件" class="headerlink" title="删除原生文件"></a>删除原生文件</h3><p>删除原生工程中java目录下系统默认创建的源代码</p>
+<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder1.png"></p>
+<h3 id="复制aar文件"><a href="#复制aar文件" class="headerlink" title="复制aar文件"></a>复制aar文件</h3><p>复制5+SDK目录下的SDK-&gt;libs-&gt;lib.5plus.base-release.aar文件到原生工程工程的app-&gt;libs目录下</p>
+<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder2.png"></p>
+<h3 id="配置build-gradle"><a href="#配置build-gradle" class="headerlink" title="配置build.gradle"></a>配置build.gradle</h3><p>打开app下的build.gradle文件</p>
+<h4 id="添加aar文件引用到dependencies"><a href="#添加aar文件引用到dependencies" class="headerlink" title="添加aar文件引用到dependencies"></a>添加aar文件引用到dependencies</h4><p>添加aar文件引用到dependencies，如下代码。如过编译器有警告信息，根据提示信息修改成imlementation。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile(name: &#x27;lib<span class="number">.5</span>plus.base-release&#x27;, ext: &#x27;aar&#x27;)</span><br></pre></td></tr></table></figure>
+<h4 id="添加aar文件搜索路径"><a href="#添加aar文件搜索路径" class="headerlink" title="添加aar文件搜索路径"></a>添加aar文件搜索路径</h4><p>添加aar文件搜索路径与dependencies同级, 代码如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    flatDir &#123;</span><br><span class="line">        dirs &#x27;libs&#x27;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="修改targetSdkVersion"><a href="#修改targetSdkVersion" class="headerlink" title="修改targetSdkVersion"></a>修改targetSdkVersion</h4><p>targetSdkVersion修改为21</p>
+<h4 id="设置multiDexEnabled"><a href="#设置multiDexEnabled" class="headerlink" title="设置multiDexEnabled"></a>设置multiDexEnabled</h4><p>multiDexEnabled设置成false</p>
+<p><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder4.png"></p>
+<h3 id="配置Androidmanifest-xml"><a href="#配置Androidmanifest-xml" class="headerlink" title="配置Androidmanifest.xml"></a>配置Androidmanifest.xml</h3><p>打开工程的Androidmanifest.xml文件,用以下内容替换原有application节点的内容</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">application</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:name</span>=<span class="string">&quot;io.dcloud.application.DCloudApplication&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:allowClearUserData</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:icon</span>=<span class="string">&quot;@drawable/icon&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:label</span>=<span class="string">&quot;@string/app_name&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:largeHeap</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">    &gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:name</span>=<span class="string">&quot;io.dcloud.PandoraEntry&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:configChanges</span>=<span class="string">&quot;orientation|keyboardHidden|keyboard|navigation&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:label</span>=<span class="string">&quot;@string/app_name&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:launchMode</span>=<span class="string">&quot;singleTask&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:hardwareAccelerated</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:theme</span>=<span class="string">&quot;@style/TranslucentTheme&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:screenOrientation</span>=<span class="string">&quot;user&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:windowSoftInputMode</span>=<span class="string">&quot;adjustResize&quot;</span> &gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.action.MAIN&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.category.LAUNCHER&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="增加icon-png"><a href="#增加icon-png" class="headerlink" title="增加icon.png"></a>增加icon.png</h3><p>在app-&gt;src-&gt;res-&gt;drawble目录下放应用的图标文件文件命名为icon.png，如果没有可从5+SDK目录下的HBuilder-Hello目录下找。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder5.png"></p>
+<h3 id="配置资源目录"><a href="#配置资源目录" class="headerlink" title="配置资源目录"></a>配置资源目录</h3><p>创建assets目录（app-&gt;src-&gt;main-&gt;assets），将5+SDK目录下的SDK-&gt;assets-&gt;data目录复制到新创建的assets目录下<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder6.png"></p>
+<h3 id="配置应用目录"><a href="#配置应用目录" class="headerlink" title="配置应用目录"></a>配置应用目录</h3><p>创建apps目录（app-&gt;src-&gt;main-&gt;assets-&gt;apps），将5+SDK目录下的HBuilder-Hello下的Apps(HBuilder-Hello-&gt;app-&gt;src-&gt;main-&gt;assets-&gt;apps)目录下内容复制到新创建的apps目录下。 注意： 应用资源的路径为[appid]-&gt;www, appid为应用资源manifest.json文件中id节点的值。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder7.png"></p>
+<h3 id="配置dcloud-control-xml"><a href="#配置dcloud-control-xml" class="headerlink" title="配置dcloud_control.xml"></a>配置dcloud_control.xml</h3><p>修改应用的assets-&gt;data-&gt;dcloud_control.xml文件的apps-&gt;app节点的appid属性的值改为manifest.json文件id节点的值，资源目录（app-&gt;[appid]）、manifest.json的id（id）和dcloud_control的appid，三者必须一致，否则应用无法正常启动。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder8.png"></p>
+<h3 id="编译运行。"><a href="#编译运行。" class="headerlink" title="编译运行。"></a>编译运行。</h3><h2 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h2><h3 id="配置应用的权限"><a href="#配置应用的权限" class="headerlink" title="配置应用的权限"></a>配置应用的权限</h3><p>参考5+SDK目录下“Feature列表.xls”文档，确定应用中使用到的扩展API，在AndroidManifest.json文件中调整API的权限。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder11.png"></p>
+<h3 id="配置应用的包名及版本号"><a href="#配置应用的包名及版本号" class="headerlink" title="配置应用的包名及版本号"></a>配置应用的包名及版本号</h3><p>打开AndroidManifest.xml文件，在代码视图中修改根节点的package属性值，如下：<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder9.png"><br>其中package为应用的包名，采用反向域名格式，为应用的标识；versionCode为应用的版本号（整数值），用于各应用市场的升级判断，建议与manifest.json中version -&gt; code值一致；versionName为应用的版本名称（字符串），在系统应用管理程序中显示的版本号，建议与manifest.json中version -&gt; name值一致。</p>
+<h3 id="配置应用名称"><a href="#配置应用名称" class="headerlink" title="配置应用名称"></a>配置应用名称</h3><p>打开res -&gt; values -&gt; strings.xml文件，修改“app_name”字段值，该值为安装到手机上桌面显示的应用名称。</p>
+<h3 id="配置应用图标和启动界面"><a href="#配置应用图标和启动界面" class="headerlink" title="配置应用图标和启动界面"></a>配置应用图标和启动界面</h3><p>将应用的图标（文件名为icon.png）和启动图片按照对应的尺寸拷贝到工程的res -&gt; drawable-XXX目录下。</p>
+<h4 id="应用图标"><a href="#应用图标" class="headerlink" title="应用图标"></a>应用图标</h4><p>指定各种分辨率设备上使用的应用图标（png格式）</p>
+<table>
+<thead>
+<tr>
+<th>节点名</th>
+<th>图标尺寸</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mdpi</td>
+<td>48*48</td>
+<td>普通屏程序图标</td>
+</tr>
+<tr>
+<td>ldpi</td>
+<td>48*48</td>
+<td>大屏程序图标</td>
+</tr>
+<tr>
+<td>hdpi</td>
+<td>72*72</td>
+<td>高分屏程序图标</td>
+</tr>
+<tr>
+<td>xhdpi</td>
+<td>96*96</td>
+<td>20P高分屏程序图标</td>
+</tr>
+<tr>
+<td>xxhdpi</td>
+<td>144*144</td>
+<td>1080P高分屏程序图标</td>
+</tr>
+</tbody></table>
+<h4 id="启动图片"><a href="#启动图片" class="headerlink" title="启动图片"></a>启动图片</h4><p>指定各种分辨率设备上使用的启动图片（png格式）</p>
+<table>
+<thead>
+<tr>
+<th>节点名</th>
+<th>图标尺寸</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mdpi</td>
+<td>240*282</td>
+<td>普通屏启动图片</td>
+</tr>
+<tr>
+<td>ldpi</td>
+<td>320*442</td>
+<td>大屏启动图片</td>
+</tr>
+<tr>
+<td>hdpi</td>
+<td>480*762</td>
+<td>高分屏启动图片</td>
+</tr>
+<tr>
+<td>xhdpi</td>
+<td>720*1242</td>
+<td>720高分屏幕启动图片</td>
+</tr>
+<tr>
+<td>xxhdpi</td>
+<td>1080*1882</td>
+<td>1080p高分屏启动图片</td>
+</tr>
+</tbody></table>
+<h3 id="更新应用资源"><a href="#更新应用资源" class="headerlink" title="更新应用资源"></a>更新应用资源</h3><p>打开assets -&gt; apps 目录，将下面“HelloH5”目录名称修改为应用manifest.json中的id名称（这步非常重要，否则会导致应用无法正常启动），并将所有应用资源拷贝到其下的www目录。</p>
+<h3 id="配置应用信息"><a href="#配置应用信息" class="headerlink" title="配置应用信息"></a>配置应用信息</h3><p>打开assets -&gt; data下的dcloud_control.xml文件：<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder11.png"><br>其中appid值为apps目录下的[appid]目录，appid决定运行哪个应用；appver为应用的版本号，用于应用资源的升级，必须保持与manifest.json中的version -&gt; name值完全一致；version值为应用基座版本号（plus.runtime.innerVersion返回的值），不要随意修改。</p>
+<h3 id="生成安装包"><a href="#生成安装包" class="headerlink" title="生成安装包"></a>生成安装包</h3><p>如果只是测试使用Build-&gt;build apks即可，如果用于正式环境，build-&gt;Generate Signed APK。按要求填写相关信息。<br><img src="http://of73u2ed9.bkt.clouddn.com/hbuilder10.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/08/09/android/android-0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -985,861 +2104,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2018/05/12/frontend/security/cors/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/05/12/frontend/security/cors/" class="post-title-link" itemprop="url">CORS 跨域资源共享</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-05-12 11:09:50" itemprop="dateCreated datePublished" datetime="2018-05-12T11:09:50+08:00">2018-05-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/frontend/" itemprop="url" rel="index"><span itemprop="name">frontend</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/frontend/security/" itemprop="url" rel="index"><span itemprop="name">security</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h1><p>因为使用Angular来调用ipfs的API时出现403禁止访问错误，首先判断的是跨域问题，尝试如下内容：直接在浏览器中输入URL访问可以，通过代理或浏览器的允许跨域设置依然是403错误。<br>通过查看ipfs的文档（<a target="_blank" rel="noopener" href="https://github.com/ipfs/js-ipfs-api%EF%BC%89%EF%BC%8CIPFS%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%BB%98%E8%AE%A4%E4%B8%8D%E6%94%AF%E6%8C%81%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82%EF%BC%8C%E9%9C%80%E8%A6%81%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E3%80%82">https://github.com/ipfs/js-ipfs-api），IPFS服务器默认不支持跨域请求，需要修改配置文件。</a></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin <span class="string">&quot;[\&quot;http://example.com\&quot;]&quot;</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials <span class="string">&quot;[\&quot;true\&quot;]&quot;</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods <span class="string">&quot;[\&quot;PUT\&quot;, \&quot;POST\&quot;, \&quot;GET\&quot;]&quot;</span></span></span><br></pre></td></tr></table></figure>
-<p>修改配置，重启IPFS之后正常访问IPFS的API。</p>
-<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>对于CORS没有理解，通过查看Wiki整理下对CORS，加深理解。为什么浏览器中可以访问而前端调用不行？<br>直接在浏览器中可以直接访问是因为他是第一下资源地址，是一个GET请求，不是跨域请求。<br>Angular中请求时，是一个XHR请求，且与第一个资源地址不同，是跨域请求。</p>
-<h1 id="跨域资源共享"><a href="#跨域资源共享" class="headerlink" title="跨域资源共享"></a>跨域资源共享</h1><p>跨域资源共享是一种机制，它允许受限的访问第一个访问资源域以外的资源（如字体）的机制。一张网页通常包含了很多跨域的图片，样式，脚本，iframes，或者视频。一些跨域请求，尤其是Ajax请求，会因为默认的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Same-origin_policy">同源安全策略</a>而被禁止访问。</p>
-<p>CORS定义了浏览器和服务器如何来决定一个跨域请求是安全的。它比完全同源请求有更多的自由和功能，但不要只是简单地允许所有跨源请求。CORS规范最初是作为W3C推荐标准发布的，但该文档已经过时。 <a target="_blank" rel="noopener" href="https://fetch.spec.whatwg.org/">Fetch Living Standard</a>是当前维护活跃的规范。</p>
-<h2 id="同源判断规则"><a href="#同源判断规则" class="headerlink" title="同源判断规则"></a>同源判断规则</h2><p>绝对路径，需要是协议，域名，端口号三者与第一个访问的资源（浏览器中输入的URL）相同，才被认为是同源。</p>
-<h2 id="CORS工作机制"><a href="#CORS工作机制" class="headerlink" title="CORS工作机制"></a>CORS工作机制</h2><p>CORS标准新增了一组HTTP消息头，它为浏览器和服务器之间提供了一种有权限时才请求远程URL的方法。虽然服务器可以执行一些验证和授权，但浏览器通常有责任支持这些消息头并执行相关限制。</p>
-<p>对于可以修改数据的Ajax和HTTP请求方法(通常是GET以外的HTTP方法，或者用于某些MIME类型的POST使用)，规范要求浏览器“预先执行”请求，使用HTTP的OPTIONS方法从服务器请求受支持的方法，然后在服务器“批准”后，使用实际的HTTP请求方法发送实际请求。服务器还可以通知客户端是否应该通过请求发送“凭据”(包括Cookies和HTTP身份验证数据)。<br><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/File:Flowchart_showing_Simple_and_Preflight_XHR.svg">cors</a></p>
-<h2 id="CORS相关消息头"><a href="#CORS相关消息头" class="headerlink" title="CORS相关消息头"></a>CORS相关消息头</h2><h3 id="请求头"><a href="#请求头" class="headerlink" title="请求头"></a>请求头</h3><ul>
-<li>Origin</li>
-<li>Access-Control-Request-Method</li>
-<li>Access-Control-Request-Headers<h3 id="响应头"><a href="#响应头" class="headerlink" title="响应头"></a>响应头</h3></li>
-<li>Access-Control-Allow-Origin</li>
-<li>Access-Control-Allow-Credentials</li>
-<li>Access-Control-Expose-Headers</li>
-<li>Access-Control-Max-Age</li>
-<li>Access-Control-Allow-Methods</li>
-<li>Access-Control-Allow-Headers</li>
-</ul>
-<p>Access-Control-Allow-Origin: *</p>
-<p>“*”的值是特殊的，因为它不允许请求提供凭据，这意味着不允许发送HTTP身份验证、客户端SSL证书和Cookie等原因。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2017/12/26/zeronet/zeronet-5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/12/26/zeronet/zeronet-5/" class="post-title-link" itemprop="url">站点开发入门</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-12-26 20:55:53" itemprop="dateCreated datePublished" datetime="2017-12-26T20:55:53+08:00">2017-12-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zeronet/" itemprop="url" rel="index"><span itemprop="name">zeronet</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>249</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>你可以在ZeroNet上发布静态和动态的网站。<br>虽然ZeroNet不能运行像PHP或者Ruby这样的脚本语言，你可以通过ZeroNet的API（叫做ZeroFrame），和JavaScript（或者CoffeScript）及内置的SQL数据库来创建动态网站。</p>
-<h2 id="ZeroChat教程"><a href="#ZeroChat教程" class="headerlink" title="ZeroChat教程"></a>ZeroChat教程</h2><p>在这个教程中，我们会通过不到100行的代码创建一个P2P的，去中心化，无服务器的聊天站点</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://127.0.0.1:43110/Blog.ZeroNetwork.bit/?Post:99:ZeroChat+tutorial">在ZeroBlog上查看</a></li>
-<li><a target="_blank" rel="noopener" href="https://decentralize.today/decentralized-p2p-chat-in-100-lines-of-code-d6e496034cd4">在Medium.com上查看</a><h2 id="ZeroNet调试模式"><a href="#ZeroNet调试模式" class="headerlink" title="ZeroNet调试模式"></a>ZeroNet调试模式</h2>ZeroNet有个<code>--debug</code>参数可以更容易开发站点。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2017/12/12/spring/springboot-0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/12/12/spring/springboot-0/" class="post-title-link" itemprop="url">SpringCloud-基础概念</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-12-12 21:06:10" itemprop="dateCreated datePublished" datetime="2017-12-12T21:06:10+08:00">2017-12-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/SpringCloud/" itemprop="url" rel="index"><span itemprop="name">SpringCloud</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>267</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>基于对微服务架构的理解，整理出来以下几下微服务相关的基础概念。</p>
-<ul>
-<li>授权认证服务</li>
-<li>服务注册和发现</li>
-<li>配置服务</li>
-<li>服务网关</li>
-<li>调用链监控</li>
-<li>限流熔断</li>
-<li>指标监控</li>
-<li>健康检查与告警</li>
-<li>日志监控</li>
-<li>其他</li>
-</ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>(一个可供中小团队参考的微服务架构技术栈)[<a target="_blank" rel="noopener" href="https://www.infoq.cn/article/china-microservice-technique]">https://www.infoq.cn/article/china-microservice-technique]</a><br>(微服务基础架构的 5 个关键问题)[<a target="_blank" rel="noopener" href="https://www.infoq.cn/article/btx6geZA_qwmyr07LbOb]">https://www.infoq.cn/article/btx6geZA_qwmyr07LbOb]</a></p>
-<h1 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h1><p>(JSkillCloud)[<a target="_blank" rel="noopener" href="http://jskillcloud.com/]">http://jskillcloud.com/]</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2017/12/11/zeronet/zeronet-4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/12/11/zeronet/zeronet-4/" class="post-title-link" itemprop="url">创建ZeroNet站点</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-12-11 20:56:22" itemprop="dateCreated datePublished" datetime="2017-12-11T20:56:22+08:00">2017-12-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zeronet/" itemprop="url" rel="index"><span itemprop="name">zeronet</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="最简单的方式：使用页面"><a href="#最简单的方式：使用页面" class="headerlink" title="最简单的方式：使用页面"></a>最简单的方式：使用页面</h2><ul>
-<li>在ZeroHello站点时，点击左边栏的“⋮ ”&gt;”创建新的空站点”菜单</li>
-<li>你会跳转到一个只有你可以修改的全新站点<br>You can find and modify your site’s content in data/[yoursiteaddress] directory</li>
-<li>你可以在<code>data/[你的地址]</code>目录找到和修改你的站点内容<br>After the modifications open your site, drag the topright “0” button to left, then press sign and publish buttons on the bottom</li>
-<li>当你修改好你的站点后，拖动右上的”0”按钮到左边，然后点击底部的签名和发布按钮。<h2 id="手动方式：使用命令行"><a href="#手动方式：使用命令行" class="headerlink" title="手动方式：使用命令行"></a>手动方式：使用命令行</h2></li>
-</ul>
-<ol>
-<li>创建站点结构</li>
-</ol>
-<ul>
-<li>如果ZeroNet在运行需要关闭</li>
-<li>进入ZeroNet的安装目录，然后运行：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ zeronet.py siteCreate</span><br><span class="line">...</span><br><span class="line">- Site private key: 23DKQpzxhbVBrAtvLEc2uvk7DZweh4qL3fn3jpM3LgHDczMK2TtYUq</span><br><span class="line">- Site address: 13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2</span><br><span class="line">...</span><br><span class="line">- Site created!</span><br><span class="line">$ zeronet.py</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
-<li>这样会创建你的站点的初始文件<br><code>data/13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2</code><blockquote>
-<p>注意：使用bundle版本的Windows的用户需要进入ZeroBudle/ZeroNet目录，然后执行<code>&quot;../Python/python.exe&quot; zeronet.py siteCreate</code></p>
-</blockquote>
-</li>
-</ul>
-<ol>
-<li>创建/修改站点</li>
-</ol>
-<ul>
-<li>更新<code>data/[your site address key]</code>目录下的网站文件（比如：13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2）</li>
-<li>当你的站点准备好时运行：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ zeronet.py siteSign 13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2</span><br><span class="line">- Signing site: 13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2...</span><br><span class="line">Private key (input hidden):</span><br></pre></td></tr></table></figure></li>
-<li>输入你创建网站时的私钥。这一步会对所有的文件进行签名，所以节点可以验证网站所有者的身份</li>
-</ul>
-<ol>
-<li>发布网站更新</li>
-</ol>
-<ul>
-<li>为了通知节点你修改了站点内容，你需要运行如下命令：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ zeronet.py sitePublish 13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2</span><br><span class="line">...</span><br><span class="line">Site:13DNDk..bhC2 Publishing to 3/10 peers...</span><br><span class="line">Site:13DNDk..bhC2 Successfuly published to 3 peers</span><br><span class="line">- Serving files....</span><br></pre></td></tr></table></figure></li>
-<li>这样就好了，你已经成功的将你的修改签名和发布出去了。</li>
-<li>你的站点可以通过这个网址访问：<br><code>http://localhost:43110/13DNDkMUExRf9Xa9ogwPKqp7zyHFEqbhC2</code>。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2017/12/11/zeronet/zeronet-3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/12/11/zeronet/zeronet-3/" class="post-title-link" itemprop="url">简易ZeroNet站点</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-12-11 20:36:57" itemprop="dateCreated datePublished" datetime="2017-12-11T20:36:57+08:00">2017-12-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zeronet/" itemprop="url" rel="index"><span itemprop="name">zeronet</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="ZeroHello"><a href="#ZeroHello" class="headerlink" title="ZeroHello"></a>ZeroHello</h2><p>ZeroNet的主页</p>
-<ul>
-<li>列出所有添加的站点：名称，节点数，修改时间</li>
-<li>站点操作：更新，暂停，继续，删除</li>
-<li>克隆站点转换成你的博客或者论坛</li>
-<li>一键更新<br><img src="http://zeronet.readthedocs.io/en/latest/img/zerohello.png"><br>地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1HeLLo4uzjaLetFx6NH3PMwFP3qbRbTf3D">1HeLLo4uzjaLetFx6NH3PMwFP3qbRbTf3D</a><br><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroHello">源码</a></li>
-</ul>
-<h2 id="ZeroBorad"><a href="#ZeroBorad" class="headerlink" title="ZeroBorad"></a>ZeroBorad</h2><h3 id="消息公告示例"><a href="#消息公告示例" class="headerlink" title="消息公告示例"></a>消息公告示例</h3><ul>
-<li>通过授权码动态生成用户</li>
-<li>实时消息更新</li>
-</ul>
-<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><ul>
-<li>你发送消息给站点所有者的机器人</li>
-<li>机器人修改message.json文件，然后签名并发布给其他节点</li>
-<li>如果网站的更新到达你的客户端，他就会显示在你的浏览器上。<br><img src="http://zeronet.readthedocs.io/en/latest/img/zeroboard.png"><br>地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1Gfey7wVXXg1rxk751TBTxLJwhddDNfcdp">1Gfey7wVXXg1rxk751TBTxLJwhddDNfcdp</a><br><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroBoard">源码</a></li>
-</ul>
-<h2 id="ZeroBlog"><a href="#ZeroBlog" class="headerlink" title="ZeroBlog"></a>ZeroBlog</h2><h3 id="个人博客示例"><a href="#个人博客示例" class="headerlink" title="个人博客示例"></a>个人博客示例</h3><ul>
-<li>内置内容编辑器</li>
-<li>Markdown语法</li>
-<li>代码高亮</li>
-<li>只要网页就可以签名和发布网站<h3 id="工作原理？"><a href="#工作原理？" class="headerlink" title="工作原理？"></a>工作原理？</h3></li>
-<li>你可以通过页面修改<code>data.json</code></li>
-<li>点击<code>Sign &amp; Publsh new conent</code>按钮时会要求私钥（创建新站点时<a target="_blank" rel="noopener" href="http://zeronet.readthedocs.io/en/latest/using_zeronet/create_new_site/">生成</a>）</li>
-<li>你的ZeroNet客户端签名新的，修改的文件并把文件发布到其他节点。</li>
-<li>只要还有一个节点是活动的，你的站点就可以访问。<br><img src="http://zeronet.readthedocs.io/en/latest/img/zeroblog.png"><br>地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1BLogC9LN4oPDcruNz3qo1ysa133E9AGg8">1BLogC9LN4oPDcruNz3qo1ysa133E9AGg8</a><br>或者<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/blog.zeronetwork.bit">blog.zeronetwork.bit</a><br><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroBlog">源码</a></li>
-</ul>
-<h2 id="ZeroTalk"><a href="#ZeroTalk" class="headerlink" title="ZeroTalk"></a>ZeroTalk</h2><h3 id="去中心化的，P2P论坛示例"><a href="#去中心化的，P2P论坛示例" class="headerlink" title="去中心化的，P2P论坛示例"></a>去中心化的，P2P论坛示例</h3><ul>
-<li>创建，修改，删除主题和消息</li>
-<li>主题和消息投票</li>
-<li>仅有一次和站点所有者的联系，就是在请求修改网站授权的时候。</li>
-<li>留言和内容修改直接会推送给其他节点</li>
-<li>只有你可以签名和修改你的文件。</li>
-<li>实时的消息显示<h3 id="工作原理-1"><a href="#工作原理-1" class="headerlink" title="工作原理"></a>工作原理</h3></li>
-<li>要参与网站的互动，你需要从ZeroID提供者那里注册一个证书（一个加密签名）</li>
-<li>有了证书之后，你就可以发布内容（消息，主题，投票）给其他节点了。<br><a target="_blank" rel="noopener" href="http://zeronet.readthedocs.io/en/latest/img/zerotalk.png"></a><br>地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1TaLkFrMwvbNsooF4ioKAY9EuxTBTjipT">1TaLkFrMwvbNsooF4ioKAY9EuxTBTjipT</a> 或者<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/talk.zeronetwork.bit">talk.zeronetwork.bit</a></li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroTalk">源码</a></p>
-<h2 id="ZeroMail"><a href="#ZeroMail" class="headerlink" title="ZeroMail"></a>ZeroMail</h2><p>端到端加密，分布式，点对点消息站点。为了提高隐私安全使用了与比特消息类似的解决方案，这样就不会暴露收件人信息。</p>
-<ul>
-<li>使用ECISE用于私密传输，采用AES256进行消息编码。</li>
-<li>当你第一次访问网站的时候，你的公钥会添加到你的数据文件中，这样其他人就可以给你发消息了。</li>
-<li>每个人都尝试解密消息，这使得要找出消息接收人成为不可能，从而提高了隐私性。</li>
-<li>为了减少消息负载和加快消息解密速度，我们重用了AES密钥，但是每次都会生成一个新的IV。<br><img src="http://zeronet.readthedocs.io/en/latest/img/zeromail.png"><br>地址:<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1MaiL5gfBM1cyb4a8e3iiL8L5gXmoAJu27">1MaiL5gfBM1cyb4a8e3iiL8L5gXmoAJu27</a>或者<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/mail.zeronetwork.bit">mail.zeronetwork.bit</a><br><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroMail">源码</a></li>
-</ul>
-<h2 id="ZeroChat"><a href="#ZeroChat" class="headerlink" title="ZeroChat"></a>ZeroChat</h2><p>一个完整的网站用于演示如何使用ZeroNet在不到用不到时100行的代码创建一个server-less，SQL后台，实时更新的P2P聊天应用。</p>
-<ul>
-<li>选择ZeroID证书</li>
-<li>用SQL数据库存储消息</li>
-<li>实时创建和分布消息</li>
-<li>实时更新消息<br><img src="http://zeronet.readthedocs.io/en/latest/img/zerochat.png"><br>地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1AvF5TpcaamRNtqvN1cnDEWzNmUtD47Npg">1AvF5TpcaamRNtqvN1cnDEWzNmUtD47Npg</a><br>ZeroBlog上的教程：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/Blog.ZeroNetwork.bit/?Post:43:ZeroNet+site+development+tutorial+1">第1部分</a>,<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/Blog.ZeroNetwork.bit/?Post:46:ZeroNet+site+development+tutorial+2">第2部分</a></li>
-</ul>
-<h2 id="ZeroMe"><a href="#ZeroMe" class="headerlink" title="ZeroMe"></a>ZeroMe</h2><p>去中心化的，类Twitter的P2P社交网络。</p>
-<ul>
-<li>在ZeroMe的用户注册表中存储用户信息</li>
-<li>将发布和留言存储在叫Hub的MergeSite中</li>
-<li>通过选择文件来上传图片。</li>
-<li>实时显示活动订阅<br><img src="http://zeronet.readthedocs.io/en/latest/img/zerome.png"><br>地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1MeFqFfFFGQfa1J3gJyYYUvb5Lksczq7nH">1MeFqFfFFGQfa1J3gJyYYUvb5Lksczq7nH</a><br><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroMe">源码</a></li>
-</ul>
-<h2 id="ReactionGIFs"><a href="#ReactionGIFs" class="headerlink" title="ReactionGIFs"></a>ReactionGIFs</h2><p>选择文件示例，视频文件只有浏览器请求时才会下载。<br><img src="http://zeronet.readthedocs.io/en/latest/img/reactiongifs.jpg"><br>地址<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/1Gif7PqWTzVWDQ42Mo7np3zXmGAo3DXc7h">1Gif7PqWTzVWDQ42Mo7np3zXmGAo3DXc7h</a><br><a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ReactionGIFs">源码</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2017/10/26/zeronet/zeronet-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/10/26/zeronet/zeronet-2/" class="post-title-link" itemprop="url">ZeroNet安装</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-10-26 08:23:47" itemprop="dateCreated datePublished" datetime="2017-10-26T08:23:47+08:00">2017-10-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zeronet/" itemprop="url" rel="index"><span itemprop="name">zeronet</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>911</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="安装ZeroNet"><a href="#安装ZeroNet" class="headerlink" title="安装ZeroNet"></a>安装ZeroNet</h2><ul>
-<li>下载ZeroNet安装包：<a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroNet-win/archive/dist/ZeroNet-win.zip">Microsoft Windows</a>,<a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroNet-mac/archive/dist/ZeroNet-mac.zip">Apple macOS</a>, <a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroBundle/raw/master/dist/ZeroBundle-linux64.tar.gz">Linux 64bit</a>,<a target="_blank" rel="noopener" href="https://github.com/HelloZeroNet/ZeroBundle/raw/master/dist/ZeroBundle-linux32.tar.gz">Linux 32bit</a></li>
-<li>解压</li>
-<li>运行 <code>ZeroNet.exe</code> (win), <code>ZeroNet(.app) </code>(macOS), <code>ZeroNet.sh</code>(linux)<h2 id="Debian-Linux手动安装"><a href="#Debian-Linux手动安装" class="headerlink" title="Debian Linux手动安装"></a>Debian Linux手动安装</h2></li>
-<li><code>sudo apt-get update</code></li>
-<li><code>sudo apt-get install msgpack-python python-gevent</code></li>
-<li><code>wget https://github.com/HelloZeroNet/ZeroNet/archive/master.tar.gz</code></li>
-<li><code>tar xvpfz master.tar.gz</code></li>
-<li><code>cd ZeroNet-Master</code></li>
-<li>运行<code>python zeronet.py</code></li>
-<li>浏览器中打开<code>http://127.0.0.1:43110</code></li>
-</ul>
-<h2 id="Vagrant"><a href="#Vagrant" class="headerlink" title="Vagrant"></a>Vagrant</h2><ul>
-<li><code>vagrant up</code></li>
-<li>访问VM<code>vagrant sh</code></li>
-<li><code>cd /vagrant</code></li>
-<li>运行<code>python zeronet.py --ui_ip 0.0.0.0</code></li>
-<li>浏览器中打开<code>http://127.0.0.1:43110</code></li>
-</ul>
-<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><ul>
-<li><code>docker run -d -v &lt;local_data_folder&gt;:/root/data -p 15441:15441 -p 43110:43110 nofish/zeronet</code></li>
-<li>这个Docker镜像包含了Tor代理，默认是关闭的。注意有些节点不允许在你运行Tor。如果你需要开启，将环境变量<code>ENABLE_TOR</code>设置为<code>true</code>(默认是<code>false</code>)。比如：<br><code>docker run -d -e &quot;ENABLE_TOR=true&quot; -v &lt;local_data_folder&gt;:/root/data -p 15441:15441 -p 127.0.0.1:43110:43110 nofish/zeronet</code></li>
-<li>浏览器中打开<code>http://127.0.0.1:43110</code></li>
-</ul>
-<h2 id="Virtualenv"><a href="#Virtualenv" class="headerlink" title="Virtualenv"></a>Virtualenv</h2><ul>
-<li><code>virtualenv env</code></li>
-<li><code>source env/bin/activate</code></li>
-<li><code>pip install msgpack-python gevent</code></li>
-<li><code>python zeronet.py</code></li>
-<li>浏览器中打开<code>http://127.0.0.1:43110</code></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2017/10/26/zeronet/zeronet-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/10/26/zeronet/zeronet-1/" class="post-title-link" itemprop="url">ZeroNet常见问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-10-26 08:22:20" itemprop="dateCreated datePublished" datetime="2017-10-26T08:22:20+08:00">2017-10-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-30 21:23:05" itemprop="dateModified" datetime="2022-10-30T21:23:05+08:00">2022-10-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zeronet/" itemprop="url" rel="index"><span itemprop="name">zeronet</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="我需要开放端口么？"><a href="#我需要开放端口么？" class="headerlink" title="我需要开放端口么？"></a>我需要开放端口么？</h2><p>这个是可选的，如果你只是浏览和使用ZeroNet，你可以不需要开放端口。如果你要创建一个站点，强烈推荐你要开放一个端口。<br>ZeroNet在启动时会尝试用UPnP来打开一个端口，如果失败了，你需要手动开启：</p>
-<ul>
-<li>通过<code>http://192.168.1.1 </code>或者 <code>http://192.168.0.1</code>来访问你的路由器页面。</li>
-<li>查找<code>开启UPnP支持</code>的类似选项，然后重启ZeroNet。<br>如果还是不起作用，查看<code>端口转发</code>章节。不同的路由器各有不同。转发端口是15441。</li>
-</ul>
-<h2 id="ZeroNet是匿名的么？"><a href="#ZeroNet是匿名的么？" class="headerlink" title="ZeroNet是匿名的么？"></a>ZeroNet是匿名的么？</h2><p>ZeroNet没有比BitTorrent提供更多的匿名性，但随着节点的增加，隐私（找到评论或站点所有者）会变得严峻。<br>ZeroNet在匿名网络中也做了一些工作：你可以使用Tor网络轻松的隐藏你的IP。</p>
-<h2 id="在Tor浏览器中如何使用ZeroNet？"><a href="#在Tor浏览器中如何使用ZeroNet？" class="headerlink" title="在Tor浏览器中如何使用ZeroNet？"></a>在Tor浏览器中如何使用ZeroNet？</h2><p>推荐使用Tor浏览器来使用ZeroNet：</p>
-<ul>
-<li>启动Tor Browser</li>
-<li>打开<code>abaut:perferences#advanced</code></li>
-<li>点击<code>设置</code></li>
-<li>在不需要代理的输入框中填入<code>127.0.0.1</code></li>
-<li>在浏览器中打开<code>http://127.0.0.1:43110</code><br>如果你看到的是空白页面，点击工具栏上的无脚本按钮，选择临时允许所有页面，重新加载页面。</li>
-</ul>
-<h2 id="在ZeroNet中如何使用Tor"><a href="#在ZeroNet中如何使用Tor" class="headerlink" title="在ZeroNet中如何使用Tor?"></a>在ZeroNet中如何使用Tor?</h2><p>如果你希望隐藏你的IP，安装ZeroNet的最新版本然后点南Tor&gt;每个连接都启动Tor。</p>
-<p>在Windows上Tor和ZeroNet是打包在一起的，ZeroNet在第一次运行的时启尝试下载和解压Tor。如果因为某些情况安装失败了，可以根据<code>core\tools\tor\manual_install.txt</code>的说明来安装。</p>
-<p>其他操作系统根据<a target="_blank" rel="noopener" href="https://www.torproject.org/docs/installguide.html">安装说明</a>进行安装，修改你的torrc的配置文件，把<code># ControlPort 9051</code>的<code>#</code>去掉，然后重启你的Tor服务和ZeroNet。</p>
-<blockquote>
-<p>提示：你可以通过ZeroNet的<a target="_blank" rel="noopener" href="http://127.0.0.1:43110/Stats">状态页</a>来验证你的IP。<br>提示：如果你连接时发生错误，请检查你是否安装了最新版本的Tor（需要0.2.7.5以上版本）</p>
-</blockquote>
-<h1 id="Linux系统中ZeroNet如何使用Tor？"><a href="#Linux系统中ZeroNet如何使用Tor？" class="headerlink" title="Linux系统中ZeroNet如何使用Tor？"></a>Linux系统中ZeroNet如何使用Tor？</h1><p>更新最新版本的Tor（我们需要0.2.7.5+版本），执行这些<a target="_blank" rel="noopener" href="https://www.torproject.org/docs/debian.html.en">操作</a>。以Debian为例：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &#x27;deb http://deb.torproject.org/torproject.org jessie main&#x27;&gt;&gt; /etc/apt/sources.list.d/tor.list</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --keyserver keys.gnupg.net --recv 886DDD89</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get update</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install tor</span><br></pre></td></tr></table></figure>
-<p>修改配置文件开启控制协议：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mcedit /etc/tor/torrc</span><br></pre></td></tr></table></figure>
-<p>删除<code>ControlPort 9051</code>和<code>CookieAuthentication 1</code>(大概在57行)的<code>#</code>字符。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/tor restart</span><br></pre></td></tr></table></figure>
-<p>通过<code>usermod -a -G debian-tor [yourlinuxuser]</code>来授权访问cookie。（如果不是使用Debian通过<code>ls -al /var/run/tor/control.authcookie</code>的查看文件的用户组）。<br>注销/登录来使修改生效。</p>
-<blockquote>
-<p>提示：可以通过<code>echo &#39;PROTOCALINFO&#39; | nc 127.0.0.1 9051</code>来验证Tor是否正常运行。<br>提示：你可以不修改Tor的配置，仅通过<code>zeronet.py --tor disabe --proxy 127.0.0.1:9050 --disable_udp</code>来使用Tor，但这样你会失去与其他.onion地址通话的能力。</p>
-</blockquote>
-<h2 id="能否使用一个配置文件？"><a href="#能否使用一个配置文件？" class="headerlink" title="能否使用一个配置文件？"></a>能否使用一个配置文件？</h2><p>你可以把选项配置在<code>zeronet.conf</code>文件中。比如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">data_dir = my-data-dir</span><br><span class="line">log_dir = my-log-dir</span><br><span class="line">ui_restrict =</span><br><span class="line"> 1.2.3.4</span><br><span class="line"> 2.3.4.5</span><br></pre></td></tr></table></figure>
-<p>使用<code>zeronet.py --help</code>命令查看所有的选项。</p>
-<h2 id="如果ISP和政府屏蔽了Tor如何使它工作？"><a href="#如果ISP和政府屏蔽了Tor如何使它工作？" class="headerlink" title="如果ISP和政府屏蔽了Tor如何使它工作？"></a>如果ISP和政府屏蔽了Tor如何使它工作？</h2><p>ZeroNet暂时未包含<a target="_blank" rel="noopener" href="https://www.torproject.org/docs/pluggable-transports.html.en">Tor pluggable transports</a>。访问Tor网络的最简单的方法就是使用Tor浏览器。修改它的配置开启可拨插传输，然后修改ZeroNet的配置，使用Tor浏览器代理和控制端口。<br>通过<code>--tor_controller 127.0.0.1:9151 --tor-proxy 127.0.0.1:9150</code>来启动ZeroNet或者在<code>zeronet.conf</code>中添加如下参数：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">tor_controller = 127.0.0.1:9151</span><br><span class="line">tor_proxy = 127.0.0.1:9150</span><br></pre></td></tr></table></figure>
-
-<h2 id="不同机器可以使用相同用户名么？"><a href="#不同机器可以使用相同用户名么？" class="headerlink" title="不同机器可以使用相同用户名么？"></a>不同机器可以使用相同用户名么？</h2><p>可以，只要你把<code>data/user.json</code>文件拷贝到时你的新机器就可以了。</p>
-<h2 id="如何创建一个“特殊”的网站地址？"><a href="#如何创建一个“特殊”的网站地址？" class="headerlink" title="如何创建一个“特殊”的网站地址？"></a>如何创建一个“特殊”的网站地址？</h2><p>通过<a target="_blank" rel="noopener" href="https://bitcointalk.org/index.php?topic=25804.0">vanitygen</a>来生成。一旦你生成了你的key,创建<code>data/你的key</code>目录。在这个目录下放一些文件。<br>然后访问<code>http://127.0.0.1:43110/你的key/</code>.将<code>0</code>按钮拖到左边，然后用侧边栏来注册你的网站。</p>
-<h2 id="如何注册一个-bit的域名。"><a href="#如何注册一个-bit的域名。" class="headerlink" title="如何注册一个.bit的域名。"></a>如何注册一个.bit的域名。</h2><p>你可以通过<a target="_blank" rel="noopener" href="https://namecoin.info/">Namacoin</a>来注册一个.bit域名。通过GUI客户端或者<a target="_blank" rel="noopener" href="http://www.christopherpoole.net/registering-a-bit-domain-with-namecoin.html">命令行接口</a>来管理你的域名。<br>一旦你注册完成，你需需增加一个<code>zeronet</code>节点来记录它。比如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">...</span><br><span class="line">    &quot;zeronet&quot;: &#123;</span><br><span class="line">        &quot;&quot;: &quot;1EU1tbG9oC1A8jz2ouVwGZyQ5asrNsE4Vr&quot;,</span><br><span class="line">        &quot;blog&quot;: &quot;1BLogC9LN4oPDcruNz3qo1ysa133E9AGg8&quot;,</span><br><span class="line">        &quot;talk&quot;: &quot;1TaLk3zM7ZRskJvrh3ZNCDVGXvkJusPKQ&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">...</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>“”是顶级域名，其他的是子域名。</p>
-<blockquote>
-<p>提示:你可以通过<a target="_blank" rel="noopener" href="https://shapeshift.io/">shapeshift.io</a>来购买比特币或者其他加密货币的Namecoin。<br>提示:一些可以注册.bit域名的站点：<a target="_blank" rel="noopener" href="https://domaincoin.net/">domaincoin.net</a>, <a target="_blank" rel="noopener" href="https://peername.com/">peername.com</a>, <a target="_blank" rel="noopener" href="https://dotbit.me/">dotbit.me</a><br>提示：你可以在<a target="_blank" rel="noopener" href="http://namecha.in/">namecha.in</a>中验证你的域名。比如:<code>zeorid.bit</code><br>提示：在域名中只能使用小写字母，数字和-。<br>提示：要让ZeroHello显示你的域名而不是比特币网址，你需要在<code>content.json</code>中增加<code>domain</code>键.比如：</p>
-</blockquote>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">&quot;address&quot;: &quot;1BLogC9LN4oPDcruNz3qo1ysa133E9AGg8&quot;,</span><br><span class="line"> &quot;background-color&quot;: &quot;white&quot;,</span><br><span class="line"> &quot;cloneable&quot;: true,</span><br><span class="line"> &quot;description&quot;: &quot;Blogging platform Demo&quot;,</span><br><span class="line"> &quot;domain&quot;: &quot;Blog.ZeroNetwork.bit&quot;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="我是否可以通过生成的网站地址-私钥来接收比特币支付？"><a href="#我是否可以通过生成的网站地址-私钥来接收比特币支付？" class="headerlink" title="我是否可以通过生成的网站地址/私钥来接收比特币支付？"></a>我是否可以通过生成的网站地址/私钥来接收比特币支付？</h2><p>是的，这个地址是一个标准的比特币地址。私钥也是WIF格式的，因此你可以把它导到大部分的客户端里。</p>
-<blockquote>
-<p>提示：建议不要在你的网站地址中放太多钱，因为每次更新你的网站的时候就需要使用你的私钥。</p>
-</blockquote>
-<h2 id="当有人托管恶意内容时会发生什么？"><a href="#当有人托管恶意内容时会发生什么？" class="headerlink" title="当有人托管恶意内容时会发生什么？"></a>当有人托管恶意内容时会发生什么？</h2><p>Zeronet的网站是沙箱化的，他们的拥有权限和你在互联网上访问的其他站点一样。你可以完全控制托管理的内容。如果你发现可疑内容，你随时都可以停止托管。</p>
-<h2 id="能否通过远程的方式来安装ZeroNet？"><a href="#能否通过远程的方式来安装ZeroNet？" class="headerlink" title="能否通过远程的方式来安装ZeroNet？"></a>能否通过远程的方式来安装ZeroNet？</h2><h2 id="有什么方式可以跟踪ZeroNet使用的带宽？"><a href="#有什么方式可以跟踪ZeroNet使用的带宽？" class="headerlink" title="有什么方式可以跟踪ZeroNet使用的带宽？"></a>有什么方式可以跟踪ZeroNet使用的带宽？</h2><p>ZeroNet的侧边栏会展示发送和接收的字节（将<code>0</code>按钮拖到左边打开侧边栏）。</p>
-<blockquote>
-<p>提示：所有连接的统计<code>http://127.0.0.1:43110/Stats</code></p>
-</blockquote>
-<h2 id="当两个人用相同的key来更新网站时会发生什么？"><a href="#当两个人用相同的key来更新网站时会发生什么？" class="headerlink" title="当两个人用相同的key来更新网站时会发生什么？"></a>当两个人用相同的key来更新网站时会发生什么？</h2><p>每个content.json是有时间戳的，所有的客户端只接收最新的那个。</p>
-<h2 id="ZeroNet是否使用了比特币的区块链？"><a href="#ZeroNet是否使用了比特币的区块链？" class="headerlink" title="ZeroNet是否使用了比特币的区块链？"></a>ZeroNet是否使用了比特币的区块链？</h2><p>没有，Zeronet只是使用了比特币的加密算法用于网站地址和内容签名和验证。用户的标识是基于比特币的<a target="_blank" rel="noopener" href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">BIP32</a>格式</p>
-<p>Namecoin的区块链用于域名注册。</p>
-<h2 id="ZeroNet是否只支持HTML和CSS的网站？"><a href="#ZeroNet是否只支持HTML和CSS的网站？" class="headerlink" title="ZeroNet是否只支持HTML和CSS的网站？"></a>ZeroNet是否只支持HTML和CSS的网站？</h2><p>ZeroNet is built for dynamic, real-time updated websites, but you can serve any kind of files using it. (VCS repositories, your own thin-client, database, etc.)</p>
-<p>ZeroNet用于构建动态和实时更新的站，或者任何的文件类型（VCS仓库，瘦客户端，数据库等等）</p>
-<h2 id="如何创建一个ZeroNet网站？"><a href="#如何创建一个ZeroNet网站？" class="headerlink" title="如何创建一个ZeroNet网站？"></a>如何创建一个ZeroNet网站？</h2><p>按<a target="_blank" rel="noopener" href="http://zeronet.readthedocs.io/en/latest/using_zeronet/create_new_site/">操作说明</a></p>
-<h2 id="运行的原理是什么？"><a href="#运行的原理是什么？" class="headerlink" title="运行的原理是什么？"></a>运行的原理是什么？</h2><ul>
-<li>当你打开一个新的站点，需要访问者在BitTorrent网络的IP地址。</li>
-<li>首先下载content.json文件，这个文件包含了所有的文件名，散列和网站所有者的加密签名。</li>
-<li>通过网站地址和文件中的网站所有者的签名来验证下载的content.json文件。</li>
-<li>下载其他文件（html，css，js……）并通过content.json中的SHA512散列值进行验证。</li>
-<li>你会托管所有你访问过的网站。</li>
-<li>如果网站的所有者（拥有网站私钥的人）修改了网站，然后他签名一个新的content.json并发布到各个节点。当节点验证了content.json的真实性（通过签名），下载修改的文件并发布给其他节点。<br>更多信息：<a target="_blank" rel="noopener" href="http://zeronet.readthedocs.io/en/latest/using_zeronet/sample_sites/">ZeroNet简单网站介绍</a>，<a target="_blank" rel="noopener" href="https://docs.google.com/presentation/d/1_2qK1IuOKJ51pgBvllZ9Yu7Au2l551t3XBgyTSvilew/pub">ZeroNet工作原理幻灯片</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/28/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><span class="page-number current">29</span><a class="page-number" href="/page/30/">30</a><a class="extend next" rel="next" href="/page/30/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/28/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><span class="page-number current">29</span><a class="page-number" href="/page/30/">30</a><a class="page-number" href="/page/31/">31</a><a class="extend next" rel="next" href="/page/30/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1905,14 +2173,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">294</span>
+          <span class="site-state-item-count">301</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">119</span>
+        <span class="site-state-item-count">120</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -1976,12 +2244,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">793k</span>
+    <span title="站点总字数">811k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:01</span>
+    <span title="站点阅读时长">12:17</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
