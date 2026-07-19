@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="说明使用 whisper 的时候，发现有的时候会出现一些无法识别的部分，或者出现一些特殊的结尾，或者出现繁体，或者没有标点符号等问题。这些都需要额外的处理，导致识别的准确度不高，同时识别数据也不是很快，因此一直也在找有没有更好用的模型。 最近发现了 FunASR。FunASR 的官网是这么介绍的，FunASR 是离线文件转写软件包，提供了一款功能强大的语音离线文件转写服务。拥有完整的语音识别链路，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="部署和使用 FunASR">
+<meta property="og:url" content="http://l4qiang.me/2026/02/19/course100/054/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="说明使用 whisper 的时候，发现有的时候会出现一些无法识别的部分，或者出现一些特殊的结尾，或者出现繁体，或者没有标点符号等问题。这些都需要额外的处理，导致识别的准确度不高，同时识别数据也不是很快，因此一直也在找有没有更好用的模型。 最近发现了 FunASR。FunASR 的官网是这么介绍的，FunASR 是离线文件转写软件包，提供了一款功能强大的语音离线文件转写服务。拥有完整的语音识别链路，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YjM0Y2QxYzlhMTVkNDhmNzBjNjhhMDcxZjQzYTMwZGFfd2kzOWdUNzByRms5V1R1OVBUQTRLNlB1azFkSUFRZmFfVG9rZW46Skh0amJzNjYzb1BVVFh4M0lqQ2NtdDI1bm9mXzE3NzE0NjkwMzQ6MTc3MTQ3MjYzNF9WNA">
+<meta property="article:published_time" content="2026-02-19T02:42:42.000Z">
+<meta property="article:modified_time" content="2026-02-19T02:43:58.344Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="教程100">
+<meta property="article:tag" content="写作">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YjM0Y2QxYzlhMTVkNDhmNzBjNjhhMDcxZjQzYTMwZGFfd2kzOWdUNzByRms5V1R1OVBUQTRLNlB1azFkSUFRZmFfVG9rZW46Skh0amJzNjYzb1BVVFh4M0lqQ2NtdDI1bm9mXzE3NzE0NjkwMzQ6MTc3MTQ3MjYzNF9WNA">
+
+<link rel="canonical" href="http://l4qiang.me/2026/02/19/course100/054/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>部署和使用 FunASR | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2613e7f510eebd12cf4d0d067e4ce195";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2026/02/19/course100/054/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          部署和使用 FunASR
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-02-19 10:42:42 / 修改时间：10:43:58" itemprop="dateCreated datePublished" datetime="2026-02-19T10:42:42+08:00">2026-02-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>19k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>17 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>使用 whisper 的时候，发现有的时候会出现一些无法识别的部分，或者出现一些特殊的结尾，或者出现繁体，或者没有标点符号等问题。这些都需要额外的处理，导致识别的准确度不高，同时识别数据也不是很快，因此一直也在找有没有更好用的模型。</p>
+<p>最近发现了 FunASR。FunASR 的官网是这么介绍的，FunASR 是离线文件转写软件包，提供了一款功能强大的语音离线文件转写服务。拥有完整的语音识别链路，结合了语音端点检测、语音识别、标点等模型，可以将几十个小时的长音频与视频识别成带标点的文字，而且支持上百路请求同时进行转写。输出为带标点的文字，含有字级别时间戳，支持ITN与用户自定义热词等。服务端集成有ffmpeg，支持各种音视频格式输入。软件包提供有html、python、c++、java与c#等多种编程语言客户端，用户可以直接使用与进一步开发。</p>
+<p>我用来处理原来的音频文件，速度提升了不少，而且可以节省一些步骤，FunASR 提供的服务已经包含了对 mp3 文件的转换，文本也已经加了标点。</p>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>FunASR 提供了 Docker 环境可以直接部署（<a target="_blank" rel="noopener" href="https://github.com/modelscope/FunASR/blob/main/runtime/docs/SDK_advanced_guide_offline_zh.md%EF%BC%89%EF%BC%8C%E6%B3%A8%E6%84%8F%E4%BF%AE%E6%94%B9%E5%8D%B7%E7%9A%84%E5%9C%B0%E5%9D%80%E4%B8%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E9%99%85%E5%9C%B0%E5%9D%80%E3%80%82">https://github.com/modelscope/FunASR/blob/main/runtime/docs/SDK_advanced_guide_offline_zh.md），注意修改卷的地址为自己的实际地址。</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker pull \</span><br><span class="line">  registry.cn-hangzhou.aliyuncs.com/funasr_repo/funasr:funasr-runtime-sdk-cpu-0.4.7</span><br><span class="line">  </span><br><span class="line">mkdir -p /Users/airhead/funasr-runtime-resources/models</span><br><span class="line"></span><br><span class="line">docker run -p 10095:10095 -it --privileged=<span class="literal">true</span> \</span><br><span class="line">  -v /Users/airhead/funasr-runtime-resources/models:/workspace/models \</span><br><span class="line">  registry.cn-hangzhou.aliyuncs.com/funasr_repo/funasr:funasr-runtime-sdk-cpu-0.4.7</span><br></pre></td></tr></table></figure>
+
+<p>执行上面的 docker 命令会直接进入容器内部，接着执行下面，可以启动 FunASR 服务，如果第一次启动，可以去掉 <code>nohup</code> 、<code>&gt; log.txt 2&gt;&amp;1 &amp;</code>的部分，方便查看日志。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">cd</span> <span class="string">FunASR/runtime</span></span><br><span class="line"><span class="string">nohup</span> <span class="string">bash</span> <span class="string">run_server.sh</span> <span class="string">\</span></span><br><span class="line">  <span class="string">--download-model-dir</span> <span class="string">/workspace/models</span> <span class="string">\</span></span><br><span class="line">  <span class="string">--model-dir</span> <span class="string">damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-onnx</span>  <span class="string">\</span></span><br><span class="line">  <span class="string">--vad-dir</span> <span class="string">damo/speech_fsmn_vad_zh-cn-16k-common-onnx</span> <span class="string">\</span></span><br><span class="line">  <span class="string">--punc-dir</span> <span class="string">damo/punc_ct-transformer_cn-en-common-vocab471067-large-onnx</span> <span class="string">\</span></span><br><span class="line">  <span class="string">--lm-dir</span> <span class="string">damo/speech_ngram_lm_zh-cn-ai-wesp-fst</span> <span class="string">\</span></span><br><span class="line">  <span class="string">--itn-dir</span> <span class="string">thuduj12/fst_itn_zh</span> <span class="string">\</span></span><br><span class="line">  <span class="string">--certfile</span> <span class="number">0</span> <span class="string">\</span></span><br><span class="line">  <span class="string">--hotword</span> <span class="string">/workspace/models/hotwords.txt</span> <span class="string">&gt;</span> <span class="string">log.txt</span> <span class="number">2</span><span class="string">&gt;&amp;1</span> <span class="string">&amp;</span></span><br></pre></td></tr></table></figure>
+
+<p>执行上述指令后，启动离线文件转写服务，但关闭了 SSL。如果模型指定为ModelScope中model id，会自动从MoldeScope中下载如下模型： <a target="_blank" rel="noopener" href="https://www.modelscope.cn/models/damo/speech_fsmn_vad_zh-cn-16k-common-onnx/summary">FSMN-VAD模型</a>, <a target="_blank" rel="noopener" href="https://www.modelscope.cn/models/damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-onnx/summary">Paraformer-lagre模型</a>, <a target="_blank" rel="noopener" href="https://www.modelscope.cn/models/damo/punc_ct-transformer_cn-en-common-vocab471067-large-onnx/summary">CT-Transformer标点预测模型</a>, <a target="_blank" rel="noopener" href="https://www.modelscope.cn/models/thuduj12/fst_itn_zh/summary">基于FST的中文ITN</a>, <a target="_blank" rel="noopener" href="https://www.modelscope.cn/models/damo/speech_ngram_lm_zh-cn-ai-wesp-fst/summary">Ngram中文语言模型</a></p>
+<h2 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h2><table>
+<thead>
+<tr>
+<th>–download-model-dir</th>
+<th>模型下载地址，通过设置model ID从Modelscope下载模型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>–model-dir</td>
+<td>主ASR识别模型，必选modelscope model ID 或者 本地模型路径</td>
+</tr>
+<tr>
+<td>–vad-dir</td>
+<td>语音活动检测模型，可选modelscope model ID 或者 本地模型路径</td>
+</tr>
+<tr>
+<td>–punc-dir</td>
+<td>标点恢复模型，可选modelscope model ID 或者 本地模型路径</td>
+</tr>
+<tr>
+<td>–lm-dir</td>
+<td>语言模型，可选modelscope model ID 或者 本地模型路径</td>
+</tr>
+<tr>
+<td>–itn-dir</td>
+<td>逆文本归一化，可选modelscope model ID 或者 本地模型路径</td>
+</tr>
+<tr>
+<td>–port</td>
+<td>服务端监听的端口号，默认为 10095</td>
+</tr>
+<tr>
+<td>–decoder-thread-num</td>
+<td>服务端线程池个数(支持的最大并发路数)，脚本会根据服务器线程数自动配置decoder-thread-num、io-thread-num</td>
+</tr>
+<tr>
+<td>–io-thread-num</td>
+<td>服务端启动的IO线程数</td>
+</tr>
+<tr>
+<td>–model-thread-num</td>
+<td>每路识别的内部线程数(控制ONNX模型的并行)，默认为 1，其中建议 decoder-thread-num*model-thread-num 等于总线程数</td>
+</tr>
+<tr>
+<td>–certfile</td>
+<td>sl的证书文件，默认为：../../../ssl_key/server.crt，如果需要关闭ssl，参数设置为0</td>
+</tr>
+<tr>
+<td>–keyfile</td>
+<td>ssl的密钥文件，默认为：../../../ssl_key/server.key</td>
+</tr>
+<tr>
+<td>–hotword</td>
+<td>热词文件路径，每行一个热词，格式：热词 权重(例如:阿里巴巴 20)，如果客户端提供热词，则与客户端提供的热词合并一起使用，服务端热词全局生效，客户端热词只针对对应客户端生效。</td>
+</tr>
+</tbody></table>
+<p>刚接触 FunASR 可能对启动的几个模型感到困惑，因此这里做些补充。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YjM0Y2QxYzlhMTVkNDhmNzBjNjhhMDcxZjQzYTMwZGFfd2kzOWdUNzByRms5V1R1OVBUQTRLNlB1azFkSUFRZmFfVG9rZW46Skh0amJzNjYzb1BVVFh4M0lqQ2NtdDI1bm9mXzE3NzE0NjkwMzQ6MTc3MTQ3MjYzNF9WNA" alt="img"></p>
+<h3 id="语音活动检测（–vad-dir）"><a href="#语音活动检测（–vad-dir）" class="headerlink" title="语音活动检测（–vad-dir）"></a>语音活动检测（–vad-dir）</h3><p>分离音频中的语音和非语音。</p>
+<h3 id="主ASR模型（–model-dir-）"><a href="#主ASR模型（–model-dir-）" class="headerlink" title="主ASR模型（–model-dir ）"></a>主ASR模型（–model-dir ）</h3><p>语音识别的主体模型，将音频转换为原始文本。</p>
+<h3 id="标点恢复（–punc-dir）"><a href="#标点恢复（–punc-dir）" class="headerlink" title="标点恢复（–punc-dir）"></a>标点恢复（–punc-dir）</h3><p>为ASR输出的无标点文本添加标点（逗号、句号等）</p>
+<h3 id="语言模型（–lm-dir）"><a href="#语言模型（–lm-dir）" class="headerlink" title="语言模型（–lm-dir）"></a>语言模型（–lm-dir）</h3><p>使用语言模型进行二次解码，提升识别准确率。使用场景：对识别结果要求较高的场景。</p>
+<h3 id="逆文本归一化（–itn-dir）"><a href="#逆文本归一化（–itn-dir）" class="headerlink" title="逆文本归一化（–itn-dir）"></a>逆文本归一化（–itn-dir）</h3><p>将数值统一使用中文表达。比如，将”123”转为”一百二十三”，”10:30”转为”十点三十分”</p>
+<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>可以在魔搭上选合适的模型。</p>
+<p><a target="_blank" rel="noopener" href="https://www.modelscope.cn/models?page=1&amp;tasks=auto-speech-recognition">https://www.modelscope.cn/models?page=1&amp;tasks=auto-speech-recognition</a></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>使用样例在 <a target="_blank" rel="noopener" href="https://github.com/modelscope/FunASR">https://github.com/modelscope/FunASR</a> 仓库下的 runtime 目录。</p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.goldsyear.solon.asr.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * FunASR 配置类</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FunAsrConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * WebSocket 服务地址，例如：ws://localhost:10095/funasr/ws/offline</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> String serverUrl;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 模式：offline（离线模式）</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> String mode = <span class="string">&quot;offline&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 音频文件格式：pcm/mp3/mp4 等</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> String wavFormat = <span class="string">&quot;pcm&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 是否启用文本规范化</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> Boolean itn = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 热词配置（JSON 字符串格式），例如：&#123;&quot;关键词&quot;:20&#125;</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> String hotwords;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 超时时间（秒）</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> Integer timeout = <span class="number">300</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * PCM 采样率</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> Integer sampleRate = <span class="number">16000</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br><span class="line">456</span><br><span class="line">457</span><br><span class="line">458</span><br><span class="line">459</span><br><span class="line">460</span><br><span class="line">461</span><br><span class="line">462</span><br><span class="line">463</span><br><span class="line">464</span><br><span class="line">465</span><br><span class="line">466</span><br><span class="line">467</span><br><span class="line">468</span><br><span class="line">469</span><br><span class="line">470</span><br><span class="line">471</span><br><span class="line">472</span><br><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br><span class="line">487</span><br><span class="line">488</span><br><span class="line">489</span><br><span class="line">490</span><br><span class="line">491</span><br><span class="line">492</span><br><span class="line">493</span><br><span class="line">494</span><br><span class="line">495</span><br><span class="line">496</span><br><span class="line">497</span><br><span class="line">498</span><br><span class="line">499</span><br><span class="line">500</span><br><span class="line">501</span><br><span class="line">502</span><br><span class="line">503</span><br><span class="line">504</span><br><span class="line">505</span><br><span class="line">506</span><br><span class="line">507</span><br><span class="line">508</span><br><span class="line">509</span><br><span class="line">510</span><br><span class="line">511</span><br><span class="line">512</span><br><span class="line">513</span><br><span class="line">514</span><br><span class="line">515</span><br><span class="line">516</span><br><span class="line">517</span><br><span class="line">518</span><br><span class="line">519</span><br><span class="line">520</span><br><span class="line">521</span><br><span class="line">522</span><br><span class="line">523</span><br><span class="line">524</span><br><span class="line">525</span><br><span class="line">526</span><br><span class="line">527</span><br><span class="line">528</span><br><span class="line">529</span><br><span class="line">530</span><br><span class="line">531</span><br><span class="line">532</span><br><span class="line">533</span><br><span class="line">534</span><br><span class="line">535</span><br><span class="line">536</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.goldsyear.solon.asr.client;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.goldsyear.solon.asr.config.FunAsrConfig;</span><br><span class="line"><span class="keyword">import</span> com.goldsyear.solon.asr.exception.FunAsrException;</span><br><span class="line"><span class="keyword">import</span> com.goldsyear.solon.asr.model.FunAsrResult;</span><br><span class="line"><span class="keyword">import</span> com.goldsyear.solon.common.core.model.KeyValue;</span><br><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.atomic.AtomicReference;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Getter;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> okhttp3.*;</span><br><span class="line"><span class="keyword">import</span> okio.ByteString;</span><br><span class="line"><span class="keyword">import</span> org.jspecify.annotations.NonNull;</span><br><span class="line"><span class="keyword">import</span> org.noear.snack4.ONode;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * FunASR WebSocket 客户端</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FunAsrWebSocketClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * -- GETTER --</span></span><br><span class="line"><span class="comment">   *  获取配置</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> FunASR 配置</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="meta">@Getter</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> FunAsrConfig config;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> OkHttpClient httpClient;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 创建 FunASR WebSocket 客户端</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> config FunASR 配置</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@throws</span> IllegalArgumentException 如果配置参数无效</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">FunAsrWebSocketClient</span><span class="params">(FunAsrConfig config)</span> </span>&#123;</span><br><span class="line">    validateConfig(config);</span><br><span class="line">    <span class="keyword">this</span>.config = config;</span><br><span class="line">    <span class="keyword">this</span>.httpClient =</span><br><span class="line">        <span class="keyword">new</span> OkHttpClient.Builder()</span><br><span class="line">            .readTimeout(config.getTimeout(), TimeUnit.SECONDS)</span><br><span class="line">            .writeTimeout(config.getTimeout(), TimeUnit.SECONDS)</span><br><span class="line">            .connectTimeout(config.getTimeout(), TimeUnit.SECONDS)</span><br><span class="line">            .build();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 识别音频文件</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> audioFile 音频文件</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> wavName 音频文件名（可选）</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> 识别结果</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> FunAsrResult <span class="title">recognize</span><span class="params">(File audioFile, String wavName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> recognize(audioFile, wavName, <span class="keyword">null</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 识别音频文件</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> audioFile 音频文件</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> wavName 音频文件名（可选）</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> hotWords 热词配置（可选，会覆盖配置中的热词）</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> 识别结果</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> FunAsrResult <span class="title">recognize</span><span class="params">(File audioFile, String wavName, String hotWords)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (audioFile == <span class="keyword">null</span> || !audioFile.exists()) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Audio file not found: &quot;</span> + audioFile);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 读取音频文件</span></span><br><span class="line">    <span class="keyword">byte</span>[] audioData;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      audioData = Files.readAllBytes(audioFile.toPath());</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> FunAsrException(<span class="string">&quot;Failed to read audio file: &quot;</span> + audioFile, e);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> recognize(audioData, wavName != <span class="keyword">null</span> ? wavName : audioFile.getName(), hotWords);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 识别音频数据</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> audioData 音频数据（字节数组）</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> wavName 音频文件名</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> 识别结果</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> FunAsrResult <span class="title">recognize</span><span class="params">(<span class="keyword">byte</span>[] audioData, String wavName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> recognize(audioData, wavName, <span class="keyword">null</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 识别音频数据</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> audioData 音频数据（字节数组）</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> wavName 音频文件名</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> hotwords 热词配置（可选，会覆盖配置中的热词）</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> 识别结果</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> FunAsrResult <span class="title">recognize</span><span class="params">(<span class="keyword">byte</span>[] audioData, String wavName, String hotwords)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (audioData == <span class="keyword">null</span> || audioData.length == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Audio data is empty&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构建 WebSocket 请求</span></span><br><span class="line">    Request request = <span class="keyword">new</span> Request.Builder().url(config.getServerUrl()).build();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建用于存储结果的容器</span></span><br><span class="line">    AtomicReference&lt;FunAsrResult&gt; resultRef = <span class="keyword">new</span> AtomicReference&lt;&gt;();</span><br><span class="line">    AtomicReference&lt;Throwable&gt; errorRef = <span class="keyword">new</span> AtomicReference&lt;&gt;();</span><br><span class="line">    CountDownLatch latch = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建 WebSocket 监听器</span></span><br><span class="line">    WebSocketListener listener =</span><br><span class="line">        <span class="keyword">new</span> WebSocketListener() &#123;</span><br><span class="line">          <span class="meta">@Override</span></span><br><span class="line">          <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClosing</span><span class="params">(WebSocket webSocket, <span class="keyword">int</span> code, String reason)</span> </span>&#123;</span><br><span class="line">            log.info(<span class="string">&quot;WebSocket closing: &#123;&#125; - &#123;&#125;&quot;</span>, code, reason);</span><br><span class="line">            webSocket.close(code, reason);</span><br><span class="line">            <span class="comment">// 如果已经有结果，立即释放 latch</span></span><br><span class="line">            <span class="comment">// 对于离线模式，结果可能已经在 onMessage 中处理了</span></span><br><span class="line">            <span class="keyword">if</span> (resultRef.get() != <span class="keyword">null</span>) &#123;</span><br><span class="line">              latch.countDown();</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          <span class="meta">@Override</span></span><br><span class="line">          <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailure</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">              <span class="meta">@NonNull</span> WebSocket webSocket, <span class="meta">@NonNull</span> Throwable t, Response response)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// 如果已经有结果且是因为关闭连接导致的错误，忽略这个异常</span></span><br><span class="line">            <span class="keyword">if</span> (resultRef.get() != <span class="keyword">null</span> &amp;&amp; t <span class="keyword">instanceof</span> java.net.SocketException) &#123;</span><br><span class="line">              log.debug(<span class="string">&quot;WebSocket closed after result received: &#123;&#125;&quot;</span>, t.getMessage());</span><br><span class="line">              <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            log.error(<span class="string">&quot;WebSocket error&quot;</span>, t);</span><br><span class="line">            errorRef.set(t);</span><br><span class="line">            latch.countDown();</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          <span class="meta">@Override</span></span><br><span class="line">          <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMessage</span><span class="params">(<span class="meta">@NonNull</span> WebSocket webSocket, <span class="meta">@NonNull</span> String text)</span> </span>&#123;</span><br><span class="line">            log.info(<span class="string">&quot;Received message: &#123;&#125;&quot;</span>, text);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">              <span class="comment">// 尝试解析消息</span></span><br><span class="line">              FunAsrResult result = parseResult(text);</span><br><span class="line">              <span class="comment">// 立即缓存结果</span></span><br><span class="line">              resultRef.set(result);</span><br><span class="line"></span><br><span class="line">              <span class="comment">// 离线模式：收到任何有效结果就立即返回</span></span><br><span class="line">              <span class="comment">// 在线模式：等待 isFinal=true</span></span><br><span class="line">              <span class="keyword">if</span> (<span class="string">&quot;offline&quot;</span>.equals(config.getMode())) &#123;</span><br><span class="line">                log.info(<span class="string">&quot;Offline mode: received result, closing connection&quot;</span>);</span><br><span class="line">                latch.countDown();</span><br><span class="line">                <span class="comment">// 主动关闭连接</span></span><br><span class="line">                webSocket.close(<span class="number">1000</span>, <span class="string">&quot;Result received&quot;</span>);</span><br><span class="line">              &#125; <span class="keyword">else</span> <span class="keyword">if</span> (Boolean.TRUE.equals(result.getIsFinal())) &#123;</span><br><span class="line">                log.info(<span class="string">&quot;Online mode: received final result&quot;</span>);</span><br><span class="line">                latch.countDown();</span><br><span class="line">              &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">              log.error(<span class="string">&quot;Failed to parse result: &#123;&#125;&quot;</span>, text, e);</span><br><span class="line">              errorRef.set(e);</span><br><span class="line">              latch.countDown();</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          <span class="meta">@Override</span></span><br><span class="line">          <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onOpen</span><span class="params">(<span class="meta">@NonNull</span> WebSocket webSocket, <span class="meta">@NonNull</span> Response response)</span> </span>&#123;</span><br><span class="line">            log.debug(<span class="string">&quot;WebSocket connected&quot;</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 发送初始化配置</span></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">              String initJson = buildInitConfig(wavName, hotwords);</span><br><span class="line">              log.debug(<span class="string">&quot;Sending init config: &#123;&#125;&quot;</span>, initJson);</span><br><span class="line">              webSocket.send(initJson);</span><br><span class="line"></span><br><span class="line">              <span class="comment">// 分块发送音频数据，每块 16KB</span></span><br><span class="line">              <span class="keyword">int</span> chunkSize = <span class="number">16</span> * <span class="number">1024</span>; <span class="comment">// 16KB</span></span><br><span class="line">              <span class="keyword">int</span> offset = <span class="number">0</span>;</span><br><span class="line">              <span class="keyword">while</span> (offset &lt; audioData.length) &#123;</span><br><span class="line">                <span class="keyword">int</span> length = Math.min(chunkSize, audioData.length - offset);</span><br><span class="line">                <span class="keyword">byte</span>[] chunk = <span class="keyword">new</span> <span class="keyword">byte</span>[length];</span><br><span class="line">                System.arraycopy(audioData, offset, chunk, <span class="number">0</span>, length);</span><br><span class="line">                webSocket.send(ByteString.of(chunk));</span><br><span class="line">                log.debug(</span><br><span class="line">                    <span class="string">&quot;Sent audio chunk: &#123;&#125; bytes (offset: &#123;&#125;/&#123;&#125;)&quot;</span>, length, offset, audioData.length);</span><br><span class="line">                offset += length;</span><br><span class="line">                <span class="comment">// 添加小延迟，避免发送过快</span></span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                  Thread.sleep(<span class="number">10</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                  Thread.currentThread().interrupt();</span><br><span class="line">                  <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">              &#125;</span><br><span class="line">              log.debug(<span class="string">&quot;Sent all audio data: &#123;&#125; bytes total&quot;</span>, audioData.length);</span><br><span class="line"></span><br><span class="line">              <span class="comment">// 发送结束标志</span></span><br><span class="line">              String endJson = buildEndFlag();</span><br><span class="line">              log.debug(<span class="string">&quot;Sending end flag: &#123;&#125;&quot;</span>, endJson);</span><br><span class="line">              webSocket.send(endJson);</span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">              log.error(<span class="string">&quot;Error during send&quot;</span>, e);</span><br><span class="line">              errorRef.set(e);</span><br><span class="line">              latch.countDown();</span><br><span class="line">              webSocket.close(<span class="number">1000</span>, <span class="string">&quot;Error during send&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 建立 WebSocket 连接</span></span><br><span class="line">    WebSocket webSocket = httpClient.newWebSocket(request, listener);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 等待结果或超时</span></span><br><span class="line">      <span class="keyword">boolean</span> completed = latch.await(config.getTimeout(), TimeUnit.SECONDS);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (!completed) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> FunAsrException(</span><br><span class="line">            <span class="string">&quot;FunASR recognition timeout after &quot;</span> + config.getTimeout() + <span class="string">&quot; seconds&quot;</span>);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 检查是否有错误</span></span><br><span class="line">      Throwable error = errorRef.get();</span><br><span class="line">      <span class="keyword">if</span> (error != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> FunAsrException(<span class="string">&quot;FunASR recognition failed&quot;</span>, error);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 获取结果</span></span><br><span class="line">      FunAsrResult result = resultRef.get();</span><br><span class="line">      <span class="keyword">if</span> (result == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> FunAsrException(<span class="string">&quot;No result received from FunASR&quot;</span>);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> result;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">      Thread.currentThread().interrupt();</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> FunAsrException(<span class="string">&quot;FunASR recognition interrupted&quot;</span>, e);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      webSocket.cancel();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 异步识别音频文件</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> audioFile 音频文件</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> wavName 音频文件名（可选）</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> Future 识别结果</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CompletableFuture&lt;FunAsrResult&gt; <span class="title">recognizeAsync</span><span class="params">(File audioFile, String wavName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> recognizeAsync(audioFile, wavName, <span class="keyword">null</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 异步识别音频文件</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> audioFile 音频文件</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> wavName 音频文件名（可选）</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> hotWords 热词配置（可选）</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> Future 识别结果</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CompletableFuture&lt;FunAsrResult&gt; <span class="title">recognizeAsync</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">      File audioFile, String wavName, String hotWords)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> CompletableFuture.supplyAsync(() -&gt; recognize(audioFile, wavName, hotWords));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 异步识别音频数据</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> audioData 音频数据（字节数组）</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> wavName 音频文件名</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> Future 识别结果</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CompletableFuture&lt;FunAsrResult&gt; <span class="title">recognizeAsync</span><span class="params">(<span class="keyword">byte</span>[] audioData, String wavName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> recognizeAsync(audioData, wavName, <span class="keyword">null</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 异步识别音频数据</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> audioData 音频数据（字节数组）</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> wavName 音频文件名</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> hotWords 热词配置（可选）</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> Future 识别结果</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CompletableFuture&lt;FunAsrResult&gt; <span class="title">recognizeAsync</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">      <span class="keyword">byte</span>[] audioData, String wavName, String hotWords)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> CompletableFuture.supplyAsync(() -&gt; recognize(audioData, wavName, hotWords));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 关闭客户端 */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shutdown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    httpClient.dispatcher().executorService().shutdown();</span><br><span class="line">    httpClient.connectionPool().evictAll();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 健康检查 尝试连接到 FunASR 服务器，检查服务是否可用</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> true 如果服务可用，false 否则</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">healthCheck</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      Request request = <span class="keyword">new</span> Request.Builder().url(config.getServerUrl()).build();</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 使用短超时进行连接测试</span></span><br><span class="line">      OkHttpClient testClient =</span><br><span class="line">          httpClient</span><br><span class="line">              .newBuilder()</span><br><span class="line">              .connectTimeout(<span class="number">5</span>, TimeUnit.SECONDS)</span><br><span class="line">              .readTimeout(<span class="number">5</span>, TimeUnit.SECONDS)</span><br><span class="line">              .build();</span><br><span class="line"></span><br><span class="line">      AtomicReference&lt;Boolean&gt; connected = <span class="keyword">new</span> AtomicReference&lt;&gt;(<span class="keyword">false</span>);</span><br><span class="line">      CountDownLatch latch = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">      WebSocketListener listener =</span><br><span class="line">          <span class="keyword">new</span> WebSocketListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailure</span><span class="params">(<span class="meta">@NonNull</span> WebSocket webSocket, <span class="meta">@NonNull</span> Throwable t, Response response)</span> </span>&#123;</span><br><span class="line">              connected.set(<span class="keyword">false</span>);</span><br><span class="line">              latch.countDown();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onOpen</span><span class="params">(WebSocket webSocket, <span class="meta">@NonNull</span> Response response)</span> </span>&#123;</span><br><span class="line">              connected.set(<span class="keyword">true</span>);</span><br><span class="line">              latch.countDown();</span><br><span class="line">              webSocket.close(<span class="number">1000</span>, <span class="string">&quot;Health check&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;;</span><br><span class="line"></span><br><span class="line">      WebSocket webSocket = testClient.newWebSocket(request, listener);</span><br><span class="line">      <span class="keyword">boolean</span> completed = latch.await(<span class="number">10</span>, TimeUnit.SECONDS);</span><br><span class="line">      webSocket.cancel();</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> completed &amp;&amp; connected.get();</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      log.error(<span class="string">&quot;FunASR health check failed: &#123;&#125;&quot;</span>, e.getMessage());</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 验证配置参数</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> config FunASR 配置</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@throws</span> IllegalArgumentException 如果配置参数无效</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">validateConfig</span><span class="params">(FunAsrConfig config)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (config == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;FunAsrConfig cannot be null&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (config.getServerUrl() == <span class="keyword">null</span> || config.getServerUrl().trim().isEmpty()) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Server URL cannot be empty&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!config.getServerUrl().startsWith(<span class="string">&quot;ws://&quot;</span>) &amp;&amp; !config.getServerUrl().startsWith(<span class="string">&quot;wss://&quot;</span>)) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Server URL must start with ws:// or wss://&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (config.getTimeout() != <span class="keyword">null</span> &amp;&amp; config.getTimeout() &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Timeout must be positive&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 构建初始化配置 JSON */</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> String <span class="title">buildInitConfig</span><span class="params">(String wavName, String hotWords)</span> </span>&#123;</span><br><span class="line">    KeyValue data = KeyValue.of();</span><br><span class="line">    data.set(<span class="string">&quot;mode&quot;</span>, config.getMode());</span><br><span class="line">    data.set(<span class="string">&quot;wav_name&quot;</span>, wavName);</span><br><span class="line">    data.set(<span class="string">&quot;wav_format&quot;</span>, config.getWavFormat());</span><br><span class="line">    data.set(<span class="string">&quot;is_speaking&quot;</span>, <span class="keyword">true</span>);</span><br><span class="line">    data.set(<span class="string">&quot;itn&quot;</span>, config.getItn());</span><br><span class="line"></span><br><span class="line">    String hw = hotWords != <span class="keyword">null</span> ? hotWords : config.getHotwords();</span><br><span class="line">    <span class="keyword">if</span> (hw != <span class="keyword">null</span> &amp;&amp; !hw.isEmpty()) &#123;</span><br><span class="line">      data.set(<span class="string">&quot;hotwords&quot;</span>, hw);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ONode.serialize(data);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 构建结束标志 JSON */</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> String <span class="title">buildEndFlag</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ONode.serialize(KeyValue.of(<span class="string">&quot;is_speaking&quot;</span>, <span class="keyword">false</span>));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 解析识别结果 */</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> FunAsrResult <span class="title">parseResult</span><span class="params">(String jsonText)</span> </span>&#123;</span><br><span class="line">    KeyValue root = ONode.deserialize(jsonText, KeyValue.class);</span><br><span class="line"></span><br><span class="line">    FunAsrResult result = <span class="keyword">new</span> FunAsrResult();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 检查错误响应</span></span><br><span class="line">    <span class="keyword">if</span> (root.notNull(<span class="string">&quot;error_code&quot;</span>)) &#123;</span><br><span class="line">      result.setErrorCode(root.getStr(<span class="string">&quot;error_code&quot;</span>));</span><br><span class="line">      result.setErrorMsg(root.getStr(<span class="string">&quot;error_msg&quot;</span>));</span><br><span class="line">      <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 解析成功响应</span></span><br><span class="line">    result.setMode(root.getStr(<span class="string">&quot;mode&quot;</span>));</span><br><span class="line">    result.setWavName(root.getStr(<span class="string">&quot;wav_name&quot;</span>));</span><br><span class="line">    result.setText(root.getStr(<span class="string">&quot;text&quot;</span>));</span><br><span class="line">    result.setIsFinal(root.getBoolean(<span class="string">&quot;is_final&quot;</span>));</span><br><span class="line">    result.setTimestamp(root.getStr(<span class="string">&quot;timestamp&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 解析时间戳句子列表</span></span><br><span class="line">    <span class="keyword">if</span> (root.notNull(<span class="string">&quot;stamp_sents&quot;</span>)) &#123;</span><br><span class="line">      result.setStampSents(parseStampSents((List&lt;?&gt;) root.get(<span class="string">&quot;stamp_sents&quot;</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 解析时间戳句子列表 */</span></span><br><span class="line">  <span class="keyword">private</span> List&lt;FunAsrResult.StampSent&gt; parseStampSents(List&lt;?&gt; stampSentsList) &#123;</span><br><span class="line">    <span class="keyword">if</span> (stampSentsList == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    List&lt;FunAsrResult.StampSent&gt; stampSents = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (Object item : stampSentsList) &#123;</span><br><span class="line">      <span class="keyword">if</span> (item <span class="keyword">instanceof</span> KeyValue) &#123;</span><br><span class="line">        KeyValue sentNode = (KeyValue) item;</span><br><span class="line">        FunAsrResult.StampSent stampSent = <span class="keyword">new</span> FunAsrResult.StampSent();</span><br><span class="line">        stampSent.setTextSeg(sentNode.getStr(<span class="string">&quot;text_seg&quot;</span>));</span><br><span class="line">        stampSent.setPunc(sentNode.getStr(<span class="string">&quot;punc&quot;</span>));</span><br><span class="line">        stampSent.setStart(sentNode.getLong(<span class="string">&quot;start&quot;</span>));</span><br><span class="line">        stampSent.setEnd(sentNode.getLong(<span class="string">&quot;end&quot;</span>));</span><br><span class="line">        stampSent.setTsList(parseTsList(sentNode.getAs(<span class="string">&quot;ts_list&quot;</span>)));</span><br><span class="line">        stampSents.add(stampSent);</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (item <span class="keyword">instanceof</span> java.util.Map) &#123;</span><br><span class="line">        <span class="comment">// 处理普通 Map</span></span><br><span class="line">        <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">        java.util.Map&lt;String, Object&gt; sentNode = (java.util.Map&lt;String, Object&gt;) item;</span><br><span class="line">        FunAsrResult.StampSent stampSent = <span class="keyword">new</span> FunAsrResult.StampSent();</span><br><span class="line">        stampSent.setTextSeg((String) sentNode.get(<span class="string">&quot;text_seg&quot;</span>));</span><br><span class="line">        stampSent.setPunc((String) sentNode.get(<span class="string">&quot;punc&quot;</span>));</span><br><span class="line">        stampSent.setStart(toLong(sentNode.get(<span class="string">&quot;start&quot;</span>)));</span><br><span class="line">        stampSent.setEnd(toLong(sentNode.get(<span class="string">&quot;end&quot;</span>)));</span><br><span class="line">        stampSent.setTsList(parseTsList((List&lt;?&gt;) sentNode.get(<span class="string">&quot;ts_list&quot;</span>)));</span><br><span class="line">        stampSents.add(stampSent);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stampSents;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 解析时间戳列表 */</span></span><br><span class="line">  <span class="keyword">private</span> List&lt;List&lt;Integer&gt;&gt; parseTsList(List&lt;?&gt; tsListRaw) &#123;</span><br><span class="line">    <span class="keyword">if</span> (tsListRaw == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    List&lt;List&lt;Integer&gt;&gt; tsList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (Object item : tsListRaw) &#123;</span><br><span class="line">      <span class="keyword">if</span> (item <span class="keyword">instanceof</span> List&lt;?&gt; tsRaw) &#123;</span><br><span class="line">        List&lt;Integer&gt; ts = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (Object num : tsRaw) &#123;</span><br><span class="line">          ts.add(toInteger(num));</span><br><span class="line">        &#125;</span><br><span class="line">        tsList.add(ts);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> tsList;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 安全转换为 Long */</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> Long <span class="title">toLong</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (value) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="keyword">null</span> -&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">case</span> Long l -&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> l;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">case</span> Integer i -&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> i.longValue();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">case</span> Number number -&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> number.longValue();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">case</span> String command -&gt; &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> Long.parseLong(command);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NumberFormatException e) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">default</span> -&gt; &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 安全转换为 Integer */</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> Integer <span class="title">toInteger</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (value) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="keyword">null</span> -&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">case</span> Integer i -&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> i;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">case</span> Long l -&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> l.intValue();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">case</span> Number number -&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> number.intValue();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">case</span> String command -&gt; &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> Integer.parseInt(command);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NumberFormatException e) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">default</span> -&gt; &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testRecognizeFile</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 创建配置</span></span><br><span class="line">  FunAsrConfig config = <span class="keyword">new</span> FunAsrConfig();</span><br><span class="line">  config.setServerUrl(<span class="string">&quot;ws://localhost:10095/funasr/ws/offline&quot;</span>);</span><br><span class="line">  config.setWavFormat(<span class="string">&quot;mp3&quot;</span>);</span><br><span class="line">  config.setMode(<span class="string">&quot;offline&quot;</span>);</span><br><span class="line">  config.setItn(<span class="keyword">true</span>);</span><br><span class="line">  config.setHotwords(<span class="string">&quot;&#123;&#125;&quot;</span>);</span><br><span class="line">  config.setTimeout(<span class="number">300</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 创建客户端</span></span><br><span class="line">  FunAsrWebSocketClient client = FunAsrClientFactory.create(config);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 识别音频文件（请替换为实际的音频文件路径）</span></span><br><span class="line">    File audioFile = <span class="keyword">new</span> File(<span class="string">&quot;1d829d6c-558b-4865-98cc-a3bcecffc485.mp3&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (!audioFile.exists()) &#123;</span><br><span class="line">      log.warn(<span class="string">&quot;Audio file not found: &#123;&#125;&quot;</span>, audioFile.getAbsolutePath());</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    FunAsrResult result = client.recognize(audioFile, <span class="string">&quot;test_audio&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (result.isSuccess()) &#123;</span><br><span class="line">      log.info(<span class="string">&quot;识别成功:&quot;</span>);</span><br><span class="line">      log.info(<span class="string">&quot;文本: &#123;&#125;&quot;</span>, result.getText());</span><br><span class="line">      log.info(<span class="string">&quot;模式: &#123;&#125;&quot;</span>, result.getMode());</span><br><span class="line">      log.info(<span class="string">&quot;时间戳: &#123;&#125;&quot;</span>, result.getTimestamp());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      log.error(<span class="string">&quot;离线识别失败: &#123;&#125; - &#123;&#125;&quot;</span>, result.getErrorCode(), result.getErrorMsg());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    log.error(<span class="string">&quot;识别过程出错&quot;</span>, e);</span><br><span class="line">  &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    client.shutdown();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%95%99%E7%A8%8B100/" rel="tag"><i class="fa fa-tag"></i> 教程100</a>
+              <a href="/tags/%E5%86%99%E4%BD%9C/" rel="tag"><i class="fa fa-tag"></i> 写作</a>
+              <a href="/tags/AI/" rel="tag"><i class="fa fa-tag"></i> AI</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/12/23/course100/053/" rel="prev" title="用 AI 写的一些小项目">
+      <i class="fa fa-chevron-left"></i> 用 AI 写的一些小项目
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2026/04/04/course100/055/" rel="next" title="微前端">
+      微前端 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2"><span class="nav-number">2.</span> <span class="nav-text">部署</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E9%9F%B3%E6%B4%BB%E5%8A%A8%E6%A3%80%E6%B5%8B%EF%BC%88%E2%80%93vad-dir%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">语音活动检测（–vad-dir）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BBASR%E6%A8%A1%E5%9E%8B%EF%BC%88%E2%80%93model-dir-%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">主ASR模型（–model-dir ）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E7%82%B9%E6%81%A2%E5%A4%8D%EF%BC%88%E2%80%93punc-dir%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">标点恢复（–punc-dir）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88%E2%80%93lm-dir%EF%BC%89"><span class="nav-number">3.4.</span> <span class="nav-text">语言模型（–lm-dir）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%86%E6%96%87%E6%9C%AC%E5%BD%92%E4%B8%80%E5%8C%96%EF%BC%88%E2%80%93itn-dir%EF%BC%89"><span class="nav-number">3.5.</span> <span class="nav-text">逆文本归一化（–itn-dir）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">5.1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">5.2.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">5.3.</span> <span class="nav-text">测试</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">307</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">852k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">12:55</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : 'e19a0e7bcd19e3cfde4f33af0087637b',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

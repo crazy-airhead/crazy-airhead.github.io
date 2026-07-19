@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Aifei-Go：为 AI Coding 而生的 Go 服务端框架 Aifei-Go 是 Aifei（Java 版）的 Go 语言移植版。它继承了 Aifei 的核心设计理念 —— Just Service 扁平架构、HIO 自主 IO 模型、Enjoy 自研模板引擎、Db + Row 数据库模式，并在 Go 的语言特性与生态上重新落地：用接口与 Handler 包装链替代动态代理，用 net&#x2F;h">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Aifei-Go：为 AI Coding 而生的 Go 服务端框架">
+<meta property="og:url" content="http://l4qiang.me/2026/07/19/course100/059/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="Aifei-Go：为 AI Coding 而生的 Go 服务端框架 Aifei-Go 是 Aifei（Java 版）的 Go 语言移植版。它继承了 Aifei 的核心设计理念 —— Just Service 扁平架构、HIO 自主 IO 模型、Enjoy 自研模板引擎、Db + Row 数据库模式，并在 Go 的语言特性与生态上重新落地：用接口与 Handler 包装链替代动态代理，用 net&#x2F;h">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-07-19T12:09:44.000Z">
+<meta property="article:modified_time" content="2026-07-19T12:53:10.518Z">
+<meta property="article:author" content="L4qiang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://l4qiang.me/2026/07/19/course100/059/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Aifei-Go：为 AI Coding 而生的 Go 服务端框架 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2613e7f510eebd12cf4d0d067e4ce195";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2026/07/19/course100/059/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Aifei-Go：为 AI Coding 而生的 Go 服务端框架
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-07-19 20:09:44 / 修改时间：20:53:10" itemprop="dateCreated datePublished" datetime="2026-07-19T20:09:44+08:00">2026-07-19</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Aifei-Go：为-AI-Coding-而生的-Go-服务端框架"><a href="#Aifei-Go：为-AI-Coding-而生的-Go-服务端框架" class="headerlink" title="Aifei-Go：为 AI Coding 而生的 Go 服务端框架"></a>Aifei-Go：为 AI Coding 而生的 Go 服务端框架</h1><blockquote>
+<p>Aifei-Go 是 <a target="_blank" rel="noopener" href="https://github.com/jfinal/aifei">Aifei</a>（Java 版）的 Go 语言移植版。它继承了 Aifei 的核心设计理念 —— <strong>Just Service</strong> 扁平架构、<strong>HIO</strong> 自主 IO 模型、<strong>Enjoy</strong> 自研模板引擎、<strong>Db + Row</strong> 数据库模式，并在 Go 的语言特性与生态上重新落地：用接口与 Handler 包装链替代动态代理，用 <code>net/http</code> 替代 Undertow，用 Radix 树路由替代注解扫描，同时又参考了 Solon，引入 Dami 提供进程内事件总线，引入 Nami 作为 HTTP RPC <strong>客户端</strong>框架，用于支撑微服务。</p>
+<p><strong>注意事项：Aifei-Go 由 GLM5.2 生成，不喜勿入</strong>。Aifei 是基准，AI 翻译。人做决策，AI 生成。</p>
+<p>Java 版文档：<a target="_blank" rel="noopener" href="https://aifei.cn/doc">https://aifei.cn/doc</a></p>
+</blockquote>
+<h2 id="1-什么是-Aifei-Go"><a href="#1-什么是-Aifei-Go" class="headerlink" title="1. 什么是 Aifei-Go"></a>1. 什么是 Aifei-Go</h2><p>Aifei 原本是”一款用于 AI Coding 的 Java 服务端框架”，其核心设计目标是 <strong>极小化 Token 消耗、极大化 Attention 浓度，让 AI 稳定生成高品质代码</strong>。要做到这一点，最有效的手段就是消除冗余分层与样板代码 —— 这也是 Aifei 开创 <strong>Just Service 范式</strong> 的根本动因。</p>
+<p>近十年间，前后端分离成为主流，页面路由、交互编排与渲染职责大量转移到前端（react-router、vue-router 已接管了过去由服务端 Controller 承担的职责）。路由既然在前端，服务端就不再需要 Controller 这一层。Just Service 范式之下，开发者无需编写 Controller、Render、Repository、Mapper 这类冗余代码，直接写业务即可。</p>
+<p>Aifei-Go 把这套理念原汁原味地带到了 Go 语言：</p>
+<ul>
+<li><strong>只写 Service，不写 Controller</strong> —— 方法名即路由，按命名约定自动映射为 RESTful 端点。</li>
+<li><strong>核心零外部依赖</strong> —— 核心库与独立框架（aifei / enjoy / db / json / log / nami / dami）仅用 Go 标准库；插件按需引入第三方库。</li>
+<li><strong>模块化、按需组合</strong> —— 每个模块可独立 <code>go get</code>，不拉入多余依赖。</li>
+<li><strong>AI 友好</strong> —— 代码量少、结构扁平、约定明确，AI 生成时上下文负担小、命中率高。</li>
+</ul>
+<h3 id="1-1-为什么从-Java-移植到-Go"><a href="#1-1-为什么从-Java-移植到-Go" class="headerlink" title="1.1 为什么从 Java 移植到 Go"></a>1.1 为什么从 Java 移植到 Go</h3><p>Aifei Java 版内核仅 3333 行（内核核心仅 260 行），零第三方依赖，已经是极致精简。移植到 Go 带来三点额外收益：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Java Aifei</th>
+<th>Go Aifei-Go</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>部署形态</td>
+<td>JVM + 打包</td>
+<td>单一静态二进制，毫秒级启动</td>
+</tr>
+<tr>
+<td>并发模型</td>
+<td>线程池 + 同步阻塞</td>
+<td>goroutine 天然并发</td>
+</tr>
+<tr>
+<td>依赖管理</td>
+<td>Maven 多模块</td>
+<td>Go workspace 多模块，按需 import</td>
+</tr>
+<tr>
+<td>动态能力</td>
+<td>CGLIB/Javassist 动态代理</td>
+<td>接口 + Handler 包装链（无运行时反射代理）</td>
+</tr>
+<tr>
+<td>HTTP 服务器</td>
+<td>Undertow（去 Servlet）</td>
+<td><code>net/http</code>（标准库，零依赖）</td>
+</tr>
+<tr>
+<td>路由</td>
+<td>注解 <code>@Path</code> + 包扫描</td>
+<td>Radix 树 + 代码注册（编译期确定）</td>
+</tr>
+</tbody></table>
+<p>Java Aifei 中被废弃的三个模块（<code>aifei-proxy</code>、<code>aifei-undertow</code>、<code>aifei-all</code>）在 Go 里不再需要：Go 没有动态代理机制，AOP 由 Handler 包装链 + Interceptor 接口实现；Go 有标准库 <code>net/http</code>；Go 的 import 机制天然按需引入。<strong>保留下来的，是 Aifei 真正有价值的内核：HIO、Just Service、Enjoy、Db + Row。</strong></p>
+<h2 id="2-核心理念：Just-Service"><a href="#2-核心理念：Just-Service" class="headerlink" title="2. 核心理念：Just Service"></a>2. 核心理念：Just Service</h2><p>Just Service 的本质是：<strong>方法名即路由</strong>。一个 Go struct 的导出方法，按命名约定自动映射成一条 HTTP 路由，无需任何注解、配置文件或注册代码（注册由生成器在 <code>init()</code> 中自动完成）。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> UserService <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *UserService)</span> <span class="title">List</span><span class="params">(in aifei.Input)</span> <span class="title">aifei</span>.<span class="title">Output</span></span>      &#123; <span class="comment">/* GET    /api/user/list */</span> &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *UserService)</span> <span class="title">Paginate</span><span class="params">(in aifei.Input)</span> <span class="title">aifei</span>.<span class="title">Output</span></span>  &#123; <span class="comment">/* GET    /api/user       */</span> &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *UserService)</span> <span class="title">Create</span><span class="params">(in aifei.Input)</span> <span class="title">aifei</span>.<span class="title">Output</span></span>    &#123; <span class="comment">/* POST   /api/user       */</span> &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *UserService)</span> <span class="title">GetById</span><span class="params">(in aifei.Input)</span> <span class="title">aifei</span>.<span class="title">Output</span></span>   &#123; <span class="comment">/* GET    /api/user/:id   */</span> &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *UserService)</span> <span class="title">UpdateById</span><span class="params">(in aifei.Input)</span> <span class="title">aifei</span>.<span class="title">Output</span></span>&#123; <span class="comment">/* PUT    /api/user/:id   */</span> &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *UserService)</span> <span class="title">DeleteById</span><span class="params">(in aifei.Input)</span> <span class="title">aifei</span>.<span class="title">Output</span></span>&#123; <span class="comment">/* DELETE /api/user/:id   */</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>server.Register()</code> 通过两条规则把方法名翻译成 HTTP 方法 + URL：</p>
+<ol>
+<li><strong>默认动作（精确匹配）</strong> —— 直接挂在 service 前缀上：<code>Paginate</code> → <code>GET /prefix</code>，<code>Create</code> → <code>POST /prefix</code>，<code>List</code> → <code>GET /prefix/list</code>。</li>
+<li><strong>动词前缀</strong> —— 方法名以（且长于）<code>Get</code>/<code>Post</code>/<code>Put</code>/<code>Delete</code>/<code>Update</code> 开头，动词决定 HTTP 方法，剩余部分 camelCase→kebab-case 作为路径后缀。例如 <code>GetProfile</code> → <code>GET /prefix/profile</code>。</li>
+</ol>
+<p>两个特殊约定：</p>
+<ul>
+<li><code>ById</code> 后缀自动转为 <code>:id</code> 路径参数：<code>GetById</code> → <code>GET /prefix/:id</code>。</li>
+<li>既非默认动作、也不符合动词前缀的方法<strong>不会被路由</strong> —— 天然成为私有 helper，无需额外的可见性控制。</li>
+</ul>
+<blockquote>
+<p>对比 Java 版的 <code>@Path</code> 注解 + 包扫描：Go 没有注解，Aifei-Go 用「命名约定 + 代码注册」达成同样的效果，且路由在编译期就已确定，没有运行时反射扫描开销。</p>
+</blockquote>
+<h2 id="3-HIO-架构：Input-Output-Handler"><a href="#3-HIO-架构：Input-Output-Handler" class="headerlink" title="3. HIO 架构：Input / Output / Handler"></a>3. HIO 架构：Input / Output / Handler</h2><p>Java Aifei 采用 <strong>HIO 自主架构（Handler + Input + Output）</strong>，让用户自主掌控处理流程与数据结构。Aifei-Go 完整保留了这一设计，并用 Go 接口重新表达：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 处理流程的单元：Input 进、Output 出</span></span><br><span class="line"><span class="keyword">type</span> HandlerFunc <span class="function"><span class="keyword">func</span><span class="params">(in Input)</span> <span class="title">Output</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Input = Param（读参数）+ Meta（请求元信息）</span></span><br><span class="line"><span class="keyword">type</span> Input <span class="keyword">interface</span> &#123;</span><br><span class="line">    Param  <span class="comment">// Has / GetStr / GetInt / GetBean / GetMap / PathPara ...</span></span><br><span class="line">    Meta   <span class="comment">// Context / Header / Path / Body</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Output 由业务构建，IoHandler 决定如何渲染</span></span><br><span class="line"><span class="keyword">type</span> Output <span class="keyword">interface</span> &#123;</span><br><span class="line">    Code() <span class="keyword">int</span></span><br><span class="line">    Msg()  <span class="keyword">string</span></span><br><span class="line">    Data() <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>几个关键点：</p>
+<ul>
+<li><p><strong>Input 与 HTTP 解耦</strong>。<code>Input</code> 只承载「任何调用源都能满足」的契约——参数读取与请求元信息。HTTP 专属的概念（method 动词、remote 地址、cookie）不在这个接口上，它们留在 HTTP 适配层。这意味着同一个 Service 方法既可被 HTTP 请求驱动，也可被测试桩、内部调用驱动，业务代码不绑死 HTTP。</p>
+</li>
+<li><p><strong>Output 是意图，不是渲染</strong>。业务代码构建一个 <code>Out</code>（<code>server.Ok()</code> / <code>server.Of(data)</code> / <code>server.Fail(msg)</code>），它累积 code/msg/data 以及<strong>渲染意图</strong>（JSON、Enjoy HTML 视图、文件下载、原始字节、重定向）。<code>IoHandler</code> 读这些意图来决定 <em>如何</em> 写响应 —— 业务代码从不直接碰 <code>net/http</code>，文件下载、响应头都通过闭包/构建器表达。</p>
+</li>
+<li><p><strong>两条包装链</strong>。Aifei-Go 区分两类横切逻辑：<strong>Handler 级</strong>（<code>Input → Output</code>，作用于业务处理，如 <code>Logger</code>、<code>Recover</code>、<code>TxInterceptor</code>）与 <strong>HTTP 级</strong>（作用于 <code>http.Handler</code>，如 <code>CORS</code>、<code>BasicAuth</code>、<code>RequestID</code>）。前者对应 Java Aifei 的全局拦截器，后者处理纯传输层关切。</p>
+</li>
+</ul>
+<p>Java 用 CGLIB/Javassist 动态代理实现 AOP，Go 没有这套机制 —— Aifei-Go 用 <strong>Handler 包装链 + Interceptor 接口</strong> 替代：<code>ChainHandlers()</code> 把一组 <code>Handler</code> 包装器组合成一条链，<code>Interceptor</code> 提供方法级 AOP（<code>@Before</code> / <code>@Clear</code> 的等价物）。</p>
+<h2 id="4-模块结构"><a href="#4-模块结构" class="headerlink" title="4. 模块结构"></a>4. 模块结构</h2><p>Aifei-Go 是一个 <strong>Go workspace 多模块</strong>项目，按角色分层。每个模块独立版本化、可独立 <code>go get</code>，互不拉入多余依赖：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>模块</th>
+<th>职责</th>
+<th>依赖</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>核心框架</td>
+<td><code>aifei-go/aifei</code></td>
+<td>Input/Output、Router、Handler wrapper、Interceptor</td>
+<td>—</td>
+</tr>
+<tr>
+<td>核心库</td>
+<td><code>aifei-go/enjoy</code></td>
+<td>模板/SQL 引擎（自研）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>核心库</td>
+<td><code>aifei-go/db</code></td>
+<td>数据库访问（Row/Dao/Dialect/Enjoy SQL）</td>
+<td>enjoy</td>
+</tr>
+<tr>
+<td>核心库</td>
+<td><code>aifei-go/json</code></td>
+<td>JSON 工具</td>
+<td>—</td>
+</tr>
+<tr>
+<td>核心库</td>
+<td><code>aifei-go/log</code></td>
+<td>日志接口</td>
+<td>—</td>
+</tr>
+<tr>
+<td>核心库</td>
+<td><code>aifei-go/config</code></td>
+<td>分层配置（yml + 环境变量 + 命令行 + 云配置）</td>
+<td>yaml.v3</td>
+</tr>
+<tr>
+<td>运行时</td>
+<td><code>aifei-go/http</code></td>
+<td>net/http 适配器</td>
+<td>aifei</td>
+</tr>
+<tr>
+<td>运行时</td>
+<td><code>aifei-go/server</code></td>
+<td>启动引导、内置 Handler、<code>Out</code>、<code>Register</code></td>
+<td>aifei, http, db, enjoy, log</td>
+</tr>
+<tr>
+<td>独立框架</td>
+<td><code>aifei-go/nami</code></td>
+<td>HTTP RPC <strong>客户端</strong>框架</td>
+<td>—</td>
+</tr>
+<tr>
+<td>独立框架</td>
+<td><code>aifei-go/dami</code></td>
+<td>进程内事件总线（send/call/stream/lpc）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>代码生成</td>
+<td><code>aifei-go/tools/generator</code></td>
+<td>Schema → 类型安全 CRUD 代码</td>
+<td>db, enjoy</td>
+</tr>
+<tr>
+<td>代码生成</td>
+<td><code>aifei-go/tools/damigen</code></td>
+<td>dami 相关代码生成</td>
+<td>enjoy</td>
+</tr>
+<tr>
+<td>插件</td>
+<td><code>plugins/cache</code></td>
+<td>两级缓存（本地 + Redis）</td>
+<td>jetcache-go, go-redis</td>
+</tr>
+<tr>
+<td>插件</td>
+<td><code>plugins/kafka</code></td>
+<td>Kafka 生产/消费</td>
+<td>franz-go</td>
+</tr>
+<tr>
+<td>插件</td>
+<td><code>plugins/nacos</code></td>
+<td>服务注册、配置中心、发现</td>
+<td>nacos-sdk-go</td>
+</tr>
+<tr>
+<td>插件</td>
+<td><code>plugins/storage</code></td>
+<td>文件存储（本地 + S3 兼容）</td>
+<td>minio-go</td>
+</tr>
+<tr>
+<td>插件</td>
+<td><code>plugins/swagger</code></td>
+<td>OpenAPI 文档（knife4j-vue3）</td>
+<td>swaggo/swag</td>
+</tr>
+<tr>
+<td>插件</td>
+<td><code>plugins/dataisolate</code></td>
+<td>租户 + 行/列数据隔离</td>
+<td>GoSQLX</td>
+</tr>
+</tbody></table>
+<p>「核心库」层的模块（enjoy / db / json / log）刻意保持零外部依赖、可脱离框架独立使用——你完全可以只用 <code>enjoy</code> 做模板渲染，或只用 <code>db</code> 做数据库访问，而不引入整个 web 框架。插件层则把第三方库的集成集中隔离，不污染核心。</p>
+<h2 id="5-快速开始"><a href="#5-快速开始" class="headerlink" title="5. 快速开始"></a>5. 快速开始</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/crazy-airhead/aifei-go/aifei</span><br></pre></td></tr></table></figure>
+
+<p>一个最小的 HTTP 服务：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;github.com/crazy-airhead/aifei-go/aifei&quot;</span></span><br><span class="line">    <span class="string">&quot;github.com/crazy-airhead/aifei-go/server&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    app := aifei.New()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 全局 Handler 包装链</span></span><br><span class="line">    app.Use(server.Logger(), server.Recover())</span><br><span class="line"></span><br><span class="line">    <span class="comment">// HandlerFunc: func(in aifei.Input) aifei.Output</span></span><br><span class="line">    app.GET(<span class="string">&quot;/&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(in aifei.Input)</span> <span class="title">aifei</span>.<span class="title">Output</span></span> &#123;</span><br><span class="line">        <span class="keyword">return</span> server.Of(<span class="string">&quot;Hello, Aifei!&quot;</span>)</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    app.GET(<span class="string">&quot;/hello/:name&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(in aifei.Input)</span> <span class="title">aifei</span>.<span class="title">Output</span></span> &#123;</span><br><span class="line">        <span class="keyword">return</span> server.Ok(<span class="string">&quot;Hello, &quot;</span> + in.GetStr(<span class="string">&quot;name&quot;</span>))</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 启动（支持 CORS、BasicAuth 等 HTTP 级包装器）</span></span><br><span class="line">    server.Run(app, <span class="string">&quot;:8080&quot;</span>, server.WithCORS(<span class="string">&quot;*&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而一个真实的多 Service 应用，骨架甚至更短——所有表对应的 Service 通过生成器在各自的 <code>init()</code> 里自注册，主程序只需一行 <code>server.AutoRegisterServices(app)</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    db.Init(<span class="string">&quot;sqlite&quot;</span>, <span class="string">&quot;./demo.db&quot;</span>)</span><br><span class="line">    <span class="comment">// ...建表...</span></span><br><span class="line"></span><br><span class="line">    app := aifei.New()</span><br><span class="line">    app.Use(server.Logger(), server.Recover())</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 每个 per-table 包在 init() 中注册自己的 Table 元数据与 Service 路由</span></span><br><span class="line">    _ <span class="string">&quot;github.com/crazy-airhead/aifei-go/_test/demo/internal/user&quot;</span></span><br><span class="line">    _ <span class="string">&quot;github.com/crazy-airhead/aifei-go/_test/demo/internal/loginlog&quot;</span></span><br><span class="line"></span><br><span class="line">    server.AutoRegisterServices(app) <span class="comment">// 一行注册全部 Service</span></span><br><span class="line">    server.Run(app, <span class="string">&quot;:8081&quot;</span>, server.WithCORS(<span class="string">&quot;*&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>完整可运行示例见 <code>_test/demo</code>（<code>go run ./_test/demo</code>）。</p>
+</blockquote>
+<h2 id="6-核心特性"><a href="#6-核心特性" class="headerlink" title="6. 核心特性"></a>6. 核心特性</h2><h3 id="6-1-Enjoy-模板引擎"><a href="#6-1-Enjoy-模板引擎" class="headerlink" title="6.1 Enjoy 模板引擎"></a>6.1 Enjoy 模板引擎</h3><p>Enjoy 是 Aifei 的招牌特性——一套自研的模板语言（~2800 行），自带词法分析器（DKFF 算法）、递归下降语法分析器（DLRD）和完整的表达式引擎。它不仅是页面渲染引擎，也是 <strong>SQL 模板引擎</strong>（见 6.3）。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">engine := enjoy.NewEngine(<span class="string">&quot;myEngine&quot;</span>)</span><br><span class="line">tpl := engine.GetTemplateByString(<span class="string">&quot;Hello, #(name)! Age: #(age)&quot;</span>)</span><br><span class="line">out := tpl.RenderToString(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;james&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>支持的语法：<code>#()</code> 表达式输出、<code>#if/#else/#elseif</code>、<code>#for</code>、<code>#set/#setLocal/#setGlobal</code>、<code>#define/#call</code>、<code>#include</code>、<code>#switch/#case/#default</code>、<code>#break/#continue/#return</code>；表达式层支持算术/比较/逻辑/三元、空安全（<code>??</code>、<code>?.</code>）、方法调用、map/数组字面量、静态访问（<code>::</code>）。</p>
+<h3 id="6-2-Db-Row-Dao"><a href="#6-2-Db-Row-Dao" class="headerlink" title="6.2 Db + Row + Dao"></a>6.2 Db + Row + Dao</h3><p>数据库访问沿用 Java Aifei 的 <strong>Db + Row 模式</strong>（与 JFinal 的 Db + Record 几乎一致），核心是链式 API 与 Active Record 变更追踪。<code>db</code> 模块本身不含驱动，用户自行引入所需驱动：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;github.com/crazy-airhead/aifei-go/db&quot;</span></span><br><span class="line">    _ <span class="string">&quot;modernc.org/sqlite&quot;</span> <span class="comment">// 或 _ &quot;github.com/go-sql-driver/mysql&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    db.Init(<span class="string">&quot;sqlite&quot;</span>, <span class="string">&quot;./app.db&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Active Record —— 插入</span></span><br><span class="line">    row := db.NewRow(<span class="string">&quot;user&quot;</span>).Set(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;james&quot;</span>).Set(<span class="string">&quot;age&quot;</span>, <span class="number">18</span>)</span><br><span class="line">    result, _ := db.Insert(row)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 主键查询</span></span><br><span class="line">    found, _ := db.FindByID(<span class="string">&quot;user&quot;</span>, result.GetID())</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 分页查询</span></span><br><span class="line">    page, _ := db.RawSql(<span class="string">&quot;SELECT * FROM user ORDER BY id DESC&quot;</span>).Paginate(<span class="number">1</span>, <span class="number">10</span>)</span><br><span class="line">    _ = found</span><br><span class="line">    _ = page</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>内置 MySQL / PostgreSQL / SQLite 三种方言，支持事务、批量操作、类型转换。<code>Row.Set()</code> 追踪变更（用于 UPDATE），<code>Put()</code> 不追踪——精确控制更新范围。</p>
+<h3 id="6-3-Enjoy-SQL：模板化的动态-SQL"><a href="#6-3-Enjoy-SQL：模板化的动态-SQL" class="headerlink" title="6.3 Enjoy SQL：模板化的动态 SQL"></a>6.3 Enjoy SQL：模板化的动态 SQL</h3><p><code>db.Sql(...)</code> 接受 Enjoy 模板作为 SQL，提供 <code>#where</code> / <code>#and</code> / <code>#orderBy</code> / <code>#para</code> 等指令，支持 18 种操作符，条件为空时自动省略——这是处理「动态查询条件」最优雅的方式，告别手写字符串拼接：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;<span class="string">&quot;minAge&quot;</span>: <span class="number">18</span>, <span class="string">&quot;status&quot;</span>: <span class="number">1</span>&#125;</span><br><span class="line">list, _ := db.Sql(</span><br><span class="line">    <span class="string">&quot;SELECT * FROM user #where() #and(age &gt; #para(minAge)) #and(status = #para(status))&quot;</span>,</span><br><span class="line">    data,</span><br><span class="line">).Find()</span><br></pre></td></tr></table></figure>
+
+<p><code>#orderBy</code> 指令接收一个字段白名单，实际排序字段从入参读取并校验——<strong>防 SQL 注入</strong>的同时支持多字段排序与字段名映射。</p>
+<h3 id="6-4-代码生成器"><a href="#6-4-代码生成器" class="headerlink" title="6.4 代码生成器"></a>6.4 代码生成器</h3><p>Aifei 没有 Model 概念——Model 的支持完全由生成器实现。<code>tools/generator</code> 扫描数据库 Schema，<strong>每张表生成一个独立包</strong>（<code>base.go</code> / <code>model.go</code> / <code>dao.go</code> / <code>service.go</code>），提供编译期类型安全的 CRUD API：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gen := generator.New(pool, dialect, <span class="string">&quot;./myapp/db&quot;</span>, <span class="string">&quot;myapp/db&quot;</span>)</span><br><span class="line">gen.Generate() <span class="comment">// 一次扫描所有表：user/、loginlog/ …</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用生成的类型安全 API</span></span><br><span class="line">u, _ := user.FindById(<span class="number">123</span>)</span><br><span class="line">u.SetName(<span class="string">&quot;new name&quot;</span>).Update()</span><br></pre></td></tr></table></figure>
+
+<p>每表一包的策略让每张表的字段都有具名 getter/setter，AI 生成业务代码时不必猜测字段名拼法，命中率显著提升。</p>
+<h3 id="6-5-分层配置"><a href="#6-5-分层配置" class="headerlink" title="6.5 分层配置"></a>6.5 分层配置</h3><p><code>config</code> 模块提供分层加载（L1–L5）：<code>app.yml</code> + <code>app-&#123;env&#125;.yml</code> → 扩展配置 → 环境变量 + 命令行参数 → 编程式 <code>LoadInto()</code> → 云配置（如 Nacos）。线程安全，支持运行时热更新。提供 <code>Get/GetStr/GetBool/GetInt</code> 访问器、<code>Sub(prefix)</code> 作用域切片、<code>Bind(v)</code> YAML 往返到自定义结构体。所有插件统一从 <code>config.Props</code> 读取自身配置（<code>storage.*</code>、<code>cache.*</code>、<code>kafka.*</code> …），约定一致。</p>
+<h3 id="6-6-插件生态"><a href="#6-6-插件生态" class="headerlink" title="6.6 插件生态"></a>6.6 插件生态</h3><p>插件实现 <code>aifei.Plugin</code>（<code>Start()/Stop()</code> 生命周期），从 <code>config.Props</code> 读自身配置并装配一个包级默认实例，让顶层便捷函数开箱即用：</p>
+<ul>
+<li><strong><code>plugins/cache</code></strong> —— 两级缓存（本地 FreeCache/TinyLFU + Redis），<code>GetOrStore</code> 自带 singleflight 与缓存穿透防护，实例级 key 前缀隔离。</li>
+<li><strong><code>plugins/storage</code></strong> —— 统一本地文件系统与 S3 兼容后端（AWS S3 / Minio / OSS / COS），按 bucket 路由。</li>
+<li><strong><code>plugins/kafka</code></strong> —— 基于 franz-go 的生产/消费，多集群，<code>Subscribe</code> 至少一次投递（失败记录不提交、下次重投）。</li>
+<li><strong><code>plugins/nacos</code></strong> —— 服务注册与发现、配置中心，自动桥接到 nami RPC 客户端；<code>init()</code> 自动注册云配置加载器。</li>
+<li><strong><code>plugins/swagger</code></strong> —— 内嵌 knife4j-vue3 UI 的 OpenAPI 文档插件。</li>
+<li><strong><code>plugins/dataisolate</code></strong> —— 租户 + 行 + 列三正交维度的数据隔离，AST 改写 SQL，应用代码零隔离感知（详见 <a href="data-isolate-intro.md">data-isolate-intro.md</a>）。</li>
+</ul>
+<h3 id="6-7-独立框架：Nami-与-Dami"><a href="#6-7-独立框架：Nami-与-Dami" class="headerlink" title="6.7 独立框架：Nami 与 Dami"></a>6.7 独立框架：Nami 与 Dami</h3><p>两个不依赖 aifei 的兄弟框架，可独立使用：</p>
+<ul>
+<li><strong><code>nami</code></strong> —— 轻量 HTTP RPC <strong>客户端</strong>框架（移植自 Java Solon Nami）。Channel 传输（<code>channel/http</code>）、编解码（<code>coder/json</code>）、Filter 链、<code>Upstream</code>/<code>Discovery</code> 服务发现、流式 <code>Builder</code>/<code>ClientFactory</code>。它是 aifei 服务端的对偶：aifei 暴露服务，nami 消费服务。</li>
+<li><strong><code>dami</code></strong> —— 进程内事件总线（send/call/stream/lpc），发布订阅 + 同步调用 + 流式返回，用于解耦模块间通信。</li>
+</ul>
+<h2 id="7-Java-Aifei-→-Go-Aifei-Go-设计决策"><a href="#7-Java-Aifei-→-Go-Aifei-Go-设计决策" class="headerlink" title="7. Java Aifei → Go Aifei-Go 设计决策"></a>7. Java Aifei → Go Aifei-Go 设计决策</h2><p>移植并非逐行翻译，而是在保持 API 风格一致的前提下，用 Go 惯用模式替代 Java 机制：</p>
+<table>
+<thead>
+<tr>
+<th>决策点</th>
+<th>Java Aifei</th>
+<th>Go Aifei-Go</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>请求上下文</td>
+<td><code>Input</code> + <code>Output</code> 接口</td>
+<td><code>Input</code> / <code>Output</code> 接口（保持分离）</td>
+<td>与 Java API 一致，职责清晰</td>
+</tr>
+<tr>
+<td>AOP / 拦截</td>
+<td>CGLIB/Javassist 动态代理 + Interceptor</td>
+<td>Handler 包装链 + Interceptor 接口</td>
+<td>Go 无运行时动态代理</td>
+</tr>
+<tr>
+<td>路由注册</td>
+<td><code>@Path</code> 注解 + 反射包扫描</td>
+<td>命名约定 + <code>Register()</code> 代码注册</td>
+<td>Go 无注解，编译期确定</td>
+</tr>
+<tr>
+<td>泛型</td>
+<td>Java 泛型 <code>Handler&lt;I, O&gt;</code></td>
+<td>Go 接口</td>
+<td>简化接口</td>
+</tr>
+<tr>
+<td>配置</td>
+<td><code>AifeiConfig</code> 接口 + 多个 <code>config()</code></td>
+<td>Functional Options 模式</td>
+<td>Go 惯用配置模式</td>
+</tr>
+<tr>
+<td>HTTP 服务器</td>
+<td>Undertow（去 Servlet）</td>
+<td><code>net/http</code>（http 适配 + server 启动）</td>
+<td>标准库，零依赖</td>
+</tr>
+<tr>
+<td>包扫描</td>
+<td>ClassLoader + JAR 扫描</td>
+<td>不需要（Go 静态编译）</td>
+<td>编译时确定所有代码</td>
+</tr>
+<tr>
+<td>依赖注入</td>
+<td><code>@Inject</code> + 反射</td>
+<td>构造函数注入</td>
+<td>Go 惯例</td>
+</tr>
+<tr>
+<td>路由匹配</td>
+<td>HashMap + ActionGroup</td>
+<td>Radix 树</td>
+<td>高性能路由标准做法</td>
+</tr>
+<tr>
+<td>错误处理</td>
+<td><code>throws Throwable</code></td>
+<td><code>error</code> 返回值 + panic/recover</td>
+<td>Go 惯例</td>
+</tr>
+<tr>
+<td>聚合模块</td>
+<td><code>aifei-all</code></td>
+<td>import 按需引入</td>
+<td>不再需要</td>
+</tr>
+</tbody></table>
+<p>四条贯穿全局的重写原则：<strong>保持 API 风格一致</strong>、<strong>Go 惯用优先</strong>、<strong>核心最小依赖</strong>、<strong>AI 友好</strong>。</p>
+<h2 id="8-继承与差异"><a href="#8-继承与差异" class="headerlink" title="8. 继承与差异"></a>8. 继承与差异</h2><p><strong>继承自 Java Aifei 的</strong>（最有价值的设计）：Just Service 范式、HIO 自主架构、Enjoy 模板引擎、Db + Row 模式与链式 API、<code>sql(sql, para).find()</code> 式查询入口、生成器生成的 Model、集中式配置中心思想、拦截器（<code>@Before</code>/<code>@Clear</code> 的等价物）。</p>
+<p><strong>Go 版新增/调整的</strong>：</p>
+<ul>
+<li><strong>路由约定化</strong> —— 用动词前缀 + 默认动作的命名约定替代 <code>@Path</code>，方法名直接表达 HTTP 语义。</li>
+<li><strong>代码生成深化</strong> —— 每表一包 + typed Dao，编译期类型安全；Service 在 <code>init()</code> 中自注册，主程序零路由样板。</li>
+<li><strong>插件生态扩展</strong> —— 在 Java 插件机制之上，新增 cache / kafka / storage / swagger / dataisolate 等开箱即用插件，全部配置驱动。</li>
+<li><strong>兄弟框架</strong> —— nami（RPC 客户端）与 dami（事件总线）作为独立模块，与 aifei 服务端组合成完整微服务工具链。</li>
+<li><strong>数据隔离</strong> —— 通过 <code>plugins/dataisolate</code> 提供声明式、AST 改写式的租户/行/列隔离，这是 Java 版未单独成插件的能力。</li>
+</ul>
+<h2 id="9-小结"><a href="#9-小结" class="headerlink" title="9. 小结"></a>9. 小结</h2><p>Aifei-Go 的定位很明确：<strong>把 Aifei「为 AI Coding 而生」的设计哲学，用 Go 的方式重新实现一遍</strong>。</p>
+<p>它不追求大而全。核心框架零外部依赖，只依赖标准库；它不引入 Controller/Service/DAO 的冗余分层，一个 struct 方法就是一条路由；它把模板引擎、SQL 模板、ORM、代码生成、配置、缓存、消息、存储、数据隔离做成正交的模块，按需取用。</p>
+<p>如果你用过 JFinal 或 Java Aifei，你会对 Db + Row、Enjoy SQL 指令、集中式配置感到熟悉；如果你是 Go 开发者，你会发现它的接口设计、错误处理、并发模型都是地道的 Go 风格。而无论哪种背景，<strong>Just Service 让你把注意力放在业务上</strong> —— 这正是 Aifei 一开始就想做到的事。</p>
+<h3 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h3><ul>
+<li>Java 版官方文档：<a target="_blank" rel="noopener" href="https://aifei.cn/doc">https://aifei.cn/doc</a></li>
+<li>Java 版仓库：<a target="_blank" rel="noopener" href="https://github.com/jfinal/aifei">https://github.com/jfinal/aifei</a></li>
+<li>实施方案总览：<a href="00-overview.md">00-overview.md</a></li>
+<li>Java → Go 对照：<a href="java-go-comparison.md">java-go-comparison.md</a></li>
+<li>数据隔离插件：<a href="data-isolate-intro.md">data-isolate-intro.md</a></li>
+<li>多表关联映射：<a href="multi-table-mapping.md">multi-table-mapping.md</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/06/13/course100/058/" rel="prev" title="MacOS 硬盘清理工具">
+      <i class="fa fa-chevron-left"></i> MacOS 硬盘清理工具
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Aifei-Go%EF%BC%9A%E4%B8%BA-AI-Coding-%E8%80%8C%E7%94%9F%E7%9A%84-Go-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%A1%86%E6%9E%B6"><span class="nav-number">1.</span> <span class="nav-text">Aifei-Go：为 AI Coding 而生的 Go 服务端框架</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-Aifei-Go"><span class="nav-number">1.1.</span> <span class="nav-text">1. 什么是 Aifei-Go</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BB%8E-Java-%E7%A7%BB%E6%A4%8D%E5%88%B0-Go"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 为什么从 Java 移植到 Go</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%A0%B8%E5%BF%83%E7%90%86%E5%BF%B5%EF%BC%9AJust-Service"><span class="nav-number">1.2.</span> <span class="nav-text">2. 核心理念：Just Service</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-HIO-%E6%9E%B6%E6%9E%84%EF%BC%9AInput-Output-Handler"><span class="nav-number">1.3.</span> <span class="nav-text">3. HIO 架构：Input &#x2F; Output &#x2F; Handler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%A8%A1%E5%9D%97%E7%BB%93%E6%9E%84"><span class="nav-number">1.4.</span> <span class="nav-text">4. 模块结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B"><span class="nav-number">1.5.</span> <span class="nav-text">5. 快速开始</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%A0%B8%E5%BF%83%E7%89%B9%E6%80%A7"><span class="nav-number">1.6.</span> <span class="nav-text">6. 核心特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-Enjoy-%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 Enjoy 模板引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-Db-Row-Dao"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 Db + Row + Dao</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-Enjoy-SQL%EF%BC%9A%E6%A8%A1%E6%9D%BF%E5%8C%96%E7%9A%84%E5%8A%A8%E6%80%81-SQL"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 Enjoy SQL：模板化的动态 SQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%99%A8"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 代码生成器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-%E5%88%86%E5%B1%82%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.5.</span> <span class="nav-text">6.5 分层配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-6-%E6%8F%92%E4%BB%B6%E7%94%9F%E6%80%81"><span class="nav-number">1.6.6.</span> <span class="nav-text">6.6 插件生态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-7-%E7%8B%AC%E7%AB%8B%E6%A1%86%E6%9E%B6%EF%BC%9ANami-%E4%B8%8E-Dami"><span class="nav-number">1.6.7.</span> <span class="nav-text">6.7 独立框架：Nami 与 Dami</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Java-Aifei-%E2%86%92-Go-Aifei-Go-%E8%AE%BE%E8%AE%A1%E5%86%B3%E7%AD%96"><span class="nav-number">1.7.</span> <span class="nav-text">7. Java Aifei → Go Aifei-Go 设计决策</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%B7%AE%E5%BC%82"><span class="nav-number">1.8.</span> <span class="nav-text">8. 继承与差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E5%B0%8F%E7%BB%93"><span class="nav-number">1.9.</span> <span class="nav-text">9. 小结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB"><span class="nav-number">1.9.1.</span> <span class="nav-text">延伸阅读</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">307</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">852k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">12:55</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '0be819975a1c04b68957af81727cfcfd',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

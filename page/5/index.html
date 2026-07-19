@@ -172,6 +172,814 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/10/course100/019/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/10/course100/019/" class="post-title-link" itemprop="url">数据操作 —— 操作 NoSQL</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-10 20:01:31 / 修改时间：20:05:43" itemprop="dateCreated datePublished" datetime="2025-02-10T20:01:31+08:00">2025-02-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>一般的 Web 应用都会使用到 Redis 做缓存处理，也可能会用 ElasticSearch 做全文检索。所以这里主要介绍对这个两个数据中间件的使用。Monogo方面也有对应的插件，可以自行尝试。</p>
+<h2 id="创建模块"><a href="#创建模块" class="headerlink" title="创建模块"></a>创建模块</h2><p>在 IDEA 中通过 <code>File-&gt;New-&gt;Modules...</code> 可以创建新的模块 demo-nosql，基础代码和配置可以从demo01中拷贝过来，或者自己手动创建。</p>
+<h2 id="修改依赖"><a href="#修改依赖" class="headerlink" title="修改依赖"></a>修改依赖</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&#x27;java&#x27;</span></span><br><span class="line">    id <span class="string">&quot;io.freefair.lombok&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">group = <span class="string">&quot;com.example&quot;</span></span><br><span class="line"><span class="comment">// 统一版本号</span></span><br><span class="line">version <span class="string">&quot;$&#123;demoVersion&#125;&quot;</span></span><br><span class="line">description = <span class="string">&quot;orm demo&quot;</span></span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:demo-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-logging-logback&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-openapi2-knife4j&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-cache-jedis&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:esearchx&quot;</span>)</span><br><span class="line"></span><br><span class="line">    annotationProcessor(<span class="string">&quot;org.mapstruct:mapstruct-processor:$&#123;mapstructVersion&#125;&quot;</span>)</span><br><span class="line"></span><br><span class="line">    testImplementation(<span class="string">&quot;org.noear:solon-test-junit5&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">compileJava &#123;</span><br><span class="line">    options.encoding = <span class="string">&quot;UTF-8&quot;</span></span><br><span class="line">    options.compilerArgs &lt;&lt; <span class="string">&quot;-parameters&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jar &#123;</span><br><span class="line">    manifest &#123;</span><br><span class="line">        attributes <span class="string">&quot;Main-Class&quot;</span>: <span class="string">&quot;com.example.demo.orm.DemoOrmApp&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dependsOn(configurations.runtimeClasspath)</span><br><span class="line"></span><br><span class="line">    duplicatesStrategy = DuplicatesStrategy.EXCLUDE</span><br><span class="line">    from(configurations.runtimeClasspath.collect &#123;</span><br><span class="line">        <span class="keyword">if</span> (it.isDirectory()) it <span class="keyword">else</span> zipTree(it)</span><br><span class="line">    &#125;) &#123;</span><br><span class="line">        exclude <span class="string">&#x27;META-INF/MANIFEST.MF&#x27;</span></span><br><span class="line">        exclude <span class="string">&#x27;META-INF/*.SF&#x27;</span></span><br><span class="line">        exclude <span class="string">&#x27;META-INF/*.DSA&#x27;</span></span><br><span class="line">        exclude <span class="string">&#x27;META-INF/*.RSA&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> sourcesMain = sourceSets.main</span><br><span class="line">    sourcesMain.allSource.forEach &#123; println(<span class="string">&quot;add from sources: $&#123;it.name&#125;&quot;</span>) &#125;</span><br><span class="line">    from(sourcesMain.output)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用-Redis"><a href="#使用-Redis" class="headerlink" title="使用 Redis"></a>使用 Redis</h2><h3 id="增加依赖"><a href="#增加依赖" class="headerlink" title="增加依赖"></a>增加依赖</h3><p>build.gradle</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-cache-jedis&quot;</span>)</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h3 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h3><p>app.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置数据源</span></span><br><span class="line"><span class="attr">demo:</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">    <span class="attr">driverType:</span> <span class="string">redis</span> <span class="comment">#驱动类型</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:6379</span></span><br><span class="line">    <span class="attr">db:</span> <span class="number">0</span> <span class="comment">#默认为 0，可不配置</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">porpoise-demo</span></span><br><span class="line">    <span class="attr">keyHeader:</span> <span class="string">porpoise-demo</span></span><br><span class="line">    <span class="attr">enableMd5key:</span> <span class="literal">false</span></span><br><span class="line">    <span class="attr">defSeconds:</span> <span class="number">600</span> <span class="comment">#默认为 30，可不配置</span></span><br><span class="line">    <span class="attr">idleConnectionTimeout:</span> <span class="number">10000</span></span><br><span class="line">    <span class="attr">connectTimeout:</span> <span class="number">10000</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="增加配置类"><a href="#增加配置类" class="headerlink" title="增加配置类"></a>增加配置类</h3><p>RedisConfig</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisConfig</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Bean(typed = true)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> RedisClient <span class="title">defaultClient</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">      <span class="meta">@Inject(&quot;$&#123;demo.redis&#125;&quot;)</span> RedisClientSupplier redisClientSupplier)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> redisClientSupplier.get();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="增加-controller"><a href="#增加-controller" class="headerlink" title="增加 controller"></a>增加 controller</h3><p>Controller 非必须，只是方便测试。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/redis&quot;)</span></span><br><span class="line"><span class="meta">@Api(&quot;redis&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> RedisClient redisClient;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;获取key的值&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> redisClient.openAndGet(session -&gt; session.key(key).get());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;设置key的值&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">set</span><span class="params">(String key, String value)</span> </span>&#123;</span><br><span class="line">    redisClient.open(</span><br><span class="line">        session -&gt; &#123;</span><br><span class="line">          session.key(key).set(value);</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>验证有很多种方式，这里通过 swagger 文档进行调用。浏览器输入 <a target="_blank" rel="noopener" href="http://localhost:8080/doc.html">http://localhost:8080/doc.html</a></p>
+<h4 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MjQwNDdjNzZiOWJjOTZlZGFiNDMxMTVjNGM2ZTUwZDNfRTlFbGs4N3lEVEx5R3g2M3ppaXk3SHphYWRGeW0zajhfVG9rZW46TzFqWmJaOXhUb3FITG14YThwUGN2NFgwbkNiXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA" alt="img"></p>
+<h4 id="获取"><a href="#获取" class="headerlink" title="获取"></a>获取</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NjMxZGY4Yjg0YWU1YjY4NDQyMWM3MWYxNjk3YmNiY2NfcHRvRGpmUTFlQ3k0Rzc1bkg3RmVqNWZMRG1mcGNnTXFfVG9rZW46V2VnUWJ0UFEybzhPamp4OWtkY2N5WkpkblpnXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA" alt="img"></p>
+<h2 id="使用-ElasticSearch"><a href="#使用-ElasticSearch" class="headerlink" title="使用 ElasticSearch"></a>使用 ElasticSearch</h2><h3 id="增加依赖-1"><a href="#增加依赖-1" class="headerlink" title="增加依赖"></a>增加依赖</h3><p>build.gradle</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// es 没有对应的插件，需要自己引入 esearchx</span></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:esearchx&quot;</span>)</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h3 id="修改配置-1"><a href="#修改配置-1" class="headerlink" title="修改配置"></a>修改配置</h3><p>app.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置数据源</span></span><br><span class="line"><span class="attr">demo:</span></span><br><span class="line">  <span class="attr">es:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">http://127.0.0.1:9200</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="number">123456</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="增加配置类-1"><a href="#增加配置类-1" class="headerlink" title="增加配置类"></a>增加配置类</h3><p>EsConfig</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EsConfig</span> </span>&#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * url,username,password</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> properties</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="meta">@Bean(name = &quot;esContext&quot;, typed = true)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> EsContext <span class="title">esContext</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;demo.es&#125;&quot;)</span> Properties properties)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> EsContext(properties);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="增加-entity"><a href="#增加-entity" class="headerlink" title="增加 entity"></a>增加 entity</h3><p>增加DemoEntity方便操作数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoEntity</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> String name;</span><br><span class="line">  <span class="keyword">private</span> String code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="增加-controller-1"><a href="#增加-controller-1" class="headerlink" title="增加 controller"></a>增加 controller</h3><p>Controller 非必须，只是方便测试。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/es&quot;)</span></span><br><span class="line"><span class="meta">@Api(&quot;es&quot;)</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EsController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> EsContext esContext;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;获取列表&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> List&lt;DemoEntity&gt; <span class="title">list</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      EsData&lt;DemoEntity&gt; result = <span class="keyword">null</span>;</span><br><span class="line">      result = esContext.indice(<span class="string">&quot;demo&quot;</span>).selectList(DemoEntity.class);</span><br><span class="line">      <span class="keyword">return</span> result.getList();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      log.error(<span class="string">&quot;add error&quot;</span>, e);</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;保存文档&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">add</span><span class="params">(<span class="meta">@Body</span> DemoEntity entity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      esContext.indice(<span class="string">&quot;demo&quot;</span>).insert(entity);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      log.error(<span class="string">&quot;add error&quot;</span>, e);</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="验证-1"><a href="#验证-1" class="headerlink" title="验证"></a>验证</h3><p>验证有很多种方式，这里通过 swagger 文档进行调用。浏览器输入 <a target="_blank" rel="noopener" href="http://localhost:8080/doc.html">http://localhost:8080/doc.html</a></p>
+<h4 id="保存文档"><a href="#保存文档" class="headerlink" title="保存文档"></a>保存文档</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZmU3OTUyMWJhMjI2NjNhZTBkM2E3ZjA0M2RhYTI5OWFfRzk3NmJhUEhQd0Y1aXZWR083M3Q1Z2laekpwVjE0SUlfVG9rZW46QVNBbWJpYkEzb0JQZUF4cDNmZGN5T0N1bllkXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA" alt="img"></p>
+<h4 id="获取文档列表"><a href="#获取文档列表" class="headerlink" title="获取文档列表"></a>获取文档列表</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YzgwMzRiYmNmNGRlZTM4ZjNlMDdkMWI2ODhmZmI2ODZfS3Q3ZmxwTUdpTGx2WVdXcklDUUdkb2JCdnNxaDhneGRfVG9rZW46TEJHcGJiOG9MbzFMbkZ4NWt5MmNkWmlQbmhkXzE3MzkxODg5Mzg6MTczOTE5MjUzOF9WNA" alt="img"></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Solon 通过简单的配置就可以操作 Redis 和 ElasticSearch ，对 NoSql 的支持还是挺完整的，更多的对数据的操作需要看具体的类库提供的接口。</p>
+<p>完整代码可以从 <a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/porpoise-demo">https://gitee.com/CrazyAirhead/porpoise-demo</a> 获取。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/09/course100/018/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/09/course100/018/" class="post-title-link" itemprop="url">数据操作 —— 操作 SQL</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-09 20:19:00 / 修改时间：20:22:29" itemprop="dateCreated datePublished" datetime="2025-02-09T20:19:00+08:00">2025-02-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>Solon 不像 Jfinal 提供了基础的数据库能力，是通过集成第三方的 ORM 来实现的，当然 Solon 家也有自己的 ORM（wood）。结合自己使用了多个 ORM 的情况，选择了无 XML 的 easy-query。虽然 Solon 也有 activerecord 的插件，但是 Jfinal 框架内，使用还是不够趁手。</p>
+<p>个人确实比较喜欢 activerecord，后续也会补充对 easy-query 的扩展，比如继承 activerecord 的 sql 模版管理，基于 map 的 Model Bean。</p>
+<p>这里使用的是 MySQL 数据库，其他数据库是类似的，切换对应的驱动即可。</p>
+<h2 id="创建模块"><a href="#创建模块" class="headerlink" title="创建模块"></a>创建模块</h2><p>在 IDEA 中通过 <code>File-&gt;New-&gt;Modules...</code> 可以创建新的模块 demo-orm，基础代码和配置可以从demo01中拷贝过来，或者自己手动创建。</p>
+<h2 id="修改依赖"><a href="#修改依赖" class="headerlink" title="修改依赖"></a>修改依赖</h2><p>使用初始器创建项目，增加 web 和 easy-query 依赖，同时增加 swagger 依赖，并非必须，只是为了方便测试接口。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&#x27;java&#x27;</span></span><br><span class="line">    id <span class="string">&quot;io.freefair.lombok&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">group = <span class="string">&quot;com.example&quot;</span></span><br><span class="line"><span class="comment">// 统一版本号</span></span><br><span class="line">version <span class="string">&quot;$&#123;demoVersion&#125;&quot;</span></span><br><span class="line">description = <span class="string">&quot;orm demo&quot;</span></span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:demo-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-logging-logback&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-openapi2-knife4j&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    implementation(<span class="string">&quot;com.zaxxer:HikariCP&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;mysql:mysql-connector-java&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;com.easy-query:sql-solon-plugin&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    annotationProcessor(<span class="string">&quot;org.mapstruct:mapstruct-processor:$&#123;mapstructVersion&#125;&quot;</span>)</span><br><span class="line">    <span class="comment">// 生成 entityProxy</span></span><br><span class="line">    annotationProcessor(<span class="string">&quot;com.easy-query:sql-processor:$&#123;easyQueryVersion&#125;&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    testImplementation(<span class="string">&quot;org.noear:solon-test-junit5&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">compileJava &#123;</span><br><span class="line">    options.encoding = <span class="string">&quot;UTF-8&quot;</span></span><br><span class="line">    options.compilerArgs &lt;&lt; <span class="string">&quot;-parameters&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jar &#123;</span><br><span class="line">    manifest &#123;</span><br><span class="line">        attributes <span class="string">&quot;Main-Class&quot;</span>: <span class="string">&quot;com.example.demo.orm.DemoOrmApp&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dependsOn(configurations.runtimeClasspath)</span><br><span class="line"></span><br><span class="line">    duplicatesStrategy = DuplicatesStrategy.EXCLUDE</span><br><span class="line">    from(configurations.runtimeClasspath.collect &#123;</span><br><span class="line">        <span class="keyword">if</span> (it.isDirectory()) it <span class="keyword">else</span> zipTree(it)</span><br><span class="line">    &#125;) &#123;</span><br><span class="line">        exclude <span class="string">&#x27;META-INF/MANIFEST.MF&#x27;</span></span><br><span class="line">        exclude <span class="string">&#x27;META-INF/*.SF&#x27;</span></span><br><span class="line">        exclude <span class="string">&#x27;META-INF/*.DSA&#x27;</span></span><br><span class="line">        exclude <span class="string">&#x27;META-INF/*.RSA&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> sourcesMain = sourceSets.main</span><br><span class="line">    sourcesMain.allSource.forEach &#123; println(<span class="string">&quot;add from sources: $&#123;it.name&#125;&quot;</span>) &#125;</span><br><span class="line">    from(sourcesMain.output)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建数据库"><a href="#创建数据库" class="headerlink" title="创建数据库"></a>创建数据库</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `demo_dept` (</span><br><span class="line">  `id` <span class="type">bigint</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT COMMENT <span class="string">&#x27;id&#x27;</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">255</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">COLLATE</span> utf8mb4_0900_ai_ci <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;部门名称&#x27;</span>,</span><br><span class="line">  `code` <span class="type">varchar</span>(<span class="number">255</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">COLLATE</span> utf8mb4_0900_ai_ci <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;部门编码&#x27;</span>,</span><br><span class="line">  `create_at` datetime <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span> COMMENT <span class="string">&#x27;时间时间&#x27;</span>,</span><br><span class="line">  `update_at` datetime <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span> <span class="keyword">ON</span> UPDATE <span class="built_in">CURRENT_TIMESTAMP</span> COMMENT <span class="string">&#x27;更新时间&#x27;</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB AUTO_INCREMENT<span class="operator">=</span><span class="number">1</span> <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4 <span class="keyword">COLLATE</span><span class="operator">=</span>utf8mb4_0900_ai_ci COMMENT<span class="operator">=</span><span class="string">&#x27;部门表&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h2><p>app.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置数据源</span></span><br><span class="line"><span class="attr">solon.dataSource:</span></span><br><span class="line">  <span class="attr">db1:</span></span><br><span class="line">    <span class="attr">jdbcUrl:</span> <span class="string">jdbc:mysql://127.0.0.1:3306/demo?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true&amp;rewriteBatchedStatements=true</span></span><br><span class="line">    <span class="attr">driverClassName:</span> <span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">demo</span></span><br><span class="line">    <span class="attr">password:</span> <span class="number">123456</span></span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+
+<h2 id="配置数据源"><a href="#配置数据源" class="headerlink" title="配置数据源"></a>配置数据源</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EasyQueryConfig</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Bean(name = &quot;db1&quot;, typed = true)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> DataSource <span class="title">db1</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;demo.db1&#125;&quot;)</span> HikariDataSource ds)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ds;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置文档"><a href="#配置文档" class="headerlink" title="配置文档"></a>配置文档</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SwaggerConfig</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> OpenApiExtensionResolver openApiExtensionResolver;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Bean(&quot;adminApi&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> DocDocket <span class="title">adminApi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    DocDocket docDocket =</span><br><span class="line">        <span class="keyword">new</span> DocDocket()</span><br><span class="line">            .groupName(<span class="string">&quot;Admin 端接口&quot;</span>)</span><br><span class="line">            .info(</span><br><span class="line">                <span class="keyword">new</span> ApiInfo()</span><br><span class="line">                    .title(<span class="string">&quot;porpoise-demo&quot;</span>)</span><br><span class="line">                    .description(<span class="string">&quot;在线API文档&quot;</span>)</span><br><span class="line">                    .contact(<span class="keyword">new</span> ApiContact().name(<span class="string">&quot;CrazyAirhead&quot;</span>).email(<span class="string">&quot;l4qiang@hotmail.com&quot;</span>))</span><br><span class="line">                    .version(<span class="string">&quot;1.0&quot;</span>))</span><br><span class="line">            .schemes(Scheme.HTTP.toValue())</span><br><span class="line">            .globalResponseInData(<span class="keyword">true</span>)</span><br><span class="line">            .vendorExtensions(openApiExtensionResolver.buildExtensions())</span><br><span class="line">            .apis(<span class="string">&quot;com.example.demo&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> docDocket;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="增加-model"><a href="#增加-model" class="headerlink" title="增加 model"></a>增加 model</h2><p>easy-query 提供了插件可以生成 model，通过IDEA 的database 连接数据库，选择表，右键选择TableEntityGenerate，填写对应的信息，点击 ok。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MTBhOTBjN2QyMTU4NjQ4Njg2ZGYyNjRkNWFiMDA2OTFfNzkyNDRNTlJLeWdIWHJyQ0VIZXpDS1YxY2tLYkJBU1hfVG9rZW46Skh5cGJmY2RUb1Rod2Z4a2xPWmNOVmw0bjVlXzE3MzkxMDM2MDU6MTczOTEwNzIwNV9WNA" alt="img"></p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZTc0OTNjYzk2MWQ1Y2Y0ZmY2NjhjYWFhODAwYjYzOGFfMzNFOGlTdTZyZ3NqYUxqV1psRHRZcVZYa1VXNnBzQzNfVG9rZW46UVRwc2JVV2FCb0FqOWV4aXpxZGMwTWlrbm1HXzE3MzkxMDM2MDU6MTczOTEwNzIwNV9WNA" alt="img"></p>
+<p>生成代码后需要使用Ctrl+enter，呼出IDEA的代码生成菜单，点击 EntityQueryImplement。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OTcxMzhjMzdmMGFjZDI2NmFmZjFiZmJmYWYyYzBkOTZfVDdkVERUSXA1MTV3b0QzTHJQd25YSEg3ekR0RU85YjZfVG9rZW46TWg5QmJ6dGdub3kyYXB4Qno5Q2NFM2hJbmFkXzE3MzkxMDM2MDU6MTczOTEwNzIwNV9WNA" alt="img"></p>
+<p>如果没有使用插件，自己创建实体类即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.orm.model;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.easy.query.core.annotation.Column;</span><br><span class="line"><span class="keyword">import</span> com.easy.query.core.annotation.EntityProxy;</span><br><span class="line"><span class="keyword">import</span> com.easy.query.core.annotation.Table;</span><br><span class="line"><span class="keyword">import</span> com.easy.query.core.proxy.ProxyEntityAvailable;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.orm.model.proxy.DeptEntityProxy;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 部门表 实体类。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Airhead</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Table(value = &quot;demo_dept&quot;)</span></span><br><span class="line"><span class="meta">@EntityProxy</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeptEntity</span> <span class="keyword">implements</span> <span class="title">ProxyEntityAvailable</span>&lt;<span class="title">DeptEntity</span>, <span class="title">DeptEntityProxy</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * id</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="meta">@Column(primaryKey = true, value = &quot;id&quot;, generatedKey = true)</span></span><br><span class="line">  <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 部门名称</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 部门编码</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> String code;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 时间时间</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> LocalDateTime createAt;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 更新时间</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> LocalDateTime updateAt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="增加Controller"><a href="#增加Controller" class="headerlink" title="增加Controller"></a>增加Controller</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/dept&quot;)</span></span><br><span class="line"><span class="meta">@Api(&quot;部门管理&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeptController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Db(&quot;db1&quot;)</span></span><br><span class="line">  <span class="keyword">private</span> EasyEntityQuery entityQuery;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;获取列表&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> List&lt;DeptEntity&gt; <span class="title">list</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> entityQuery.queryable(DeptEntity.class).toList();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;新增&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">add</span><span class="params">(<span class="meta">@Body</span> DeptEntity dept)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> entityQuery.insertable(dept).executeRows(<span class="keyword">true</span>) &gt; <span class="number">0L</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Put</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;更新&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">update</span><span class="params">(<span class="meta">@Body</span> DeptEntity dept)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> entityQuery.updatable(dept).executeRows() &gt; <span class="number">0L</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;获取&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> DeptEntity <span class="title">get</span><span class="params">(Long id)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> entityQuery.queryable(DeptEntity.class).whereById(id).firstOrNull();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line">  <span class="meta">@Delete</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;删除&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">delete</span><span class="params">(Long id)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> entityQuery</span><br><span class="line">            .getEasyQueryClient()</span><br><span class="line">            .deletable(DeptEntity.class)</span><br><span class="line">            .allowDeleteStatement(<span class="keyword">true</span>)</span><br><span class="line">            .whereById(id)</span><br><span class="line">            .executeRows()</span><br><span class="line">        &gt; <span class="number">0L</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>验证有很多种方式，这里通过 swagger 文档进行调用。浏览器输入 <a target="_blank" rel="noopener" href="http://localhost:8080/doc.html">http://localhost:8080/doc.html</a></p>
+<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=M2I2YWQ0OGU0NTNjYzEzMWU4MWI0N2JlMWUwMjRlNDVfSFdGS1FOcmZjamM1d0xYOEZINGxKanVsTERTSzkzSnBfVG9rZW46Q2hEMmIyZGppb2lUOTF4ZUFrUmNPdXZjblRiXzE3MzkxMDM2MDU6MTczOTEwNzIwNV9WNA" alt="img"></p>
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OWEyODFhODJiNjExMmNlZDMxYWE0NDU4YjJmNGI1YzJfWFN1OWE2WFdQcFlNcGNCUUExbFkyTmgyZ3Zoa2d0UnZfVG9rZW46WVlFU2IzVjZ2b2hiU1p4dXVSeWNXbXZvbjJnXzE3MzkxMDM2MDU6MTczOTEwNzIwNV9WNA" alt="img"></p>
+<p>其他的接口可以自行尝试。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>通过以上步骤已经，可以实现对 dept 表的基础增删改查了，可以自己继续添加一些功能进行尝试性的修改。Solon 第三方的 orm 插件非常的多，如果不喜欢使用 easy-query，也可以选择其他 orm 框架进行尝试。</p>
+<p>完整代码可以从 <a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/porpoise-demo">https://gitee.com/CrazyAirhead/porpoise-demo</a> 获取。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/08/course100/017/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/08/course100/017/" class="post-title-link" itemprop="url">初识 Solon —— 进一步的准备</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-08 21:41:03 / 修改时间：22:08:53" itemprop="dateCreated datePublished" datetime="2025-02-08T21:41:03+08:00">2025-02-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>为了简化和统一后续的开发，我们采用多模块的项目结构，引入 BOM 来统一管理依赖。本人并不擅长前端，前端不会过多讲解，主要基于 Sysbean Admin，后续的例子也将以对接 Sysbean Admin的接口作为例子进行讲解。</p>
+<h2 id="多模块"><a href="#多模块" class="headerlink" title="多模块"></a>多模块</h2><p>多模块的配置，可以参看 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/qXaZ7BCL_0-1hkqTGNxFmA%E3%80%82">https://mp.weixin.qq.com/s/qXaZ7BCL_0-1hkqTGNxFmA。</a></p>
+<p>在 IDEA 中通过 <code>File-&gt;New-&gt;Modules...</code> 可以创建新的模块。</p>
+<p>先创建一个demo01的模块，然后把第一应用的文件移动到 demo01中（第一个应用的玩转例子保留在 start-up 的分支）。</p>
+<p>之后再创建demo-parent模块，该模块用于统一管理依赖。</p>
+<h3 id="修改settings-gradle"><a href="#修改settings-gradle" class="headerlink" title="修改settings.gradle"></a>修改settings.gradle</h3><p>补充说明写在注释中。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将demo，修改名称为porpoise-demo</span></span><br><span class="line">rootProject.name = <span class="string">&quot;porpoise-demo&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建新模版后自动增加的内容可以不用调整</span></span><br><span class="line">include <span class="string">&#x27;demo01&#x27;</span></span><br><span class="line">include <span class="string">&#x27;demo-parent&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-build-gradle"><a href="#配置-build-gradle" class="headerlink" title="配置 build.gradle"></a>配置 build.gradle</h3><p>补充说明写在注释中。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&#x27;java&#x27;</span></span><br><span class="line">    id <span class="string">&quot;io.freefair.lombok&quot;</span> version <span class="string">&quot;8.11&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 统一 jdk 版本号</span></span><br><span class="line"><span class="keyword">def</span> jdkVersion = <span class="number">17</span></span><br><span class="line"><span class="keyword">def</span> demoVersion = <span class="string">&quot;1.0.0&quot;</span></span><br><span class="line"><span class="comment">// processor 的依赖需要指定版本号</span></span><br><span class="line"><span class="keyword">def</span> mapstructVersion = <span class="string">&quot;1.6.3&quot;</span></span><br><span class="line"><span class="comment">// processor 的依赖需要指定版本号</span></span><br><span class="line"><span class="keyword">def</span> easyQueryVersion = <span class="string">&quot;2.4.14&quot;</span></span><br><span class="line"></span><br><span class="line">group = <span class="string">&quot;com.example.demo&quot;</span></span><br><span class="line">version <span class="string">&quot;$&#123;demoVersion&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        mavenLocal()</span><br><span class="line">        mavenCentral()</span><br><span class="line">        <span class="comment">// 增加腾讯云 maven 仓库镜像，提速。</span></span><br><span class="line">        maven &#123; url <span class="string">&quot;https://mirrors.cloud.tencent.com/nexus/repository/maven-public/&quot;</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 版本号传递</span></span><br><span class="line">    ext[<span class="string">&quot;jdkVersion&quot;</span>] = <span class="string">&quot;$&#123;jdkVersion&#125;&quot;</span></span><br><span class="line">    ext[<span class="string">&quot;demoVersion&quot;</span>] = <span class="string">&quot;$&#123;demoVersion&#125;&quot;</span></span><br><span class="line">    ext[<span class="string">&quot;mapstructVersion&quot;</span>] = <span class="string">&quot;$&#123;mapstructVersion&#125;&quot;</span></span><br><span class="line">    ext[<span class="string">&quot;easyQueryVersion&quot;</span>] = <span class="string">&quot;$&#123;easyQueryVersion&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">    tasks.withType(JavaCompile).tap &#123;</span><br><span class="line">        configureEach &#123;</span><br><span class="line">            options.encoding = <span class="string">&quot;UTF-8&quot;</span></span><br><span class="line">            <span class="comment">// 统一指定编译时保留参数名</span></span><br><span class="line">            options.compilerArgs &lt;&lt; <span class="string">&quot;-parameters&quot;</span> &lt;&lt; <span class="string">&quot;-Xlint:unchecked&quot;</span> &lt;&lt; <span class="string">&quot;-Xlint:deprecation&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-demo-parant"><a href="#配置-demo-parant" class="headerlink" title="配置 demo-parant"></a>配置 demo-parant</h3><h4 id="增加dependencies-gradle"><a href="#增加dependencies-gradle" class="headerlink" title="增加dependencies.gradle"></a>增加dependencies.gradle</h4><p>用于统一管理版本号。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ext &#123;</span><br><span class="line">    set(<span class="string">&quot;solonVersion&quot;</span>, <span class="string">&quot;3.0.7&quot;</span>)</span><br><span class="line">    set(<span class="string">&quot;esearchxVersion&quot;</span>, <span class="string">&quot;1.0.22&quot;</span>)</span><br><span class="line">    set(<span class="string">&quot;hikaricpVersion&quot;</span>, <span class="string">&quot;5.1.0&quot;</span>)</span><br><span class="line">    set(<span class="string">&quot;mysqlVersion&quot;</span>, <span class="string">&quot;8.0.28&quot;</span>)</span><br><span class="line">    set(<span class="string">&quot;hutoolVersion&quot;</span>, <span class="string">&quot;6.0.0-M18&quot;</span>)</span><br><span class="line">    set(<span class="string">&quot;transmittableThreadLocalVersion&quot;</span>, <span class="string">&quot;2.14.2&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置-build-gradle-1"><a href="#配置-build-gradle-1" class="headerlink" title="配置 build.gradle"></a>配置 build.gradle</h4><p>补充说明写在注释中。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    <span class="comment">// 使用 java-platform 可以统一管理 bom</span></span><br><span class="line">    id <span class="string">&#x27;java-platform&#x27;</span></span><br><span class="line">    id <span class="string">&#x27;maven-publish&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 引入版本管理文件</span></span><br><span class="line">apply <span class="attr">from:</span> <span class="string">&quot;dependencies.gradle&quot;</span></span><br><span class="line"></span><br><span class="line">group <span class="string">&#x27;com.example.demo&#x27;</span></span><br><span class="line">version <span class="string">&quot;$&#123;demoVersion&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">javaPlatform &#123;</span><br><span class="line">    allowDependencies()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    api platform(<span class="string">&quot;org.noear:solon-parent:$&#123;solonVersion&#125;&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    constraints &#123;</span><br><span class="line">        api(<span class="string">&quot;com.zaxxer:HikariCP:$&#123;hikaricpVersion&#125;&quot;</span>)</span><br><span class="line">        api(<span class="string">&quot;mysql:mysql-connector-java:$&#123;mysqlVersion&#125;&quot;</span>)</span><br><span class="line">        api(<span class="string">&quot;com.easy-query:sql-solon-plugin:$&#123;easyQueryVersion&#125;&quot;</span>)</span><br><span class="line">        api(<span class="string">&quot;org.noear:esearchx:$&#123;esearchxVersion&#125;&quot;</span>)</span><br><span class="line">        api(<span class="string">&quot;org.dromara.hutool:hutool-all:$&#123;hutoolVersion&#125;&quot;</span>)</span><br><span class="line">        api(<span class="string">&quot;org.mapstruct:mapstruct:$&#123;mapstructVersion&#125;&quot;</span>)</span><br><span class="line">        api(<span class="string">&quot;com.alibaba:transmittable-thread-local:$&#123;transmittableThreadLocalVersion&#125;&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">publishing &#123;</span><br><span class="line">    publications &#123;</span><br><span class="line">        <span class="comment">//以下maven并非关键字，可自定义</span></span><br><span class="line">        maven(MavenPublication) &#123;</span><br><span class="line">            <span class="comment">//通过java-platform生成BOM</span></span><br><span class="line">            from components.javaPlatform</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    repositories &#123;</span><br><span class="line">        <span class="comment">// 根据需要发布到不同的仓库，此处只是发布到本地</span></span><br><span class="line">        mavenLocal()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-demo01"><a href="#配置-demo01" class="headerlink" title="配置 demo01"></a>配置 demo01</h3><h4 id="配置-build-gradle-2"><a href="#配置-build-gradle-2" class="headerlink" title="配置 build.gradle"></a>配置 build.gradle</h4><p>补充说明写在注释中。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&#x27;java&#x27;</span></span><br><span class="line">    id <span class="string">&quot;io.freefair.lombok&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">group = <span class="string">&quot;com.example&quot;</span></span><br><span class="line"><span class="comment">// 统一版本号</span></span><br><span class="line">version <span class="string">&quot;$&#123;demoVersion&#125;&quot;</span></span><br><span class="line">description = <span class="string">&quot;Demo project for Solon&quot;</span></span><br><span class="line"></span><br><span class="line">java &#123;</span><br><span class="line">    toolchain &#123;</span><br><span class="line">        languageVersion = JavaLanguageVersion.of(<span class="string">&quot;$&#123;jdkVersion&#125;&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// 使用 demo-parent，依赖调整的最主要的位置</span></span><br><span class="line">    implementation platform(project(<span class="string">&quot;:demo-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-view-freemarker&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-logging-logback&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 删除，已经用插件的方式引入了</span></span><br><span class="line">    <span class="comment">// compileOnly(&quot;org.projectlombok:lombok&quot;)</span></span><br><span class="line">    testImplementation(<span class="string">&quot;org.noear:solon-test&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">compileJava &#123;</span><br><span class="line">    options.encoding = <span class="string">&quot;UTF-8&quot;</span></span><br><span class="line">    options.compilerArgs &lt;&lt; <span class="string">&quot;-parameters&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jar &#123;</span><br><span class="line">    manifest &#123;</span><br><span class="line">        attributes <span class="string">&quot;Main-Class&quot;</span>: <span class="string">&quot;com.example.demo.App&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dependsOn(configurations.runtimeClasspath)</span><br><span class="line"></span><br><span class="line">    duplicatesStrategy = DuplicatesStrategy.EXCLUDE</span><br><span class="line">    from(configurations.runtimeClasspath.collect &#123;</span><br><span class="line">        <span class="keyword">if</span> (it.isDirectory()) it <span class="keyword">else</span> zipTree(it)</span><br><span class="line">    &#125;) &#123;</span><br><span class="line">        exclude <span class="string">&#x27;META-INF/MANIFEST.MF&#x27;</span></span><br><span class="line">        exclude <span class="string">&#x27;META-INF/*.SF&#x27;</span></span><br><span class="line">        exclude <span class="string">&#x27;META-INF/*.DSA&#x27;</span></span><br><span class="line">        exclude <span class="string">&#x27;META-INF/*.RSA&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> sourcesMain = sourceSets.main</span><br><span class="line">    sourcesMain.allSource.forEach &#123; println(<span class="string">&quot;add from sources: $&#123;it.name&#125;&quot;</span>) &#125;</span><br><span class="line">    from(sourcesMain.output)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="重新运行demo01"><a href="#重新运行demo01" class="headerlink" title="重新运行demo01"></a>重新运行demo01</h4><p>日志中出现如下字样，表示项目结构调整成功，可通过浏览器调用进行测试。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">App:</span> End loading elapsed=<span class="number">258</span>ms pid=<span class="number">32912</span> v=<span class="number">3.0</span><span class="number">.7</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MGVlZjcyMzAzMGQ3OTdjOTFmNGExYjBkNzM2MDU2MTVfUHRGdlhQd0pxdzA1UDJ0SWFtWkxvejhxS0t4TGVxZmVfVG9rZW46VGhzWmJOVGY1b2d2eHB4TzZLTGNER3NQbnJoXzE3MzkwMjM0MTU6MTczOTAyNzAxNV9WNA" alt="img"></p>
+<h2 id="技术栈"><a href="#技术栈" class="headerlink" title="技术栈"></a>技术栈</h2><h3 id="后端"><a href="#后端" class="headerlink" title="后端"></a>后端</h3><ul>
+<li>JDK 17</li>
+<li>Gradle 8+</li>
+<li>Solon 3.0.7</li>
+<li>Easy-query 2.4.14</li>
+<li>lombok 8.11</li>
+<li>Mapstruct 1.6.3</li>
+<li>Hutool 6.0.0-M18</li>
+<li>MySQL 8+</li>
+<li>Redis 6+</li>
+</ul>
+<h3 id="前端"><a href="#前端" class="headerlink" title="前端"></a>前端</h3><p>具体参看其官方文档，<a target="_blank" rel="noopener" href="https://docs.soybeanjs.cn/zh/guide/quick-start">https://docs.soybeanjs.cn/zh/guide/quick-start</a> 。</p>
+<ul>
+<li>Node  18.19.0+</li>
+<li>pnpm 8.7.0+</li>
+<li>Vue 3</li>
+<li>Vite 4</li>
+<li>TypeScript</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>将项目调整为多模块结构，增加父BOM，并测试 demo01 可以正常运行，为后续项目的开发做好准备。</p>
+<p>完整代码可以从 <a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/porpoise-demo">https://gitee.com/CrazyAirhead/porpoise-demo</a> 获取。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/07/course100/016/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/07/course100/016/" class="post-title-link" itemprop="url">初识 Solon —— 第一个应用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-07 19:56:06 / 修改时间：20:10:12" itemprop="dateCreated datePublished" datetime="2025-02-07T19:56:06+08:00">2025-02-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>994</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>使用<strong>Solon Initializr（</strong><a target="_blank" rel="noopener" href="https://solon.noear.org/start/%EF%BC%89,%E5%88%9B%E5%BB%BA%E5%9F%BA%E7%A1%80%E9%A1%B9%E7%9B%AE%E3%80%82%E4%B9%9F%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8">https://solon.noear.org/start/）,创建基础项目。也可以使用</a> IDEA 的 Solon 插件，<a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/21380-solon%EF%BC%8C%E5%8A%9F%E8%83%BD%E7%B1%BB%E4%BC%BC%EF%BC%8C%E7%94%A8%E5%85%B6%E4%B8%AD%E4%B8%80%E7%A7%8D%E6%96%B9%E5%BC%8F%E5%B0%B1%E5%8F%AF%E4%BB%A5%E4%BA%86%E3%80%82">https://plugins.jetbrains.com/plugin/21380-solon，功能类似，用其中一种方式就可以了。</a></p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MTJkZGI0OWQ0NzE1YTc3YmVlZWU2Mjk2NmI5YmRkYTdfS2JOM2U4c0pva0c1RmZ0anpFWmEzSlZJeFJaQmhmTU1fVG9rZW46TzA5c2JiUlFzbzZHOUV4bFcxZ2NSRE95bmtnXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
+<p>这里选择Gradle-Groovey，Java， 3.0.6，jar，jdk17，Solon Web。</p>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><p>解压下载的demo.zip，用 IDEA 打开目录的 <code>build.gradle</code> 文件，弹窗选择open as project。</p>
+<p>生成的代码已经包含了一个服务接口，无须额外编写代码。</p>
+<p>等 IDEA 加载依赖完毕，即可直接运行 App.java的main函数。</p>
+<p>打开浏览器，输入<a target="_blank" rel="noopener" href="http://localhost:8080/hello">http://localhost:8080/hello</a></p>
+<p>你的第一个 Solon 的 web 应用就完成了。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MDcxMGIzNTU4ZmFmZGI2ZDUxNWVlMjIwYmFhNGM3YzFfeG04anJJS3BBUERYYk1VYjdjWEJrSWcxc2NJMHY5Ym9fVG9rZW46SzNSRmI0OWhnb01QZWJ4YmpkR2NhOUtvblBkXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>默认生成的Demo 已经提供测试，可以点击后看到如下效果。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NmQ0NGY2ZDEyNThkNTIwZDdlNjZjMTljMzZjOWNmMTlfMExUQ2lKVWc2VDBtS0d5NGZSdHVTR3dqb0FBemxLZ0tfVG9rZW46SVpuVmJjR2lnb1Y4ZWV4OUZyT2NJeTlMbm1iXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NTU5ZWZmN2U3ODgyZWRkZDdmNzc5NGM5YWM1NzAwM2ZfV3ZCTzNqaTlMSlJrdWp4a25HZWhveWtTa3RYQ1pNeEVfVG9rZW46UkpKT2JLZWZQbzdkTXF4VXdpUGNHR0NoblFkXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
+<p>如果提示不存在任何测试的错误，调整 IDEA 的配置。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">No matching tests found <span class="keyword">in</span> any candidate <span class="built_in">test</span> task.</span><br><span class="line">    Requested tests:</span><br><span class="line">        Test pattern features.HelloTest.hello <span class="keyword">in</span> task :demo:<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZmQ4YmZkNGEzODM2M2FkNjc3ZDE2MzY0MTM5M2Y0NDFfVXQ0OW5hbzBFOU83Sjl4Zkw3UmpDbkRPQU1HWVVpOHpfVG9rZW46QXRDM2JPRGczb0dKeDF4QTNvaWNVOTRybjdmXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NzVlMGQxY2Y4NjgxOGMxOTZhOGQxZmYyODJkM2Y1ZWVfdURKZFBnWXA0T0FHOWZtd0JXclpzS0V0ZnZidzFpQXlfVG9rZW46Vkx5VWJ1VlJybzI0OE14elZWWmNrZXpFblRkXzE3Mzg5Mjk0Nzk6MTczODkzMzA3OV9WNA" alt="img"></p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>默认生成的代码可以从下面的分支获取。</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/porpoise-demo/tree/start-up/">https://gitee.com/CrazyAirhead/porpoise-demo/tree/start-up/</a></p>
+<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>Solon 作者针对的提供了多个性能的测试对比，具体看链接 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/737">https://solon.noear.org/article/737</a> 的文章。这里不逻辑所有的性能对比，只例出<code>Spring VS Javalin VS Solon</code>的对比，另外测试只是做个参考。不同的环境、场景，效果不同。</p>
+<h3 id="测试记录"><a href="#测试记录" class="headerlink" title="测试记录"></a>测试记录</h3><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>SpringBoot2</th>
+<th>SpringBoot3</th>
+<th>Javalin</th>
+<th>Solon</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>运行时</td>
+<td>java 17</td>
+<td>java 17</td>
+<td>java 17</td>
+<td>java 17</td>
+</tr>
+<tr>
+<td>测试前状态/内存</td>
+<td>101.1Mb</td>
+<td>112.9Mb</td>
+<td>66.1Mb</td>
+<td>45.6Mb</td>
+</tr>
+<tr>
+<td>测试后状态/内存</td>
+<td>996.3Mb</td>
+<td>326.9Mb</td>
+<td>457.3Mb</td>
+<td>369.2Mb</td>
+</tr>
+<tr>
+<td>测试后状态/并发</td>
+<td>2万</td>
+<td>2.6万</td>
+<td>12万</td>
+<td>17万</td>
+</tr>
+</tbody></table>
+<h3 id="测试视频"><a href="#测试视频" class="headerlink" title="测试视频"></a>测试视频</h3><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1nJ4m1h79P/">https://www.bilibili.com/video/BV1nJ4m1h79P/</a></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>通过 Solon Initializr 可以直接创建基础可运行的应用。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/06/course100/015/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/06/course100/015/" class="post-title-link" itemprop="url">初始 Solon —— Solon 体系</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-06 22:13:02 / 修改时间：22:25:29" itemprop="dateCreated datePublished" datetime="2025-02-06T22:13:02+08:00">2025-02-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本部分内容建议直接看官网 <a target="_blank" rel="noopener" href="https://solon.noear.org,以便能看到最新的内容.这里只是简单的罗列./">https://solon.noear.org，以便能看到最新的内容。这里只是简单的罗列。</a></p>
+<h2 id="Solon-体系"><a href="#Solon-体系" class="headerlink" title="Solon 体系"></a>Solon 体系</h2><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NzU2YWQ2MDY4OTViOGE2ZDIxNjhkNjk1ZTNjOTc3ZDZfWW55QW5ZYVdlZVBPQjhGcWtUc2VyZUJRYjZOb0FqVUNfVG9rZW46TmZBeGJ2bnVzbzhVRnB4T2ZkUmNqUVB3bkhoXzE3Mzg4NTE0NTM6MTczODg1NTA1M19WNA" alt="img"></p>
+<h3 id="Solon-Core"><a href="#Solon-Core" class="headerlink" title="Solon Core"></a>Solon Core</h3><p>Solon 核心库，主要分成，容器、插件、上下文处理。</p>
+<ul>
+<li>Ioc / Aop 容器，提供基于注入依赖的自动装配体系</li>
+<li>插件扩展机制，提供“编码风格”的扩展体系</li>
+<li>通用上下文处理接口，提供开放式网络协议对接适配体系（俗称，三元合一）</li>
+</ul>
+<h3 id="Solon-Boot"><a href="#Solon-Boot" class="headerlink" title="Solon Boot"></a>Solon Boot</h3><p>服务启动器，处理网络协议，三元合一。</p>
+<h3 id="Solon-Serialization"><a href="#Solon-Serialization" class="headerlink" title="Solon Serialization"></a>Solon Serialization</h3><p>序列化体系及相关适配插件。</p>
+<h3 id="Solon-View"><a href="#Solon-View" class="headerlink" title="Solon View"></a>Solon View</h3><p>Solon Web 的后端视图体系及相关适配插件。</p>
+<h3 id="Solon-Data"><a href="#Solon-Data" class="headerlink" title="Solon Data"></a>Solon Data</h3><p>Solon 数据处理，包括事务、缓存、Orm 框架、NoSQL相关的插件。</p>
+<h3 id="Solon-Doc"><a href="#Solon-Doc" class="headerlink" title="Solon Doc"></a>Solon Doc</h3><p>Solon 文档相关的插件。</p>
+<h3 id="Solon-Log"><a href="#Solon-Log" class="headerlink" title="Solon Log"></a>Solon Log</h3><p>Solon 日志相关的插件。</p>
+<h3 id="Solon-Test"><a href="#Solon-Test" class="headerlink" title="Solon Test"></a>Solon Test</h3><p>Solon 单元测试等开发辅助相关的插件。</p>
+<h3 id="Solon-Security"><a href="#Solon-Security" class="headerlink" title="Solon Security"></a>Solon Security</h3><p>Solon 安全，鉴权、校验、加密等安全相关的插件。</p>
+<h3 id="Solon-I18n"><a href="#Solon-I18n" class="headerlink" title="Solon I18n"></a>Solon I18n</h3><p>Solon 国际化相关的插件。</p>
+<h3 id="Solon-Native"><a href="#Solon-Native" class="headerlink" title="Solon Native"></a>Solon Native</h3><p>Solon Native 是可以让 Solon 应用程序以 GraalVM 原生镜像的方式运行的技术方案。</p>
+<h3 id="Solon-AI"><a href="#Solon-AI" class="headerlink" title="Solon AI"></a>Solon AI</h3><p>Solon 使用 AI 的相关插件。</p>
+<h3 id="Solon-Remoting"><a href="#Solon-Remoting" class="headerlink" title="Solon Remoting"></a>Solon Remoting</h3><p>Solon 远程服务相关的插件及其应用。</p>
+<h3 id="Solon-Web"><a href="#Solon-Web" class="headerlink" title="Solon Web"></a>Solon Web</h3><p>Solon Web 一个虚拟的项目，是相关依赖项目的组合。</p>
+<h3 id="Solon-Scheduling"><a href="#Solon-Scheduling" class="headerlink" title="Solon Scheduling"></a>Solon Scheduling</h3><p>Solon 任务调度相关的插件。</p>
+<h3 id="Solon-FaaS"><a href="#Solon-FaaS" class="headerlink" title="Solon FaaS"></a>Solon FaaS</h3><p>Solon 即时运行函数（一个文件，即为一个函数）的技术方案。</p>
+<h3 id="Solon-Flow"><a href="#Solon-Flow" class="headerlink" title="Solon Flow"></a>Solon Flow</h3><p>Solon 流程引擎、规则引擎 等相关的插件。</p>
+<h3 id="Solon-Cloud"><a href="#Solon-Cloud" class="headerlink" title="Solon Cloud"></a>Solon Cloud</h3><p>Solon 分布式与微服务开发相关的插件，主要包括：</p>
+<ul>
+<li>Solon Cloud Gateway 分布式网关相关插件</li>
+<li>Solon Cloud Config 分布式配置相关插件</li>
+<li>Solon Cloud Discovery 分布式注册与发现相关插件</li>
+<li>Solon Cloud Event 分布式时间总线相关插件</li>
+<li>Solon Cloud Job 分布式任务调度插件</li>
+<li>Solon Cloud File 分布式文件插件</li>
+<li>Solon Cloud Log 分布式日志插件</li>
+<li>Solon Cloud Trace 分布式跟踪插件</li>
+<li>Solon Cloud Metrics 分布式监控插件</li>
+<li>Solon Cloud Breaker 分布式熔断插件</li>
+<li>Solon Cloud Id 分布式 ID 插件</li>
+<li>Solon Cloud I18n 分布式国际化配置插件</li>
+<li>Solon Cloud List 分布式名单，白名单、黑名单等</li>
+<li>Solon Cloud Lock 分布式锁插件</li>
+</ul>
+<h2 id="技术趋势"><a href="#技术趋势" class="headerlink" title="技术趋势"></a>技术趋势</h2><p>我们关注 Spring Boot3 的话，当前已经只支持 JDK17 以上版本，对 WebFlux，异步编程的支持越来越好。而且因为云原生的发展，Native 项目。随着大语言模型的发展，对构建 AI 应用的需求也会增加。在这些方面 Solon 都是有完整支持的，跟进 Solon 也能保持自己在技术方面的更新迭代。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/05/course100/014/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/05/course100/014/" class="post-title-link" itemprop="url">Solon 实用教程 —— 介绍</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-02-05 21:08:21" itemprop="dateCreated datePublished" datetime="2025-02-05T21:08:21+08:00">2025-02-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-02-06 22:15:47" itemprop="dateModified" datetime="2025-02-06T22:15:47+08:00">2025-02-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>一次在 Jfinal 的群聊中，无意中发现 Solon 的，说「 Solon只需要几M」。于是搜索到官网，看了官网内容。抱着试一试的态度，于是按着官方文档写例子，发现挺好用的，生态也很完整，自己想要的东西基本都有。</p>
+<p>目前自己在尝试构建 Solon 版的快速开发框架，算是学习环境。在公司使用 Solon 和 Solon Cloud 开发安全运营平台，算是实践环境。</p>
+<p>在学习实践 Solon 的过程中，也是会碰到问题的，我就会把问题和处理过程记录下来。本着「教是最好的学」的原则，于是整理本教程《Solon 实用教程》，以便自己能更好的理解和使用 Solon。</p>
+<p>由于我还在学习和实践 Solon 的过程中，因此本教程会持续更新。同时，由于我的学习可能不够深入或使用不当，教程中难免会出现错误，欢迎大家指正。</p>
+<h2 id="Solon-是什么"><a href="#Solon-是什么" class="headerlink" title="Solon 是什么"></a>Solon 是什么</h2><p>以下是Solon在开放原子开源基金会的<a target="_blank" rel="noopener" href="https://www.openatom.cn/project/YNjOOt50Swn2">介绍</a>（<a target="_blank" rel="noopener" href="https://www.openatom.cn/project/YNjOOt50Swn2%EF%BC%89%E3%80%82">https://www.openatom.cn/project/YNjOOt50Swn2）。</a></p>
+<h3 id="项目简介"><a href="#项目简介" class="headerlink" title="项目简介"></a>项目简介</h3><p>Solon 一个是新的Java “生态型”应用开发框架。相对目前主流解决方案。Solon并发高 2～ 3 倍；内存省 50%；启动快 5 ～ 10 倍；打包小 50% ~ 90%；同时兼容 java8 ~ java22 运行时。</p>
+<h3 id="项目特点"><a href="#项目特点" class="headerlink" title="项目特点"></a>项目特点</h3><h4 id="技术价值"><a href="#技术价值" class="headerlink" title="技术价值"></a>技术价值</h4><p>Solon 提供了更高的计算性价比；更好的软件开发效率；快的生产与部署体验；更灵活的兼容选择。</p>
+<h4 id="业务价值"><a href="#业务价值" class="headerlink" title="业务价值"></a>业务价值</h4><p>Solon解决了Spring 的历史包袱重，架构臃肿，计算资源浪费，学习曲线复杂，以及不再支持java17之前版本等问题。</p>
+<h4 id="生态价值"><a href="#生态价值" class="headerlink" title="生态价值"></a>生态价值</h4><p>Solon 给Java 生态整合提供了更先进的底座支持。灵活的架构，即可适配传统的java-ee体系，又可以支持最新的技术发展成果。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZjVhMDI1OWI2NTQzODk2MGE2MjY0M2I2ZWQ5ZDY1MmZfTHNhRURJV0tmMEFHbmJuaXp1N0E3d3ppNXl6ejVDbVhfVG9rZW46Skl4U2JMREJGb3RzQzR4MlF1N2N6OTNhbmNiXzE3Mzg3NjA5ODY6MTczODc2NDU4Nl9WNA" alt="img"></p>
+<h2 id="为什么要学-Solon"><a href="#为什么要学-Solon" class="headerlink" title="为什么要学 Solon"></a>为什么要学 Solon</h2><ul>
+<li>更快、更小、更简单。Solon并发高 2～ 3 倍；启动快 5 ～ 10 倍；打包小 50% ~ 90%；内存省 50%；最小 Web 完整开发单位 1Mb。除了注解模式之外，还可以按需手动，生态丰富，选择自由。同时兼容 java8 ~ java22 运行时。</li>
+<li>国产框架，生态完整。随着国产信创的推荐，使用国产框架将更有优势。</li>
+<li>交流方便，容易理解。有官方的沟通交流群和使用 Gitee，沟通交流方面，文档使用中文编写，容易理解。</li>
+</ul>
+<h2 id="教程内容"><a href="#教程内容" class="headerlink" title="教程内容"></a>教程内容</h2><p>在学习和实践 Solon 的过程中，会发现自己一开始更关注怎么用？接着才会关注为什么要这么用？之后才会想这样设计的好处？如何用 Solon 进行 Web 开发是本教程的主线，本教程不会讲解 Solon 的源码。本教程的主要来源为 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/learn-start">Solon 官网</a> 、 <a target="_blank" rel="noopener" href="https://gitee.com/noear/solon">Solon 源码</a>和自己的实践（<a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/projects?sort=&amp;scope=&amp;state=public&amp;search=solon">https://gitee.com/CrazyAirhead/projects?sort=&amp;scope=&amp;state=public&amp;search=solon</a> 和 <a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/porpoise-demo%EF%BC%89%E3%80%82">https://gitee.com/CrazyAirhead/porpoise-demo）。</a></p>
+<p>本教程主要以下几个部分：</p>
+<ul>
+<li>初识 Solon</li>
+<li>数据操作</li>
+<li>Web 开发</li>
+<li>Solon Boot</li>
+<li>Solon Cloud</li>
+</ul>
+<p>本教程使用 IDEA、JDK17 和 Gradle，需要有这些基础知识。本教程于官网资料的主要不同在于，官网面向的读者更宽泛，会涉及各种不同版本 JDK，Maven 和 Gradle 的配置，不同的编程习惯，比如注解或手动获取 Bean 等，不同的技术偏好，比如多种 ORM 组件等。本教程则更面向实践，并限定了选择，这样可以比较快速简单的入门，实际使用 Solon 进行开发工作。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/01/17/go/gsyslog/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -663,619 +1471,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/11/17/misc/homebrew-01/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/17/misc/homebrew-01/" class="post-title-link" itemprop="url">Howebrew 安装软件时提示不支持的 MacOs 版本</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2024-11-17 16:26:16 / 修改时间：18:41:28" itemprop="dateCreated datePublished" datetime="2024-11-17T16:26:16+08:00">2024-11-17</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MacOS/" itemprop="url" rel="index"><span itemprop="name">MacOS</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MacOS/Homebrew/" itemprop="url" rel="index"><span itemprop="name">Homebrew</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>系统升级 macOS Sequoia 的 15.1 后，今天要安装安装 gpg 结果提示异常：<code>_error: gnupg: unknown or unsupported macos version: :dunno</code>。</p>
-<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>macOS 系统版本的升级可能导致 Homebrew 识别新系统版本时出现兼容性问题，具体表现为“unknown or unsupported macOS version: :dunno”错误。通过查看 Github 的讨论（<a target="_blank" rel="noopener" href="https://github.com/orgs/Homebrew/discussions/941">来源</a>），发现该问题可以通过重置 Homebrew 解决。</p>
-<h1 id="处理"><a href="#处理" class="headerlink" title="处理"></a>处理</h1><p>执行<code>brew docker</code>，检查brew是否有问题。我自己执行此命令提示如下问题：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Please note that these warnings are just used to <span class="built_in">help</span> the Homebrew maintainers</span><br><span class="line">with debugging <span class="keyword">if</span> you file an issue. If everything you use Homebrew <span class="keyword">for</span> is</span><br><span class="line">working fine: please don<span class="string">&#x27;t worry or file an issue; just ignore this. Thanks!</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Warning: Suspicious https://github.com/Homebrew/brew git origin remote found.</span></span><br><span class="line"><span class="string">The current git origin is:</span></span><br><span class="line"><span class="string">  https://mirrors.aliyun.com/homebrew/brew.git</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">With a non-standard origin, Homebrew won&#x27;</span>t update properly.</span><br><span class="line">You can solve this by setting the origin remote:</span><br><span class="line">  git -C <span class="string">&quot;/opt/homebrew&quot;</span> remote set-url origin https://github.com/Homebrew/brew</span><br></pre></td></tr></table></figure>
-
-<p>此时继续执行提示的命令，因为墙的原因，之前设置了国内的镜像。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git -C <span class="string">&quot;/opt/homebrew&quot;</span> remote set-url origin https://github.com/Homebrew/brew</span><br></pre></td></tr></table></figure>
-
-<p>再次执行<code>brew docker</code>，提示正常。</p>
-<p>执行<code>brew update-reset</code>，将 Homebrew 重置到官方的稳定版本：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew update-reset</span><br></pre></td></tr></table></figure>
-
-<p>接着就可以执行<code>brew update</code>，更新 Homebrew 及所有组件到最新版本。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew update</span><br></pre></td></tr></table></figure>
-
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://blog.axiaoxin.com/post/fix-brew-macos-version-dunno-error/">macOS系统升级Homebrew报错“unknown or unsupported macOS version: :dunno (MacOSVersionError) ”解决方法</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/10/31/misc/error-encoding/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/10/31/misc/error-encoding/" class="post-title-link" itemprop="url">MacOS 错误编码问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-10-31 10:16:15" itemprop="dateCreated datePublished" datetime="2024-10-31T10:16:15+08:00">2024-10-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 15:06:58" itemprop="dateModified" datetime="2024-11-02T15:06:58+08:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MacOS/" itemprop="url" rel="index"><span itemprop="name">MacOS</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MacOS/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MacOS/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>775</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>一开始发现飞书的菜单栏里显示的推送消息是乱码的，而且在飞书界面中才侧边栏，显示的的已打开的标题也是乱码。一开始以为是飞书的问题，记得是前几天前有升级过，简单找了下飞书的语言相关的设置，没有找到可以配置的地方。于是就将就着用着，影响也不大，虽然标题乱码了，但内容显示是正常的。昨天 Mixin Messenger 推送了新的桌面版本，也做了升级。打开后发现会话列表都是乱码的。突然就想这个应该不是单个软件的问题了，应该是操作系统的配置。</p>
-<p>我升级过 MacOS 的最新推送，也就是 macOS Sequoia 的 15.1 版本。首先想到的就是看看设置里的「地区与语言」，我个人的习惯是首选语言是英语，地区是大陆，多少会有点关系。既然中文乱码，那我就先把首选语言修改成中文，然后重启，飞书和 Mixin 的乱码问题都消失了，更加确定就是MacOS升级后引起的配置的问题。于是带着碰碰运气的方式，将首选语言设置成英语，重启后，还是正常显示。于是困扰了几天的问题处理好了。</p>
-<p>因为这个问题是一次性的问题，也没有截图。当时想如果没解决，是想具体看看 mac 的系统编码的，现在的系统编码如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">% locale</span><br><span class="line"></span><br><span class="line">LANG=<span class="string">&quot;zh_CN.UTF-8&quot;</span></span><br><span class="line">LC_COLLATE=<span class="string">&quot;zh_CN.UTF-8&quot;</span></span><br><span class="line">LC_CTYPE=<span class="string">&quot;UTF-8&quot;</span></span><br><span class="line">LC_MESSAGES=<span class="string">&quot;zh_CN.UTF-8&quot;</span></span><br><span class="line">LC_MONETARY=<span class="string">&quot;zh_CN.UTF-8&quot;</span></span><br><span class="line">LC_NUMERIC=<span class="string">&quot;zh_CN.UTF-8&quot;</span></span><br><span class="line">LC_TIME=<span class="string">&quot;zh_CN.UTF-8&quot;</span></span><br><span class="line">LC_ALL=</span><br></pre></td></tr></table></figure>
-
-<p>总之，如果你和我一样使用的是英语作为首选项，恰好也碰上部分软件突然就显示乱码问题，可以尝试调整下首选语言。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/09/04/course100/012/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/04/course100/012/" class="post-title-link" itemprop="url">使用 GLM4-9B 修改语音识别文本错误</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2024-09-04 21:00:45 / 修改时间：21:53:50" itemprop="dateCreated datePublished" datetime="2024-09-04T21:00:45+08:00">2024-09-04</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/" itemprop="url" rel="index"><span itemprop="name">定投人生课堂</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/%E5%AE%9A%E6%8A%95%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">定投写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/%E5%AE%9A%E6%8A%95%E5%86%99%E4%BD%9C/GLM4/" itemprop="url" rel="index"><span itemprop="name">GLM4</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AE%9A%E6%8A%95%E4%BA%BA%E7%94%9F%E8%AF%BE%E5%A0%82/%E5%AE%9A%E6%8A%95%E5%86%99%E4%BD%9C/GLM4/Ollama/" itemprop="url" rel="index"><span itemprop="name">Ollama</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>在“「定投搜索」工具的一些分享”中有说到，通过 <code>whsiper.cpp </code> 识别的文本不准确的问题，包括存在繁体中文，错误的同音字，没有标点符号，突然增加的一些版权信息和告别语。</p>
-<p>已经尝试使用 GLM4 进行文本的修改，修改效果不错。</p>
-<p>以下分享此次使用 GLM4-9B 修改语音识别文本错误的过程。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/09/04/course100/012/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/09/02/mixin/mixin-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/02/mixin/mixin-1/" class="post-title-link" itemprop="url">「定投搜索」工具的一些分享</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2024-09-02 00:17:27 / 修改时间：16:05:56" itemprop="dateCreated datePublished" datetime="2024-09-02T00:17:27+08:00">2024-09-02</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/mixin/" itemprop="url" rel="index"><span itemprop="name">mixin</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>「定投搜索」工具是 Mixin 的机器人（Mixin 号「7000103414」），以 Mixin 聊天的方式提供「定投人生」课堂的全文搜索，并返回匹配的课程列表或者课程卡片。</p>
-<p>最近学习AI，发现可以用AI技术对「定投搜索」进行些优化改造，然后在查看文档时发现之前写了这篇技术总结，现在稍作调整分享这个「定投搜索」Mixin的机器人制作过程，顺便预告下新版功能。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/09/02/mixin/mixin-1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/08/31/solon/solon-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/08/31/solon/solon-1/" class="post-title-link" itemprop="url">使用国产化框架 Solon 的一些开发经验</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2024-08-31 15:00:14 / 修改时间：17:49:37" itemprop="dateCreated datePublished" datetime="2024-08-31T15:00:14+08:00">2024-08-31</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/solon/" itemprop="url" rel="index"><span itemprop="name">solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/solon/cmdb/" itemprop="url" rel="index"><span itemprop="name">cmdb</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>11k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>10 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>公司的数字安全运营平台是基于 Spring Boot 和 Spring Cloud 进行构建的。考虑到公司有企事业单位的客户，陆续对产品提国产信创的要求。虽然当前信创可能只要求硬件，操作系统和数据库是国产化即可，但底层框架也是国产化的，可以给客户提供更多的国产化保证。</p>
-<p>Solon 就是这样的一个选择，Solon 的官网介绍说，Solon 是 Java 「新式」应用开发框架，从零开始构建，有自主的标准规范与开放生态。追求更快、更小、更简单； 提倡克制、简洁、高效、开放、生态；是信通院可信开源社区成员、可信开源项目。Solon 有以下的特色：拥有更高的计算性价比，并发高 2～3 倍，内存省 50%；更快的开发效率：内核小，入门快，调试重启可快至 10 倍；更好的生成和部署体验：打包最多缩小 90%； 更大的兼容范围：非 java-ee 框架，同时支持 java8～java22，graalvm native image。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/08/31/solon/solon-1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/07/20/spring/saas-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/07/20/spring/saas-2/" class="post-title-link" itemprop="url">多租户的技术实现</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-07-20 20:52:14" itemprop="dateCreated datePublished" datetime="2024-07-20T20:52:14+08:00">2024-07-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-07-21 09:43:37" itemprop="dateModified" datetime="2024-07-21T09:43:37+08:00">2024-07-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/Mybatis-Plus/" itemprop="url" rel="index"><span itemprop="name">Mybatis Plus</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/Mybatis-Plus/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/Mybatis-Plus/Redis/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/Mybatis-Plus/Redis/ElasticSearch/Job/" itemprop="url" rel="index"><span itemprop="name">Job</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/Mybatis-Plus/Redis/ElasticSearch/Job/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>15k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>13 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>上一篇「<a target="_blank" rel="noopener" href="https://l4qiang.goldsyear.com/2021/07/30/spring/saas/">基于Mybatis的多租户实现方法</a>」介绍的是Spring Boot使用 Mybatis Plus实现Db层的数据隔离。但在实际的实现过程中，除了涉及Db层的数据隔离，还会涉及租户的识别，缓存的数据隔离，ElasticSearch的数据隔离，任务的数据隔离、消息队列的隔离，同时也包括租户的切换与忽略租户等。</p>
-<p>因此在上一篇的基础上，这次尝试把多租户的技术实现写得更完整些，如有不足支持欢迎指正。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/07/20/spring/saas-2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1345,20 +1540,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">301</span>
+          <span class="site-state-item-count">307</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">120</span>
+        <span class="site-state-item-count">126</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">118</span>
+        <span class="site-state-item-count">121</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1407,7 +1602,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2025</span>
+  <span itemprop="copyrightYear">2026</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -1416,12 +1611,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">811k</span>
+    <span title="站点总字数">852k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:17</span>
+    <span title="站点阅读时长">12:55</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
