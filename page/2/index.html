@@ -172,6 +172,115 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/11/20/course100/050/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/11/20/course100/050/" class="post-title-link" itemprop="url">Solon 本地网关配置不当引起的 404 问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-11-20 17:20:46 / 修改时间：17:31:00" itemprop="dateCreated datePublished" datetime="2025-11-20T17:20:46+08:00">2025-11-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>公司的 Ficus 基础框架中的 <code>ficus-starter-server</code> 使用本地网关对路由做了统一的规划。比如：AdminGateway 统一使用 <code>/admin-api/**</code>路径，使用管理用户鉴权过滤器，会注册所有标记为 <code>adminApi</code> 的组件接口；AppGateway 统一使用 <code>/app-api/**</code>路径，使用会员鉴权过滤器，会注册所有标记为 <code>appApi</code> 的组件接口；而OpenGateway 统一使用 <code>/open-api/**</code>路径，则增加了签名校验的过滤器，会注册所有标记为 <code>openApi</code> 的组件接口。</p>
+<p><img src="https://ytq6nfyc5n.feishu.cn/space/api/box/stream/download/asynccode/?code=OTBlZjUwNTI5MDM4YmRmZWU2NTA2NTI1NmE1MWQ1YjBfTlpLUDdhSW9EOUZXRGlhc1JTRXlEV3ZQVUl1N1c1WVBfVG9rZW46VXpFRWJJYlJ5b3RJZ3d4YVM2dGNjZ3RhbjhiXzE3NjM2MzA0ODA6MTc2MzYzNDA4MF9WNA" alt="img"></p>
+<p>一体机服务也是基于 Ficus 基础框架开发，但是因为是一个独立运行的服务，而不是基于平台的微服务，因此需要调整自己的本地 Gateway 配置。</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>一体机增加自己的本地网关的配置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/admin-api/**&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AioAdminGateway</span> <span class="keyword">extends</span> <span class="title">Gateway</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> SecurityProperties securityProperties;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** index 越小优先级越高 */</span></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">register</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    filter(-<span class="number">1</span>, <span class="keyword">new</span> FicusTraceFilter());</span><br><span class="line">    filter(<span class="number">0</span>, <span class="keyword">new</span> FicusAdminExceptionFilter());</span><br><span class="line">    filter(<span class="number">4</span>, <span class="keyword">new</span> AioAdminFilter(securityProperties));</span><br><span class="line">    filter(<span class="number">5</span>, <span class="keyword">new</span> LicenseFilter());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 添加Bean</span></span><br><span class="line">    addBeans(bw -&gt; <span class="string">&quot;adminApi&quot;</span>.equals(bw.tag()));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试的时候发现，虽然 swagger 里可以看到接口，但是请求的时候提示 404，把断点打在 Controller 或者 Filter 上都没有进入。</p>
+<h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>经过一段时间的排查时找到原因了。<code>ficus-starter-server</code> 组件，会先执行<code>AdminGateway</code>，但因为 <code>autoScanRoute=false</code> 关闭了 Filter 和 Action 的注册，所以 <code>/admin-api/**</code>是没有接口的，也就无法访问了。 </p>
+<p>而 <code>AioAdminGateway</code> 虽然也注册到 <code>/admin-api/**</code>，但是更晚注册的，可能地址重复了，实际上没有真正注册 Action。</p>
+<p>而 Swagger 没有做判断，只要是 adminApi 标记的就会加载到接口列表中，所以出现了接口可见，但请求不了的怪异现象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/admin-api/**&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AdminGateway</span> <span class="keyword">extends</span> <span class="title">BaseGateway</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> TenantProperties tenantProperties;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> SecurityProperties securityProperties;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> WebProperties webProperties;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** index 越小优先级越高 */</span></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">register</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 部分情况不希望server来自动扫描路由，手动添加</span></span><br><span class="line">    <span class="keyword">if</span> (!webProperties.getAutoScanRoute()) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    filter(-<span class="number">1</span>, <span class="keyword">new</span> FicusTraceFilter());</span><br><span class="line">    filter(<span class="number">0</span>, <span class="keyword">new</span> FicusAdminExceptionFilter());</span><br><span class="line">    filter(<span class="number">2</span>, <span class="keyword">new</span> FicusTenantFilter(tenantProperties));</span><br><span class="line">    filter(<span class="number">3</span>, <span class="keyword">new</span> FicusAdminFilter(securityProperties));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 添加Bean</span></span><br><span class="line">    addBeans(bw -&gt; <span class="string">&quot;adminApi&quot;</span>.equals(bw.tag()));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="处理"><a href="#处理" class="headerlink" title="处理"></a>处理</h2><p>使用 Condition 注解，如果<code>autoScanRoute=false</code>不创建对应的 bean。Condition 的使用参考 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/434%E3%80%82">https://solon.noear.org/article/434。</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/admin-api/**&quot;)</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Condition(onProperty = &quot;$&#123;ficus.web.autoScanRoute:true&#125; == true&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AdminGateway</span> <span class="keyword">extends</span> <span class="title">BaseGateway</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> TenantProperties tenantProperties;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> SecurityProperties securityProperties;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> WebProperties webProperties;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** index 越小优先级越高 */</span></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">register</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    filter(-<span class="number">1</span>, <span class="keyword">new</span> FicusTraceFilter());</span><br><span class="line">    filter(<span class="number">0</span>, <span class="keyword">new</span> FicusAdminExceptionFilter());</span><br><span class="line">    filter(<span class="number">2</span>, <span class="keyword">new</span> FicusTenantFilter(tenantProperties));</span><br><span class="line">    filter(<span class="number">3</span>, <span class="keyword">new</span> FicusAdminFilter(securityProperties));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 添加Bean</span></span><br><span class="line">    addBeans(bw -&gt; <span class="string">&quot;adminApi&quot;</span>.equals(bw.tag()));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h2><p>登记了个 issue，如果路由冲突的时候增加打印告警日志。<a target="_blank" rel="noopener" href="https://gitee.com/opensolon/solon/issues/ID7MWK">https://gitee.com/opensolon/solon/issues/ID7MWK</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/10/30/course100/049/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1412,111 +1521,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/04/30/course100/040/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/04/30/course100/040/" class="post-title-link" itemprop="url">Solon Cloud Gateway 补充</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-04-30 22:18:33 / 修改时间：22:20:27" itemprop="dateCreated datePublished" datetime="2025-04-30T22:18:33+08:00">2025-04-30</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在「使用 Solon Cloud Gateway 替换Spring Cloud Gateway 」的文章中，有评论说不知道响应式。当时看的是</p>
-<p>Solon Cloud Gateway 使用响应式接口，由 Solon-Rx 来实现，是基于 reactive-streams 封装的 RxJava 极简版。目前仅一个接口 Completable，所以当时以为实现了 ExFilter 返回 Completable 就是响应式了。后续 Solon Cloud Gateway 继续更新文档之后才发现，虽然网关是响应式了，但如果逻辑涉及 IO 或者比较慢的操作，需要在 ExFilter 中开启异步接口，这样才是真正的异步，从而避免对网关的事件循环器造成影响，减少对响应式的性能的伤害。</p>
-<p>为了对接同步 IO 接口，Solon 3.2.1 提供了 CloudGatewayFilterSync，用于简化异步调用的编写。</p>
-<h2 id="基础版"><a href="#基础版" class="headerlink" title="基础版"></a>基础版</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//同步过滤器（会自动转异步）</span></span><br><span class="line"><span class="meta">@FunctionalInterfacepublic</span> <span class="class"><span class="keyword">interface</span> <span class="title">ExFilterSync</span> <span class="keyword">extends</span> <span class="title">ExFilter</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Overridedefault</span> <span class="function">Completable <span class="title">doFilter</span><span class="params">(ExContext ctx, ExFilterChain chain)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Completable.create(emitter -&gt; &#123;</span><br><span class="line">            <span class="comment">//暂停接收流</span></span><br><span class="line">            ctx.pause();</span><br><span class="line"></span><br><span class="line">            <span class="comment">//开始异步</span></span><br><span class="line">            RunUtil.async(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="comment">//开始同步处理boolean isContinue = doFilterSync(ctx);</span></span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (isContinue) &#123;</span><br><span class="line">                        <span class="comment">//继续</span></span><br><span class="line">                        chain.doFilter(ctx).subscribe(emitter);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="comment">//结束</span></span><br><span class="line">                        emitter.onComplete();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">                    emitter.onError(ex);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 执行过滤同步处理（一般用于同步 io）</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> ctx 上下文</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 是否继续</span></span><br><span class="line"><span class="comment">     */</span><span class="function"><span class="keyword">boolean</span> <span class="title">doFilterSync</span><span class="params">(ExContext ctx)</span> <span class="keyword">throws</span> Throwable</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这个 doFilter 的过程中需要自己先处理 ctx.pause，然后开启异步，并在开启的过程中判断是否异常的提交等等，需要写好这个 ExFitler 的扩展还是有点不容易的。</p>
-<p>于是作者又贴心的提供了CloudGatewayFilterSync</p>
-<h2 id="简化版"><a href="#简化版" class="headerlink" title="简化版"></a>简化版</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component(index = -9)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AuthFilterSync</span> <span class="keyword">implements</span> <span class="title">CloudGatewayFilterSync</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Inject</span></span><br><span class="line">    AuthJdbcService authService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Overridepublic</span> <span class="function"><span class="keyword">boolean</span> <span class="title">doFilterSync</span><span class="params">(ExContext ctx)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        String userId = ctx.rawQueryParam(<span class="string">&quot;userId&quot;</span>);</span><br><span class="line">        <span class="comment">//检测路径权限</span></span><br><span class="line">        <span class="keyword">return</span> authService.check(userId, ctx.rawPath());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在简化的版本中，只需要在 doFilterSync 中编写具体的逻辑，而不要关心流的暂停和开启异步等。如果已经处理完毕，不需要继续执行返回 ture，否则返回 false。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://solon.noear.org/article/813">https://solon.noear.org/article/813</a></p>
-<p><a target="_blank" rel="noopener" href="https://solon.noear.org/article/1005">https://solon.noear.org/article/1005</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1586,20 +1590,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">307</span>
+          <span class="site-state-item-count">308</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-count">128</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-count">123</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1657,12 +1661,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">852k</span>
+    <span title="站点总字数">856k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:55</span>
+    <span title="站点阅读时长">12:58</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

@@ -172,6 +172,111 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/04/30/course100/040/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/04/30/course100/040/" class="post-title-link" itemprop="url">Solon Cloud Gateway 补充</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-04-30 22:18:33 / 修改时间：22:20:27" itemprop="dateCreated datePublished" datetime="2025-04-30T22:18:33+08:00">2025-04-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在「使用 Solon Cloud Gateway 替换Spring Cloud Gateway 」的文章中，有评论说不知道响应式。当时看的是</p>
+<p>Solon Cloud Gateway 使用响应式接口，由 Solon-Rx 来实现，是基于 reactive-streams 封装的 RxJava 极简版。目前仅一个接口 Completable，所以当时以为实现了 ExFilter 返回 Completable 就是响应式了。后续 Solon Cloud Gateway 继续更新文档之后才发现，虽然网关是响应式了，但如果逻辑涉及 IO 或者比较慢的操作，需要在 ExFilter 中开启异步接口，这样才是真正的异步，从而避免对网关的事件循环器造成影响，减少对响应式的性能的伤害。</p>
+<p>为了对接同步 IO 接口，Solon 3.2.1 提供了 CloudGatewayFilterSync，用于简化异步调用的编写。</p>
+<h2 id="基础版"><a href="#基础版" class="headerlink" title="基础版"></a>基础版</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//同步过滤器（会自动转异步）</span></span><br><span class="line"><span class="meta">@FunctionalInterfacepublic</span> <span class="class"><span class="keyword">interface</span> <span class="title">ExFilterSync</span> <span class="keyword">extends</span> <span class="title">ExFilter</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Overridedefault</span> <span class="function">Completable <span class="title">doFilter</span><span class="params">(ExContext ctx, ExFilterChain chain)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Completable.create(emitter -&gt; &#123;</span><br><span class="line">            <span class="comment">//暂停接收流</span></span><br><span class="line">            ctx.pause();</span><br><span class="line"></span><br><span class="line">            <span class="comment">//开始异步</span></span><br><span class="line">            RunUtil.async(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="comment">//开始同步处理boolean isContinue = doFilterSync(ctx);</span></span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (isContinue) &#123;</span><br><span class="line">                        <span class="comment">//继续</span></span><br><span class="line">                        chain.doFilter(ctx).subscribe(emitter);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="comment">//结束</span></span><br><span class="line">                        emitter.onComplete();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">                    emitter.onError(ex);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 执行过滤同步处理（一般用于同步 io）</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> ctx 上下文</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 是否继续</span></span><br><span class="line"><span class="comment">     */</span><span class="function"><span class="keyword">boolean</span> <span class="title">doFilterSync</span><span class="params">(ExContext ctx)</span> <span class="keyword">throws</span> Throwable</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个 doFilter 的过程中需要自己先处理 ctx.pause，然后开启异步，并在开启的过程中判断是否异常的提交等等，需要写好这个 ExFitler 的扩展还是有点不容易的。</p>
+<p>于是作者又贴心的提供了CloudGatewayFilterSync</p>
+<h2 id="简化版"><a href="#简化版" class="headerlink" title="简化版"></a>简化版</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component(index = -9)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AuthFilterSync</span> <span class="keyword">implements</span> <span class="title">CloudGatewayFilterSync</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Inject</span></span><br><span class="line">    AuthJdbcService authService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Overridepublic</span> <span class="function"><span class="keyword">boolean</span> <span class="title">doFilterSync</span><span class="params">(ExContext ctx)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        String userId = ctx.rawQueryParam(<span class="string">&quot;userId&quot;</span>);</span><br><span class="line">        <span class="comment">//检测路径权限</span></span><br><span class="line">        <span class="keyword">return</span> authService.check(userId, ctx.rawPath());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在简化的版本中，只需要在 doFilterSync 中编写具体的逻辑，而不要关心流的暂停和开启异步等。如果已经处理完毕，不需要继续执行返回 ture，否则返回 false。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://solon.noear.org/article/813">https://solon.noear.org/article/813</a></p>
+<p><a target="_blank" rel="noopener" href="https://solon.noear.org/article/1005">https://solon.noear.org/article/1005</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/03/31/course100/039/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1647,122 +1752,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/23/course100/030/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/02/23/course100/030/" class="post-title-link" itemprop="url">Solon Cloud —— 服务注册与发现</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-02-23 14:29:56 / 修改时间：14:37:54" itemprop="dateCreated datePublished" datetime="2025-02-23T14:29:56+08:00">2025-02-23</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>服务注册与发现是一种动态管理服务实例的机制，其目的是让各个服务能够及时了解其他服务的状态与位置，以便能进行相互的通讯与协作。</p>
-<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><p>添加 nacos2 的依赖 <code>org.noear:nacos2-solon-cloud-plugin</code>。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:demo-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-logging-logback&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-openapi2-knife4j&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:nacos2-solon-cloud-plugin&quot;</span>)</span><br><span class="line">    <span class="comment">// 使用 httputils</span></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-net-httputils&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 使用 NamiClient</span></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:nami-coder-snack3&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:nami-channel-http&quot;</span>)</span><br><span class="line"></span><br><span class="line">    annotationProcessor(<span class="string">&quot;org.mapstruct:mapstruct-processor:$&#123;mapstructVersion&#125;&quot;</span>)</span><br><span class="line"></span><br><span class="line">    testImplementation(<span class="string">&quot;org.noear:solon-test-junit5&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>Nacos2 插件已经做了些默认值，所以我不需要过多的配置即可连接到 nacos 发现服务，如果使用了server 节点，意思是配置服务和发现服务使用同一个配置，或者单独使用<code>solon.cloud.nacos.discovery.server</code>配置。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">solon.app:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&quot;demo-cloud-config&quot;</span></span><br><span class="line">  <span class="comment"># group: &quot;DEFAULT_GROUP&quot; # 默认值为 DEFAULT_GROUP</span></span><br><span class="line">  <span class="comment"># namespace: &quot;public&quot; # 默认值为 public</span></span><br><span class="line"></span><br><span class="line"><span class="attr">solon.cloud.nacos:</span></span><br><span class="line">  <span class="attr">server:</span> <span class="string">&quot;localhost:8848&quot;</span></span><br><span class="line">  <span class="attr">config:</span></span><br><span class="line">    <span class="attr">load:</span> <span class="string">&quot;demo-cloud-config.yml&quot;</span></span><br><span class="line">  <span class="comment"># discovery:</span></span><br><span class="line">  <span class="comment">#   server: &quot;localhost:8848&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="服务调用"><a href="#服务调用" class="headerlink" title="服务调用"></a>服务调用</h2><h3 id="测试服务"><a href="#测试服务" class="headerlink" title="测试服务"></a>测试服务</h3><p>测试服务中我们提供一个hello接口，并增加表示是从 Service01 的标识。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">package</span> com.example.demo.solon.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Controller;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Mapping;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Param;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Api(&quot;Demo&quot;)</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@ApiOperation(&quot;hello&quot;)</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;/hello&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">(<span class="meta">@Param(defaultValue = &quot;world&quot;)</span> String name)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> String.format(<span class="string">&quot;Hello %s!, By Service01&quot;</span>, name);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="DemoController"><a href="#DemoController" class="headerlink" title="DemoController"></a>DemoController</h3><p>Solon 的 NamiClient 或者 HttpUtils 可以通过服务名来调用服务，其中NamiClient可以通过类似FeignClient的注解的方式进行使用。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.solon.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.solon.client.DemoClient;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> org.noear.nami.annotation.NamiClient;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Controller;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Mapping;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Param;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.net.http.HttpUtils;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Api(&quot;Demo&quot;)</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@NamiClient</span> <span class="keyword">private</span> DemoClient demoClient;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;hello&quot;)</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;/hello&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">(<span class="meta">@Param(defaultValue = &quot;world&quot;)</span> String name)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> HttpUtils.http(<span class="string">&quot;demo-cloud-service01&quot;</span>, <span class="string">&quot;/hello&quot;</span>).data(<span class="string">&quot;name&quot;</span>, name).get();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;hello2&quot;)</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;/hello2&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">hello2</span><span class="params">(<span class="meta">@Param(defaultValue = &quot;world&quot;)</span> String name)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> demoClient.hello(name);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="DemoClient"><a href="#DemoClient" class="headerlink" title="DemoClient"></a>DemoClient</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.solon.client;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.noear.nami.annotation.NamiClient;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@NamiClient(name = &quot;demo-cloud-service01&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DemoClient</span> </span>&#123;</span><br><span class="line">  <span class="function">String <span class="title">hello</span><span class="params">(String name)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>运行 demo-cloud-discovery 和 demo-cloud-service01，我们可以通过 nacos 看到服务到已经注册上来了。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZWRhODU4NzA4NWQ4YzlhM2EyMzliOTNlZWVhMzQ4MmRfU3FZVXhiVm84SHZsRjFuRjV6TldpQmtEaHBscDN3dWVfVG9rZW46SEJnSWJVRDNvb0sySFp4eWQyNmM0dzFybm1nXzE3NDAyOTIzMzE6MTc0MDI5NTkzMV9WNA" alt="img"></p>
-<p>接下来通过 hello 和 hello2 接口测试 两种不同方式的调用。</p>
-<p>通过 httputils 调用服务</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MDJhMGM1OTA5MWYwZjkwZDljZjVmMGU3M2ZlYWE0N2VfNW5rOFJrM0c3dEZSQm5xOXBlUVRWRTkxZkp5bzF5NHFfVG9rZW46TmFOUmI0d2JEb2NRdUp4Q2w3T2NqckQxbjljXzE3NDAyOTIzMzE6MTc0MDI5NTkzMV9WNA" alt="img"></p>
-<p>通过 NamiClient</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OGYyODRmNzNkZmY0ZWZmMDQwNjBkNThlOTI0ODI4N2ZfS3NMakJmM291NEZLVXIzVnpXWnpvZ2Z1Nk5hM20yNGVfVG9rZW46T0JHbmJBV0Job1RIeGV4dzY5WmNzdFowblVoXzE3NDAyOTIzMzE6MTc0MDI5NTkzMV9WNA" alt="img"></p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>通过简单的配置，我们就可以把服务注册的 Nacos 中，并可以通过服务名的方式调用其他服务。当我们在普通的服务中增加服务配置和服务注册与发现功能配置后，就可以算作系统中的一个分布式微服务了，可以关注于业务的开发了。而 Solon Cloud 的接下来的更多的面向系统的可用性，可维护性等。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1832,20 +1821,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">307</span>
+          <span class="site-state-item-count">308</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-count">128</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-count">123</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1903,12 +1892,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">852k</span>
+    <span title="站点总字数">856k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:55</span>
+    <span title="站点阅读时长">12:58</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

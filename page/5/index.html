@@ -172,6 +172,211 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/11/course100/020/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/11/course100/020/" class="post-title-link" itemprop="url">Web 开发 —— 基础</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-11 20:38:28 / 修改时间：20:46:39" itemprop="dateCreated datePublished" datetime="2025-02-11T20:38:28+08:00">2025-02-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>Web 基础主要讲解 Solon 对 Web 开发提供的基础能力，支持 HTML 文档和其他静态资源的获取，提供数据交换的能力。</p>
+<h3 id="MVC"><a href="#MVC" class="headerlink" title="MVC"></a>MVC</h3><p>Web 开发中最常使用的 MVC 架构，MVC 全称是 “模型 (Model)- 视图 (View)- 控制器 (Controller)”，是一种广泛使用的设计模式，用于将应用程序的逻辑、数据和界面进行分离。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MGE5NzFiYTQ3NjczYWRkMjkzNDVjMjNmMzgxZjE4ZDZfZWp4MFVHa0JmWW5SWmtaT2duRUpyMGFUWWdYNWdUN05fVG9rZW46UEtEa2JkNWh4b1dLT014b29TWWNMYkRhbnBxXzE3MzkyNzc1NzI6MTczOTI4MTE3Ml9WNA" alt="img"></p>
+<p>在具体对 MVC 的划分中可能存在一些边界的不同，有的人认为 Modle是输入，View 是输出，Controller是处理；有的人认为 Model 是数据，View 是数据的展示与用户的交互，Controller是处理，包含了输入和输出；有的人认为 Model 就是模型，即数据+接口，View 是模型的裁剪，Controller 是数据交互。随着前后端分离的架构的发展，前端也有自己的MVC 的结构，这个时候后端的接口的就成了 Model 层。根据自己对 MVC 的实际理解去用就好了，适合自己就好。</p>
+<p>在 Solon 中可以这样理解：solon-data 对应处理 Model 层，提供数据处理、事务、缓存等支持；solon-core/solon-boot 对应处理 Controller 层，提供 Handler + Context 操作接口，提供Http信号接入支持；solon-view 对应处理 View 层（单体结构），提供不同的模板渲染框架，solon-serialization 对应处理 View 层（前后端分离结构），提供JSON、XML、PROTOSTUFF 等不同格式的序列化。</p>
+<h3 id="常用注解"><a href="#常用注解" class="headerlink" title="常用注解"></a>常用注解</h3><table>
+<thead>
+<tr>
+<th>@Controller</th>
+<th>控制器注解（只有一个注解，会自动通过不同的返回值做不同的处理）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>@Param</td>
+<td>注入请求参数（包括：QueryString、Form、Path）。起到指定名字、默认值等作用</td>
+</tr>
+<tr>
+<td>@Header</td>
+<td>注入请求 header</td>
+</tr>
+<tr>
+<td>@Cookie</td>
+<td>注入请求 cookie</td>
+</tr>
+<tr>
+<td>@Path</td>
+<td>注入请求 path 变量（因为框架会自动处理，所以这个只是标识下方便文档生成用）</td>
+</tr>
+<tr>
+<td>@Body</td>
+<td>注入请求体（一般会自动处理。仅在主体的 String, Steam, Map 时才需要）</td>
+</tr>
+<tr>
+<td>@Mapping</td>
+<td>路由关系映射注解</td>
+</tr>
+<tr>
+<td>@Get</td>
+<td>@Mapping 的辅助注解，便于 RESTful 开发</td>
+</tr>
+<tr>
+<td>@Post</td>
+<td>@Mapping 的辅助注解，便于 RESTful 开发</td>
+</tr>
+<tr>
+<td>@Put</td>
+<td>@Mapping 的辅助注解，便于 RESTful 开发</td>
+</tr>
+<tr>
+<td>@Delete</td>
+<td>@Mapping 的辅助注解，便于 RESTful 开发</td>
+</tr>
+<tr>
+<td>@Patch</td>
+<td>@Mapping 的辅助注解，便于 RESTful 开发</td>
+</tr>
+<tr>
+<td>@Produces</td>
+<td>输出内容类型申明</td>
+</tr>
+<tr>
+<td>@Consumes</td>
+<td>输入内容类型申明（当输出内容类型未包函 @Consumes，则响应为 415 状态码）</td>
+</tr>
+<tr>
+<td>@Multipart</td>
+<td>显式申明支持 Multipart 输入</td>
+</tr>
+</tbody></table>
+<h3 id="参数注入"><a href="#参数注入" class="headerlink" title="参数注入"></a>参数注入</h3><p>关于 MVC 参数注入，主要尊守以下规则：</p>
+<ul>
+<li>参数名与请求数据名一一对应（使用 -parameters）。</li>
+<li>当对映不上时，会采用整体数据注入（如果接收的是实体）</li>
+<li>参数名与请求数据同名时，又想整体注入（如果接收的是实体），可使用 @Body 注解强制标注。</li>
+</ul>
+<h3 id="个人偏好"><a href="#个人偏好" class="headerlink" title="个人偏好"></a>个人偏好</h3><p>不同的 MVC 的理解，会有不一样的项目结构，下面是阿里巴巴《Java 开发手册（黄山版）》的截图，可供参考。 </p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NDkxZTNhOTAzZmE3MjAwMjY4ODdjZjQ0ZTE0YjFjNzhfVE5OYjRMNFdybDUyZnlLcFppSkc5cFFCTjlVTzBWcnhfVG9rZW46RkVZTmI5Y2RJb3Q5SWZ4WlhrWmNYYXFqbldmXzE3MzkyNzc1NzI6MTczOTI4MTE3Ml9WNA" alt="img"></p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MTE4YWJhOTQ0MjA4ZGZlZmNjODdjMDE3MTVjMWE2MDdfb3Y5MUxjMk9NM08yQVVScGVlMmpWVTlEaXpNdGZINDNfVG9rZW46TnIzMmIyMDVRb1B0WTl4VG8zaWNzZGJ2bk9FXzE3MzkyNzc1NzI6MTczOTI4MTE3Ml9WNA" alt="img"></p>
+<p>以下属于个人偏好的目录结构，后续的示例会按这个方式处理。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">domain(业务领域)</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">controller(对应Contoller</span> <span class="string">层，提供用户交互接口)</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">admin（管理端接口）</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">app（应用端接）</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">dto</span> <span class="string">（对应</span> <span class="string">View</span> <span class="string">层的数据）</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">model（对应</span> <span class="string">Model</span> <span class="string">层的数据）</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">service（对应</span> <span class="string">Model</span> <span class="string">层的接口）</span></span><br></pre></td></tr></table></figure>
+
+<p>进一步补充，在 controller 中我不会放业务逻辑，只是调用 service进行转发，这样能更大程度的复用Service；在service中通常不采用接口实现的分离方式（虽然这种方式更好，但在编写、查看代码的过程中跳转太多，而且对应业务来说，通常不会有多种实现，有多种实现的逻辑再进行接口实现分离的方式）；尽可能少的分层领域模型，避免过多的数据转换操作。</p>
+<h2 id="demo-web01"><a href="#demo-web01" class="headerlink" title="demo-web01"></a>demo-web01</h2><p>在 IDEA 中通过 <code>File-&gt;New-&gt;Modules...</code> 可以创建新的模块 <code>demo-web01</code>，基础代码和配置可以从<code>demo-orm</code>中拷贝过来，或者自己手动创建，之后调整包名。</p>
+<p>这里我们继续补充<code>demo-orm</code>的部门管理的例子。实现基本的增删改查（CURD）接口，实现数据的导入导出展示文件的上传与下载，实现 index 接口用于展示模版的渲染，同时在模版中访问静态资源。提供 list 展示 json 的序列化，提供 listXml 展示 XML 的序列化。</p>
+<p>为了在接口中尽可能多的展示不同的参数注入的使用，接口的定义不会是完全的 RESTful 风格。</p>
+<h3 id="修改依赖"><a href="#修改依赖" class="headerlink" title="修改依赖"></a>修改依赖</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// enjoy 模版渲染</span></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-view-enjoy&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// xml 序列化</span></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-serialization-jackson-xml&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// json 序列化，默认就是snack3 可以不配置</span></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-serialization-snack3&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 静态资源访问</span></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web-staticfiles&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建model"><a href="#创建model" class="headerlink" title="创建model"></a>创建model</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.manage.model;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.easy.query.core.annotation.Column;</span><br><span class="line"><span class="keyword">import</span> com.easy.query.core.annotation.EntityProxy;</span><br><span class="line"><span class="keyword">import</span> com.easy.query.core.annotation.Table;</span><br><span class="line"><span class="keyword">import</span> com.easy.query.core.proxy.ProxyEntityAvailable;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.manage.model.proxy.DeptEntityProxy;</span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 部门表 实体类。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Airhead</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Table(value = &quot;demo_dept&quot;)</span></span><br><span class="line"><span class="meta">@EntityProxy</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeptEntity</span> <span class="keyword">implements</span> <span class="title">ProxyEntityAvailable</span>&lt;<span class="title">DeptEntity</span>, <span class="title">DeptEntityProxy</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** id */</span></span><br><span class="line">  <span class="meta">@Column(primaryKey = true, value = &quot;id&quot;, generatedKey = true)</span></span><br><span class="line">  <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 部门名称 */</span></span><br><span class="line">  <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 部门编码 */</span></span><br><span class="line">  <span class="keyword">private</span> String code;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 时间时间 */</span></span><br><span class="line">  <span class="keyword">private</span> LocalDateTime createAt;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 更新时间 */</span></span><br><span class="line">  <span class="keyword">private</span> LocalDateTime updateAt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建service"><a href="#创建service" class="headerlink" title="创建service"></a>创建service</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.manage.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.easy.query.api.proxy.client.EasyEntityQuery;</span><br><span class="line"><span class="keyword">import</span> com.easy.query.solon.annotation.Db;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.manage.convert.DeptConvert;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.manage.dto.DeptDto;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.manage.model.DeptEntity;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeptService</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Db(&quot;db1&quot;)</span></span><br><span class="line">  <span class="keyword">private</span> EasyEntityQuery entityQuery;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> List&lt;DeptDto&gt; <span class="title">list</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> entityQuery.queryable(DeptEntity.class).select(DeptDto.class).toList();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">add</span><span class="params">(DeptDto deptDto)</span> </span>&#123;</span><br><span class="line">    DeptEntity dept = DeptConvert.INSTANCE.convert(deptDto);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> entityQuery.insertable(dept).executeRows(<span class="keyword">true</span>) &gt; <span class="number">0L</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">update</span><span class="params">(DeptDto deptDto)</span> </span>&#123;</span><br><span class="line">    DeptEntity dept = DeptConvert.INSTANCE.convert(deptDto);</span><br><span class="line">    <span class="keyword">return</span> entityQuery.updatable(dept).executeRows() &gt; <span class="number">0L</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> DeptDto <span class="title">get</span><span class="params">(Long id)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> entityQuery</span><br><span class="line">        .queryable(DeptEntity.class)</span><br><span class="line">        .whereById(id)</span><br><span class="line">        .select(DeptDto.class)</span><br><span class="line">        .firstOrNull();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">delete</span><span class="params">(Long id)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> entityQuery</span><br><span class="line">            .getEasyQueryClient()</span><br><span class="line">            .deletable(DeptEntity.class)</span><br><span class="line">            .allowDeleteStatement(<span class="keyword">true</span>)</span><br><span class="line">            .whereById(id)</span><br><span class="line">            .executeRows()</span><br><span class="line">        &gt; <span class="number">0L</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建dto"><a href="#创建dto" class="headerlink" title="创建dto"></a>创建dto</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.manage.dto;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeptDto</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 部门名称 */</span></span><br><span class="line">  <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 部门编码 */</span></span><br><span class="line">  <span class="keyword">private</span> String code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建controller"><a href="#创建controller" class="headerlink" title="创建controller"></a>创建controller</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.manage.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.manage.dto.DeptDto;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.manage.service.DeptService;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.*;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.Context;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.ModelAndView;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.UploadedFile;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/dept&quot;)</span></span><br><span class="line"><span class="meta">@Api(&quot;部门管理&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeptController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> DeptService service;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(value = &quot;list&quot;, produces = &quot;application/json&quot;)</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;获取列表json&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> List&lt;DeptDto&gt; <span class="title">list</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.list();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(value = &quot;listXml&quot;, produces = &quot;application/xml&quot;)</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;获取列表Xml&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> List&lt;DeptDto&gt; <span class="title">listXml</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.list();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;新增&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">add</span><span class="params">(<span class="meta">@Body</span> DeptDto deptDto)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.add(deptDto);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Put</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;更新&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">update</span><span class="params">(<span class="meta">@Body</span> DeptDto deptDto)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.update(deptDto);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;获取&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> DeptDto <span class="title">get</span><span class="params">(<span class="meta">@Path</span> Long id)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.get(id);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping</span></span><br><span class="line">  <span class="meta">@Delete</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;删除&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">delete</span><span class="params">(<span class="meta">@Param</span> Long id)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.delete(id);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(&quot;/importData&quot;)</span></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;上传&quot;)</span></span><br><span class="line">  <span class="meta">@Multipart</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Boolean <span class="title">importData</span><span class="params">(UploadedFile file)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.importData(file);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(&quot;/exportData&quot;)</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;下载&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exportData</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">    service.exportData(context);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(&quot;/index&quot;)</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;浏览部门&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> ModelAndView <span class="title">index</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ModelAndView mv = <span class="keyword">new</span> ModelAndView();</span><br><span class="line">    mv.put(<span class="string">&quot;depts&quot;</span>, service.list());</span><br><span class="line">    mv.view(<span class="string">&quot;dept.shtm&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> mv;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="上传下载"><a href="#上传下载" class="headerlink" title="上传下载"></a>上传下载</h3><p>Solon 对上传下载的支持也是比较丰富的，这里只是使用了最常用的方式进行展示。更多的使用方法，参看 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/313">https://solon.noear.org/article/313</a> 。</p>
+<h3 id="静态资源"><a href="#静态资源" class="headerlink" title="静态资源"></a>静态资源</h3><p>引入<code>solon-web-staticfiles</code>可以提供公共的静态文件服务，默认静态文件目录是<code>resources/static/</code> 。可以通过配置的的方式调整目录。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">solon:</span></span><br><span class="line">  <span class="symbol">staticfiles:</span></span><br><span class="line">    <span class="symbol">mappings:</span></span><br><span class="line">      - <span class="attr">path:</span> <span class="string">&quot;/img/&quot;</span></span><br><span class="line">        <span class="symbol">repository:</span> <span class="string">&quot;classpath:img&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>还可以通过代码的方式调整目录，更多的配置参看 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/268">https://solon.noear.org/article/268</a> 。</p>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><h4 id="View"><a href="#View" class="headerlink" title="View"></a>View</h4><p>微信号的展示和logo，访问的是静态资源，且使用了不同的目录。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NjM3M2IyMjMwMWNmMmJlOGIyYzU2YWM4NzQzYTVjYzBfZFRSRldmbms3S1JZbkIyNnpxWkNtWTdteEVRR2VnWEpfVG9rZW46TGo4RmJrRWFnb2Rab2J4enB2Q2NkNEpZbldjXzE3MzkyNzc1NzI6MTczOTI4MTE3Ml9WNA" alt="img"></p>
+<h4 id="Json"><a href="#Json" class="headerlink" title="Json"></a>Json</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NjkxODRmZjJiMDA4NmVlNmMxZTcyOWRlN2JhYWE2NTlfVzhxelBaRzhVcUNBd2pQTW5ZWFVTZEg1eDR5OGV1TmRfVG9rZW46QUlYQmJoZXo5b2huMTF4dmYwdWNiZnlRbmRkXzE3MzkyNzc1NzI6MTczOTI4MTE3Ml9WNA" alt="img"></p>
+<h4 id="Xml"><a href="#Xml" class="headerlink" title="Xml"></a>Xml</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MTAwODRjYmJjOWZjM2FkNTlhM2MyYTY2MmQ2ZGI1NTZfYkoxNXN4eWpGbm9TaWVQak0zYmZxZmh4aFNCY1dhbkdfVG9rZW46Q0kxUGIyZmhYb09WS1R4eE9JZWNwcjhXbncxXzE3MzkyNzc1NzI6MTczOTI4MTE3Ml9WNA" alt="img"></p>
+<h4 id="上传"><a href="#上传" class="headerlink" title="上传"></a>上传</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NjY5ZWZiZDkyOTU4ZTQ3Yzk5NGM0OTM0YTMyMDBlNzlfQXBPR0d4OFI0cUw3TndpcFJyVWlOelpwcHhYTG9IYmpfVG9rZW46Q1gxcWJmQ1RTb21yclB4T09CQ2NVWThMbnRuXzE3MzkyNzc1NzI6MTczOTI4MTE3Ml9WNA" alt="img"></p>
+<p>上传文件后，可以在日志中看到上传的文件名，可以在代码根目录看到对应上传的文件。</p>
+<h4 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h4><p>下载的内容 swagger 工具显示不了，这里只展示返回的头信息。可以在浏览器中直接输入<a target="_blank" rel="noopener" href="http://localhost:8080/dept/exportData">http://localhost:8080/dept/exportData</a> 进行下载测试。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OTQ0YTI3ZWQwNjhlZjk0N2ZkZGM4N2M3YWY4Y2I2NThfSmZMMk96Z3Viek5kTk9reTliZnVKUllQTzNxM3lyaW5fVG9rZW46RXEyRWJqZXc5b3B1Q3Z4WW11M2NiVnZ1bjJmXzE3MzkyNzc1NzI6MTczOTI4MTE3Ml9WNA" alt="img"></p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>在 Solon 3.0.7 版本测试的时候发现上述 controller 的路由定义，可能存在 index 接口无法访问，而路由到的 get 接口的情况，但 3.1.0-SNAPSHOT已经修复这个问题，当前代码实用了 Solon 3.1.0-SNAPSHOT，后续 3.1.0 发布时，教程也会统一更新版本号。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YmFjNDI2NDUyNDVmYjBiOWI2OGU4N2VlNjkwZTdiYjJfWnB5WHBDU3JXelNRRXNydTgzUnZRdUhWb2x1WE9UaUlfVG9rZW46SWlSd2JNUWF1b3dVYXp4cEZTOGNqSjN4blhjXzE3MzkyNzc1NzI6MTczOTI4MTE3Ml9WNA" alt="img"></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>MVC 虽然广为人知，但是在细节处还是存在理解的不同。Solon 对 MVC 用完整的支持，可以放心食用。不喜欢示例中的项目结构划分的可以参考阿里或者其他的目录结构进行项目结构的组织。</p>
+<h2 id="补充说明"><a href="#补充说明" class="headerlink" title="补充说明"></a>补充说明</h2><p>春节期间的囤货已经用完了，也是第一次写比较完整的教程，后续教程的更新可能会比较慢。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/10/course100/019/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1368,109 +1573,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2024/11/18/java/gradle-005/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/18/java/gradle-005/" class="post-title-link" itemprop="url">使用 Gradle 发布 Jar 包到中央仓库的完整教程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-11-18 22:29:24" itemprop="dateCreated datePublished" datetime="2024-11-18T22:29:24+08:00">2024-11-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-29 21:09:38" itemprop="dateModified" datetime="2024-11-29T21:09:38+08:00">2024-11-29</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Gradle/" itemprop="url" rel="index"><span itemprop="name">Gradle</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>本文主要介绍使用 Gradle 工具发布 Jar 包到中央仓库的方法及可能碰到的问题的处理。本文假定读者已经熟悉使用 Gradle，IDEA 等工具，并对中央仓库有所了解。本文使用 macOS，在安装gpg工具时可能有所不同，如果使用 Windows 系统需要自行查阅相关安装方法。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/11/18/java/gradle-005/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1540,20 +1642,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">307</span>
+          <span class="site-state-item-count">308</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-count">128</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-count">123</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1611,12 +1713,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">852k</span>
+    <span title="站点总字数">856k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:55</span>
+    <span title="站点阅读时长">12:58</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
