@@ -172,6 +172,114 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2026/08/24/course100/062/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/08/24/course100/062/" class="post-title-link" itemprop="url">把事情做完整 —— aifei-go 文档站小记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-08-24 21:10:16 / 修改时间：21:48:26" itemprop="dateCreated datePublished" datetime="2026-08-24T21:10:16+08:00">2026-08-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/aifei-go/" itemprop="url" rel="index"><span itemprop="name">aifei-go</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>代码写完，只算把事情做了一半；文档建起来，这件事才算完整。</p>
+</blockquote>
+<p>个人开源项目的宿命，大多是这样的：代码写完，发一个 README，心里默念「文档以后再补」—— 而「以后」永远不会来。不是不想补，是完整性太贵。一个像样的文档站，意味着选型、配置、部署、CI、内容规范、校验脚本……每一项都得查资料、踩坑、返工。于是索性砍掉，美其名曰「聚焦核心」。</p>
+<p>前面介绍过 aifei-go —— Java 版 Aifei 的 Go 移植。它的处境比一般项目更尴尬：这是一个宣称「为 AI Coding 而生」的框架，Java 版有官方文档 aifei.cn/doc 摆在那里当基准，Go 版要是只有一个 README，多少有点打脸。而且这里还藏着一个顺理成章的推论 —— 既然是为 AI Coding 而生的框架，它的文档，本来就该由 AI 来写。于是花了两天，把文档站建了起来：<a target="_blank" rel="noopener" href="https://crazy-airhead.github.io/aifei-go/">https://crazy-airhead.github.io/aifei-go/</a>。</p>
+<h2 id="完整性的坑，AI-都记得"><a href="#完整性的坑，AI-都记得" class="headerlink" title="完整性的坑，AI 都记得"></a>完整性的坑，AI 都记得</h2><p>技术上没什么新鲜事：VitePress + pnpm + GitHub Actions，push 到 master 自动构建、发布到 gh-pages。新鲜的不是技术，是细节有人替你想着。随手摘两段：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout（完整历史，供</span> <span class="string">lastUpdated</span> <span class="string">读取时间）</span></span><br><span class="line">  <span class="attr">uses:</span> <span class="string">actions/checkout@v6</span></span><br><span class="line">  <span class="attr">with:</span></span><br><span class="line">    <span class="attr">fetch-depth:</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">to</span> <span class="string">gh-pages</span></span><br><span class="line">  <span class="attr">uses:</span> <span class="string">peaceiris/actions-gh-pages@v4</span></span><br><span class="line">  <span class="attr">with:</span></span><br><span class="line">    <span class="attr">publish_dir:</span> <span class="string">docs/.vitepress/dist</span></span><br><span class="line">    <span class="comment"># dist 是纯生成产物：单提交孤儿分支，保证删除的页面同步消失</span></span><br><span class="line">    <span class="attr">force_orphan:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>配置里的这些注释，本身就说明创建一个文档站不是一件容易的事情。没写进注释里的还有一堆：base 路径要配 <code>/aifei-go/</code>、head 里的 favicon 不会自动加前缀得写全路径、paths 过滤让只有 docs 变更才触发构建、concurrency 把排队的旧部署取消掉、sitemap 要配 hostname……但这些坑，每一个都是前人踩过的，AI 都记得。以前要花一个下午翻 issue 才能凑齐的事，现在是一轮对话。</p>
+<h2 id="先写「怎么写」，再写「写什么」"><a href="#先写「怎么写」，再写「写什么」" class="headerlink" title="先写「怎么写」，再写「写什么」"></a>先写「怎么写」，再写「写什么」</h2><p>真正值得记的不是部署，是内容的生产方式。开工第一步，不是让 AI 写文档，而是先写「文档怎么写」—— 一份 <code>docs/guide/_STYLE.md</code> 写作规范。统一模板大纲（背景 → 架构 → 关键 API → 核心机制 → 配置集成 → 模块结构 → 总结）、风格规则（多用表格和代码块、交叉链接、信息密度要高），再加几条质量红线：</p>
+<ul>
+<li>内容来源<strong>必须实际读取源码，不得凭记忆编造</strong>；</li>
+<li>代码示例的类型名 / 方法签名 / 配置键<strong>必须与源码一致，逐项核实</strong>；</li>
+<li>篇幅 300~500 行，完成后用 <code>wc -l</code> 和 <code>grep</code> 自查行数与标题结构。</li>
+</ul>
+<p>规范开头有一句：「本规范<strong>人与 AI 均适用</strong>」。人做决策，AI 生成 —— 落到这件事上，就是人定标准、立标杆（风格范例是那篇五百行的 data-isolate 文档），AI 读源码、照模板写。最后落地的，是二十五篇模块文档。这套招数其实是框架自己的招数：Just Service 用命名约定让 AI 稳定生成代码，_STYLE.md 用模板和红线让 AI 稳定生成文档，一回事。</p>
+<h2 id="抽卡之后，要有验收"><a href="#抽卡之后，要有验收" class="headerlink" title="抽卡之后，要有验收"></a>抽卡之后，要有验收</h2><p>规范把写作经验沉淀了下来，让下一篇的起点更高。但光有规范还不够 —— AI 的输出是基于概率的，「抽卡」式的不确定性不会因为换了任务就消失。git 历史里躺着证据：首次部署之后，紧跟一串提交 —— 更新 Logo、更新文档图、把 Actions 升级到 Node 24 运行时、修 Markdown 语法错误、修 index.md 语法错误。所以要有验收闭环：构建、校验、人工过目，一轮下来，概率性的输出才算变成确定性的成品。</p>
+<p>最让我意外的是 <code>scripts/check-mermaid.mjs</code>。VitePress 构建时并不校验 mermaid 图表的语法，错了要到浏览器渲染时才暴露。这件事我没有让 AI 做，是它自己想到的：文档里有图、图会坏、坏了要在上线前发现 —— 于是有了这个脚本：jsdom 搭环境，调 <code>mermaid.parse</code> 把 docs 下所有 mermaid 代码块逐个校验，内部文件自动跳过。这种「想到你没让它想的事」，是完整性的另一个来源：人容易在「能用」的地方停下来；AI 不会累，也就没有「差不多得了」。</p>
+<h2 id="过程留痕，成品干净"><a href="#过程留痕，成品干净" class="headerlink" title="过程留痕，成品干净"></a>过程留痕，成品干净</h2><p>仓库里有个 <code>docs/issues/</code> 目录，编号归档了移植过程中发现的十九个缺陷：enjoy 的算术精度降级、for 循环迭代不了 map、内置指令缺失、db 缺方言……每一条都是留了案的复盘。这些记录通过 <code>srcExclude</code> 排除在发布站点之外 —— 对外的成品要干净，对内的过程要留痕。完整，不是把所有东西都端出去，而是该在的都在。</p>
+<h2 id="完整是长出来的"><a href="#完整是长出来的" class="headerlink" title="完整是长出来的"></a>完整是长出来的</h2><p>有了 AI 的帮助，让自己做事情更完整 —— 改变的到底是什么？不是 AI 会写文档了，文档它一直会写；是<strong>完整性的成本变了</strong>。以前文档、CI、校验、sitemap、孤儿分支，这些收尾活最劝退；现在它们的边际成本趋近于零，「能用」和「完整」之间的那段距离，走着走着就走完了。</p>
+<p>你得知道「完整」长什么样—— 当然也不必一开始就知道。完整是在深入的过程中长出来的：每一步追问一句「还差什么」，追问多了，「完整」的认知自然成形。这两天下来，我对「完整」的理解，就比开工时具体得多。</p>
+<p>最后是个自举：一个为 AI Coding 而生的框架，它自己的文档站，也是 AI Coding 做出来的。文档站的地址挂在那里，往后每一次 push，它都会自己生长。</p>
+<p>人负责想要什么，AI 负责让它完整。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2026/08/24/course100/061/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1565,128 +1673,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/12/13/course100/052/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/12/13/course100/052/" class="post-title-link" itemprop="url">扩展 easy-query（二）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-12-13 22:07:34 / 修改时间：22:11:13" itemprop="dateCreated datePublished" datetime="2025-12-13T22:07:34+08:00">2025-12-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>6.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在使用 easy-query 一段时间之后，发现 Jfinal 的 ActiveRecord 的一个很好用的功能，现在用起来变麻烦了，是什么呢？就是实体的丰富化。与实体的裁剪相对，丰富化就是对实体内容进行扩展，返回给前端，比如，存储的是编码，但多返回名称。为了实现实体的裁剪与丰富化，通过是建立新的 DTO，不同的返回结果，增加不同的 DTO，这就会导致 DTO的膨胀或者爆炸。而 ActiveRecord 和 Modle 内部通过 Map 来承载数据，天然具体扩展能力，不管是裁剪还是丰富化，都不需要额外定义 DTO。在 <a target="_blank" rel="noopener" href="https://otwu9ovpkn.feishu.cn/wiki/DItdwpPpxiHnRtkmJb4ctAd9nid">扩展 easy-query</a> 中，我们提到了实体的裁剪和实现方法，有兴趣的同学可以进一步看一看。</p>
-<p>因为 easy-query 是基于Bean 的 getter 和 setter 方法来读取和设置数据的，也就是说虽然编写的 DSL 已经返回了扩展的字段，因为 Model 对象缺失 getter 和 setter 方法，而无法返回新增字段的数据。如果要返回新增字段的数据就是需要给实体增加 getter 和 setter 方法。虽然比起DTO的膨胀好了一点，但变得没那么直观和直接了。</p>
-<p>于是在 easy-query 的群里，问了这个问题，作者说是比较麻烦的。前几天是了修改FastBean 和 ModelProxy，仍然是没有办法实现。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YWU3Mjg4OGU0NGU3M2QzNTgyNzA0NWJhZDQyZTE2MDdfYlp2UWg0QzlWak9sSmFkS0FHUjUzV1VqT1huMlkzZEZfVG9rZW46Uk8xYmJHSXZOb3RNcU14ckpyaWNJNFBQbnBoXzE3NjU2MzQ4OTA6MTc2NTYzODQ5MF9WNA" alt="img"></p>
-<p>今天重新查询 easy-query 的文档，发现了 EntityMetadataManager 和作者提供了StreamIterableFactory，通过替换这个两个框架行为最终实现了编写 DSL 能返回需要的数据。暂时还没有处理直接 SQL 查询时的数据丰富化。</p>
-<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>简单说明 EntityMetadataManager，其实会解析实体哪些是字段，哪些是属性。StreamIterableFactory 实现的是对结果集的转换处理。在 Model Bean 的需求里，其实希望的是，如果不是字段，1. SQL 多返回的字段也需要被认定为是属性，2. 通过Model的 put 方法设置数据，而不是直接忽略。因此本次的扩展也就是围绕着这两点进行的。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YzliMTA1NGYwOThhNGEyNmZlODljMDU2ZjQ3Y2E5MTBfbWViTnJMVzNYaUNZRk9MTHRjOWZyU0pyYWF2b0NCYVVfVG9rZW46UFdwSmI5UDN2b0pyWGl4RXBxQ2N3SFJwblJ3XzE3NjU2MzQ5NDk6MTc2NTYzODU0OV9WNA" alt="img"></p>
-<h3 id="ModelEntityMetadataManager"><a href="#ModelEntityMetadataManager" class="headerlink" title="ModelEntityMetadataManager"></a>ModelEntityMetadataManager</h3><p>如果是 Model 类型的实体，需要特殊处理。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> EntityMetadata <span class="title">getEntityMetadata</span><span class="params">(Class&lt;?&gt; entityClass)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (entityClass == <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;entityClass&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  EntityMetadata cacheItem = entityMetadataCache.get(entityClass);</span><br><span class="line">  <span class="keyword">if</span> (cacheItem != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> cacheItem;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (Map.class.isAssignableFrom(entityClass)) &#123;</span><br><span class="line">    <span class="keyword">return</span> entityMetadataCache.computeIfAbsent(</span><br><span class="line">        entityClass,</span><br><span class="line">        key -&gt; <span class="keyword">new</span> MapEntityMetadata(Map.class, mapColumnNameChecker, mapKeyNameConversion));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (Row.class.isAssignableFrom(entityClass) || Objects.equals(SqlKit.class, entityClass)) &#123;</span><br><span class="line">    <span class="keyword">return</span> entityMetadataCache.computeIfAbsent(</span><br><span class="line">        entityClass,</span><br><span class="line">        key -&gt; <span class="keyword">new</span> RowEntityMetadata(Row.class, mapColumnNameChecker, mapKeyNameConversion));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (Model.class.isAssignableFrom(entityClass)) &#123;</span><br><span class="line">    EntityMetadata entityMetadata =</span><br><span class="line">        <span class="keyword">new</span> ModelEntityMetadata(entityClass, mapColumnNameChecker, mapKeyNameConversion);</span><br><span class="line">    entityMetadata.init(serviceProvider);</span><br><span class="line"></span><br><span class="line">    addMetadata(entityMetadata.getTableName(), entityMetadata);</span><br><span class="line">    <span class="keyword">return</span> entityMetadataCache.computeIfAbsent(entityClass, key -&gt; entityMetadata);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  EntityMetadata entityMetadata = <span class="keyword">new</span> EntityMetadata(entityClass);</span><br><span class="line">  entityMetadata.init(serviceProvider);</span><br><span class="line"></span><br><span class="line">  addMetadata(entityMetadata.getTableName(), entityMetadata);</span><br><span class="line">  <span class="keyword">return</span> entityMetadataCache.computeIfAbsent(</span><br><span class="line">      entityClass,</span><br><span class="line">      key -&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> entityMetadata;</span><br><span class="line">      &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="ModelEntityMetadata"><a href="#ModelEntityMetadata" class="headerlink" title="ModelEntityMetadata"></a>ModelEntityMetadata</h3><p>如果属性不是数据库字段，需要将 put 和 set 返回，当作该属性的getter和setter方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ColumnMetadata <span class="title">getColumnNotNull</span><span class="params">(String propertyName)</span> </span>&#123;</span><br><span class="line">  ColumnMetadata columnMetadata = getColumnOrNull(propertyName);</span><br><span class="line">  <span class="keyword">if</span> (columnMetadata == <span class="keyword">null</span>) &#123;</span><br><span class="line">    String checkField = mapColumnNameChecker.checkColumnName(propertyName);</span><br><span class="line">    ColumnOption columnOption = <span class="keyword">new</span> ColumnOption(<span class="keyword">false</span>, <span class="keyword">this</span>, mapKeyNameConversion.convert(checkField), checkField, checkField);</span><br><span class="line">    columnOption.setGetterCaller(obj -&gt; &#123;</span><br><span class="line">      <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Model&lt;?&gt;) &#123;</span><br><span class="line">        Model&lt;?&gt; model = (Model&lt;?&gt;) obj;</span><br><span class="line">        <span class="keyword">return</span> model.get(checkField);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    columnOption.setSetterCaller((obj, val) -&gt; &#123;</span><br><span class="line">      <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Model&lt;?&gt;) &#123;</span><br><span class="line">        Model&lt;?&gt; model = (Model&lt;?&gt;) obj;</span><br><span class="line">        model.put(checkField, val);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ColumnMetadata(columnOption);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> columnMetadata;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="ModelStreamIterableFactory"><a href="#ModelStreamIterableFactory" class="headerlink" title="ModelStreamIterableFactory"></a>ModelStreamIterableFactory</h3><p>需要使用自定义的 ModelStreamIterable</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ModelStreamIterableFactory</span> <span class="title">implements</span> <span class="title">StreamIterableFactory</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> &lt;T&gt; StreamIterable&lt;T&gt; <span class="function"><span class="title">create</span>(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="function">      ExecutorContext context, ResultMetadata&lt;T&gt; resultMetadata, StreamResultSet streamResultSet</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ModelStreamIterable&lt;&gt;(context, resultMetadata, streamResultSet);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="ModelStreamIterable"><a href="#ModelStreamIterable" class="headerlink" title="ModelStreamIterable"></a>ModelStreamIterable</h3><p>如果是 Bean 数据，需要使用 ModelBeanStreamIterator。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Iterator&lt;T&gt; <span class="title">iterator0</span><span class="params">()</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">  EntityMetadataTypeEnum entityMetadataType = resultMetadata.getEntityMetadataType();</span><br><span class="line">  <span class="keyword">switch</span> (entityMetadataType) &#123;</span><br><span class="line">    <span class="keyword">case</span> MAP:</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">if</span> (EasyArrayUtil.isNotEmpty(context.getExpressionContext().getResultPropTypes())) &#123;</span><br><span class="line">          <span class="keyword">return</span> EasyObjectUtil.typeCastNullable(</span><br><span class="line">              <span class="keyword">new</span> MapTypeStreamIterator(</span><br><span class="line">                  context, streamResultSet, EasyObjectUtil.typeCastNullable(resultMetadata)));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MapStreamIterator&lt;&gt;(context, streamResultSet, resultMetadata);</span><br><span class="line">      &#125;</span><br><span class="line">    <span class="keyword">case</span> BASIC_TYPE:</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> BasicStreamIterator&lt;&gt;(context, streamResultSet, resultMetadata);</span><br><span class="line">    <span class="comment">//            case DRAFT:</span></span><br><span class="line">    <span class="comment">//                return EasyObjectUtil.typeCastNullable(new DraftStreamIterator(context,</span></span><br><span class="line">    <span class="comment">// streamResultSet, EasyObjectUtil.typeCastNullable(resultMetadata)));</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">if</span> (resultMetadata.getDataReader() != <span class="keyword">null</span>) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> FastBeanStreamIterator&lt;&gt;(context, streamResultSet, resultMetadata);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (DraftResult.class.isAssignableFrom(resultMetadata.getResultClass())) &#123;</span><br><span class="line">          <span class="keyword">return</span> EasyObjectUtil.typeCastNullable(</span><br><span class="line">              <span class="keyword">new</span> DraftStreamIterator(</span><br><span class="line">                  context, streamResultSet, EasyObjectUtil.typeCastNullable(resultMetadata)));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ModelBeanStreamIterator&lt;&gt;(context, streamResultSet, resultMetadata);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="ModelBeanStreamIterator"><a href="#ModelBeanStreamIterator" class="headerlink" title="ModelBeanStreamIterator"></a>ModelBeanStreamIterator</h3><p>完全重写 getMapColumnMetadata，如果不是字段的情况，需要使用 get 和 put 方法，另外需要设置 JdbcTypeHandler 为 ObjectTypeHandler。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> ResultColumnMetadata <span class="title">getMapColumnMetadata</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="keyword">int</span> index, String columnName, <span class="keyword">boolean</span> mapToBeanStrict)</span> </span>&#123;</span><br><span class="line">  EntityMetadata entityMetadata = resultMetadata.getEntityMetadata();</span><br><span class="line">  ColumnMetadata columnMetadata = entityMetadata.getColumnMetadataOrNull(columnName);</span><br><span class="line">  <span class="keyword">if</span> (columnMetadata != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> EntityResultColumnMetadata(index, entityMetadata, columnMetadata);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!mapToBeanStrict) &#123;</span><br><span class="line">    <span class="keyword">return</span> resultMetadata.getResultColumnOrNullByPropertyName(index, columnName);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ColumnOption columnOption =</span><br><span class="line">      <span class="keyword">new</span> ColumnOption(<span class="keyword">false</span>, entityMetadata, columnName, columnName, columnName);</span><br><span class="line">  columnOption.setGetterCaller(</span><br><span class="line">      obj -&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Model&lt;?&gt;) &#123;</span><br><span class="line">          <span class="keyword">return</span> ((Model&lt;?&gt;) obj).get(columnName);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">  columnOption.setSetterCaller(</span><br><span class="line">      (obj, val) -&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Model&lt;?&gt;) &#123;</span><br><span class="line">          ((Model&lt;?&gt;) obj).put(columnName, val);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">  columnOption.setJdbcTypeHandler(<span class="keyword">new</span> ObjectTypeHandler());</span><br><span class="line"></span><br><span class="line">  columnMetadata = <span class="keyword">new</span> ColumnMetadata(columnOption);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> EntityResultColumnMetadata(index, entityMetadata, columnMetadata);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>CodeColumn（这个 CodeColumn 类字段有点多，且是自动生成的代码，这里就不放代码了）本身不包含 tableName 属性，是通过 CodeTable 的 name 取别名而来。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  @Deform(keep = &#123;&quot;id&quot;, &quot;name&quot;&#125;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;CodeColumn&gt; <span class="title">simpleListCodeColumn</span><span class="params">(CodeColumn codeColumn)</span> </span>&#123;</span><br><span class="line">  List&lt;CodeColumn&gt; list =</span><br><span class="line">      <span class="built_in">entityQueryable</span>()</span><br><span class="line">          .<span class="built_in">leftJoin</span>(</span><br><span class="line">              CodeTable.class,</span><br><span class="line">              (t1, t2) -&gt; &#123;</span><br><span class="line">                t1.<span class="built_in">tableId</span>().<span class="built_in">eq</span>(t2.<span class="built_in">id</span>());</span><br><span class="line">              &#125;)</span><br><span class="line">          .<span class="built_in">select</span>(</span><br><span class="line">              CodeColumn.class,</span><br><span class="line">              (t1, t2) -&gt; Select.<span class="built_in">of</span>(t1.FETCHER.<span class="built_in">allFields</span>(), t2.<span class="built_in">name</span>().<span class="built_in">as</span>(<span class="string">&quot;tableName&quot;</span>)))</span><br><span class="line">          .<span class="built_in">toList</span>();</span><br><span class="line">  <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><p>虽然使用的是 CodeColumn 没有 tableName 属性，但是 tableName 的值成功返回了。Solon 的配置字段过滤 Null 值了。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ODE4MDdhMTZiNTFkMzI1YmFjN2RjMWMzYmE5MDVmZWFfb0FaNmlXNnZSd2RBVE52WmlBd2o5b2xjR1pURzFtcGdfVG9rZW46UjROUGIwaUJHb1lWbW94eHc3c2NpMURKblZjXzE3NjU2MzQ4OTA6MTc2NTYzODQ5MF9WNA" alt="img"></p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>扩展 easy-query 的代码已经签入 <a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/easy-query%EF%BC%8C%E5%A2%9E%E5%8A%A0%E4%BA%86">https://gitee.com/CrazyAirhead/easy-query，增加了</a></p>
-<p>sql-solon-plugin-ext 模块。代码是从我的其他项目迁移过来的，除用了Gradle 和更高版本的 JDK 和 hutool ，因此虽然通过编译，但是仍有可能报错，目前只建议参考，如果要实际使用，碰到问题可能需要自行修复。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1756,20 +1742,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">309</span>
+          <span class="site-state-item-count">310</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-count">131</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-count">127</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1827,12 +1813,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">857k</span>
+    <span title="站点总字数">859k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:59</span>
+    <span title="站点阅读时长">13:01</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

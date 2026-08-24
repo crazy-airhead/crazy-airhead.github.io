@@ -172,6 +172,140 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/06/28/course100/042/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/06/28/course100/042/" class="post-title-link" itemprop="url">Solon 项目无法启动或者启动慢问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-06-28 19:56:55 / 修改时间：20:03:59" itemprop="dateCreated datePublished" datetime="2025-06-28T19:56:55+08:00">2025-06-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>最近已经陆续把公司的 Spring Boot 服务迁移到了 Solon 框架中来，期间碰到几次迁移后无法启动的问题或者启动慢问题。以下是问题的记录和处理办法。</p>
+<h2 id="问题-1"><a href="#问题-1" class="headerlink" title="问题 1"></a>问题 1</h2><p>启动提示循环依赖，启动失败。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MzZjNzNhODI3NTA1YzM1ZmQ0NmI1ZGUxMjU2OTI2YTdfSlFzRzc5QmZHREppOXpIQjFxa2RwSUU2bno3N1hmNHdfVG9rZW46QWc2QWJ1cFBtb2VwazV4YndqemNHSGNZbk9kXzE3NTExMTE4NTg6MTc1MTExNTQ1OF9WNA" alt="img"></p>
+<p>通常情况 Solon 的 Inject 是支持循环依赖的，有两种情况会因为循环依赖而启动失败，具体细节可以参考官网文档，<a target="_blank" rel="noopener" href="https://solon.noear.org/article/1019">「问题：产生 Bean 循环依赖怎么办？」</a></p>
+<ol>
+<li>由构造函数产生的依赖</li>
+<li>由初始化的依赖</li>
+</ol>
+<p>而我碰的的刚好就是第二种情况，在就的 Spring Boot 服务中有一些 Spring Event 事件是通过过 PostConstruct 注解来注册。所以迁移过来的时候使用了 Init 的注解，如下代码。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NTA5NGM3YTQ1NGNmMjRhM2IxMjZkMzM1YzIwN2EzYmRfR2VMQnl0MExabFEzcTNPZTNReGlGSzFuOG92WVdLV1hfVG9rZW46RXZ5Y2J3WWlab2FsclN4MXNPdmNqNlQ3bldkXzE3NTExMTE4NTg6MTc1MTExNTQ1OF9WNA" alt="img"></p>
+<p>但因为另一个类也存在 Init 的注解且相互依赖，所以无法正常启动，解决办法就是设置不同的优先级。</p>
+<p>类 1</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Init(index = 2)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  EventUtils.listen(ManageEvent.TOPIC_USER_UPDATE, <span class="keyword">new</span> UpdateUserListener());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>类 2</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Init(index = 1)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  EventUtils.listen(ManageEvent.TOPIC_ORG_CREATE, <span class="keyword">new</span> CreateOrgListener());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="问题-2"><a href="#问题-2" class="headerlink" title="问题 2"></a>问题 2</h2><p>应用启动慢</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZjFkYjg0M2RiNjRjMDVlMzlhYmViMGNmNzBhZTQ1N2NfczhmOUt1OXpWMmpZSEJSS3FxQ3BMVjdHeWFDRlozalZfVG9rZW46VnU0WWJXWWR6b2VYWkR4Q1dZV2NlS1JGbnNjXzE3NTExMTE4NTg6MTc1MTExNTQ1OF9WNA" alt="img"></p>
+<p>迁移了几个服务，通常情况下Solon 服务的启动会比 Spring Boot 的服务启动快。但有个服务器迁移过来的时候启动很慢，表现为扫描 Bean 对象很慢。</p>
+<p>一开始时没有头绪的，后面问了作者，之后通过直接跟踪源代码，定位到慢的类，发现这个类是写得比较点怪的，是一个工具类，但为了获取其他 Bean 对象方便，把其他用的的类一起注入进来了，所以给这个类，用 PostConstruct 来做一次初始化，迁移过来的是自然就用了 Init 注解。这次扫描 Bean 慢，可能出现了较深的依赖关系，但还没形成循环依赖。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NTNkY2NkZGRmMzg4NDJmYzE5MGQ4YWI0ZTg5YTIzNjVfODA3VVRXaDVEaGVDYVNLbzdqZm50TWZ1Z1M4NkEzZU9fVG9rZW46VE03SWIzRTl3b1ZzTVV4RG9ZOGM0TDhUbkY3XzE3NTExMTE4NTg6MTc1MTExNTQ1OF9WNA" alt="img"></p>
+<p>处理办法就是取消了 Init 的注解，AppLoadEndEvent 事件中，执行一次 Init 操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppLoadEndEventListener</span> <span class="keyword">implements</span> <span class="title">EventListener</span>&lt;<span class="title">AppLoadEndEvent</span>&gt; </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> ESHelper esHelper;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(AppLoadEndEvent appLoadEndEvent)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">    esHelper.init();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="问题-3"><a href="#问题-3" class="headerlink" title="问题 3"></a>问题 3</h2><p>旧的 Spring Boot 有个 Redis 消息队列的监听，于是修改成如下的代码。但发现项目启动的时候卡住了无法启动。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisMessageConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String SCAN_JOB_MESSAGE = <span class="string">&quot;scanJob-message&quot;</span>;</span><br><span class="line">  <span class="comment">/* 单次任务队列 */</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String SCAN_ONCE_MESSAGE = <span class="string">&quot;scanOnce-message&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    RedisUtils.subscribe(<span class="keyword">new</span> ScanJobSubscribe(), SCAN_JOB_MESSAGE);</span><br><span class="line">    RedisUtils.subscribe(<span class="keyword">new</span> ScanJobSubscribe(), SCAN_ONCE_MESSAGE);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>后面跟踪了代码才发现 redisx 的 subscribe，里面包含一个 process 其实是一个无限循环。在官网文档<a target="_blank" rel="noopener" href="https://solon.noear.org/article/240">「应用生命周期」</a>中有个提示：</p>
+<blockquote>
+<p><strong>重要提醒</strong>：</p>
+<ul>
+<li>启动过程完成后，项目才能正常运行（启动过程中，不能把线程卡死了）</li>
+<li>AppBeanLoadEndEvent 之前的事件，需要启动前完成订阅！！！（否则，时机错过了）</li>
+</ul>
+</blockquote>
+<p>知道原因，处理起来就比较简单了，统一在 AppLoadEndEvent 事件中处理，并使用异步订阅。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppLoadEndEventListener</span> <span class="keyword">implements</span> <span class="title">EventListener</span>&lt;<span class="title">AppLoadEndEvent</span>&gt; </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> ScanJobSubscribe scanJobSubscribe;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(AppLoadEndEvent appLoadEndEvent)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    RedisUtils.subscribeFuture(scanJobSubscribe, SCAN_JOB_MESSAGE);</span><br><span class="line">    RedisUtils.subscribeFuture(scanJobSubscribe, SCAN_ONCE_MESSAGE);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Solon 可能出于简单、快速等原因考虑，对待循环依赖是比较粗暴的，直接报错。但出现启动慢等问题时可能就不容易立刻定位问题，此时可以优先看看有没有使用 Init 注解，有没有使用 Bean 注解。这些相关的类是否有依赖，这些初始化函数是否把线程卡死了。</p>
+<p>反过来说， Spring Boot 为了解决循环依赖方面还是做了很多的检查或者调整，所以可能导致启动速度慢一些。不过听说 Spring Boot 3.x 默认也禁用了循环依赖。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/05/15/course100/041/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1530,134 +1664,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/03/01/course100/032/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/03/01/course100/032/" class="post-title-link" itemprop="url">Solon AI —— 初体验</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-03-01 07:58:44 / 修改时间：10:09:17" itemprop="dateCreated datePublished" datetime="2025-03-01T07:58:44+08:00">2025-03-01</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>关于 Solon Cloud 目前正在准备「熔断与限流」 的部分，想使用 sentinel 的插件，但我之前只用过 Spring 集成的 Hystrix，还需要先学习下 sentinel，目前还在准备当中，不会那么快更新。Solon AI 是 《Solon 实用教程》的第六部分，算是新增章节，恰好之前有使用过 agents-flex，准备起来更容易些，因此先开始更新 Solon AI 部分。</p>
-<p><img src="blob:https://otwu9ovpkn.feishu.cn/96ae1bca-64eb-41f6-beb4-b20344c7041e" alt="Feishu Docs - Image"></p>
-<p>Solon 将在 3.1.0 版本引入 AI 相关插件，现在已经发布 SNAPSHOT 版本，现在接口和功能还不稳定，只建议尝鲜。</p>
-<p>从官网的介绍中（<a target="_blank" rel="noopener" href="https://solon.noear.org/article/learn-solon-ai%EF%BC%89%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%9C%8B%E5%88%B0Solon">https://solon.noear.org/article/learn-solon-ai），可以看到Solon</a> AI 对大模型的支持是比较完整的，聊天模型接口支持同步调用，流式调用，Function Call，记忆功能，多种消息角色和多种消息格式，提供 RAG 支持和流程编排。</p>
-<p>在初体验中，我测试的是聊天模型的同步调用，流式调用，Function Call这几个功能。</p>
-<h2 id="前置"><a href="#前置" class="headerlink" title="前置"></a>前置</h2><p>本地测试使用了 ollama，需要安装好 ollama (<a target="_blank" rel="noopener" href="https://ollama.com/download)%EF%BC%8C%E5%B9%B6%E4%B8%8B%E8%BD%BD%E5%A5%BD%E6%A8%A1%E5%9E%8B%EF%BC%8C%E6%88%91%E8%BF%99%E9%87%8C%E6%BC%94%E7%A4%BA%E7%94%A8%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%A8%A1%E5%9E%8B%E4%B8%80%E4%B8%AA%E6%98%AFdeepseek-r1:7b%EF%BC%88%E5%9F%BA%E4%BA%8E">https://ollama.com/download)，并下载好模型，我这里演示用的两个模型一个是deepseek-r1:7b（基于</a> qwen2.5 的蒸馏的一个推理模型）和 qwen2.5:7b（支持tools，在ollama 可以通过点击 tools 标签查看哪些模型支持 tools）。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ollama run deepseek-r1:7b</span><br><span class="line">ollama run qwen2.5:7b</span><br></pre></td></tr></table></figure>
-
-<p>如果无法调用 ollama 接口时，可做如下配置，主要处理跨域或者局域网调用。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vi .zshrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> OLLAMA_ORIGINS=<span class="string">&quot;*&quot;</span></span><br><span class="line"><span class="built_in">export</span> OLLAMA_HOST=0.0.0.0:11434</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> .zshrc</span><br></pre></td></tr></table></figure>
-
-<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><p>增加 solon-ai 的依赖，solon-web-rx 和 solon-web-sse 用于支持流式调用。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    <span class="function">implementation <span class="title">platform</span><span class="params">(project(<span class="string">&quot;:demo-parent&quot;</span>)</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="title">implementation</span><span class="params">(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span></span></span><br><span class="line"><span class="function">    <span class="title">implementation</span><span class="params">(<span class="string">&quot;org.noear:solon-ai&quot;</span>)</span></span></span><br><span class="line"><span class="function">    <span class="title">implementation</span><span class="params">(<span class="string">&quot;org.noear:solon-logging-logback&quot;</span>)</span></span></span><br><span class="line"><span class="function">    <span class="title">implementation</span><span class="params">(<span class="string">&quot;org.noear:solon-openapi2-knife4j&quot;</span>)</span></span></span><br><span class="line"><span class="function">    <span class="title">implementation</span><span class="params">(<span class="string">&quot;org.noear:solon-web-rx&quot;</span>)</span></span></span><br><span class="line"><span class="function">    <span class="title">implementation</span><span class="params">(<span class="string">&quot;org.noear:solon-web-sse&quot;</span>)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="title">testImplementation</span><span class="params">(<span class="string">&quot;org.noear:solon-test&quot;</span>)</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>我这里使用 ollama 服务时，需要配置 provider。如果使用云服务时，设置 apiKey。</p>
-<p>这里配置 timeout 是避免使用推理模型时，接口调用时间过长报错问题，可以根据自己的模型和机器的配置情况进行调整。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">demo:</span></span><br><span class="line">  <span class="attr">llm:</span></span><br><span class="line">    <span class="attr">apiUrl:</span> <span class="string">&quot;http://127.0.0.1:11434/api/chat&quot;</span> <span class="comment"># 使用完整地址（而不是 api_base）</span></span><br><span class="line">    <span class="comment"># apiKey: &quot;xxxx&quot;</span></span><br><span class="line">    <span class="attr">provider:</span> <span class="string">&quot;ollama&quot;</span></span><br><span class="line">    <span class="comment"># model: &quot;deepseek-r1:7b&quot;</span></span><br><span class="line">    <span class="attr">model:</span> <span class="string">&quot;qwen2.5:7b&quot;</span></span><br><span class="line">    <span class="attr">timeout:</span> <span class="string">600s</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="LlmConfig"><a href="#LlmConfig" class="headerlink" title="LlmConfig"></a>LlmConfig</h3><p>通过注入的方式获取配置，并初始化ChatModel，这里可以根据自在的需求进一步配置ChatModel。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.ai.llm.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.chat.ChatConfig;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.chat.ChatModel;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LlmConfig</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> ChatModel <span class="title">build</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;demo.llm&#125;&quot;)</span> ChatConfig config)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ChatModel.of(config).build();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Controller"><a href="#Controller" class="headerlink" title="Controller"></a>Controller</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.ai.llm.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.ai.llm.service.LlmService;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.*;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.util.MimeType;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/llm&quot;)</span></span><br><span class="line"><span class="meta">@Api(&quot;聊天&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LlmController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> LlmService service;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;chat&quot;)</span></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;chat&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">chat</span><span class="params">(String prompt)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.chat(prompt);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Produces(MimeType.TEXT_EVENT_STREAM_UTF8_VALUE)</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;stream&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Flux&lt;String&gt; <span class="title">stream</span><span class="params">(String prompt)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.stream(prompt);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;functionCall&quot;)</span></span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping(&quot;functionCall&quot;)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">functionCall</span><span class="params">(String prompt)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.functionCall(prompt);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.ai.llm.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.chat.ChatModel;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.chat.ChatResponse;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LlmService</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> ChatModel chatModel;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">chat</span><span class="params">(String prompt)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      ChatResponse response = chatModel.prompt(prompt).call();</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> response.getMessage().getContent();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Flux&lt;String&gt; <span class="title">stream</span><span class="params">(String prompt)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Flux.from(chatModel.prompt(prompt).stream())</span><br><span class="line">        .filter(ChatResponse::hasChoices)</span><br><span class="line">        .map(resp -&gt; resp.getMessage().getContent());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">functionCall</span><span class="params">(String prompt)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      ChatResponse response =</span><br><span class="line">          chatModel.prompt(prompt).options(o -&gt; o.functionAdd(<span class="keyword">new</span> Tools())).call();</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> response.getMessage().getContent();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Tools"><a href="#Tools" class="headerlink" title="Tools"></a>Tools</h3><p>Solon 提供了多种设置 Fuction Call 的方式，这里只是从官网拿过来的一个例子，更多内容看这里 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/921">https://solon.noear.org/article/921</a> 。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.chat.annotation.FunctionMapping;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.chat.annotation.FunctionParam;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Tools</span> </span>&#123;</span><br><span class="line">  <span class="meta">@FunctionMapping</span>(description = <span class="string">&quot;获取指定城市的天气情况&quot;</span>)</span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">String</span> <span class="function"><span class="title">get_weather</span>(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="function">      <span class="meta">@FunctionParam</span>(name = <span class="string">&quot;location&quot;</span>, description = <span class="string">&quot;根据用户提到的地点推测城市&quot;</span>) <span class="built_in">String</span> location</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (location == <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">&quot;arguments location is null (Assistant recognition failure)&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;晴，24度&quot;</span>; <span class="comment">// 可使用 “数据库” 或 “网络” 接口根据 location 查询合适数据;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><h3 id="同步调用"><a href="#同步调用" class="headerlink" title="同步调用"></a>同步调用</h3><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZTAwZjI5YTA0MTY2M2RlYTU1NWExYzRjMjE5N2E3ODJfYUgyMU9WckRORUhYT2dLNm84cDg3ZjJrbDNrWXVhRXNfVG9rZW46V1V1a2JMNkU4b1hxb0p4VmRqS2N5ZnJ6bk5kXzE3NDA3OTI1Mzg6MTc0MDc5NjEzOF9WNA" alt="img"></p>
-<h3 id="流式调用"><a href="#流式调用" class="headerlink" title="流式调用"></a>流式调用</h3><p>可以在浏览器中直接进行测试，目前的情况是，如果使用了推理模型 think 可能不显示，如果推理时间过长，可能出现超时的情况。作者在最新版本的SNAPSHOT中已处理，但我暂时还拉取不到最新版本。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OTA1MDU5ZWQzYTllNGE1ZDU4ZjdjMTUyOWE3ODFkM2NfZUIyZnFvblFJZE0zUmhMTXg1MjI2TE85eU9iclFTMzRfVG9rZW46S1RvUWJKSmVxb3JHNUF4ZzByb2MyTzhpbk5lXzE3NDA3OTI1Mzg6MTc0MDc5NjEzOF9WNA" alt="img"></p>
-<h3 id="Function-Call"><a href="#Function-Call" class="headerlink" title="Function Call"></a>Function Call</h3><p>我们可能看到这例子里面只简单返回了 “晴，24度” 的天气情况。经过大模型的处理，内容就更完整丰富了。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MDkwYmJiOGRlZGE3YWFiYjZhODM3MDBjODQ5YmUzMzVfbG9EdDIzMlhEeU5UeHVIdEJSQ2VGNHNDaFlDZzFXNkVfVG9rZW46Rjh0TGJsSGpwb2ZhNHB4NE16UWNpQWZmbk9jXzE3NDA3OTI1Mzg6MTc0MDc5NjEzOF9WNA" alt="img"></p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>这里我只测试了 Solon AI 的基础功能，可以说是非常容易上手，通过简单的配置就能调用本地的服务了，如果是云服务也是一样的，增加配置 apiKey 就可以了。后续我将继续测试 Solon AI 的 RAG 和 Flow 的功能。</p>
-<h2 id="广告"><a href="#广告" class="headerlink" title="广告"></a>广告</h2><p>在 AI 来临的时候，越来越多的新奇的东西会占有我们的时间，我们的注意力，不少人甚至认为有了 AI 甚至可以不用学习了，然而现实有了 AI 能学的人越能学，不学的人越不会学，就像现在面对同样的 AI 有的人能做出精美的图片，有的人能写出生动的故事，但一些人面对 AI 还是不知所措。那么更关键的是即使没有 AI，自己也应该是一台学习机器、生产机器。不论学习还是生产都是需要占用时间的，或者更准确的说是注意力，这个注意力就好像是时间的利用率，注意力越高，时间利用率就越高，越能学习，越能生产。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1727,20 +1733,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">309</span>
+          <span class="site-state-item-count">310</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-count">131</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-count">127</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1798,12 +1804,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">857k</span>
+    <span title="站点总字数">859k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:59</span>
+    <span title="站点阅读时长">13:01</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

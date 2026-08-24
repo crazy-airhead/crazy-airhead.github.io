@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="代码写完，只算把事情做了一半；文档建起来，这件事才算完整。  个人开源项目的宿命，大多是这样的：代码写完，发一个 README，心里默念「文档以后再补」—— 而「以后」永远不会来。不是不想补，是完整性太贵。一个像样的文档站，意味着选型、配置、部署、CI、内容规范、校验脚本……每一项都得查资料、踩坑、返工。于是索性砍掉，美其名曰「聚焦核心」。 前面介绍过 aifei-go —— Java 版 Ai">
+<meta property="og:type" content="article">
+<meta property="og:title" content="把事情做完整 —— aifei-go 文档站小记">
+<meta property="og:url" content="http://l4qiang.me/2026/08/24/course100/062/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="代码写完，只算把事情做了一半；文档建起来，这件事才算完整。  个人开源项目的宿命，大多是这样的：代码写完，发一个 README，心里默念「文档以后再补」—— 而「以后」永远不会来。不是不想补，是完整性太贵。一个像样的文档站，意味着选型、配置、部署、CI、内容规范、校验脚本……每一项都得查资料、踩坑、返工。于是索性砍掉，美其名曰「聚焦核心」。 前面介绍过 aifei-go —— Java 版 Ai">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-24T13:10:16.000Z">
+<meta property="article:modified_time" content="2026-08-24T13:48:26.361Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="aifei-go">
+<meta property="article:tag" content="VitePress">
+<meta property="article:tag" content="文档站">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://l4qiang.me/2026/08/24/course100/062/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>把事情做完整 —— aifei-go 文档站小记 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2613e7f510eebd12cf4d0d067e4ce195";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2026/08/24/course100/062/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          把事情做完整 —— aifei-go 文档站小记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-08-24 21:10:16 / 修改时间：21:48:26" itemprop="dateCreated datePublished" datetime="2026-08-24T21:10:16+08:00">2026-08-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/aifei-go/" itemprop="url" rel="index"><span itemprop="name">aifei-go</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>代码写完，只算把事情做了一半；文档建起来，这件事才算完整。</p>
+</blockquote>
+<p>个人开源项目的宿命，大多是这样的：代码写完，发一个 README，心里默念「文档以后再补」—— 而「以后」永远不会来。不是不想补，是完整性太贵。一个像样的文档站，意味着选型、配置、部署、CI、内容规范、校验脚本……每一项都得查资料、踩坑、返工。于是索性砍掉，美其名曰「聚焦核心」。</p>
+<p>前面介绍过 aifei-go —— Java 版 Aifei 的 Go 移植。它的处境比一般项目更尴尬：这是一个宣称「为 AI Coding 而生」的框架，Java 版有官方文档 aifei.cn/doc 摆在那里当基准，Go 版要是只有一个 README，多少有点打脸。而且这里还藏着一个顺理成章的推论 —— 既然是为 AI Coding 而生的框架，它的文档，本来就该由 AI 来写。于是花了两天，把文档站建了起来：<a target="_blank" rel="noopener" href="https://crazy-airhead.github.io/aifei-go/">https://crazy-airhead.github.io/aifei-go/</a>。</p>
+<h2 id="完整性的坑，AI-都记得"><a href="#完整性的坑，AI-都记得" class="headerlink" title="完整性的坑，AI 都记得"></a>完整性的坑，AI 都记得</h2><p>技术上没什么新鲜事：VitePress + pnpm + GitHub Actions，push 到 master 自动构建、发布到 gh-pages。新鲜的不是技术，是细节有人替你想着。随手摘两段：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout（完整历史，供</span> <span class="string">lastUpdated</span> <span class="string">读取时间）</span></span><br><span class="line">  <span class="attr">uses:</span> <span class="string">actions/checkout@v6</span></span><br><span class="line">  <span class="attr">with:</span></span><br><span class="line">    <span class="attr">fetch-depth:</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">to</span> <span class="string">gh-pages</span></span><br><span class="line">  <span class="attr">uses:</span> <span class="string">peaceiris/actions-gh-pages@v4</span></span><br><span class="line">  <span class="attr">with:</span></span><br><span class="line">    <span class="attr">publish_dir:</span> <span class="string">docs/.vitepress/dist</span></span><br><span class="line">    <span class="comment"># dist 是纯生成产物：单提交孤儿分支，保证删除的页面同步消失</span></span><br><span class="line">    <span class="attr">force_orphan:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>配置里的这些注释，本身就说明创建一个文档站不是一件容易的事情。没写进注释里的还有一堆：base 路径要配 <code>/aifei-go/</code>、head 里的 favicon 不会自动加前缀得写全路径、paths 过滤让只有 docs 变更才触发构建、concurrency 把排队的旧部署取消掉、sitemap 要配 hostname……但这些坑，每一个都是前人踩过的，AI 都记得。以前要花一个下午翻 issue 才能凑齐的事，现在是一轮对话。</p>
+<h2 id="先写「怎么写」，再写「写什么」"><a href="#先写「怎么写」，再写「写什么」" class="headerlink" title="先写「怎么写」，再写「写什么」"></a>先写「怎么写」，再写「写什么」</h2><p>真正值得记的不是部署，是内容的生产方式。开工第一步，不是让 AI 写文档，而是先写「文档怎么写」—— 一份 <code>docs/guide/_STYLE.md</code> 写作规范。统一模板大纲（背景 → 架构 → 关键 API → 核心机制 → 配置集成 → 模块结构 → 总结）、风格规则（多用表格和代码块、交叉链接、信息密度要高），再加几条质量红线：</p>
+<ul>
+<li>内容来源<strong>必须实际读取源码，不得凭记忆编造</strong>；</li>
+<li>代码示例的类型名 / 方法签名 / 配置键<strong>必须与源码一致，逐项核实</strong>；</li>
+<li>篇幅 300~500 行，完成后用 <code>wc -l</code> 和 <code>grep</code> 自查行数与标题结构。</li>
+</ul>
+<p>规范开头有一句：「本规范<strong>人与 AI 均适用</strong>」。人做决策，AI 生成 —— 落到这件事上，就是人定标准、立标杆（风格范例是那篇五百行的 data-isolate 文档），AI 读源码、照模板写。最后落地的，是二十五篇模块文档。这套招数其实是框架自己的招数：Just Service 用命名约定让 AI 稳定生成代码，_STYLE.md 用模板和红线让 AI 稳定生成文档，一回事。</p>
+<h2 id="抽卡之后，要有验收"><a href="#抽卡之后，要有验收" class="headerlink" title="抽卡之后，要有验收"></a>抽卡之后，要有验收</h2><p>规范把写作经验沉淀了下来，让下一篇的起点更高。但光有规范还不够 —— AI 的输出是基于概率的，「抽卡」式的不确定性不会因为换了任务就消失。git 历史里躺着证据：首次部署之后，紧跟一串提交 —— 更新 Logo、更新文档图、把 Actions 升级到 Node 24 运行时、修 Markdown 语法错误、修 index.md 语法错误。所以要有验收闭环：构建、校验、人工过目，一轮下来，概率性的输出才算变成确定性的成品。</p>
+<p>最让我意外的是 <code>scripts/check-mermaid.mjs</code>。VitePress 构建时并不校验 mermaid 图表的语法，错了要到浏览器渲染时才暴露。这件事我没有让 AI 做，是它自己想到的：文档里有图、图会坏、坏了要在上线前发现 —— 于是有了这个脚本：jsdom 搭环境，调 <code>mermaid.parse</code> 把 docs 下所有 mermaid 代码块逐个校验，内部文件自动跳过。这种「想到你没让它想的事」，是完整性的另一个来源：人容易在「能用」的地方停下来；AI 不会累，也就没有「差不多得了」。</p>
+<h2 id="过程留痕，成品干净"><a href="#过程留痕，成品干净" class="headerlink" title="过程留痕，成品干净"></a>过程留痕，成品干净</h2><p>仓库里有个 <code>docs/issues/</code> 目录，编号归档了移植过程中发现的十九个缺陷：enjoy 的算术精度降级、for 循环迭代不了 map、内置指令缺失、db 缺方言……每一条都是留了案的复盘。这些记录通过 <code>srcExclude</code> 排除在发布站点之外 —— 对外的成品要干净，对内的过程要留痕。完整，不是把所有东西都端出去，而是该在的都在。</p>
+<h2 id="完整是长出来的"><a href="#完整是长出来的" class="headerlink" title="完整是长出来的"></a>完整是长出来的</h2><p>有了 AI 的帮助，让自己做事情更完整 —— 改变的到底是什么？不是 AI 会写文档了，文档它一直会写；是<strong>完整性的成本变了</strong>。以前文档、CI、校验、sitemap、孤儿分支，这些收尾活最劝退；现在它们的边际成本趋近于零，「能用」和「完整」之间的那段距离，走着走着就走完了。</p>
+<p>你得知道「完整」长什么样—— 当然也不必一开始就知道。完整是在深入的过程中长出来的：每一步追问一句「还差什么」，追问多了，「完整」的认知自然成形。这两天下来，我对「完整」的理解，就比开工时具体得多。</p>
+<p>最后是个自举：一个为 AI Coding 而生的框架，它自己的文档站，也是 AI Coding 做出来的。文档站的地址挂在那里，往后每一次 push，它都会自己生长。</p>
+<p>人负责想要什么，AI 负责让它完整。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"><i class="fa fa-tag"></i> AI</a>
+              <a href="/tags/aifei-go/" rel="tag"><i class="fa fa-tag"></i> aifei-go</a>
+              <a href="/tags/VitePress/" rel="tag"><i class="fa fa-tag"></i> VitePress</a>
+              <a href="/tags/%E6%96%87%E6%A1%A3%E7%AB%99/" rel="tag"><i class="fa fa-tag"></i> 文档站</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/08/24/course100/061/" rel="prev" title="翻翻类比">
+      <i class="fa fa-chevron-left"></i> 翻翻类比
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E6%80%A7%E7%9A%84%E5%9D%91%EF%BC%8CAI-%E9%83%BD%E8%AE%B0%E5%BE%97"><span class="nav-number">1.</span> <span class="nav-text">完整性的坑，AI 都记得</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%86%99%E3%80%8C%E6%80%8E%E4%B9%88%E5%86%99%E3%80%8D%EF%BC%8C%E5%86%8D%E5%86%99%E3%80%8C%E5%86%99%E4%BB%80%E4%B9%88%E3%80%8D"><span class="nav-number">2.</span> <span class="nav-text">先写「怎么写」，再写「写什么」</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%BD%E5%8D%A1%E4%B9%8B%E5%90%8E%EF%BC%8C%E8%A6%81%E6%9C%89%E9%AA%8C%E6%94%B6"><span class="nav-number">3.</span> <span class="nav-text">抽卡之后，要有验收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B%E7%95%99%E7%97%95%EF%BC%8C%E6%88%90%E5%93%81%E5%B9%B2%E5%87%80"><span class="nav-number">4.</span> <span class="nav-text">过程留痕，成品干净</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E6%98%AF%E9%95%BF%E5%87%BA%E6%9D%A5%E7%9A%84"><span class="nav-number">5.</span> <span class="nav-text">完整是长出来的</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">310</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">131</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">127</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">859k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">13:01</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '03a79e2faceb42bf36b0225493f41148',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
