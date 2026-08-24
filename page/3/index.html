@@ -172,6 +172,137 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/05/15/course100/041/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/05/15/course100/041/" class="post-title-link" itemprop="url">Solon 集成 Flowable</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-05-15 10:16:28 / 修改时间：10:27:58" itemprop="dateCreated datePublished" datetime="2025-05-15T10:16:28+08:00">2025-05-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>最近在做的事情就是把 Spring Boot 的项目迁移到 Solon 上来。我们的有一个 OA 系统，里面使用到了 Flowable 6.5。照例我还是从官网入手，其中说到是不需要适配可以直接使用。然后附带了例子，<a target="_blank" rel="noopener" href="https://gitee.com/hiro/flowable-solon-web%E3%80%82">https://gitee.com/hiro/flowable-solon-web。</a></p>
+<p>看起来还是比较简单，但也没那么简单，还好之前有看网友提供了 easy-flowable，<a target="_blank" rel="noopener" href="https://gitee.com/iajie/easy-flowable%EF%BC%8C%E4%B8%AD%E9%97%B4%E4%B9%9F%E6%9C%89%E8%AF%B7%E6%95%99%E4%BD%9C%E8%80%85%E5%87%A0%E4%B8%AA%E9%97%AE%E9%A2%98%EF%BC%8C%E6%84%9F%E8%B0%A2%E3%80%82%E5%A6%82%E6%9E%9C%E6%98%AF%E6%96%B0%E9%A1%B9%E7%9B%AE%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%EF%BC%8Ceasy-flowable">https://gitee.com/iajie/easy-flowable，中间也有请教作者几个问题，感谢。如果是新项目推荐使用，easy-flowable</a> 不仅提供了封装和增强，还提供了不错的 UI编排界面，使得 flowable 更简单易用。</p>
+<p>在统一看了相关的代码之后，主要的适配工作，就是根据配置设置ProcessEngineConfiguration， 并创建 ProcessEngine 及相关的 Service 的 bean 对象。 </p>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>在我们的系统中为一些基础组件采用 Solon 插件的方式封装一部分初始化工作。</p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@Inject(value = &quot;$&#123;flowable&#125;&quot;, autoRefreshed = true)</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FlowableProperties</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> String databaseSchemaUpdate = <span class="string">&quot;true&quot;</span>;</span><br><span class="line">  <span class="keyword">private</span> Boolean asyncExecutorActivate = <span class="keyword">false</span>;</span><br><span class="line">  <span class="keyword">private</span> String historyLevel = <span class="string">&quot;audit&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="构建-Bean"><a href="#构建-Bean" class="headerlink" title="构建 Bean"></a>构建 Bean</h3><p>根据配置设置ProcessEngineConfiguration， 并创建 ProcessEngine 及相关的 Service 的 bean 对象。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">XPluginImp</span> <span class="keyword">implements</span> <span class="title">Plugin</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> AppContext appContext;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">(AppContext context)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    appContext = context;</span><br><span class="line"></span><br><span class="line">    appContext.beanScan(FlowableProperties.class);</span><br><span class="line"></span><br><span class="line">    appContext.getBeanAsync(</span><br><span class="line">        DataSource.class,</span><br><span class="line">        dataSource -&gt; &#123;</span><br><span class="line">          FlowableProperties flowableProperties = appContext.getBean(FlowableProperties.class);</span><br><span class="line"></span><br><span class="line">          ProcessEngineConfigurationImpl engineConfiguration =</span><br><span class="line">              (ProcessEngineConfigurationImpl)</span><br><span class="line">                  ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration();</span><br><span class="line"></span><br><span class="line">          engineConfiguration.setDataSource(dataSource);</span><br><span class="line">          engineConfiguration.setDatabaseSchemaUpdate(<span class="string">&quot;false&quot;</span>);</span><br><span class="line">          <span class="comment">// 设置流程历史级别</span></span><br><span class="line">          engineConfiguration.setHistoryLevel(</span><br><span class="line">              HistoryLevel.getHistoryLevelForKey(flowableProperties.getHistoryLevel()));</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 设置表达式管理器</span></span><br><span class="line">          ExpressionManager ficusExpressionManager = <span class="keyword">new</span> SolonExpressionManager(appContext, <span class="keyword">null</span>);</span><br><span class="line">          engineConfiguration.setExpressionManager(ficusExpressionManager);</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 定时任务开关</span></span><br><span class="line">          engineConfiguration.setAsyncExecutorActivate(</span><br><span class="line">              flowableProperties.getAsyncExecutorActivate());</span><br><span class="line">          appContext.wrapAndPut(ProcessEngineConfiguration.class, engineConfiguration);</span><br><span class="line"></span><br><span class="line">          ProcessEngine processEngine = engineConfiguration.buildProcessEngine();</span><br><span class="line">          appContext.wrapAndPut(ProcessEngine.class, processEngine);</span><br><span class="line"></span><br><span class="line">          RuntimeService runtimeService = processEngine.getRuntimeService();</span><br><span class="line">          appContext.wrapAndPut(RuntimeService.class, runtimeService);</span><br><span class="line"></span><br><span class="line">          RepositoryService repositoryService = processEngine.getRepositoryService();</span><br><span class="line">          appContext.wrapAndPut(RepositoryService.class, repositoryService);</span><br><span class="line"></span><br><span class="line">          IdentityService identityService = processEngine.getIdentityService();</span><br><span class="line">          appContext.wrapAndPut(IdentityService.class, identityService);</span><br><span class="line"></span><br><span class="line">          TaskService taskService = processEngine.getTaskService();</span><br><span class="line">          appContext.wrapAndPut(TaskService.class, taskService);</span><br><span class="line"></span><br><span class="line">          HistoryService historyService = processEngine.getHistoryService();</span><br><span class="line">          appContext.wrapAndPut(HistoryService.class, historyService);</span><br><span class="line"></span><br><span class="line">          ManagementService managementService = processEngine.getManagementService();</span><br><span class="line">          appContext.wrapAndPut(ManagementService.class, managementService);</span><br><span class="line"></span><br><span class="line">          FormService formService = processEngine.getFormService();</span><br><span class="line">          appContext.wrapAndPut(FormService.class, formService);</span><br><span class="line"></span><br><span class="line">          DynamicBpmnService dynamicBpmnService = processEngine.getDynamicBpmnService();</span><br><span class="line">          appContext.wrapAndPut(DynamicBpmnService.class, dynamicBpmnService);</span><br><span class="line">        &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stop</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    Plugin.<span class="keyword">super</span>.stop();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="表达管理器-ProcessExpressionManager"><a href="#表达管理器-ProcessExpressionManager" class="headerlink" title="表达管理器 (ProcessExpressionManager)"></a>表达管理器 (ProcessExpressionManager)</h3><p>重要，如果没有添加自己的表达式管理，一些流程在执行的时候可能出错。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SolonExpressionManager</span> <span class="keyword">extends</span> <span class="title">ProcessExpressionManager</span> </span>&#123;</span><br><span class="line">  <span class="keyword">protected</span> AppContext appContext;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">SolonExpressionManager</span><span class="params">(AppContext appContext, Map&lt;Object, Object&gt; beans)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(beans);</span><br><span class="line">    <span class="keyword">this</span>.appContext = appContext;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> ELResolver <span class="title">createElResolver</span><span class="params">(VariableContainer variableContainer)</span> </span>&#123;</span><br><span class="line">    List&lt;ELResolver&gt; elResolvers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    elResolvers.add(createVariableElResolver(variableContainer));</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> AppContextElResolver(<span class="keyword">this</span>.appContext));</span><br><span class="line">    <span class="keyword">if</span> (beans != <span class="keyword">null</span>) &#123;</span><br><span class="line">      elResolvers.add(<span class="keyword">new</span> ReadOnlyMapELResolver(beans));</span><br><span class="line">    &#125;</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> ArrayELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> ListELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> MapELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> JsonNodeELResolver());</span><br><span class="line">    ELResolver beanElResolver = createBeanElResolver();</span><br><span class="line">    <span class="keyword">if</span> (beanElResolver != <span class="keyword">null</span>) &#123;</span><br><span class="line">      elResolvers.add(beanElResolver);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    configureResolvers(elResolvers);</span><br><span class="line"></span><br><span class="line">    CompositeELResolver compositeElResolver = <span class="keyword">new</span> CompositeELResolver();</span><br><span class="line">    <span class="keyword">for</span> (ELResolver elResolver : elResolvers) &#123;</span><br><span class="line">      compositeElResolver.add(elResolver);</span><br><span class="line">    &#125;</span><br><span class="line">    compositeElResolver.add(<span class="keyword">new</span> CouldNotResolvePropertyELResolver());</span><br><span class="line">    <span class="keyword">return</span> compositeElResolver;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ELResolver"><a href="#ELResolver" class="headerlink" title="ELResolver"></a>ELResolver</h3><p>EL 表达式执行器，用于处理 Solon bean 对象的获取。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppContextElResolver</span> <span class="keyword">extends</span> <span class="title">ELResolver</span> </span>&#123;</span><br><span class="line">  <span class="keyword">protected</span> AppContext appContext;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="function"><span class="title">AppContextElResolver</span>(<span class="params">AppContext appContext</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.appContext = appContext;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> Class&lt;?&gt; <span class="function"><span class="title">getCommonPropertyType</span>(<span class="params">ELContext context, <span class="built_in">Object</span> arg</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Object</span>.class;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> Iterator&lt;FeatureDescriptor&gt; <span class="function"><span class="title">getFeatureDescriptors</span>(<span class="params">ELContext context, <span class="built_in">Object</span> arg</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> Class&lt;?&gt; <span class="function"><span class="title">getType</span>(<span class="params">ELContext context, <span class="built_in">Object</span> arg1, <span class="built_in">Object</span> arg2</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Object</span>.class;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">Object</span> <span class="function"><span class="title">getValue</span>(<span class="params">ELContext context, <span class="built_in">Object</span> base, <span class="built_in">Object</span> property</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (base == <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="built_in">String</span> key = property.toString();</span><br><span class="line">      <span class="built_in">Object</span> bean = appContext.getBean(key);</span><br><span class="line">      <span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">        context.setPropertyResolved(<span class="literal">true</span>);</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">boolean</span> <span class="function"><span class="title">isReadOnly</span>(<span class="params">ELContext context, <span class="built_in">Object</span> base, <span class="built_in">Object</span> property</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setValue</span>(<span class="params">ELContext context, <span class="built_in">Object</span> base, <span class="built_in">Object</span> property, <span class="built_in">Object</span> value</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (base == <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="built_in">String</span> key = (<span class="built_in">String</span>) property;</span><br><span class="line">      <span class="built_in">this</span>.appContext.getBeanAsync(</span><br><span class="line">          key,</span><br><span class="line">          (bean) -&gt; &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> FlowableException(</span><br><span class="line">                <span class="string">&quot;Cannot set value of &#x27;&quot;</span></span><br><span class="line">                    + property</span><br><span class="line">                    + <span class="string">&quot;&#x27;, it resolves to a bean defined in the Solon application-context.&quot;</span>);</span><br><span class="line">          &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ol>
+<li>提示模型注册失败，并提示 <code>java.time.LocalDateTime cannot be cast to java.lang.String</code></li>
+</ol>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NjgwNmQwNDA3N2M0MGJkYTA0MDA3NDc4NDdmYWMyYTFfcGZaYWk1eHZRdXZqNk1NVjVkdmFCbndXbUdWWGxZUG9fVG9rZW46UTBVeWJwNDJZb1RZNE94MWFaQ2N5NTU1bnpoXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA" alt="img"></p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OGE0NzlmYjNlMThlMjAyNzM4ZWRlMzVhNjc3NmEzZjlfQ1g2Y2JURENxSUZFWFFDek9BeUt3S2Fzc1NwNG9jMzVfVG9rZW46UVR2RWIxQllNbzRGVUF4dTNqTWNncm1sblJnXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA" alt="img"></p>
+<blockquote>
+<p>主要的问题，集成的是 6.5.0的 Flowable，不支持高版本的 MySQL 驱动。检查发现Spring 版本使用的是 8.0.20的MySQL 驱动，而 Solon 使用的是 8.0.30 版本的驱动。把MySQL  驱动版本恢复为8.0.20，服务启动成功。</p>
+</blockquote>
+<ol>
+<li>提示找不到对象 TaskListener 相关的表达式对象，一些流程条件的时候提示如下的错误。</li>
+</ol>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YTk5ZWFlMWVkNTlmZjAyODVkZTk4Yjc1NWZmYmY4ZjJfeFVYaGRUMGdwS01DazNIQzZYdGF5ZGRYa1JxaUM0R2hfVG9rZW46UGVXdWIyemZnb2JqYUN4cEJUOGM2VldmbnJiXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA" alt="img"></p>
+<blockquote>
+<p>原因是虽然通过 Component 注册了 Bean 对象，但 Flowable 无法获取，需有重写 ExpressionManager，增加Solon bean 对象的获取。</p>
+<p>这里需要注意，注册 ExpressionManager 时，需要在 <code>ProcessEngine processEngine = engineConfiguration.buildProcessEngine()</code>之前否则可能构建了两个ExpressionManager，在执行获取 TaskListener 的对象时仍然可能报错。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置表达式管理器</span></span><br><span class="line">ExpressionManager ficusExpressionManager = <span class="keyword">new</span> SolonExpressionManager(appContext, <span class="keyword">null</span>);</span><br><span class="line">engineConfiguration.setExpressionManager(ficusExpressionManager);</span><br></pre></td></tr></table></figure>
+
+<p>增加 SolonExpressionManager，继承自 ProcessExpressionManager。重写 EL 表达式执行器，多增加AppContextElResolver。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> ELResolver <span class="title">createElResolver</span><span class="params">(VariableContainer variableContainer)</span> </span>&#123;</span><br><span class="line">    List&lt;ELResolver&gt; elResolvers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    elResolvers.add(createVariableElResolver(variableContainer));</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> AppContextElResolver(<span class="keyword">this</span>.appContext));</span><br><span class="line">    <span class="keyword">if</span> (beans != <span class="keyword">null</span>) &#123;</span><br><span class="line">      elResolvers.add(<span class="keyword">new</span> ReadOnlyMapELResolver(beans));</span><br><span class="line">    &#125;</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> ArrayELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> ListELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> MapELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> JsonNodeELResolver());</span><br><span class="line">    ELResolver beanElResolver = createBeanElResolver();</span><br><span class="line">    <span class="keyword">if</span> (beanElResolver != <span class="keyword">null</span>) &#123;</span><br><span class="line">      elResolvers.add(beanElResolver);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    configureResolvers(elResolvers);</span><br><span class="line"></span><br><span class="line">    CompositeELResolver compositeElResolver = <span class="keyword">new</span> CompositeELResolver();</span><br><span class="line">    <span class="keyword">for</span> (ELResolver elResolver : elResolvers) &#123;</span><br><span class="line">      compositeElResolver.add(elResolver);</span><br><span class="line">    &#125;</span><br><span class="line">    compositeElResolver.add(<span class="keyword">new</span> CouldNotResolvePropertyELResolver());</span><br><span class="line">    <span class="keyword">return</span> compositeElResolver;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>增加 AppContextElResolver，继承自 ELResolver，获取 Bean 对象的代码，这里需要注意如果对象创建了，需要设置<code>context.setPropertyResolved(true)</code>。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="built_in">Object</span> <span class="function"><span class="title">getValue</span>(<span class="params">ELContext context, <span class="built_in">Object</span> base, <span class="built_in">Object</span> property</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (base == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="built_in">String</span> key = property.toString();</span><br><span class="line">    <span class="built_in">Object</span> bean = appContext.getBean(key);</span><br><span class="line">    <span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">      context.setPropertyResolved(<span class="literal">true</span>);</span><br><span class="line">      <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/04/30/course100/040/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1527,231 +1658,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/24/course100/031/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/02/24/course100/031/" class="post-title-link" itemprop="url">Solon Cloud —— 服务网关</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-02-24 22:44:30 / 修改时间：22:46:08" itemprop="dateCreated datePublished" datetime="2025-02-24T22:44:30+08:00">2025-02-24</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>Solon Cloud Gateway 是 一个可 Java 编程的分布式网关，提供了服务路由的能力和各种拦截的支持，只要是 http 服务（不需要关心实现的语言）都可以通过 Solon Cloud Gateway 进行代理转发，代理转发的服务也不一定要注册到服务注册中心。</p>
-<p>虽然 Solon Cloud 提供了网关的实现，但在其官网出于性能及资源等原因的考虑，推荐优先使用专业网关（ngix，apisix，kong， k8s ingress controller），其次才是 Java 实现的网关 Spring Cloud Gateway 和 Solon Cloud Gateway。因此，在实际的项目中需要结合自己的项目情况来选择。</p>
-<p>以下是微服务框架配合网关的架构图，图片来自 Solon 官网。<a target="_blank" rel="noopener" href="https://solon.noear.org/article/328">https://solon.noear.org/article/328</a> 。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NGE2N2NiOWVmYjRjNGFjNmNhZGE3YjlmMTQ5YmM3ODdfMjBnNkhjSFBtbkd0MENRRWNPVURFTmZBWm83OFBNeFZfVG9rZW46U3N5a2J1MGxwb2FJTVF4RkhpVGNWNXBlbjJjXzE3NDA0MDgzNDA6MTc0MDQxMTk0MF9WNA" alt="img"></p>
-<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a><strong>依赖</strong></h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:demo-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:nacos2-solon-cloud-plugin&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon.cloud.gateway&quot;</span>)</span><br><span class="line"></span><br><span class="line">    annotationProcessor(<span class="string">&quot;org.mapstruct:mapstruct-processor:$&#123;mapstructVersion&#125;&quot;</span>)</span><br><span class="line"></span><br><span class="line">    testImplementation(<span class="string">&quot;org.noear:solon-test-junit5&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="响应式"><a href="#响应式" class="headerlink" title="响应式"></a>响应式</h3><p>Solon Cloud Gateway 使用响应式接口，由 Solon-Rx 来实现，是基于 reactive-streams 封装的 RxJava 极简版。目前仅一个接口 Completable，意为：可完成的发布者。</p>
-<table>
-<thead>
-<tr>
-<th>接口</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Completable</td>
-<td>作为返回类型</td>
-</tr>
-<tr>
-<td>Completable::complete()</td>
-<td>构建完成发布者</td>
-</tr>
-<tr>
-<td>Completable::error(cause)</td>
-<td>构建异常发布者</td>
-</tr>
-<tr>
-<td>Completable::create(（emitter)-&gt;{…})</td>
-<td>构建发射器发布者</td>
-</tr>
-</tbody></table>
-<h3 id="路由检测器"><a href="#路由检测器" class="headerlink" title="路由检测器"></a>路由检测器</h3><h4 id="内置路由检测器"><a href="#内置路由检测器" class="headerlink" title="内置路由检测器"></a>内置路由检测器</h4><table>
-<thead>
-<tr>
-<th>匹配检测器工厂</th>
-<th>本置前缀</th>
-<th>说明与示例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>AfterPredicateFactory</td>
-<td>After=</td>
-<td>After 时间检测器，ZonedDateTime 格式 (After=2017-01-20T17:42:47.789-07:00[America/Denver])</td>
-</tr>
-<tr>
-<td>BeforePredicateFactory</td>
-<td>Before=</td>
-<td>After 时间检测器，ZonedDateTime 格式 (Before=2017-01-20T17:42:47.789-07:00[America/Denver])</td>
-</tr>
-<tr>
-<td>CookiePredicateFactory</td>
-<td>Cookie=</td>
-<td>Cookie 检测器 (Cookie=token)(Cookie=token, ^user.)</td>
-</tr>
-<tr>
-<td>HeaderPredicateFactory</td>
-<td>Header=</td>
-<td>Header 检测器 (Header=token)(Header=token, ^user.)</td>
-</tr>
-<tr>
-<td>MethodPredicateFactory</td>
-<td>Method=</td>
-<td>Method 检测器 (Method=GET,POST)</td>
-</tr>
-<tr>
-<td>PathPredicateFactory</td>
-<td>Path=</td>
-<td>Path 检测器（支持多路径匹配，以”,”号隔开） (Path=/demo/<strong>) ，(Path=/demo/</strong>,/hello/**)</td>
-</tr>
-</tbody></table>
-<p>通常情况下，我们使用 PathPredicateFactory 就够用，不需要额外的配置。</p>
-<h3 id="路由过滤器"><a href="#路由过滤器" class="headerlink" title="路由过滤器"></a>路由过滤器</h3><h4 id="内置过滤器"><a href="#内置过滤器" class="headerlink" title="内置过滤器"></a>内置过滤器</h4><p>Solon 提供了一些内置的路由过滤器，可以通过直接的配置就可以使用。</p>
-<table>
-<thead>
-<tr>
-<th>过滤器工厂</th>
-<th>本置前缀</th>
-<th>说明与示例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>AddRequestHeaderFilterFactory</td>
-<td>AddRequestHeader=</td>
-<td>添加请求头 (AddRequestHeader=Demo-Ver,1.0)</td>
-</tr>
-<tr>
-<td>AddResponseHeaderFilterFactory</td>
-<td>AddResponseHeader=</td>
-<td>添加响应头 (AddResponseHeader=Demo-Ver,1.0)</td>
-</tr>
-<tr>
-<td>PrefixPathFilterFactory</td>
-<td>PrefixPath=</td>
-<td>附加路径前缀 (PrefixPath=/app)</td>
-</tr>
-<tr>
-<td>RedirectToFilterFactory</td>
-<td>RedirectTo=</td>
-<td>跳转到 (RedirectTo=302,<a target="_blank" rel="noopener" href="http://demo.org/a,true">http://demo.org/a,true</a>)</td>
-</tr>
-<tr>
-<td>RemoveRequestHeaderFilterFactory</td>
-<td>RemoveRequestHeader=</td>
-<td>移除请求头 (RemoveRequestHeader=Demo-Ver,1.0)</td>
-</tr>
-<tr>
-<td>RemoveResponseHeaderFilterFactory</td>
-<td>RemoveResponseHeader=</td>
-<td>移除响应头 (RemoveResponseHeader=Demo-Ver,1.0)</td>
-</tr>
-<tr>
-<td>StripPrefixFilterFactory</td>
-<td>StripPrefix=</td>
-<td>移除路径前缀段数 (StripPrefix=1)</td>
-</tr>
-</tbody></table>
-<h4 id="定制"><a href="#定制" class="headerlink" title="定制"></a>定制</h4><p>通过RouteFilterFactory定制路由过滤规则，实现不同类型的接口过滤。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.solon.filter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.vertx.core.buffer.Buffer;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.dromara.hutool.core.text.StrUtil;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.cloud.gateway.exchange.ExContext;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.cloud.gateway.exchange.ExFilter;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.cloud.gateway.exchange.ExFilterChain;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.cloud.gateway.route.RouteFilterFactory;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.rx.Completable;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AuthFilterFactory</span> <span class="keyword">implements</span> <span class="title">RouteFilterFactory</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String TOKEN = <span class="string">&quot;token&quot;</span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String EMPTY = <span class="string">&quot;empty&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">prefix</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Auth&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> ExFilter <span class="title">create</span><span class="params">(String config)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (TOKEN.equals(config)) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> TokenFilter();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> EmptyAuthFilter();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 默认的空鉴权 */</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">EmptyAuthFilter</span> <span class="keyword">implements</span> <span class="title">ExFilter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EmptyAuthFilter</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Completable <span class="title">doFilter</span><span class="params">(ExContext ctx, ExFilterChain chain)</span> </span>&#123;</span><br><span class="line">      log.info(<span class="string">&quot;empty filter, do nothing&quot;</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> chain.doFilter(ctx);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** token 鉴权 ，如果鉴权逻辑比较复杂的，用独立类 */</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">TokenFilter</span> <span class="keyword">implements</span> <span class="title">ExFilter</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Completable <span class="title">doFilter</span><span class="params">(ExContext ctx, ExFilterChain chain)</span> </span>&#123;</span><br><span class="line">      String token = ctx.rawHeader(<span class="string">&quot;token&quot;</span>);</span><br><span class="line">      <span class="keyword">if</span> (StrUtil.isBlank(token)) &#123;</span><br><span class="line">        ctx.newResponse().status(<span class="number">401</span>);</span><br><span class="line">        ctx.newResponse().body(Buffer.buffer(<span class="string">&quot;token is empty&quot;</span>));</span><br><span class="line">        <span class="keyword">return</span> Completable.complete();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> chain.doFilter(ctx);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>其中 EmptyFilter 只是简单的记录日志，而 TokenFilter 会从头中获取 token 信息判断是否为空，为空是返回错误信息，不为空时正常情况。</p>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a><strong>配置</strong></h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server.port:</span> <span class="number">8000</span></span><br><span class="line"></span><br><span class="line"><span class="attr">solon.app:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&#x27;demo-cloud-gateway&#x27;</span></span><br><span class="line">  <span class="comment"># group: &quot;DEFAULT_GROUP&quot; # 默认值为 DEFAULT_GROUP</span></span><br><span class="line">  <span class="comment"># namespace: &quot;public&quot; # 默认值为 public</span></span><br><span class="line"></span><br><span class="line"><span class="attr">knife4j.enable:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行样例时，屏蔽，或者配置app-local.yml</span></span><br><span class="line"><span class="attr">solon.env:</span> <span class="string">local</span></span><br><span class="line"></span><br><span class="line"><span class="attr">solon.cloud.nacos:</span></span><br><span class="line">  <span class="attr">server:</span> <span class="string">&quot;localhost:8848&quot;</span>           <span class="comment">#nacos2 服务地址</span></span><br><span class="line">  <span class="attr">config:</span></span><br><span class="line">    <span class="attr">load:</span> <span class="string">&quot;demo-cloud-gateway.yml&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">solon.cloud.gateway:</span></span><br><span class="line">  <span class="attr">discover:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">false</span></span><br><span class="line">    <span class="attr">excludedServices:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;self-service&quot;</span></span><br><span class="line">  <span class="attr">httpClient:</span></span><br><span class="line">    <span class="attr">responseTimeout:</span> <span class="number">1800</span> <span class="comment">#单位：秒</span></span><br><span class="line">  <span class="attr">routes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">demo</span></span><br><span class="line">      <span class="attr">index:</span> <span class="number">0</span> <span class="comment">#默认为0</span></span><br><span class="line">      <span class="attr">target:</span> <span class="string">&quot;http://127.0.0.1:8081&quot;</span></span><br><span class="line">      <span class="attr">predicates:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;Path=/demo/**&quot;</span></span><br><span class="line">      <span class="attr">filters:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;Auth=empty&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;StripPrefix=1&quot;</span></span><br><span class="line">      <span class="attr">timeout:</span></span><br><span class="line">        <span class="attr">responseTimeout:</span> <span class="number">1800</span> <span class="comment">#单位：秒</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">service01</span></span><br><span class="line">      <span class="attr">index:</span> <span class="number">0</span> <span class="comment">#默认为0</span></span><br><span class="line">      <span class="attr">target:</span> <span class="string">lb://demo-cloud-service01</span></span><br><span class="line">      <span class="attr">predicates:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;Path=/service01/**&quot;</span></span><br><span class="line">      <span class="attr">filters:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;Auth=token&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;StripPrefix=1&quot;</span></span><br><span class="line">      <span class="attr">timeout:</span></span><br><span class="line">        <span class="attr">responseTimeout:</span> <span class="number">1800</span> <span class="comment">#单位：秒</span></span><br></pre></td></tr></table></figure>
-
-<p>这里使用 service01 作为上游服务，配置直接地址和使用服务注册的地址来分别测试。</p>
-<p>使用直接地址时，使用了一个空的鉴权逻辑，然后利用 Solon 内置的StripPrefix 来移除url 中的第一段，然后请求实际的服务。</p>
-<p>使用注册服务时，使用了一个简单的Token鉴权逻辑，然后利用 Solon 内置的StripPrefix 来移除url 中的第一段，然后请求实际的服务。</p>
-<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>启动 demo-cloud-gateway 和 demo-cloud-service01。</p>
-<p>通过service01来调用，也就是通过注册服务来调用。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NDEyNzFiZTU1ZTdkZjA2ZmMxZjg1MjQ3NTI1OTNkOGVfa0pjQ0hnYWd3OU5MNllvVDkxYnRuaVRZMzVmZjVOaFpfVG9rZW46TEE4aGIyWEVFbzlRY294blpLVGN1NEpPblJlXzE3NDA0MDgzNDA6MTc0MDQxMTk0MF9WNA" alt="img"></p>
-<p>通过demo来调用，也就是通过直接地址来调用。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ODE5ZDQ5NTU2YWZlODdiYjQ4YmM1NTdlZGRlOGYyOGFfNmVTd0dmdEF3VUIxNFlVYjJNUHpSRENaZ2RGVWJVWjRfVG9rZW46TXZFNmJUVFZjb25FZm94T0txbGNzT3pObmlmXzE3NDA0MDgzNDA6MTc0MDQxMTk0MF9WNA" alt="img"></p>
-<p>如果 servic01 没有启动的情况返回的是404的错误。</p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Solon Cloud Gateway 通过配置的方式就可以对服务进行代理转发，在实际的业务使用中通常会与服务发现一起，实现负载均衡，也可以通过编程的方式进一步的定制自己的业务逻辑，实现统一鉴权，限流熔断，灰度发布等功能。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1821,20 +1727,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">308</span>
+          <span class="site-state-item-count">309</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">128</span>
+        <span class="site-state-item-count">130</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">123</span>
+        <span class="site-state-item-count">124</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1892,12 +1798,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">856k</span>
+    <span title="站点总字数">857k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:58</span>
+    <span title="站点阅读时长">12:59</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

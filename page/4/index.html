@@ -172,6 +172,231 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/24/course100/031/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/24/course100/031/" class="post-title-link" itemprop="url">Solon Cloud —— 服务网关</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-24 22:44:30 / 修改时间：22:46:08" itemprop="dateCreated datePublished" datetime="2025-02-24T22:44:30+08:00">2025-02-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>Solon Cloud Gateway 是 一个可 Java 编程的分布式网关，提供了服务路由的能力和各种拦截的支持，只要是 http 服务（不需要关心实现的语言）都可以通过 Solon Cloud Gateway 进行代理转发，代理转发的服务也不一定要注册到服务注册中心。</p>
+<p>虽然 Solon Cloud 提供了网关的实现，但在其官网出于性能及资源等原因的考虑，推荐优先使用专业网关（ngix，apisix，kong， k8s ingress controller），其次才是 Java 实现的网关 Spring Cloud Gateway 和 Solon Cloud Gateway。因此，在实际的项目中需要结合自己的项目情况来选择。</p>
+<p>以下是微服务框架配合网关的架构图，图片来自 Solon 官网。<a target="_blank" rel="noopener" href="https://solon.noear.org/article/328">https://solon.noear.org/article/328</a> 。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NGE2N2NiOWVmYjRjNGFjNmNhZGE3YjlmMTQ5YmM3ODdfMjBnNkhjSFBtbkd0MENRRWNPVURFTmZBWm83OFBNeFZfVG9rZW46U3N5a2J1MGxwb2FJTVF4RkhpVGNWNXBlbjJjXzE3NDA0MDgzNDA6MTc0MDQxMTk0MF9WNA" alt="img"></p>
+<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a><strong>依赖</strong></h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:demo-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:nacos2-solon-cloud-plugin&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon.cloud.gateway&quot;</span>)</span><br><span class="line"></span><br><span class="line">    annotationProcessor(<span class="string">&quot;org.mapstruct:mapstruct-processor:$&#123;mapstructVersion&#125;&quot;</span>)</span><br><span class="line"></span><br><span class="line">    testImplementation(<span class="string">&quot;org.noear:solon-test-junit5&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="响应式"><a href="#响应式" class="headerlink" title="响应式"></a>响应式</h3><p>Solon Cloud Gateway 使用响应式接口，由 Solon-Rx 来实现，是基于 reactive-streams 封装的 RxJava 极简版。目前仅一个接口 Completable，意为：可完成的发布者。</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Completable</td>
+<td>作为返回类型</td>
+</tr>
+<tr>
+<td>Completable::complete()</td>
+<td>构建完成发布者</td>
+</tr>
+<tr>
+<td>Completable::error(cause)</td>
+<td>构建异常发布者</td>
+</tr>
+<tr>
+<td>Completable::create(（emitter)-&gt;{…})</td>
+<td>构建发射器发布者</td>
+</tr>
+</tbody></table>
+<h3 id="路由检测器"><a href="#路由检测器" class="headerlink" title="路由检测器"></a>路由检测器</h3><h4 id="内置路由检测器"><a href="#内置路由检测器" class="headerlink" title="内置路由检测器"></a>内置路由检测器</h4><table>
+<thead>
+<tr>
+<th>匹配检测器工厂</th>
+<th>本置前缀</th>
+<th>说明与示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AfterPredicateFactory</td>
+<td>After=</td>
+<td>After 时间检测器，ZonedDateTime 格式 (After=2017-01-20T17:42:47.789-07:00[America/Denver])</td>
+</tr>
+<tr>
+<td>BeforePredicateFactory</td>
+<td>Before=</td>
+<td>After 时间检测器，ZonedDateTime 格式 (Before=2017-01-20T17:42:47.789-07:00[America/Denver])</td>
+</tr>
+<tr>
+<td>CookiePredicateFactory</td>
+<td>Cookie=</td>
+<td>Cookie 检测器 (Cookie=token)(Cookie=token, ^user.)</td>
+</tr>
+<tr>
+<td>HeaderPredicateFactory</td>
+<td>Header=</td>
+<td>Header 检测器 (Header=token)(Header=token, ^user.)</td>
+</tr>
+<tr>
+<td>MethodPredicateFactory</td>
+<td>Method=</td>
+<td>Method 检测器 (Method=GET,POST)</td>
+</tr>
+<tr>
+<td>PathPredicateFactory</td>
+<td>Path=</td>
+<td>Path 检测器（支持多路径匹配，以”,”号隔开） (Path=/demo/<strong>) ，(Path=/demo/</strong>,/hello/**)</td>
+</tr>
+</tbody></table>
+<p>通常情况下，我们使用 PathPredicateFactory 就够用，不需要额外的配置。</p>
+<h3 id="路由过滤器"><a href="#路由过滤器" class="headerlink" title="路由过滤器"></a>路由过滤器</h3><h4 id="内置过滤器"><a href="#内置过滤器" class="headerlink" title="内置过滤器"></a>内置过滤器</h4><p>Solon 提供了一些内置的路由过滤器，可以通过直接的配置就可以使用。</p>
+<table>
+<thead>
+<tr>
+<th>过滤器工厂</th>
+<th>本置前缀</th>
+<th>说明与示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AddRequestHeaderFilterFactory</td>
+<td>AddRequestHeader=</td>
+<td>添加请求头 (AddRequestHeader=Demo-Ver,1.0)</td>
+</tr>
+<tr>
+<td>AddResponseHeaderFilterFactory</td>
+<td>AddResponseHeader=</td>
+<td>添加响应头 (AddResponseHeader=Demo-Ver,1.0)</td>
+</tr>
+<tr>
+<td>PrefixPathFilterFactory</td>
+<td>PrefixPath=</td>
+<td>附加路径前缀 (PrefixPath=/app)</td>
+</tr>
+<tr>
+<td>RedirectToFilterFactory</td>
+<td>RedirectTo=</td>
+<td>跳转到 (RedirectTo=302,<a target="_blank" rel="noopener" href="http://demo.org/a,true">http://demo.org/a,true</a>)</td>
+</tr>
+<tr>
+<td>RemoveRequestHeaderFilterFactory</td>
+<td>RemoveRequestHeader=</td>
+<td>移除请求头 (RemoveRequestHeader=Demo-Ver,1.0)</td>
+</tr>
+<tr>
+<td>RemoveResponseHeaderFilterFactory</td>
+<td>RemoveResponseHeader=</td>
+<td>移除响应头 (RemoveResponseHeader=Demo-Ver,1.0)</td>
+</tr>
+<tr>
+<td>StripPrefixFilterFactory</td>
+<td>StripPrefix=</td>
+<td>移除路径前缀段数 (StripPrefix=1)</td>
+</tr>
+</tbody></table>
+<h4 id="定制"><a href="#定制" class="headerlink" title="定制"></a>定制</h4><p>通过RouteFilterFactory定制路由过滤规则，实现不同类型的接口过滤。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.solon.filter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.vertx.core.buffer.Buffer;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.dromara.hutool.core.text.StrUtil;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.cloud.gateway.exchange.ExContext;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.cloud.gateway.exchange.ExFilter;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.cloud.gateway.exchange.ExFilterChain;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.cloud.gateway.route.RouteFilterFactory;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.rx.Completable;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AuthFilterFactory</span> <span class="keyword">implements</span> <span class="title">RouteFilterFactory</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String TOKEN = <span class="string">&quot;token&quot;</span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String EMPTY = <span class="string">&quot;empty&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">prefix</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Auth&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> ExFilter <span class="title">create</span><span class="params">(String config)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (TOKEN.equals(config)) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> TokenFilter();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> EmptyAuthFilter();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 默认的空鉴权 */</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">EmptyAuthFilter</span> <span class="keyword">implements</span> <span class="title">ExFilter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EmptyAuthFilter</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Completable <span class="title">doFilter</span><span class="params">(ExContext ctx, ExFilterChain chain)</span> </span>&#123;</span><br><span class="line">      log.info(<span class="string">&quot;empty filter, do nothing&quot;</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> chain.doFilter(ctx);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** token 鉴权 ，如果鉴权逻辑比较复杂的，用独立类 */</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">TokenFilter</span> <span class="keyword">implements</span> <span class="title">ExFilter</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Completable <span class="title">doFilter</span><span class="params">(ExContext ctx, ExFilterChain chain)</span> </span>&#123;</span><br><span class="line">      String token = ctx.rawHeader(<span class="string">&quot;token&quot;</span>);</span><br><span class="line">      <span class="keyword">if</span> (StrUtil.isBlank(token)) &#123;</span><br><span class="line">        ctx.newResponse().status(<span class="number">401</span>);</span><br><span class="line">        ctx.newResponse().body(Buffer.buffer(<span class="string">&quot;token is empty&quot;</span>));</span><br><span class="line">        <span class="keyword">return</span> Completable.complete();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> chain.doFilter(ctx);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中 EmptyFilter 只是简单的记录日志，而 TokenFilter 会从头中获取 token 信息判断是否为空，为空是返回错误信息，不为空时正常情况。</p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a><strong>配置</strong></h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server.port:</span> <span class="number">8000</span></span><br><span class="line"></span><br><span class="line"><span class="attr">solon.app:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&#x27;demo-cloud-gateway&#x27;</span></span><br><span class="line">  <span class="comment"># group: &quot;DEFAULT_GROUP&quot; # 默认值为 DEFAULT_GROUP</span></span><br><span class="line">  <span class="comment"># namespace: &quot;public&quot; # 默认值为 public</span></span><br><span class="line"></span><br><span class="line"><span class="attr">knife4j.enable:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行样例时，屏蔽，或者配置app-local.yml</span></span><br><span class="line"><span class="attr">solon.env:</span> <span class="string">local</span></span><br><span class="line"></span><br><span class="line"><span class="attr">solon.cloud.nacos:</span></span><br><span class="line">  <span class="attr">server:</span> <span class="string">&quot;localhost:8848&quot;</span>           <span class="comment">#nacos2 服务地址</span></span><br><span class="line">  <span class="attr">config:</span></span><br><span class="line">    <span class="attr">load:</span> <span class="string">&quot;demo-cloud-gateway.yml&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">solon.cloud.gateway:</span></span><br><span class="line">  <span class="attr">discover:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">false</span></span><br><span class="line">    <span class="attr">excludedServices:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;self-service&quot;</span></span><br><span class="line">  <span class="attr">httpClient:</span></span><br><span class="line">    <span class="attr">responseTimeout:</span> <span class="number">1800</span> <span class="comment">#单位：秒</span></span><br><span class="line">  <span class="attr">routes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">demo</span></span><br><span class="line">      <span class="attr">index:</span> <span class="number">0</span> <span class="comment">#默认为0</span></span><br><span class="line">      <span class="attr">target:</span> <span class="string">&quot;http://127.0.0.1:8081&quot;</span></span><br><span class="line">      <span class="attr">predicates:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;Path=/demo/**&quot;</span></span><br><span class="line">      <span class="attr">filters:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;Auth=empty&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;StripPrefix=1&quot;</span></span><br><span class="line">      <span class="attr">timeout:</span></span><br><span class="line">        <span class="attr">responseTimeout:</span> <span class="number">1800</span> <span class="comment">#单位：秒</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">service01</span></span><br><span class="line">      <span class="attr">index:</span> <span class="number">0</span> <span class="comment">#默认为0</span></span><br><span class="line">      <span class="attr">target:</span> <span class="string">lb://demo-cloud-service01</span></span><br><span class="line">      <span class="attr">predicates:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;Path=/service01/**&quot;</span></span><br><span class="line">      <span class="attr">filters:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;Auth=token&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;StripPrefix=1&quot;</span></span><br><span class="line">      <span class="attr">timeout:</span></span><br><span class="line">        <span class="attr">responseTimeout:</span> <span class="number">1800</span> <span class="comment">#单位：秒</span></span><br></pre></td></tr></table></figure>
+
+<p>这里使用 service01 作为上游服务，配置直接地址和使用服务注册的地址来分别测试。</p>
+<p>使用直接地址时，使用了一个空的鉴权逻辑，然后利用 Solon 内置的StripPrefix 来移除url 中的第一段，然后请求实际的服务。</p>
+<p>使用注册服务时，使用了一个简单的Token鉴权逻辑，然后利用 Solon 内置的StripPrefix 来移除url 中的第一段，然后请求实际的服务。</p>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>启动 demo-cloud-gateway 和 demo-cloud-service01。</p>
+<p>通过service01来调用，也就是通过注册服务来调用。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NDEyNzFiZTU1ZTdkZjA2ZmMxZjg1MjQ3NTI1OTNkOGVfa0pjQ0hnYWd3OU5MNllvVDkxYnRuaVRZMzVmZjVOaFpfVG9rZW46TEE4aGIyWEVFbzlRY294blpLVGN1NEpPblJlXzE3NDA0MDgzNDA6MTc0MDQxMTk0MF9WNA" alt="img"></p>
+<p>通过demo来调用，也就是通过直接地址来调用。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ODE5ZDQ5NTU2YWZlODdiYjQ4YmM1NTdlZGRlOGYyOGFfNmVTd0dmdEF3VUIxNFlVYjJNUHpSRENaZ2RGVWJVWjRfVG9rZW46TXZFNmJUVFZjb25FZm94T0txbGNzT3pObmlmXzE3NDA0MDgzNDA6MTc0MDQxMTk0MF9WNA" alt="img"></p>
+<p>如果 servic01 没有启动的情况返回的是404的错误。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Solon Cloud Gateway 通过配置的方式就可以对服务进行代理转发，在实际的业务使用中通常会与服务发现一起，实现负载均衡，也可以通过编程的方式进一步的定制自己的业务逻辑，实现统一鉴权，限流熔断，灰度发布等功能。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/23/course100/030/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1726,160 +1951,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/13/course100/021/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/02/13/course100/021/" class="post-title-link" itemprop="url">Web 开发 —— 进阶</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-02-13 19:50:30" itemprop="dateCreated datePublished" datetime="2025-02-13T19:50:30+08:00">2025-02-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-02-14 22:45:40" itemprop="dateModified" datetime="2025-02-14T22:45:40+08:00">2025-02-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>6.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在基础篇当中，我们讲究了 Solon 对 MVC 的支持和提供的基础的Web 能力。在这个章节我们会讲解 Solon 提供了哪些能力可以供我们进行控制。</p>
-<p>首先我们来看看 Solon Web  的请求过程，理解 Solon 的基础概念，这样方便我们后续的定制。</p>
-<h2 id="请求过程"><a href="#请求过程" class="headerlink" title="请求过程"></a>请求过程</h2><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZjcyZDQ3ZDA2NWI4YTMxN2ZiOWQ0YzRlMWI0Y2M3MDFfOTZtdkFYRDJlaGNQZElYN0hWNWVUU3ZFTVVFTnA3Q1VfVG9rZW46SjJQQ2JzQzNZb2MxYlR4Rm1KcmNmSlY4blplXzE3Mzk0NDc1MTA6MTczOTQ1MTExMF9WNA" alt="img"></p>
-<p>从图中，我们可以看到在Web 的请求过程中，会经过几个环节：Filter（全局过滤器）-&gt;</p>
-<p>RouterInterCeptor（路由拦截器）-&gt; Handler（处理器）-&gt; Interceptor（拦截器）。</p>
-<h3 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h3><p>Solon 采用 Handler + Context 架构，Context 是请求的上下文。 在 Context 中可以获取请求和响应相关的数据，包括请求相关的对象与接口，会话相关的对象与接口，响应相关的对象与接口等。Solon 提供了多种方式获取Context，也为Context 其他了一些常用的接口，更详细的内容可以查看 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/216">https://solon.noear.org/article/216</a> 。</p>
-<h3 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h3><p>过滤器，可以对所有请求（无论动态还是静态的请求）进行全局的控制。通常用于全局的 Web 请求异常处理，全局的性能记录，全局的响应状态调整，全局的上下文日志记录，全局的链路跟踪等等，当然也可以作用在局部上。</p>
-<h3 id="RouterInterceptor"><a href="#RouterInterceptor" class="headerlink" title="RouterInterceptor"></a>RouterInterceptor</h3><p>路由拦截器，可以对动态请求进行全局的控制，功能基本与 Filter 一致。主要的区别是：1. 只能对动态请求（路由器范围）进行拦截；2. 可以修改参数和返回结果。</p>
-<h3 id="Interceptor"><a href="#Interceptor" class="headerlink" title="Interceptor"></a>Interceptor</h3><p>拦截器，拦截器使用切面（AOP）的方式实现，通过定义注解、设置切点、注册拦截器，Solon 将对方法进行拦截，从而增加拦截器方法的执行。拦截器可以用于实现缓存、事务等等功能。</p>
-<h3 id="Action"><a href="#Action" class="headerlink" title="Action"></a>Action</h3><p>实际的请求方法，注册到路由器的方法（通常是<code>@Mapping</code> 函数，可以通过 Controller 的方式定义，也可以通过 Handler 的方式定义，等等）。Action 本质上是 Handler 和 Class Method 的结合，可以请求方法进行局部的控制。</p>
-<h2 id="示例-demo-web02"><a href="#示例-demo-web02" class="headerlink" title="示例 demo-web02"></a>示例 demo-web02</h2><p>在 IDEA 中通过 <code>File-&gt;New-&gt;Modules...</code> 可以创建新的模块 <code>demo-web02</code>，基础代码和配置可以从<code>demo-web01</code>中拷贝过来。</p>
-<p>这里我们继续补充<code>demo-web01</code> ，增加定制化的处理。</p>
-<ul>
-<li>增加简单的鉴权用于演示的Filter。</li>
-<li>增加RouterInterceptor，用于演示Filter和RouterInterceptor的区别。 </li>
-<li>增加日志审计的功能用于演示 Interceptor 拦截器。</li>
-</ul>
-<h3 id="全局过滤器"><a href="#全局过滤器" class="headerlink" title="全局过滤器"></a>全局过滤器</h3><p>使用全局的Filter做简单的 token 验证。这里需要指定<code>Component</code>的注解，也就是统一有Solon 来管理。如果有多个过滤器是可以指定<code>Component</code>的 index 参数，参数越小，越外层，可以理解为优先级越高。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.common.filter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.jfinal.kit.Kv;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.dromara.hutool.core.text.StrUtil;</span><br><span class="line"><span class="keyword">import</span> org.noear.snack.ONode;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.Context;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.Filter;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.FilterChain;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlobalFilter</span> <span class="keyword">implements</span> <span class="title">Filter</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(Context ctx, FilterChain chain)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    String path = ctx.path();</span><br><span class="line">    log.info(<span class="string">&quot;1. GlobalFilter, path: &#123;&#125;&quot;</span>, path);</span><br><span class="line">    <span class="comment">// 简单逻辑，非静态的路径都需要token</span></span><br><span class="line">    <span class="keyword">if</span> (!path.contains(<span class="string">&quot;.&quot;</span>)) &#123;</span><br><span class="line">      String token = ctx.param(<span class="string">&quot;token&quot;</span>);</span><br><span class="line">      <span class="keyword">if</span> (StrUtil.isBlank(token)) &#123;</span><br><span class="line">        ctx.outputAsJson(ONode.stringify(Kv.of(<span class="string">&quot;state&quot;</span>, <span class="keyword">false</span>)));</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    chain.doFilter(ctx);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="路由拦截器"><a href="#路由拦截器" class="headerlink" title="路由拦截器"></a>路由拦截器</h3><p>这边只是为了对比和Filter的不同，如果是静态资源请求时，不会进入路由拦截器，也就不会打印对应的日志。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.common.interceptor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.Context;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.Handler;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.route.RouterInterceptor;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.route.RouterInterceptorChain;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoRouteInterceptor</span> <span class="keyword">implements</span> <span class="title">RouterInterceptor</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doIntercept</span><span class="params">(Context ctx, Handler mainHandler, RouterInterceptorChain chain)</span></span></span><br><span class="line"><span class="function">      <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    String path = ctx.path();</span><br><span class="line">    log.info(<span class="string">&quot;2. DemoRouteInterceptor, path: &#123;&#125;&quot;</span>, path);</span><br><span class="line"></span><br><span class="line">    chain.doIntercept(ctx, mainHandler);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="局部过滤器"><a href="#局部过滤器" class="headerlink" title="局部过滤器"></a>局部过滤器</h3><p>局部过滤器可以通过 Addition 注解直接使用，可以通过注解继承的方式使用。</p>
-<h4 id="WhitelistFilter"><a href="#WhitelistFilter" class="headerlink" title="WhitelistFilter"></a>WhitelistFilter</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.common.filter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.Context;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.Filter;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.FilterChain;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WhitelistFilter</span> <span class="keyword">implements</span> <span class="title">Filter</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(Context ctx, FilterChain chain)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    String path = ctx.path();</span><br><span class="line">    log.info(<span class="string">&quot;3. WhitelistFilter, path: &#123;&#125;&quot;</span>, path);</span><br><span class="line">    chain.doFilter(ctx);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Whitelist"><a href="#Whitelist" class="headerlink" title="Whitelist"></a>Whitelist</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.common.annotation;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.common.filter.WhitelistFilter;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.*;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Addition;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Addition(WhitelistFilter.class)</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Whitelist &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h3><p>拦截器可以通过 Around 注解直接使用，可以通过注解继承的方式使用。</p>
-<h4 id="LogInterceptor"><a href="#LogInterceptor" class="headerlink" title="LogInterceptor"></a>LogInterceptor</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.common.interceptor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.aspect.Interceptor;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.aspect.Invocation;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.Context;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LogInterceptor</span> <span class="keyword">implements</span> <span class="title">Interceptor</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Object <span class="title">doIntercept</span><span class="params">(Invocation inv)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    Context context = Context.current();</span><br><span class="line">    String path = context.path();</span><br><span class="line">    log.info(<span class="string">&quot;4. LogInterceptor, path: &#123;&#125;&quot;</span>, path);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> inv.invoke();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="OperateLog"><a href="#OperateLog" class="headerlink" title="OperateLog"></a>OperateLog</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.common.annotation;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.common.interceptor.LogInterceptor;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.*;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Around;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Around(LogInterceptor.class)</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> OperateLog &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Controller的调整"><a href="#Controller的调整" class="headerlink" title="Controller的调整"></a>Controller的调整</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.web.manage.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.common.annotation.OperateLog;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.common.annotation.Whitelist;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.common.filter.WhitelistFilter;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.common.interceptor.LogInterceptor;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.manage.dto.DeptDto;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.web.manage.service.DeptService;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.*;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.Context;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.ModelAndView;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.core.handle.UploadedFile;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping(&quot;/dept&quot;)</span></span><br><span class="line"><span class="meta">@Api(&quot;部门管理&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeptController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> DeptService service;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(&quot;/index&quot;)</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;浏览部门&quot;)</span></span><br><span class="line">  <span class="meta">@OperateLog</span></span><br><span class="line">  <span class="meta">@Whitelist</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> ModelAndView <span class="title">index</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ModelAndView mv = <span class="keyword">new</span> ModelAndView();</span><br><span class="line">    mv.put(<span class="string">&quot;depts&quot;</span>, service.list());</span><br><span class="line">    mv.view(<span class="string">&quot;dept.shtm&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> mv;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Mapping(value = &quot;list&quot;)</span></span><br><span class="line">  <span class="meta">@Get</span></span><br><span class="line">  <span class="meta">@ApiOperation(&quot;获取列表&quot;)</span></span><br><span class="line">  <span class="meta">@Around(LogInterceptor.class)</span></span><br><span class="line">  <span class="meta">@Addition(WhitelistFilter.class)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> List&lt;DeptDto&gt; <span class="title">list</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> service.list();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><ul>
-<li>请求 /dept/index，不带token得情况，演示全局的过滤器效果</li>
-</ul>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NmM0YjNjMGEyMzlkOTc4Njc4YjlmYWY2ZDhhZjcxYjlfYjNVcG5aelVBWVF4SDNxRXF0dFJVNUxZdUVScDNBdWpfVG9rZW46Tkw3NGJqNHhTb3p3SWt4WXFlOWNCVmJPbkpnXzE3Mzk0NDc1MTA6MTczOTQ1MTExMF9WNA" alt="img"></p>
-<ul>
-<li>请求 /dept/list?tokent=1，带token得情况，验证请求过程，使用的是 Addition 和 Around 的方式添加局部过滤器和拦截器。</li>
-</ul>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YmZmMDk1NjlhMTI0MWZlODg5MDY4ZTk1ZjU2ZDhjMTNfOEZ4cndDd1QxVjBqWlNkazBYVlhuQm91cHdoSDltYlJfVG9rZW46WVRtcmJuMVdrbzBnSTd4NjFSYWNaTDRTbkJmXzE3Mzk0NDc1MTA6MTczOTQ1MTExMF9WNA" alt="img"></p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=N2I2N2I0N2FmN2JiN2Q0ZTU3NmEwMDE2YmZlOWQ3N2Rfdk1Dd2FpNU9tUU5ZQWdmWmE2eEZYcUZRT0RjeE5jekpfVG9rZW46Ulp1SmI3b29Ub0pqUXJ4T21hNWN6SE1IbkhlXzE3Mzk0NDc1MTA6MTczOTQ1MTExMF9WNA" alt="img"></p>
-<ul>
-<li>请求 /dept/index?tokent=1，带token得情况，验证请求过程，使用注解继承的方式添加局部过滤器和拦截器。</li>
-</ul>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NTNjOWY5M2RlNTYyMWQxNmIxMDhkYmE2ZTlhMWEyYmFfRTZPUFphZWZ1ZnMxT1JiZ056dDQ2VG1Wc3oyVnlLUHFfVG9rZW46U1VqSmIxSlNsbzNtaTJ4YVZ3NGNGeHhNbkNiXzE3Mzk0NDc1MTA6MTczOTQ1MTExMF9WNA" alt="img"></p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MWE1YTRlNjY5OWRhZmFhZmRkNzNhOGYxNGU1ZjQwMjBfeGlIYjFZMG1YTVhpRU5IYkpLV0RkQ2s4czNlaHZGTXdfVG9rZW46WmZRY2JPTDJpb09RSGV4UkY3N2M1aWZybmRmXzE3Mzk0NDc1MTA6MTczOTQ1MTExMF9WNA" alt="img"></p>
-<ul>
-<li>请求 /img/wechat.png，验证静态请求不会通过RouterInterceptor。如果静态资源不存在的情况，依然会继续查找动态路由，此时会进入RouterInterceptor。</li>
-</ul>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZDI4NjE3MWQxOTllOWFiYTk4NDNjZDQ0NWZlMGExZjdfT2xUb242Z1VHNkhWaGsxVjAyZjVlNnJEdlEyM213NHdfVG9rZW46UnpTQWJKTG5Vb0tHVlh4ZlRsbGNXN3VYbkpjXzE3Mzk0NDc1MTA6MTczOTQ1MTExMF9WNA" alt="img"></p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本章节通过示意图的方式简单描述Solon web的请求过程，并对其中的重要概念做了讲解，通过实例的方式正式了对过滤器，路由拦截器和拦截器的定制。</p>
-<p>官网对这些内容做了多篇文章的介绍，可以通过官网进一步的了解这些概念和使用方法。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1949,20 +2020,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">308</span>
+          <span class="site-state-item-count">309</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">128</span>
+        <span class="site-state-item-count">130</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">123</span>
+        <span class="site-state-item-count">124</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -2020,12 +2091,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">856k</span>
+    <span title="站点总字数">857k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:58</span>
+    <span title="站点阅读时长">12:59</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

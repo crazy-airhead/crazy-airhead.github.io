@@ -172,6 +172,126 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/11/22/course100/051/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/11/22/course100/051/" class="post-title-link" itemprop="url">使用 AI 构建一个本地文件预览服务</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-11-22 16:49:27 / 修改时间：19:49:36" itemprop="dateCreated datePublished" datetime="2025-11-22T16:49:27+08:00">2025-11-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>公司的文件预览服务使用的是 kkFileView，后面 kkFileView 开始走商业化路线，开源版本就停止更新了。</p>
+<p>昨天给客户部署服务的时候，发现给客户部署的 kkFileView 无法启动。客户要求在 Arm 的机器中部署应用，所有的 Docker 镜像都是重新打包的。可是 kkFileView 提供的 Dockerfile 的下载 LibreOffice 的链接无法访问了，使用的 LibreOffice 版本也不支持 arm 架构，所以只能升级 LibreOffice。一开始只是照着原有的 Dockerfile 替换源和替换 LibreOffice 的版本，可能还是无法启动，测试发现是缺失了依赖。费了好大劲才发现说，制作 Docker 镜像的时候，其实不需要使用离线安装包，而应该用 apt-get 的在线安装的方式。</p>
+<p>如果没有 AI 工具的话，事情可能就这么结束了。昨晚回家一想，既然我们已经全面使用了 Solon，那么为什么不用 AI 写一个 Solon 版本的文件预览服务呢？我们不需要像 kkFileView 那么支持那么多的文件预览，重点解决 Office 文档的预览，提供 Office 文档转 PDF 的功能就够了。</p>
+<p>于是通过 Solon 的模板项目生成器，构建了一个初始化的版本。用户用Claude Code 的 /init 命令对项目进行初始化。因为看过 kkFileView 的一些源码，整体的方案是知道一些的，前端也不想使用分离模式。于是给Claude Code 的提示词是：</p>
+<blockquote>
+<p>我要创建一个基于 Java 的文档转换和预览系统，使用 JODConverter 技术提供高质量的文档格式转换服务，并通过 Bootstrap 5 构建现代化的 Web 界面，先提供 UI 图，供我审核。先不要生成代码，把升级方案生成到 doc 目录。</p>
+</blockquote>
+<p>于是他夸夸一顿操作给我生成了这些文档，比我自己写完整多了。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NWEzMDk3OTAwMTk3NTY5YmRlZmUyYzMyYWVlMzVjZTlfWVNxTjkyMEtXVGJDalZZcnRUS3VjQzBrY2kzTTVZM0xfVG9rZW46T3NRUmJKRGUwb3JraUt4Vk5EMmMxa0Y0bkhoXzE3NjM4MTE3NTM6MTc2MzgxNTM1M19WNA" alt="img"></p>
+<p>中间对界面做了些调整，要求它使用单独的预览页面而不是用预览区域。让它开始生成代码之后，也就是看看一屏一屏的滚动代码，自己选择 yes 和 apply 就行。</p>
+<p>需要注意的是，虽然在 CLAUDE.md 里面已经识别了 Solon 框架，但 Spring 的资料就是比 Solon 全，在技术实现的方案里面，还是会引入 Spring 的依赖，生成的代码还是会包含 Spring 的注解。还碰到的问题是 一些 Solon 的包路径错误，所有这些错误，都需要自己手动调整（我不知道如果不自己调整，最后能不能通过）。</p>
+<p>在修改编译通过，项目可以正常启动后，一定要注意签入 Git，这样后面生成的不满意也可以回滚。</p>
+<p>接下来的调试和调整了，对于前端来说，我基本不会，所以我只提问题，让 Claude Code 进行修改。对于后端代码来说，我能看其中写的有问题的地方，自己做修改。这里和自己写代码没什么不同，发现错误，修改错误。</p>
+<p>让 AI 修改问题时，如果能知道文件名最好直接写在提示词，如果确定代码的部分是一样的，这样修改会更高效些。比如在待上传列表中的标签文字一开始不是白色的，不容易看出来，我让它修改它修改了列表的标题，而不是标签。后面我自己找的标签的位置说，颜色看不清，他很快就把颜色换成白色了。</p>
+<p>以下是功能截图：</p>
+<p>上传文件</p>
+<p>选择文件，出现待上传文件，点击上传按钮，文件显示在已上传列表，此时可以点击转换或者预览。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OTFmZTcwNGE4YjQxYTIyN2MwM2RhZDdiNTk1MmUzOWJfRUpTUTZ6M0tlNlB2dXBPbDJrMEtDZFpNVVpQRGppN1VfVG9rZW46QVZFd2JLOWxib1ZmWEF4Y3BPcWNpSTF2bnFoXzE3NjM4MTE3NTM6MTc2MzgxNTM1M19WNA" alt="img"></p>
+<p>预览 docx 文件</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YmYzYjQ4N2Y4NGNmYjQ4YjBiZjJiODZhMGQ2Y2YxNjRfSGN1YlJmcFhqVkZXMlcwVXM0am5weTRWRFFQa2Fza0FfVG9rZW46S1JjaWJ6UTFIb2FPcGh4MnBlQ2NXNXlXbnZoXzE3NjM4MTE3NTM6MTc2MzgxNTM1M19WNA" alt="img"></p>
+<p>预览 xlsx 文件</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YTkxYzVmYTlhOTBjZjJhMzcwNzBjYTU0YmE5YmExMDRfSXpSNVBhU3czRkZ1M1hxMWNWUEhrVENlcW5NejJqV2VfVG9rZW46SEpsdmJINkpUbzZuTXp4V1hlOWN6Y2M0bnliXzE3NjM4MTE3NTM6MTc2MzgxNTM1M19WNA" alt="img"></p>
+<p>查看转换任务</p>
+<p>已经转换好的文件可以直接点击下载按钮进行下载。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZGJlMmM5NGU3ODNiZGQ5YTYyYmY1NTM2MmZlMDJhN2ZfTEdBck9wTUNVSVc5WWFzVFpQQ1hDWmhQOGl6Qlg3Vk9fVG9rZW46U2d6WWJnTDJRb1RuNmp4RllTRWNFSjhobkJmXzE3NjM4MTE3NTM6MTc2MzgxNTM1M19WNA" alt="img"></p>
+<p>本次代码生成一个用的是 1000万 GLM-4.6资源包，生成的时候还没用一般，调试问题，修改问题，一会就给我干完了，然后充了个 GLM Coding Lite 才把后面的功能调完。问题处理、调试可能会发送比较多的上下文信息，而且需要经过多轮修改，所以Token 消耗会比多。</p>
+<p>经过一天的调整，一个 MVP 算是出来了，主体的文件转换和预览功能都是正常使用的，后续还需要调整代码结构和完善功能。于是每次使用 AI 编程的时候，都感慨 AI 是真行，写代码的成本应该是会越来越低的，自己能做的事情应该是越来越多的。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/11/20/course100/050/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1390,137 +1510,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/05/15/course100/041/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/05/15/course100/041/" class="post-title-link" itemprop="url">Solon 集成 Flowable</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-05-15 10:16:28 / 修改时间：10:27:58" itemprop="dateCreated datePublished" datetime="2025-05-15T10:16:28+08:00">2025-05-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>7.9k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>最近在做的事情就是把 Spring Boot 的项目迁移到 Solon 上来。我们的有一个 OA 系统，里面使用到了 Flowable 6.5。照例我还是从官网入手，其中说到是不需要适配可以直接使用。然后附带了例子，<a target="_blank" rel="noopener" href="https://gitee.com/hiro/flowable-solon-web%E3%80%82">https://gitee.com/hiro/flowable-solon-web。</a></p>
-<p>看起来还是比较简单，但也没那么简单，还好之前有看网友提供了 easy-flowable，<a target="_blank" rel="noopener" href="https://gitee.com/iajie/easy-flowable%EF%BC%8C%E4%B8%AD%E9%97%B4%E4%B9%9F%E6%9C%89%E8%AF%B7%E6%95%99%E4%BD%9C%E8%80%85%E5%87%A0%E4%B8%AA%E9%97%AE%E9%A2%98%EF%BC%8C%E6%84%9F%E8%B0%A2%E3%80%82%E5%A6%82%E6%9E%9C%E6%98%AF%E6%96%B0%E9%A1%B9%E7%9B%AE%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%EF%BC%8Ceasy-flowable">https://gitee.com/iajie/easy-flowable，中间也有请教作者几个问题，感谢。如果是新项目推荐使用，easy-flowable</a> 不仅提供了封装和增强，还提供了不错的 UI编排界面，使得 flowable 更简单易用。</p>
-<p>在统一看了相关的代码之后，主要的适配工作，就是根据配置设置ProcessEngineConfiguration， 并创建 ProcessEngine 及相关的 Service 的 bean 对象。 </p>
-<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>在我们的系统中为一些基础组件采用 Solon 插件的方式封装一部分初始化工作。</p>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@Inject(value = &quot;$&#123;flowable&#125;&quot;, autoRefreshed = true)</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FlowableProperties</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> String databaseSchemaUpdate = <span class="string">&quot;true&quot;</span>;</span><br><span class="line">  <span class="keyword">private</span> Boolean asyncExecutorActivate = <span class="keyword">false</span>;</span><br><span class="line">  <span class="keyword">private</span> String historyLevel = <span class="string">&quot;audit&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="构建-Bean"><a href="#构建-Bean" class="headerlink" title="构建 Bean"></a>构建 Bean</h3><p>根据配置设置ProcessEngineConfiguration， 并创建 ProcessEngine 及相关的 Service 的 bean 对象。 </p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">XPluginImp</span> <span class="keyword">implements</span> <span class="title">Plugin</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> AppContext appContext;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">(AppContext context)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    appContext = context;</span><br><span class="line"></span><br><span class="line">    appContext.beanScan(FlowableProperties.class);</span><br><span class="line"></span><br><span class="line">    appContext.getBeanAsync(</span><br><span class="line">        DataSource.class,</span><br><span class="line">        dataSource -&gt; &#123;</span><br><span class="line">          FlowableProperties flowableProperties = appContext.getBean(FlowableProperties.class);</span><br><span class="line"></span><br><span class="line">          ProcessEngineConfigurationImpl engineConfiguration =</span><br><span class="line">              (ProcessEngineConfigurationImpl)</span><br><span class="line">                  ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration();</span><br><span class="line"></span><br><span class="line">          engineConfiguration.setDataSource(dataSource);</span><br><span class="line">          engineConfiguration.setDatabaseSchemaUpdate(<span class="string">&quot;false&quot;</span>);</span><br><span class="line">          <span class="comment">// 设置流程历史级别</span></span><br><span class="line">          engineConfiguration.setHistoryLevel(</span><br><span class="line">              HistoryLevel.getHistoryLevelForKey(flowableProperties.getHistoryLevel()));</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 设置表达式管理器</span></span><br><span class="line">          ExpressionManager ficusExpressionManager = <span class="keyword">new</span> SolonExpressionManager(appContext, <span class="keyword">null</span>);</span><br><span class="line">          engineConfiguration.setExpressionManager(ficusExpressionManager);</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 定时任务开关</span></span><br><span class="line">          engineConfiguration.setAsyncExecutorActivate(</span><br><span class="line">              flowableProperties.getAsyncExecutorActivate());</span><br><span class="line">          appContext.wrapAndPut(ProcessEngineConfiguration.class, engineConfiguration);</span><br><span class="line"></span><br><span class="line">          ProcessEngine processEngine = engineConfiguration.buildProcessEngine();</span><br><span class="line">          appContext.wrapAndPut(ProcessEngine.class, processEngine);</span><br><span class="line"></span><br><span class="line">          RuntimeService runtimeService = processEngine.getRuntimeService();</span><br><span class="line">          appContext.wrapAndPut(RuntimeService.class, runtimeService);</span><br><span class="line"></span><br><span class="line">          RepositoryService repositoryService = processEngine.getRepositoryService();</span><br><span class="line">          appContext.wrapAndPut(RepositoryService.class, repositoryService);</span><br><span class="line"></span><br><span class="line">          IdentityService identityService = processEngine.getIdentityService();</span><br><span class="line">          appContext.wrapAndPut(IdentityService.class, identityService);</span><br><span class="line"></span><br><span class="line">          TaskService taskService = processEngine.getTaskService();</span><br><span class="line">          appContext.wrapAndPut(TaskService.class, taskService);</span><br><span class="line"></span><br><span class="line">          HistoryService historyService = processEngine.getHistoryService();</span><br><span class="line">          appContext.wrapAndPut(HistoryService.class, historyService);</span><br><span class="line"></span><br><span class="line">          ManagementService managementService = processEngine.getManagementService();</span><br><span class="line">          appContext.wrapAndPut(ManagementService.class, managementService);</span><br><span class="line"></span><br><span class="line">          FormService formService = processEngine.getFormService();</span><br><span class="line">          appContext.wrapAndPut(FormService.class, formService);</span><br><span class="line"></span><br><span class="line">          DynamicBpmnService dynamicBpmnService = processEngine.getDynamicBpmnService();</span><br><span class="line">          appContext.wrapAndPut(DynamicBpmnService.class, dynamicBpmnService);</span><br><span class="line">        &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stop</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    Plugin.<span class="keyword">super</span>.stop();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="表达管理器-ProcessExpressionManager"><a href="#表达管理器-ProcessExpressionManager" class="headerlink" title="表达管理器 (ProcessExpressionManager)"></a>表达管理器 (ProcessExpressionManager)</h3><p>重要，如果没有添加自己的表达式管理，一些流程在执行的时候可能出错。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SolonExpressionManager</span> <span class="keyword">extends</span> <span class="title">ProcessExpressionManager</span> </span>&#123;</span><br><span class="line">  <span class="keyword">protected</span> AppContext appContext;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">SolonExpressionManager</span><span class="params">(AppContext appContext, Map&lt;Object, Object&gt; beans)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(beans);</span><br><span class="line">    <span class="keyword">this</span>.appContext = appContext;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> ELResolver <span class="title">createElResolver</span><span class="params">(VariableContainer variableContainer)</span> </span>&#123;</span><br><span class="line">    List&lt;ELResolver&gt; elResolvers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    elResolvers.add(createVariableElResolver(variableContainer));</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> AppContextElResolver(<span class="keyword">this</span>.appContext));</span><br><span class="line">    <span class="keyword">if</span> (beans != <span class="keyword">null</span>) &#123;</span><br><span class="line">      elResolvers.add(<span class="keyword">new</span> ReadOnlyMapELResolver(beans));</span><br><span class="line">    &#125;</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> ArrayELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> ListELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> MapELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> JsonNodeELResolver());</span><br><span class="line">    ELResolver beanElResolver = createBeanElResolver();</span><br><span class="line">    <span class="keyword">if</span> (beanElResolver != <span class="keyword">null</span>) &#123;</span><br><span class="line">      elResolvers.add(beanElResolver);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    configureResolvers(elResolvers);</span><br><span class="line"></span><br><span class="line">    CompositeELResolver compositeElResolver = <span class="keyword">new</span> CompositeELResolver();</span><br><span class="line">    <span class="keyword">for</span> (ELResolver elResolver : elResolvers) &#123;</span><br><span class="line">      compositeElResolver.add(elResolver);</span><br><span class="line">    &#125;</span><br><span class="line">    compositeElResolver.add(<span class="keyword">new</span> CouldNotResolvePropertyELResolver());</span><br><span class="line">    <span class="keyword">return</span> compositeElResolver;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="ELResolver"><a href="#ELResolver" class="headerlink" title="ELResolver"></a>ELResolver</h3><p>EL 表达式执行器，用于处理 Solon bean 对象的获取。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppContextElResolver</span> <span class="keyword">extends</span> <span class="title">ELResolver</span> </span>&#123;</span><br><span class="line">  <span class="keyword">protected</span> AppContext appContext;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="function"><span class="title">AppContextElResolver</span>(<span class="params">AppContext appContext</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.appContext = appContext;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> Class&lt;?&gt; <span class="function"><span class="title">getCommonPropertyType</span>(<span class="params">ELContext context, <span class="built_in">Object</span> arg</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Object</span>.class;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> Iterator&lt;FeatureDescriptor&gt; <span class="function"><span class="title">getFeatureDescriptors</span>(<span class="params">ELContext context, <span class="built_in">Object</span> arg</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> Class&lt;?&gt; <span class="function"><span class="title">getType</span>(<span class="params">ELContext context, <span class="built_in">Object</span> arg1, <span class="built_in">Object</span> arg2</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Object</span>.class;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">Object</span> <span class="function"><span class="title">getValue</span>(<span class="params">ELContext context, <span class="built_in">Object</span> base, <span class="built_in">Object</span> property</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (base == <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="built_in">String</span> key = property.toString();</span><br><span class="line">      <span class="built_in">Object</span> bean = appContext.getBean(key);</span><br><span class="line">      <span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">        context.setPropertyResolved(<span class="literal">true</span>);</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">boolean</span> <span class="function"><span class="title">isReadOnly</span>(<span class="params">ELContext context, <span class="built_in">Object</span> base, <span class="built_in">Object</span> property</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setValue</span>(<span class="params">ELContext context, <span class="built_in">Object</span> base, <span class="built_in">Object</span> property, <span class="built_in">Object</span> value</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (base == <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="built_in">String</span> key = (<span class="built_in">String</span>) property;</span><br><span class="line">      <span class="built_in">this</span>.appContext.getBeanAsync(</span><br><span class="line">          key,</span><br><span class="line">          (bean) -&gt; &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> FlowableException(</span><br><span class="line">                <span class="string">&quot;Cannot set value of &#x27;&quot;</span></span><br><span class="line">                    + property</span><br><span class="line">                    + <span class="string">&quot;&#x27;, it resolves to a bean defined in the Solon application-context.&quot;</span>);</span><br><span class="line">          &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ol>
-<li>提示模型注册失败，并提示 <code>java.time.LocalDateTime cannot be cast to java.lang.String</code></li>
-</ol>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=NjgwNmQwNDA3N2M0MGJkYTA0MDA3NDc4NDdmYWMyYTFfcGZaYWk1eHZRdXZqNk1NVjVkdmFCbndXbUdWWGxZUG9fVG9rZW46UTBVeWJwNDJZb1RZNE94MWFaQ2N5NTU1bnpoXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA" alt="img"></p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OGE0NzlmYjNlMThlMjAyNzM4ZWRlMzVhNjc3NmEzZjlfQ1g2Y2JURENxSUZFWFFDek9BeUt3S2Fzc1NwNG9jMzVfVG9rZW46UVR2RWIxQllNbzRGVUF4dTNqTWNncm1sblJnXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA" alt="img"></p>
-<blockquote>
-<p>主要的问题，集成的是 6.5.0的 Flowable，不支持高版本的 MySQL 驱动。检查发现Spring 版本使用的是 8.0.20的MySQL 驱动，而 Solon 使用的是 8.0.30 版本的驱动。把MySQL  驱动版本恢复为8.0.20，服务启动成功。</p>
-</blockquote>
-<ol>
-<li>提示找不到对象 TaskListener 相关的表达式对象，一些流程条件的时候提示如下的错误。</li>
-</ol>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YTk5ZWFlMWVkNTlmZjAyODVkZTk4Yjc1NWZmYmY4ZjJfeFVYaGRUMGdwS01DazNIQzZYdGF5ZGRYa1JxaUM0R2hfVG9rZW46UGVXdWIyemZnb2JqYUN4cEJUOGM2VldmbnJiXzE3NDcyNzU2MDM6MTc0NzI3OTIwM19WNA" alt="img"></p>
-<blockquote>
-<p>原因是虽然通过 Component 注册了 Bean 对象，但 Flowable 无法获取，需有重写 ExpressionManager，增加Solon bean 对象的获取。</p>
-<p>这里需要注意，注册 ExpressionManager 时，需要在 <code>ProcessEngine processEngine = engineConfiguration.buildProcessEngine()</code>之前否则可能构建了两个ExpressionManager，在执行获取 TaskListener 的对象时仍然可能报错。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置表达式管理器</span></span><br><span class="line">ExpressionManager ficusExpressionManager = <span class="keyword">new</span> SolonExpressionManager(appContext, <span class="keyword">null</span>);</span><br><span class="line">engineConfiguration.setExpressionManager(ficusExpressionManager);</span><br></pre></td></tr></table></figure>
-
-<p>增加 SolonExpressionManager，继承自 ProcessExpressionManager。重写 EL 表达式执行器，多增加AppContextElResolver。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> ELResolver <span class="title">createElResolver</span><span class="params">(VariableContainer variableContainer)</span> </span>&#123;</span><br><span class="line">    List&lt;ELResolver&gt; elResolvers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    elResolvers.add(createVariableElResolver(variableContainer));</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> AppContextElResolver(<span class="keyword">this</span>.appContext));</span><br><span class="line">    <span class="keyword">if</span> (beans != <span class="keyword">null</span>) &#123;</span><br><span class="line">      elResolvers.add(<span class="keyword">new</span> ReadOnlyMapELResolver(beans));</span><br><span class="line">    &#125;</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> ArrayELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> ListELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> MapELResolver());</span><br><span class="line">    elResolvers.add(<span class="keyword">new</span> JsonNodeELResolver());</span><br><span class="line">    ELResolver beanElResolver = createBeanElResolver();</span><br><span class="line">    <span class="keyword">if</span> (beanElResolver != <span class="keyword">null</span>) &#123;</span><br><span class="line">      elResolvers.add(beanElResolver);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    configureResolvers(elResolvers);</span><br><span class="line"></span><br><span class="line">    CompositeELResolver compositeElResolver = <span class="keyword">new</span> CompositeELResolver();</span><br><span class="line">    <span class="keyword">for</span> (ELResolver elResolver : elResolvers) &#123;</span><br><span class="line">      compositeElResolver.add(elResolver);</span><br><span class="line">    &#125;</span><br><span class="line">    compositeElResolver.add(<span class="keyword">new</span> CouldNotResolvePropertyELResolver());</span><br><span class="line">    <span class="keyword">return</span> compositeElResolver;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-
-<p>增加 AppContextElResolver，继承自 ELResolver，获取 Bean 对象的代码，这里需要注意如果对象创建了，需要设置<code>context.setPropertyResolved(true)</code>。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="built_in">Object</span> <span class="function"><span class="title">getValue</span>(<span class="params">ELContext context, <span class="built_in">Object</span> base, <span class="built_in">Object</span> property</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (base == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="built_in">String</span> key = property.toString();</span><br><span class="line">    <span class="built_in">Object</span> bean = appContext.getBean(key);</span><br><span class="line">    <span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">      context.setPropertyResolved(<span class="literal">true</span>);</span><br><span class="line">      <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1590,20 +1579,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">308</span>
+          <span class="site-state-item-count">309</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">128</span>
+        <span class="site-state-item-count">130</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">123</span>
+        <span class="site-state-item-count">124</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1661,12 +1650,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">856k</span>
+    <span title="站点总字数">857k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:58</span>
+    <span title="站点阅读时长">12:59</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
