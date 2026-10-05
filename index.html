@@ -172,6 +172,382 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2026/10/04/course100/066/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/10/04/course100/066/" class="post-title-link" itemprop="url">从 FunASR 到 Confucius4-R2T2</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2026-10-04 14:21:40" itemprop="dateCreated datePublished" datetime="2026-10-04T14:21:40+08:00">2026-10-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-10-05 12:28:26" itemprop="dateModified" datetime="2026-10-05T12:28:26+08:00">2026-10-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/FunASR/" itemprop="url" rel="index"><span itemprop="name">FunASR</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/FunASR/Confucius4-R2T2/" itemprop="url" rel="index"><span itemprop="name">Confucius4-R2T2</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>七个多月前，我写过一篇《部署和使用 FunASR》，记录从 whisper 换到 FunASR 的过程。七个多月后，我把这套服务换成了 Confucius4-R2T2。这篇文章完整记录决策链：为什么换、架构怎么定、量化怎么选、靠什么数据下结论，以及付出了什么代价。  </p>
+</blockquote>
+<h2 id="一、为什么选-Confucius4-R2T2"><a href="#一、为什么选-Confucius4-R2T2" class="headerlink" title="一、为什么选 Confucius4-R2T2"></a>一、为什么选 Confucius4-R2T2</h2><p>我有个 Java 小项目：采集音视频，本地转写，入库供检索。环境使用 MacBook Pro M1 Pro (32GB) + OrbStack，无 GPU。  </p>
+<p>这套转写栈已经做了两次迭代。一开始使用 whisper：识别不准、没有标点、时不时蹦出繁体，最难受的是会在结尾冒出些奇怪的内容 —— 长期靠 LLM 修正表兜底。后来 FunASR(aliyun funasr runtime: Paraformer-large + VAD + 标点 + ngram 语言模型 + 数字规整)就是为了治这些毛病换的：检测、识别、标点、数字规整一站式，服务端自带 ffmpeg，还支持热词；WebSocket 协议，单容器，RTF≈0.05(Real-Time Factor，实时率 = 转写耗时 ÷ 音频时长，小于 1 即比实时快，越小越快) —— 3.7 分钟的音频 11 秒转完。一用就是七个多月，看起来够用了。</p>
+<p>最近看到 Confucius4-R2T2 霸榜的消息，网易有道子曰-Live 系列的 <strong>Confucius4-R2T2</strong>：与 Qwen3-ASR 同架构的 2B 微调版。同期开源的还有流式翻译模型 Confucius4-T3PO，两个模型发布时在 HuggingFace 双双登顶各自细分 Trending 榜 —— R2T2 是 ASR 榜第一。</p>
+<p>让我觉得可以再次迭代的原因，我的 Mac 能跑得起来。官方放出了 GGUF 量化仓库(<a target="_blank" rel="noopener" href="https://huggingface.co/netease-youdao/Confucius4-R2T2-GGUF">netease-youdao/Confucius4-R2T2-GGUF</a> )，海外开发者还主动做了 C++ 移植(audio.cpp)；llama.cpp 官方二进制直接能跑，Ollama 一条命令就能拉起。别人愿意真花时间做适配，说明这东西能用。 </p>
+<p>之前有人问我 FunASR 对比 Qwen3-ASR 怎么样 —— 严格说 FunASR 是一套框架/平台，包含一整套流水线，其中负责转写的默认模型是 Fun-Asr，是可以更换的（比如换成 Paraformer、SenseVoice，Qwen3-ASR 也可以），具体参考 <a target="_blank" rel="noopener" href="https://huggingface.co/Qwen/Qwen3-ASR-1.7B/discussions/24">HuggingFace 上的这篇讨论</a>。这次同题对比也算顺带验证了那个问题，毕竟 Confucius4-R2T2 就是基于 Qwen3-ASR 架构。</p>
+<h2 id="二、技术验证"><a href="#二、技术验证" class="headerlink" title="二、技术验证"></a>二、技术验证</h2><p>让 AI 作了技术验证，得出五条结论：  </p>
+<ol>
+<li><strong>用 FunASR 直接跑 Confucius4-R2T2 大模型，CPU 上 RTF≈90</strong>，完全不可用(3.7 分钟音频要转 4~6 小时)；但它的两个小模型是<strong>毫秒级</strong>的 —— VAD(fsmn-vad)RTF 0.003，说话人嵌入(cam++)RTF 0.006。 </li>
+<li><strong>llama.cpp 只有 HTTP(含 SSE)，没有 WebSocket。</strong>旧栈的 WS 客户端要自己初始化配置、按块发送音频、发结束标志、解析回包，其实也不简单；新栈换成一次 HTTP multipart 上传就完事，倒也省事。  </li>
+<li><strong>mp3 可以直传 llama.cpp、mp4/AAC 不行</strong>，报 “Failed to tokenize prompt”。视频必须先经 ffmpeg 抽音轨。  </li>
+<li><strong>单请求受上下文限制</strong>：音频约占 13 token/s，<code>-c 4096</code> 下约 5.2 分钟封顶。长音频必须分段。  </li>
+<li>输出带 <code>language Chinese&lt;asr_text&gt;</code> 前缀，需要剥离。</li>
+</ol>
+<p>FunASR 不能直接使用，Mac 跑不动，特别是在容器里跑，应该以 llama.cpp 为主，但是因为 FunASR 的 VAD 和说话人嵌入等还是不错的，也应该吸收过来。  </p>
+<h2 id="三、FunASR-降级为预处理层"><a href="#三、FunASR-降级为预处理层" class="headerlink" title="三、FunASR 降级为预处理层"></a>三、FunASR 降级为预处理层</h2><p>最终架构各取所长：  </p>
+<pre class="mermaid">
+flowchart TD
+    A(["音频/视频"]) --> B["ffmpeg 转 16k 单声道"]
+    subgraph PRE["毫秒级小模型, CPU 随便跑"]
+        P1["fsmn-vad 按静音切段"]
+        P2["cam++ 说话人嵌入 + 层次聚类<br/>(小于 2s 碎段就近继承邻段标签)"]
+        P3["相邻同说话人段合并为 ≤55s 转写块"]
+        P1 --> P2 --> P3
+    end
+    B --> P1
+    P3 --> T["llama.cpp GGUF(Q8_0) 逐块转写<br/>重活交给量化后的大模型"]
+    T --> O(["输出: JSON 说话人轮次 + Markdown 文稿"])
+</pre>
+
+<p>FunASR 从“转写引擎”降级成“预处理层”，只负责 VAD 切段和说话人分离；文本生成的重活全部交给 GGUF，比 FunASR 调用 Confucius4-R2T2 原生 CPU 转写快两个数量级。  </p>
+<p>说话人分离的输出长这样：  </p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="strong">**【说话人 1】**</span>(00:00-00:06)之前有顾客自己带酒水,也没加收钱或者不让喝。  </span><br></pre></td></tr></table></figure>
+
+<p>实测：224.5 秒独白音频，<code>speakers=1</code> 无误检；42.3 秒双人交替对话，<code>speakers=2</code> 且四轮完美交替。预处理开销可以忽略 —— 耗时全在转写本身。  </p>
+<h2 id="四、量化怎么选：Q8-0-是甜点位"><a href="#四、量化怎么选：Q8-0-是甜点位" class="headerlink" title="四、量化怎么选：Q8_0 是甜点位"></a>四、量化怎么选：Q8_0 是甜点位</h2><p>GGUF 部署要选量化档。7 个测试文件(约 7.5 分钟)做全量化 A/B：  </p>
+<table>
+<thead>
+<tr>
+<th>量化</th>
+<th>容器 CPU RTF</th>
+<th>镜像体积</th>
+<th>质量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>f16</td>
+<td>0.52-0.57</td>
+<td>6.87GB</td>
+<td>基准</td>
+</tr>
+<tr>
+<td><strong>Q8_0</strong></td>
+<td><strong>0.42-0.45</strong></td>
+<td><strong>5.26GB</strong></td>
+<td><strong>与 f16 字词级几乎全同</strong></td>
+</tr>
+<tr>
+<td>Q4_K_M</td>
+<td>0.42</td>
+<td>4.24GB</td>
+<td>歧义短语上与 f16 各有输赢</td>
+</tr>
+</tbody></table>
+<p>一个有意思的发现：f16 在容器 CPU 和 Mac Metal 上输出<strong>逐字节一致</strong> —— 意味着结果可复现，所有 A/B 对比因此可信。  </p>
+<p>结论：Q8_0 质量≈f16、速度≈Q4_K_M，标准的甜点位，设为默认模型。差异仅在个别标点与语气词(Q8 的标点反而更规范)；至于“推倒重来/推导出来”这类音频本身就歧义的短语，任何引擎、任何量化都会翻转，不计分。  </p>
+<h2 id="五、同题-A-B：可以换成-R2T2"><a href="#五、同题-A-B：可以换成-R2T2" class="headerlink" title="五、同题 A/B：可以换成 R2T2"></a>五、同题 A/B：可以换成 R2T2</h2><p>用 5 个真实 mp3(共 3.7 分钟)同题对比：  </p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>FunASR(aliyun runtime)</th>
+<th>R2T2(Q8_0)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>幻觉</td>
+<td>1 处：结尾凭空多出”没有有没有。”</td>
+<td>无，5/5 干净收尾</td>
+</tr>
+<tr>
+<td>断句</td>
+<td>“推导出来了。若干次”(错位)</td>
+<td>“推倒重来了若干次”(断句正确)</td>
+</tr>
+<tr>
+<td>伪影</td>
+<td>ITN 空格伪影(“14 个”)</td>
+<td>无</td>
+</tr>
+<tr>
+<td>语气词</td>
+<td>丢(“呃”)</td>
+<td>完整保留</td>
+</tr>
+<tr>
+<td>标点</td>
+<td>粗糙生硬</td>
+<td>细腻自然</td>
+</tr>
+<tr>
+<td>专有名词</td>
+<td>“李笑来”✓ “定投”✓</td>
+<td>同样 ✓</td>
+</tr>
+<tr>
+<td><strong>速度</strong></td>
+<td><strong>单文件 1.7-3.1s(RTF≈0.05)</strong></td>
+<td>单文件 12-25s(RTF 0.42-0.45)</td>
+</tr>
+</tbody></table>
+<p>质量上新栈全面占优，且没有一处实质字词错误输给对方；速度上 FunASR 快约 10 倍 —— 但我的场景是<strong>批量离线转写</strong>，RTF 0.05 和 0.42 都远快于实时，都是后台任务，没有本质区别。质量优先，决定切换成 R2T2。  </p>
+<h2 id="六、最终形态：一个容器一个端口"><a href="#六、最终形态：一个容器一个端口" class="headerlink" title="六、最终形态：一个容器一个端口"></a>六、最终形态：一个容器一个端口</h2><p>最后一步，把所有能力收进一个自包含镜像 <code>r2t2-gguf:latest</code>(5.26GB，模型全部内置)：  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name r2t2-asr -p 8080:8080 r2t2-gguf:latest</span><br></pre></td></tr></table></figure>
+
+<p>起来就是一个 ASR 网关，四组端点：  </p>
+<ul>
+<li><code>POST /v1/audio/transcriptions</code> —— OpenAI 兼容，短音频字节级透传，老客户端零改动;  </li>
+<li><code>POST /asr/jobs</code> —— 提交长音视频任务(mp4/ts/m4a 等任意 ffmpeg 支持的格式)，返回 202 + job_id;  </li>
+<li><code>GET /asr/jobs/&#123;id&#125;</code> —— 轮询进度，逐块更新 n/N;  </li>
+<li><code>DELETE /asr/jobs/&#123;id&#125;</code> —— 取消，块间生效，保留已完成部分。</li>
+</ul>
+<p>内部逻辑：≤270s 的音频单发直译；超了就自动走完整管线 —— ffmpeg 抽轨、VAD、说话人分离、分块转写。网关本体 <code>asr_server.py</code> 约 300 行，纯 Python 标准库，没有给镜像增加任何依赖。Java 侧只对接两个方法：短音频同步透传；长视频提交任务 + 10 秒轮询 + 进度停滞看门狗，结果按“源文件.txt”旁路缓存，幂等可重试。  </p>
+<p><strong>为什么长音频必须分块，不能放大上下文硬扛？</strong>实测过:<code>-c 32768</code> 单发 10.4 分钟尚可用(RTF 0.72)；但 31.2 分钟时生成速度从 6.6 token/s 一路衰减到 3.0 以下，<strong>比实时还慢</strong>(RTF&gt;2)。而分块方案的 RTF 恒定在 0.43-0.50，与时长无关 —— 31.2 分钟音频分块转写 835.8s(RTF 0.447)。  </p>
+<p><strong>实战验证</strong>：63.1 分钟的真实 mp4(AV1+AAC，英文演讲)直接扔给网关 —— 容器内自动抽轨，74 块、识别出 3 个说话人、45,367 字符、端到端 1751.6s，<strong>RTF 0.462</strong>，与预估一致；首尾干净，无幻觉；中途 DELETE 也能干净取消。以我现在 Mac 上的容器跑法，29 分钟能转完一小时视频。  </p>
+<p>顺带记录一个值得警惕的 bug：早期 Dockerfile 里多源 <code>COPY fsmn-vad campplus /models/funasr/</code> 会把两个目录的<strong>内容摊平</strong>进同一层，子目录从未真正存在；而 FunASR 收到不存在的本地路径时会<strong>静默回退到在线下载</strong> —— 所谓”运行时免下载”其实从未成立，小模型一直是运行时在线拉的，只是恰好没人断网发现过。修复后加了显式路径检查才算闭环。 </p>
+<h2 id="七、代价清单"><a href="#七、代价清单" class="headerlink" title="七、代价清单"></a>七、代价清单</h2><p>切换后的问题：</p>
+<ul>
+<li><strong>速度慢了约 10 倍</strong>：RTF 0.42 对 0.05，一小时视频转 29 分钟。离线批量无感，但要实时出稿的场景，这套 CPU 方案不适合；</li>
+<li><strong>热词降级</strong>：旧栈原生热词，新栈只能经 prompt 字段透传，效果依赖 llama.cpp 版本对该模型上下文偏置的支持；</li>
+<li><strong>没有流式</strong>：需要的话得上 R2T2 官方 NVIDIA CUDA 栈；</li>
+<li><strong>真要快还有后手</strong>：Mac 上原生 llama.cpp + Metal 能到 RTF≈0.06(容器里没有 GPU 加速)；Linux 服务器换 CUDA 版 llama.cpp 即可，镜像构建留了变体参数。</li>
+</ul>
+<p>换来的是：转写质量提升；说话人分离、视频直转能力上线；为 whisper 幻觉长期兜底的 LLM 修正表等防御性逻辑，这次可以正式退休了。  </p>
+<h2 id="八、写在最后"><a href="#八、写在最后" class="headerlink" title="八、写在最后"></a>八、写在最后</h2><p>回顾这次的迭代升级，有三点心得值得留下来：</p>
+<ol>
+<li>选型时与其盯着 benchmark，不如看有没有人真金白银地为它做移植、做量化、做集成。这样可以在不同的环境中验证是否适合自己。 </li>
+<li>FunASR 调用R2T2大模型在 CPU 上不可用，但它的毫秒级小模型正好补位。“新模型干重活、旧栈降级当预处理”的混合流水线，可以推广到很多”大模型本地跑不动”的场景。  </li>
+<li>多作 A/B 测试，要同题、要真实数据、要可复现，f16 跨设备逐字节一致，让所有对比有了基准；5 个真实 mp3 的胜负表，升级迭代决定一目了然。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2026/08/28/course100/065/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/08/28/course100/065/" class="post-title-link" itemprop="url">把 git worktree 真用起来</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-08-28 06:48:53 / 修改时间：09:18:25" itemprop="dateCreated datePublished" datetime="2026-08-28T06:48:53+08:00">2026-08-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/Git/%E5%AE%9A%E6%8A%95/" itemprop="url" rel="index"><span itemprop="name">定投</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>两次 clone 不等于 worktree —— 熟悉的陌生人最可怕。</p>
+</blockquote>
+<p>8 月 18 日的 AI 课程叫《git 真用起来》。笑来老师讲，git 是一台有平行世界的时光机，创造平行世界有两种办法：一种叫 branch，大家都熟；另一种叫 worktree，更独立、更隔绝 —— 因为它连目录都换了。你可以在同一个项目的若干个互不干扰的目录里同时工作，需要合并的时候用 rebase 收回来。</p>
+<p>课里举的例子是笑来老师自己写电子书阅读器：library view 拆成三块，book view 拆成四块，编辑器里开七个标签，每个标签挂一个 worktree，七个硅基劳动力同时干活。这边跑起来了，去看看那边；那边也在跑，再看看另一边 —— 七个里面总有要干的事。</p>
+<p>听课的时候我心里一动。在此之前，我并不了解 worktree，但需求是真实存在的：ficus 要挂着最新开发分支 feat-v1.7.6 一路向前，历史版本的修复又得在 feat-v1.7.4 上做。于是有了 ficus 和 ficus-fix 两个目录，各挂各的分支，各干各的。我以为多个目录（多工作区）就是 worktree，我已经在用了。</p>
+<p>不过我还是开了个会话，把两个目录都 @ 给 AI，问它：这两个目录现在是 git worktree 的方式使用吗？问的时候没有半点犹豫 —— 我真心以为自己在用它，也希望 AI 回答”是”。</p>
+<p>AI 核实之后，回复的大意是：<strong>这两个目录不是真正的 git worktree，而是两个独立的完整克隆。</strong></p>
+<p>判断的依据很简单：真正的 worktree，它的 <code>.git</code> 是一个<strong>文件</strong>，内容只有一行，指向主仓库；而 <code>ficus-fix/.git</code> 是一个完整的<strong>目录</strong>。两边各自执行 <code>git worktree list</code>，都只看得到自己。它们唯一的交集，是共享同一个 origin。</p>
+<p>两个独立克隆的实际影响：</p>
+<ol>
+<li><strong>跨目录不同步</strong> —— 在 ficus-fix 里提交的修复，ficus 目录看不见，必须 push 之后再去 fetch；</li>
+<li><strong>没有分支互斥</strong> —— 同一个分支可以被两边同时检出，各改各的，冲突留到未来某个措手不及的时刻爆炸；</li>
+<li><strong>对象库各存一份</strong> —— 磁盘双倍，fetch 双倍，什么都双倍。</li>
+</ol>
+<p>我甚至不知道 worktree 的存在，用第二个克隆满足了同样的需求，等真正遇到这个词时，就顺理成章地把它当成了自己已有的做法 —— 连核实都省了。以为自己知道，是比不知道更危险的状态：不知道的人会去查，以为自己知道的人，连查的动作都不会有。如果不是这次笑来老师的提醒，如果不是 AI 一句”这两个目录不是真正的 worktree”，我可能也就一直这么用着，多同步一次，费事点就费事点，困扰就困扰吧 —— 我以为这已经是最优解了。</p>
+<p>事后想，这个误会几乎注定发生：多克隆和 worktree 从外面看几乎一模一样 —— 两个目录、两个分支、各干各的，日常用起来除了多一次 push 和 fetch，也没太大区别。区别全藏在 <code>.git</code> 里面：一个是完整仓库，一个是只有一行的链接文件。<strong>外观相同、机制不同的东西，最容易长成熟悉的陌生人。</strong></p>
+<p>既然知道用错了，就把它改过来。我说：需要使用 worktree，为我执行相关的操作。</p>
+<p>AI 没有直接动手。它先做了一轮安全核查，确认删掉旧目录不会丢任何东西：</p>
+<ul>
+<li>工作区干净，没有 stash；</li>
+<li>ficus-fix 里有 <strong>14 个本地分支</strong>，逐个和 origin 对比 —— 其中 feat-v1.6.0、feat-v1.7.5、feat-v1.7.x、master 这几个和 origin 不一致，需要分辨是「本地超前」（有未推送提交，删了就丢数据）还是「本地落后」（只是过时）—— 核查结果是<strong>全部 0 超前</strong>，不一致的仅仅因为过时；</li>
+<li>2 个 tag 与 origin 完全一致。</li>
+</ul>
+<p>结论：ficus-fix 里没有任何 origin 上不存在的提交，可以安全删除重建。</p>
+<p>这一段是整个过程中最值得学的。删一个用了很久的目录之前，耐心把 14 个分支一个个和远程对账，把”会不会丢数据”证明清楚，而不是靠感觉说”应该没事”。这种枯燥的核查，正是人类绝对不会有耐心做完、而硅基劳动力毫不在意的活。</p>
+<p>核查通过，执行就两步：删掉旧的独立克隆，从主仓库挂一个真正的 worktree：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git worktree add /Users/airhead/WorkSpace/PolarData/ficus-fix feat-v1.7.4</span><br></pre></td></tr></table></figure>
+
+<p>验证结果：<code>ficus-fix/.git</code> 变成了链接文件，内容只有一行 <code>gitdir: .../ficus/.git/worktrees/ficus-fix</code>；两边执行 <code>git worktree list</code> 互相可见 —— 它们终于承认彼此属于同一个仓库；ficus 主目录的一切未受影响。转换完成时的状态：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/Users/airhead/WorkSpace/PolarData/ficus      1dee48ef3 [feat-v1.7.6]  ← 主 worktree</span><br><span class="line">/Users/airhead/WorkSpace/PolarData/ficus-fix ada8dc353 [feat-v1.7.4]  ← 挂修复分支</span><br></pre></td></tr></table></figure>
+
+<p>真正挂上 worktree 之后，行为立刻不一样了。<strong>实时同步</strong>：在 ficus-fix 里提交的修复，ficus 目录立刻可见 —— 共享对象库，不需要再绕远程一圈。<strong>分支互斥</strong>：ficus 占着 feat-v1.7.6，ficus-fix 就不能再检出这个分支 —— 听起来像限制，其实正是 worktree 的价值：同一个分支永远不会被两个目录同时改，减小签错分支的可能性。</p>
+<p>在 worktree 里切分支，和普通仓库没有任何区别：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ficus-fix</span><br><span class="line">git switch feat-v1.7.2   <span class="comment"># 切到要修复的分支</span></span><br><span class="line">git pull --ff-only       <span class="comment"># 先快进到 origin 最新，别在过时代码上修</span></span><br><span class="line"><span class="comment"># ……修复、提交、推送</span></span><br><span class="line">git switch feat-v1.7.4   <span class="comment"># 切回，或者去下一个修复分支</span></span><br></pre></td></tr></table></figure>
+
+<p>那句 <code>git pull --ff-only</code> 是 AI 特意提醒的：老版本分支常年不动，切过去时本地往往是落后的，<code>git switch</code> 不会自动更新 —— 不先快进，修复就可能打在过时的代码上。</p>
+<p>最后，我把自己的使用模式说给它听，它写进了长期记忆：</p>
+<blockquote>
+<p><strong>ficus 只向前推进</strong> —— 始终检出最新开发分支；<strong>ficus-fix 通常需要切换其他分支</strong> —— 在各历史版本之间做修复。</p>
+</blockquote>
+<p>两者的分工天然错开，以后的会话它会默认按这个模式工作：修复类任务先确认目标分支，落到 ficus-fix；新功能开发，跟随 ficus 的最新分支。这大概就是课程里说的”和自己协作”的另一种形态 —— 不仅 git 记得这个结构，AI 也记得。</p>
+<p>写这篇文章的时候，我特意把 ficus-fix 已经切到 feat-v1.7.5 上。</p>
+<p>回头看，这件事里有几个课程内容的直接印证。</p>
+<p><strong>worktree 是更独立、更隔绝的平行世界。</strong> 真正挂上之后才理解”隔绝”二字的准确：目录隔离、分支互斥 —— 但对象库共享。隔绝的是工作现场，共享的是历史。这个设计比我之前”两个克隆”的伪平行世界高明得多。</p>
+<p><strong>以前最有经验的工程师掌握的技巧，也不见得比 AI 强。</strong> 判断”两个克隆还是 worktree”只需要看 <code>.git</code> 是文件还是目录。课程说 AI 能把 git 的潜力开发到几乎 100%，我还缺很多。</p>
+<p><strong>花更多的时间做计划，而不是操作。</strong> 这件事里我花时间的部分，是决定”ficus 向前推进、ficus-fix 来回切换”这个分工 —— 这是 what 和 why；至于怎么核查、怎么转换、怎么验证，全部是 how，交给硅基劳动力就可以了。</p>
+<p><strong>熟悉的陌生人，要一个一个抓出来。</strong> 我在 worktree 摔的这一跤，路径有点绕：先是不了解它，用”再克隆一份”满足了多工作区的需求；听到这个词的时候，又把自己已有的做法直接映射了过去 —— 我以为多个目录（多个工作区）就是 worktree。还好 AI 核查的成本很低，让我了解我用错了。往后每学一个新词，除了问它是什么、怎么用，值得再问一句：帮我去现有的环境里核实一下，我是不是真的在用它。</p>
+<p>课程最后说：你一定要用上 git 的 worktree 功能，这样的话，你就算是把这个工具用透了，比绝大多数人强。</p>
+<p>现在，我的项目里，ficus 和 ficus-fix 终于真正是同一个仓库的两个平行世界了。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2026/08/27/course100/064/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -195,10 +571,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2026-08-27 17:58:12 / 修改时间：21:34:22" itemprop="dateCreated datePublished" datetime="2026-08-27T17:58:12+08:00">2026-08-27</time>
+              <time title="创建时间：2026-08-27 17:58:12" itemprop="dateCreated datePublished" datetime="2026-08-27T17:58:12+08:00">2026-08-27</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-08-28 05:37:47" itemprop="dateModified" datetime="2026-08-28T05:37:47+08:00">2026-08-28</time>
+              </span>
 
           <br>
             <span class="post-meta-item" title="本文字数">
@@ -241,12 +623,12 @@
 <p>“我是走路不看手机的人。”</p>
 <p>这不算我第一次用语言给自己下咒。之前听罗胖的罗辑思维，讲探险家斯坦利在非洲丛林里每天坚持刮胡子的故事，我深受触动，当时就用”不刮胡子就不是文明人”这样的话吓自己，至今几乎每天刮胡子（原来都是胡子长了才刮），除非临时出差。那次是吓出来的，这一次，我给咒语加上了理由：走路看手机会受伤；走路看手机，和行尸走肉有什么区别。</p>
 <p>真正的考验，在手伸进口袋的那一刻。手会自己伸进去，指尖碰到手机的瞬间，有一种极细微的踏实感，说不清为什么，就是”它在，就好”。头几天，我还是会掏出来看。于是我补了一条规则：要看，就停下来，站在原地，把几个 IM 的消息确认完，再开始走。剩下的路程交给脚本 —— 碰到手机就念，边走边念，念完再念。</p>
-<p>大约一周之后，变化来了：不碰手机，心里也不再有那种空落落的感觉；即便手机抓在手上，也可以做到不看。</p>
+<p>一段时间后，变化来了：不碰手机，心里也不再有那种空落落的感觉；即便手机抓在手上，也可以做到不看。</p>
 <p>就这样过了半年多，我以为自己已经完全做到了走路不看手机。</p>
-<p>然后，前两周，老家出了些事，好些天上班时间我都待在医院里。手机通知我一直关着，那几天却开始发慌——“万一漏掉什么呢？””耽误同事的进度怎么办？””项目进度本来就紧，我已经在请假了。”于是走路时，我又开始掏手机。每次掏出来，往往什么都没有。但下一次，照掏。</p>
+<p>然后，前两周，老家出了些事，好些天上班时间我都待在医院里。手机通知我一直关着，那几天却开始发慌 —— “万一漏掉什么呢？””耽误同事的进度怎么办？””项目进度本来就紧，我已经在请假了。”于是走路时，我又开始掏手机。每次掏出来，往往什么都没有。但下一次，照掏。</p>
 <p>更让我不安的是，从老家回来之后，这个行为并没有自己消失。爬楼梯的时候，我又会把手机掏出来，一直看到进家门。</p>
 <p>半年攒下的咒语效果，两周就退了回去。</p>
-<p>好在作息恢复正常之后，我也警醒过来：这不是我想要的行为。我又开始念动咒语——</p>
+<p>好在作息恢复正常之后，我也警醒过来：这不是我想要的行为。我又开始念动咒语 ——</p>
 <p>“我是走路不看手机的人。”</p>
 <p>一遍，两遍，十遍。只要是我自己一个人走路、不用接送小孩，我就一直念，从下车到工位的路上念，从下车到家的路上也念。同时，把那条规则重新立了起来：</p>
 <p><strong>只要在路上想起任何需要处理的事 —— 停下来，处理完，再走。</strong></p>
@@ -934,10 +1316,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2026-07-19 20:09:44 / 修改时间：20:53:10" itemprop="dateCreated datePublished" datetime="2026-07-19T20:09:44+08:00">2026-07-19</time>
+              <time title="创建时间：2026-07-19 20:09:44" itemprop="dateCreated datePublished" datetime="2026-07-19T20:09:44+08:00">2026-07-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-08-08 09:29:22" itemprop="dateModified" datetime="2026-08-08T09:29:22+08:00">2026-08-08</time>
+              </span>
 
           <br>
             <span class="post-meta-item" title="本文字数">
@@ -1554,204 +1942,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2026/05/26/course100/056/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2026/05/26/course100/056/" class="post-title-link" itemprop="url">为自己写个 SSH 客户端</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2026-05-26 19:38:11 / 修改时间：21:54:44" itemprop="dateCreated datePublished" datetime="2026-05-26T19:38:11+08:00">2026-05-26</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/SSH/" itemprop="url" rel="index"><span itemprop="name">SSH</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>过去遇到不顺手的软件，我们要么将就，要么苦等别人更新。哪怕自己是程序员，也很少动念头给自己写一个 —— 毕竟打通设计、交互和编码全链路实在太耗时耗力了（编程大佬除外）。如今，AI 颠覆了这一切，代码生成速度快得惊人：过去程序员要写上几天甚至一个月的代码量，现在一天甚至几小时就能搞定。于是，那些曾经“能忍则忍”的将就，都变成了必须满足的需求，因为技术让定制变得“理所应当”且“触手可及”。软件定制化的时代开启了。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/05/26/course100/056/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2026/04/04/course100/055/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2026/04/04/course100/055/" class="post-title-link" itemprop="url">微前端</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2026-04-04 22:09:54 / 修改时间：22:37:52" itemprop="dateCreated datePublished" datetime="2026-04-04T22:09:54+08:00">2026-04-04</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/%E5%BE%AE%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">微前端</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>之前看到京东微前端框架 MicroApp 的时候，就觉得这个东西挺有意思的，可以和后端的微服务，或者插件系统对接起来用。</p>
-<p>MicroApp 官网是这么介绍微前端的（<a target="_blank" rel="noopener" href="https://jd-opensource.github.io/micro-app/docs.html#/%EF%BC%89">https://jd-opensource.github.io/micro-app/docs.html#/）</a></p>
-<blockquote>
-<p>微前端的概念是由 ThoughtWorks 在2016年提出的，它借鉴了微服务的架构理念，核心在于将一个庞大的前端应用拆分成多个独立灵活的小型应用，每个应用都可以独立开发、独立运行、独立部署，再将这些小型应用融合为一个完整的应用，或者将原本运行已久、没有关联的几个应用融合为一个应用。微前端既可以将多个项目融合为一，又可以减少项目之间的耦合，提升项目扩展性，相比一整块的前端仓库，微前端架构下的前端仓库倾向于更小更灵活。<br>它主要解决了两个问题：<br>1、随着项目迭代应用越来越庞大，难以维护。<br>2、跨团队或跨部门协作开发项目导致效率低下的问题。</p>
-</blockquote>
-<p>虽然也尝试过几次，但效果都不理想，毕竟自己不会前端，很多布局类的东西就弄不出来，于是就没再搞了。这次让 AI 重新设计的时候，他是这么回答的，我感觉有戏了。 </p>
-<p>![image-20260404221920910](/Users/airhead/Library/Application Support/typora-user-images/image-20260404221920910.png)</p>
-<p>于是让他不停的改，在耗光一周的 Token 限额的时候，总算有想要的效果了。主应用和子应用都是基于 Soybean Admin 进行修改的。</p>
-<ul>
-<li>主应用</li>
-</ul>
-<p>![image-20260404222447210](/Users/airhead/Library/Application Support/typora-user-images/image-20260404222447210.png)</p>
-<ul>
-<li>子应用模板</li>
-</ul>
-<p>![image-20260404222544000](/Users/airhead/Library/Application Support/typora-user-images/image-20260404222544000.png)</p>
-<ul>
-<li>系统管理</li>
-</ul>
-<p>![image-20260404222624817](/Users/airhead/Library/Application Support/typora-user-images/image-20260404222624817.png)</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1821,20 +2011,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">312</span>
+          <span class="site-state-item-count">314</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">133</span>
+        <span class="site-state-item-count">137</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">128</span>
+        <span class="site-state-item-count">132</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1892,12 +2082,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">866k</span>
+    <span title="站点总字数">873k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:07</span>
+    <span title="站点阅读时长">13:14</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -2007,6 +2197,19 @@ window.addEventListener('pjax:success', () => {
 
 
 
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
 
 
     <div id="pjax">

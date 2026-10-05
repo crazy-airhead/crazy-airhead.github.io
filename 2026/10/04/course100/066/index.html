@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"l4qiang.me","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="七个多月前，我写过一篇《部署和使用 FunASR》，记录从 whisper 换到 FunASR 的过程。七个多月后，我把这套服务换成了 Confucius4-R2T2。这篇文章完整记录决策链：为什么换、架构怎么定、量化怎么选、靠什么数据下结论，以及付出了什么代价。    一、为什么选 Confucius4-R2T2我有个 Java 小项目：采集音视频，本地转写，入库供检索。环境使用 MacBoo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从 FunASR 到 Confucius4-R2T2">
+<meta property="og:url" content="http://l4qiang.me/2026/10/04/course100/066/index.html">
+<meta property="og:site_name" content="CrazyAirhead">
+<meta property="og:description" content="七个多月前，我写过一篇《部署和使用 FunASR》，记录从 whisper 换到 FunASR 的过程。七个多月后，我把这套服务换成了 Confucius4-R2T2。这篇文章完整记录决策链：为什么换、架构怎么定、量化怎么选、靠什么数据下结论，以及付出了什么代价。    一、为什么选 Confucius4-R2T2我有个 Java 小项目：采集音视频，本地转写，入库供检索。环境使用 MacBoo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-10-04T06:21:40.000Z">
+<meta property="article:modified_time" content="2026-10-05T04:28:26.746Z">
+<meta property="article:author" content="L4qiang">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="FunASR">
+<meta property="article:tag" content="Confucius4-R2T2">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://l4qiang.me/2026/10/04/course100/066/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>从 FunASR 到 Confucius4-R2T2 | CrazyAirhead</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2613e7f510eebd12cf4d0d067e4ce195";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CrazyAirhead</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/crazy-airhead" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2026/10/04/course100/066/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从 FunASR 到 Confucius4-R2T2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2026-10-04 14:21:40" itemprop="dateCreated datePublished" datetime="2026-10-04T14:21:40+08:00">2026-10-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-10-05 12:28:26" itemprop="dateModified" datetime="2026-10-05T12:28:26+08:00">2026-10-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/FunASR/" itemprop="url" rel="index"><span itemprop="name">FunASR</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/FunASR/Confucius4-R2T2/" itemprop="url" rel="index"><span itemprop="name">Confucius4-R2T2</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>七个多月前，我写过一篇《部署和使用 FunASR》，记录从 whisper 换到 FunASR 的过程。七个多月后，我把这套服务换成了 Confucius4-R2T2。这篇文章完整记录决策链：为什么换、架构怎么定、量化怎么选、靠什么数据下结论，以及付出了什么代价。  </p>
+</blockquote>
+<h2 id="一、为什么选-Confucius4-R2T2"><a href="#一、为什么选-Confucius4-R2T2" class="headerlink" title="一、为什么选 Confucius4-R2T2"></a>一、为什么选 Confucius4-R2T2</h2><p>我有个 Java 小项目：采集音视频，本地转写，入库供检索。环境使用 MacBook Pro M1 Pro (32GB) + OrbStack，无 GPU。  </p>
+<p>这套转写栈已经做了两次迭代。一开始使用 whisper：识别不准、没有标点、时不时蹦出繁体，最难受的是会在结尾冒出些奇怪的内容 —— 长期靠 LLM 修正表兜底。后来 FunASR(aliyun funasr runtime: Paraformer-large + VAD + 标点 + ngram 语言模型 + 数字规整)就是为了治这些毛病换的：检测、识别、标点、数字规整一站式，服务端自带 ffmpeg，还支持热词；WebSocket 协议，单容器，RTF≈0.05(Real-Time Factor，实时率 = 转写耗时 ÷ 音频时长，小于 1 即比实时快，越小越快) —— 3.7 分钟的音频 11 秒转完。一用就是七个多月，看起来够用了。</p>
+<p>最近看到 Confucius4-R2T2 霸榜的消息，网易有道子曰-Live 系列的 <strong>Confucius4-R2T2</strong>：与 Qwen3-ASR 同架构的 2B 微调版。同期开源的还有流式翻译模型 Confucius4-T3PO，两个模型发布时在 HuggingFace 双双登顶各自细分 Trending 榜 —— R2T2 是 ASR 榜第一。</p>
+<p>让我觉得可以再次迭代的原因，我的 Mac 能跑得起来。官方放出了 GGUF 量化仓库(<a target="_blank" rel="noopener" href="https://huggingface.co/netease-youdao/Confucius4-R2T2-GGUF">netease-youdao/Confucius4-R2T2-GGUF</a> )，海外开发者还主动做了 C++ 移植(audio.cpp)；llama.cpp 官方二进制直接能跑，Ollama 一条命令就能拉起。别人愿意真花时间做适配，说明这东西能用。 </p>
+<p>之前有人问我 FunASR 对比 Qwen3-ASR 怎么样 —— 严格说 FunASR 是一套框架/平台，包含一整套流水线，其中负责转写的默认模型是 Fun-Asr，是可以更换的（比如换成 Paraformer、SenseVoice，Qwen3-ASR 也可以），具体参考 <a target="_blank" rel="noopener" href="https://huggingface.co/Qwen/Qwen3-ASR-1.7B/discussions/24">HuggingFace 上的这篇讨论</a>。这次同题对比也算顺带验证了那个问题，毕竟 Confucius4-R2T2 就是基于 Qwen3-ASR 架构。</p>
+<h2 id="二、技术验证"><a href="#二、技术验证" class="headerlink" title="二、技术验证"></a>二、技术验证</h2><p>让 AI 作了技术验证，得出五条结论：  </p>
+<ol>
+<li><strong>用 FunASR 直接跑 Confucius4-R2T2 大模型，CPU 上 RTF≈90</strong>，完全不可用(3.7 分钟音频要转 4~6 小时)；但它的两个小模型是<strong>毫秒级</strong>的 —— VAD(fsmn-vad)RTF 0.003，说话人嵌入(cam++)RTF 0.006。 </li>
+<li><strong>llama.cpp 只有 HTTP(含 SSE)，没有 WebSocket。</strong>旧栈的 WS 客户端要自己初始化配置、按块发送音频、发结束标志、解析回包，其实也不简单；新栈换成一次 HTTP multipart 上传就完事，倒也省事。  </li>
+<li><strong>mp3 可以直传 llama.cpp、mp4/AAC 不行</strong>，报 “Failed to tokenize prompt”。视频必须先经 ffmpeg 抽音轨。  </li>
+<li><strong>单请求受上下文限制</strong>：音频约占 13 token/s，<code>-c 4096</code> 下约 5.2 分钟封顶。长音频必须分段。  </li>
+<li>输出带 <code>language Chinese&lt;asr_text&gt;</code> 前缀，需要剥离。</li>
+</ol>
+<p>FunASR 不能直接使用，Mac 跑不动，特别是在容器里跑，应该以 llama.cpp 为主，但是因为 FunASR 的 VAD 和说话人嵌入等还是不错的，也应该吸收过来。  </p>
+<h2 id="三、FunASR-降级为预处理层"><a href="#三、FunASR-降级为预处理层" class="headerlink" title="三、FunASR 降级为预处理层"></a>三、FunASR 降级为预处理层</h2><p>最终架构各取所长：  </p>
+<pre class="mermaid">
+flowchart TD
+    A(["音频/视频"]) --> B["ffmpeg 转 16k 单声道"]
+    subgraph PRE["毫秒级小模型, CPU 随便跑"]
+        P1["fsmn-vad 按静音切段"]
+        P2["cam++ 说话人嵌入 + 层次聚类<br/>(小于 2s 碎段就近继承邻段标签)"]
+        P3["相邻同说话人段合并为 ≤55s 转写块"]
+        P1 --> P2 --> P3
+    end
+    B --> P1
+    P3 --> T["llama.cpp GGUF(Q8_0) 逐块转写<br/>重活交给量化后的大模型"]
+    T --> O(["输出: JSON 说话人轮次 + Markdown 文稿"])
+</pre>
+
+<p>FunASR 从“转写引擎”降级成“预处理层”，只负责 VAD 切段和说话人分离；文本生成的重活全部交给 GGUF，比 FunASR 调用 Confucius4-R2T2 原生 CPU 转写快两个数量级。  </p>
+<p>说话人分离的输出长这样：  </p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="strong">**【说话人 1】**</span>(00:00-00:06)之前有顾客自己带酒水,也没加收钱或者不让喝。  </span><br></pre></td></tr></table></figure>
+
+<p>实测：224.5 秒独白音频，<code>speakers=1</code> 无误检；42.3 秒双人交替对话，<code>speakers=2</code> 且四轮完美交替。预处理开销可以忽略 —— 耗时全在转写本身。  </p>
+<h2 id="四、量化怎么选：Q8-0-是甜点位"><a href="#四、量化怎么选：Q8-0-是甜点位" class="headerlink" title="四、量化怎么选：Q8_0 是甜点位"></a>四、量化怎么选：Q8_0 是甜点位</h2><p>GGUF 部署要选量化档。7 个测试文件(约 7.5 分钟)做全量化 A/B：  </p>
+<table>
+<thead>
+<tr>
+<th>量化</th>
+<th>容器 CPU RTF</th>
+<th>镜像体积</th>
+<th>质量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>f16</td>
+<td>0.52-0.57</td>
+<td>6.87GB</td>
+<td>基准</td>
+</tr>
+<tr>
+<td><strong>Q8_0</strong></td>
+<td><strong>0.42-0.45</strong></td>
+<td><strong>5.26GB</strong></td>
+<td><strong>与 f16 字词级几乎全同</strong></td>
+</tr>
+<tr>
+<td>Q4_K_M</td>
+<td>0.42</td>
+<td>4.24GB</td>
+<td>歧义短语上与 f16 各有输赢</td>
+</tr>
+</tbody></table>
+<p>一个有意思的发现：f16 在容器 CPU 和 Mac Metal 上输出<strong>逐字节一致</strong> —— 意味着结果可复现，所有 A/B 对比因此可信。  </p>
+<p>结论：Q8_0 质量≈f16、速度≈Q4_K_M，标准的甜点位，设为默认模型。差异仅在个别标点与语气词(Q8 的标点反而更规范)；至于“推倒重来/推导出来”这类音频本身就歧义的短语，任何引擎、任何量化都会翻转，不计分。  </p>
+<h2 id="五、同题-A-B：可以换成-R2T2"><a href="#五、同题-A-B：可以换成-R2T2" class="headerlink" title="五、同题 A/B：可以换成 R2T2"></a>五、同题 A/B：可以换成 R2T2</h2><p>用 5 个真实 mp3(共 3.7 分钟)同题对比：  </p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>FunASR(aliyun runtime)</th>
+<th>R2T2(Q8_0)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>幻觉</td>
+<td>1 处：结尾凭空多出”没有有没有。”</td>
+<td>无，5/5 干净收尾</td>
+</tr>
+<tr>
+<td>断句</td>
+<td>“推导出来了。若干次”(错位)</td>
+<td>“推倒重来了若干次”(断句正确)</td>
+</tr>
+<tr>
+<td>伪影</td>
+<td>ITN 空格伪影(“14 个”)</td>
+<td>无</td>
+</tr>
+<tr>
+<td>语气词</td>
+<td>丢(“呃”)</td>
+<td>完整保留</td>
+</tr>
+<tr>
+<td>标点</td>
+<td>粗糙生硬</td>
+<td>细腻自然</td>
+</tr>
+<tr>
+<td>专有名词</td>
+<td>“李笑来”✓ “定投”✓</td>
+<td>同样 ✓</td>
+</tr>
+<tr>
+<td><strong>速度</strong></td>
+<td><strong>单文件 1.7-3.1s(RTF≈0.05)</strong></td>
+<td>单文件 12-25s(RTF 0.42-0.45)</td>
+</tr>
+</tbody></table>
+<p>质量上新栈全面占优，且没有一处实质字词错误输给对方；速度上 FunASR 快约 10 倍 —— 但我的场景是<strong>批量离线转写</strong>，RTF 0.05 和 0.42 都远快于实时，都是后台任务，没有本质区别。质量优先，决定切换成 R2T2。  </p>
+<h2 id="六、最终形态：一个容器一个端口"><a href="#六、最终形态：一个容器一个端口" class="headerlink" title="六、最终形态：一个容器一个端口"></a>六、最终形态：一个容器一个端口</h2><p>最后一步，把所有能力收进一个自包含镜像 <code>r2t2-gguf:latest</code>(5.26GB，模型全部内置)：  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name r2t2-asr -p 8080:8080 r2t2-gguf:latest</span><br></pre></td></tr></table></figure>
+
+<p>起来就是一个 ASR 网关，四组端点：  </p>
+<ul>
+<li><code>POST /v1/audio/transcriptions</code> —— OpenAI 兼容，短音频字节级透传，老客户端零改动;  </li>
+<li><code>POST /asr/jobs</code> —— 提交长音视频任务(mp4/ts/m4a 等任意 ffmpeg 支持的格式)，返回 202 + job_id;  </li>
+<li><code>GET /asr/jobs/&#123;id&#125;</code> —— 轮询进度，逐块更新 n/N;  </li>
+<li><code>DELETE /asr/jobs/&#123;id&#125;</code> —— 取消，块间生效，保留已完成部分。</li>
+</ul>
+<p>内部逻辑：≤270s 的音频单发直译；超了就自动走完整管线 —— ffmpeg 抽轨、VAD、说话人分离、分块转写。网关本体 <code>asr_server.py</code> 约 300 行，纯 Python 标准库，没有给镜像增加任何依赖。Java 侧只对接两个方法：短音频同步透传；长视频提交任务 + 10 秒轮询 + 进度停滞看门狗，结果按“源文件.txt”旁路缓存，幂等可重试。  </p>
+<p><strong>为什么长音频必须分块，不能放大上下文硬扛？</strong>实测过:<code>-c 32768</code> 单发 10.4 分钟尚可用(RTF 0.72)；但 31.2 分钟时生成速度从 6.6 token/s 一路衰减到 3.0 以下，<strong>比实时还慢</strong>(RTF&gt;2)。而分块方案的 RTF 恒定在 0.43-0.50，与时长无关 —— 31.2 分钟音频分块转写 835.8s(RTF 0.447)。  </p>
+<p><strong>实战验证</strong>：63.1 分钟的真实 mp4(AV1+AAC，英文演讲)直接扔给网关 —— 容器内自动抽轨，74 块、识别出 3 个说话人、45,367 字符、端到端 1751.6s，<strong>RTF 0.462</strong>，与预估一致；首尾干净，无幻觉；中途 DELETE 也能干净取消。以我现在 Mac 上的容器跑法，29 分钟能转完一小时视频。  </p>
+<p>顺带记录一个值得警惕的 bug：早期 Dockerfile 里多源 <code>COPY fsmn-vad campplus /models/funasr/</code> 会把两个目录的<strong>内容摊平</strong>进同一层，子目录从未真正存在；而 FunASR 收到不存在的本地路径时会<strong>静默回退到在线下载</strong> —— 所谓”运行时免下载”其实从未成立，小模型一直是运行时在线拉的，只是恰好没人断网发现过。修复后加了显式路径检查才算闭环。 </p>
+<h2 id="七、代价清单"><a href="#七、代价清单" class="headerlink" title="七、代价清单"></a>七、代价清单</h2><p>切换后的问题：</p>
+<ul>
+<li><strong>速度慢了约 10 倍</strong>：RTF 0.42 对 0.05，一小时视频转 29 分钟。离线批量无感，但要实时出稿的场景，这套 CPU 方案不适合；</li>
+<li><strong>热词降级</strong>：旧栈原生热词，新栈只能经 prompt 字段透传，效果依赖 llama.cpp 版本对该模型上下文偏置的支持；</li>
+<li><strong>没有流式</strong>：需要的话得上 R2T2 官方 NVIDIA CUDA 栈；</li>
+<li><strong>真要快还有后手</strong>：Mac 上原生 llama.cpp + Metal 能到 RTF≈0.06(容器里没有 GPU 加速)；Linux 服务器换 CUDA 版 llama.cpp 即可，镜像构建留了变体参数。</li>
+</ul>
+<p>换来的是：转写质量提升；说话人分离、视频直转能力上线；为 whisper 幻觉长期兜底的 LLM 修正表等防御性逻辑，这次可以正式退休了。  </p>
+<h2 id="八、写在最后"><a href="#八、写在最后" class="headerlink" title="八、写在最后"></a>八、写在最后</h2><p>回顾这次的迭代升级，有三点心得值得留下来：</p>
+<ol>
+<li>选型时与其盯着 benchmark，不如看有没有人真金白银地为它做移植、做量化、做集成。这样可以在不同的环境中验证是否适合自己。 </li>
+<li>FunASR 调用R2T2大模型在 CPU 上不可用，但它的毫秒级小模型正好补位。“新模型干重活、旧栈降级当预处理”的混合流水线，可以推广到很多”大模型本地跑不动”的场景。  </li>
+<li>多作 A/B 测试，要同题、要真实数据、要可复现，f16 跨设备逐字节一致，让所有对比有了基准；5 个真实 mp3 的胜负表，升级迭代决定一目了然。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="L4qiang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/bitcoin.jpeg" alt="L4qiang 比特币">
+        <p>比特币</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fa fa-wechat"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"><i class="fa fa-tag"></i> AI</a>
+              <a href="/tags/FunASR/" rel="tag"><i class="fa fa-tag"></i> FunASR</a>
+              <a href="/tags/Confucius4-R2T2/" rel="tag"><i class="fa fa-tag"></i> Confucius4-R2T2</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/08/28/course100/065/" rel="prev" title="把 git worktree 真用起来">
+      <i class="fa fa-chevron-left"></i> 把 git worktree 真用起来
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89-Confucius4-R2T2"><span class="nav-number">1.</span> <span class="nav-text">一、为什么选 Confucius4-R2T2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%8A%80%E6%9C%AF%E9%AA%8C%E8%AF%81"><span class="nav-number">2.</span> <span class="nav-text">二、技术验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81FunASR-%E9%99%8D%E7%BA%A7%E4%B8%BA%E9%A2%84%E5%A4%84%E7%90%86%E5%B1%82"><span class="nav-number">3.</span> <span class="nav-text">三、FunASR 降级为预处理层</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E9%87%8F%E5%8C%96%E6%80%8E%E4%B9%88%E9%80%89%EF%BC%9AQ8-0-%E6%98%AF%E7%94%9C%E7%82%B9%E4%BD%8D"><span class="nav-number">4.</span> <span class="nav-text">四、量化怎么选：Q8_0 是甜点位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%90%8C%E9%A2%98-A-B%EF%BC%9A%E5%8F%AF%E4%BB%A5%E6%8D%A2%E6%88%90-R2T2"><span class="nav-number">5.</span> <span class="nav-text">五、同题 A&#x2F;B：可以换成 R2T2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E6%9C%80%E7%BB%88%E5%BD%A2%E6%80%81%EF%BC%9A%E4%B8%80%E4%B8%AA%E5%AE%B9%E5%99%A8%E4%B8%80%E4%B8%AA%E7%AB%AF%E5%8F%A3"><span class="nav-number">6.</span> <span class="nav-text">六、最终形态：一个容器一个端口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E4%BB%A3%E4%BB%B7%E6%B8%85%E5%8D%95"><span class="nav-number">7.</span> <span class="nav-text">七、代价清单</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="nav-number">8.</span> <span class="nav-text">八、写在最后</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">L4qiang</p>
+  <div class="site-description" itemprop="description">记录点滴，注重积累。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">314</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">137</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">132</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/crazy-airhead" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;crazy-airhead" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:L4qiang@gmail.com" title="E-Mail → mailto:L4qiang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/enderjo" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;enderjo" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ri.cms.firesbox.com/" title="https:&#x2F;&#x2F;ri.cms.firesbox.com" rel="noopener" target="_blank">践行群官方情报站</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">L4qiang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">873k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">13:14</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2932e376382d4c4a1dba',
+      clientSecret: '01d2eef214d2f8f9e5c65a19790794d3734775a6',
+      repo        : 'crazy-airhead.github.io',
+      owner       : 'airhead',
+      admin       : ['crazy-airhead'],
+      id          : '339696e621f1116f50cc65d936e4f517',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

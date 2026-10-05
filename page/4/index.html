@@ -172,6 +172,260 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/03/08/course100/036/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/03/08/course100/036/" class="post-title-link" itemprop="url">加餐 —— Spring Boot 项目转 Solon 项目工具</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-03-08 10:33:01 / 修改时间：10:58:11" itemprop="dateCreated datePublished" datetime="2025-03-08T10:33:01+08:00">2025-03-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>19k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>17 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>公司里面原来的项目都是 Spring Boot 和 Spring Cloud 框架的，自己手动迁移完一个项目后，发现迁移的过程有些还是能代码化的东西，于是整理了 SpringConverter 这个工具。</p>
+<p>这个工具不是说你转换完就能无痛的启动，你还是需要手动处理一些错误。虽然工具内置了一部分的 Spring 与 Solon 的对照关系，但你仍然可能需要修改这个工具的代码，配置遗漏的对照关系，以便能将自己的项目进行迁移。</p>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>在手动替换的过程中，会首先创建新项目，然后把旧代码复制到新项目中，之后对相关的包和类进行替换，然后逐步修复其中的错误。</p>
+<p>这个工具做的事情就是从实现了复制代码和替换包名、类名的过程。这个过程当中，我发现通常是一个包对另一个包，一个类对一个类，当然也会有多对一的情况，和无法对应的情况，于是注意的工作就是配置类名、包名的映射关系，然后就可以通过代码实现自动替换，从而实现减少工作量的目的。</p>
+<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><ul>
+<li>自己手动转换 pom 或者 gradle 文件，调整好依赖，不要交给转换工具。</li>
+<li>替换原项目地址，原项目包名，新项目地址，新项目包名。</li>
+<li>转化工具放置在另一个项目（或者模块中），这样方便多次转换新项目（边调整映射配置边替换）。必要时也可以方便的整个删除新项目。</li>
+<li>如果类名从短变长（通常是后缀相同），需要先替换类名，再通过旧包名+新类名的方式，替换新包名。</li>
+<li>如果无法对应的包，可以直接替换为空串或者回车（\n）</li>
+<li>如果是类上无法使用注解，可以增加回车(\n)，替换从空串或者回车（\n）。</li>
+<li>注意字符串匹配是通过正则匹配的，替换的原字符串中包含中括弧（()），大括号（{}）,星号（*）等时需要进行转移。</li>
+<li>根据不同的类库进行替换，方便维护。必要时可以自己修改成配置文件从配置文件中读取对照关系。</li>
+</ul>
+<h2 id="项目地址"><a href="#项目地址" class="headerlink" title="项目地址"></a>项目地址</h2><p><a target="_blank" rel="noopener" href="https://gitee.com/CrazyAirhead/porpoise-demo/tree/ray-admin/">https://gitee.com/CrazyAirhead/porpoise-demo/tree/ray-admin/</a></p>
+<p>ray-tools/ray-spring-converter</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>代码本身无特别之处，就是根据配置的信息不断地替换源代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.goldsyear.ray.converter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.io.File.separator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.jfinal.kit.Kv;</span><br><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"><span class="keyword">import</span> java.util.regex.Matcher;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.dromara.hutool.core.collection.set.SetUtil;</span><br><span class="line"><span class="keyword">import</span> org.dromara.hutool.core.io.file.FileTypeUtil;</span><br><span class="line"><span class="keyword">import</span> org.dromara.hutool.core.io.file.FileUtil;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * SpringBoot 项目迁移 Solon 项目工具，并不能迁移完就直接启动，只是减少迁移工作量</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RayConverterApp</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 白名单文件，不进行重写，避免出问题 */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Set&lt;String&gt; WHITE_FILE_TYPES =</span><br><span class="line">      SetUtil.of(<span class="string">&quot;gif&quot;</span>, <span class="string">&quot;jpg&quot;</span>, <span class="string">&quot;svg&quot;</span>, <span class="string">&quot;png&quot;</span>, <span class="string">&quot;eot&quot;</span>, <span class="string">&quot;woff2&quot;</span>, <span class="string">&quot;ttf&quot;</span>, <span class="string">&quot;woff&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 修改路径</span></span><br><span class="line">    String oldProjectDir = <span class="string">&quot;旧项目路&quot;</span>;</span><br><span class="line">    String oldPackageName = <span class="string">&quot;旧包名&quot;</span>;</span><br><span class="line">    String newProjectDir = <span class="string">&quot;新项目路&quot;</span>;</span><br><span class="line">    String newPackageName = <span class="string">&quot;新包名&quot;</span>;</span><br><span class="line"></span><br><span class="line">    log.info(<span class="string">&quot;原项目目录：&#123;&#125;, 原基础包名：&#123;&#125;&quot;</span>, oldProjectDir, oldPackageName);</span><br><span class="line">    log.info(<span class="string">&quot;新项目目录：&#123;&#125;, 新基础包名：&#123;&#125;&quot;</span>, newProjectDir, newPackageName);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ========== 配置，需要你手动修改 ==========</span></span><br><span class="line">    List&lt;Kv&gt; mappingList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, oldPackageName).set(<span class="string">&quot;new&quot;</span>, newPackageName));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Spring 包调整</span></span><br><span class="line">    mappingSpringBoot(mappingList);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Hutool 包调整</span></span><br><span class="line">    mappingHutool(mappingList);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// FastJson</span></span><br><span class="line">    mappingFastJson(mappingList);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Mybatis 包调整</span></span><br><span class="line">    mappingMybatis(mappingList);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> 根据自己依赖的项目模块进行替换</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 业务包调整</span></span><br><span class="line">    mappingBusiness(mappingList);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获得需要复制的文件</span></span><br><span class="line">    log.info(<span class="string">&quot;开始获得需要重写的文件，预计需要 10-20 秒&quot;</span>);</span><br><span class="line">    Collection&lt;File&gt; files = listFiles(oldProjectDir);</span><br><span class="line">    log.info(<span class="string">&quot;需要重写的文件数量：&#123;&#125;，预计需要 15-30 秒&quot;</span>, files.size());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 写入文件</span></span><br><span class="line">    files.forEach(</span><br><span class="line">        file -&gt; &#123;</span><br><span class="line">          <span class="comment">// 如果是白名单的文件类型，不进行重写，直接拷贝</span></span><br><span class="line">          String fileType = FileTypeUtil.getType(file);</span><br><span class="line">          <span class="keyword">if</span> (WHITE_FILE_TYPES.contains(fileType)) &#123;</span><br><span class="line">            copyFile(file, oldProjectDir, oldPackageName, newProjectDir, newPackageName);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 如果非白名单的文件类型，重写内容，在生成文件</span></span><br><span class="line">          String content = replaceFileContent(file, mappingList);</span><br><span class="line"></span><br><span class="line">          writeFile(file, content, oldProjectDir, oldPackageName, newProjectDir, newPackageName);</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    log.info(<span class="string">&quot;重写完成，共耗时：&#123;&#125; 秒&quot;</span>, (System.currentTimeMillis() - start) / <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">mappingBusiness</span><span class="params">(List&lt;Kv&gt; mappingList)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// TODO</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">mappingFastJson</span><span class="params">(List&lt;Kv&gt; mappingList)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// TODO</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">mappingMybatis</span><span class="params">(List&lt;Kv&gt; mappingList)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Page</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.extension.plugins.pagination.Page&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.solon.plugins.pagination.Page&quot;</span>));</span><br><span class="line">    <span class="comment">// Model</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.extension.activerecord.Model&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.solon.activerecord.Model&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// TenantLineHandler</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.solon.plugins.handler.TenantLineHandler&quot;</span>));</span><br><span class="line">    <span class="comment">// MybatisPlusInterceptor</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.solon.plugins.MybatisPlusInterceptor&quot;</span>));</span><br><span class="line">    <span class="comment">// PaginationInnerInterceptor</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.solon.plugins.inner.PaginationInnerInterceptor&quot;</span>));</span><br><span class="line">    <span class="comment">// TenantLineInnerInterceptor</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.solon.plugins.inner.TenantLineInnerInterceptor&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// FastjsonTypeHandler</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;com.baomidou.mybatisplus.solon.handlers.FastjsonTypeHandler&quot;</span>));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">mappingHutool</span><span class="params">(List&lt;Kv&gt; mappingList)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// StrUtil;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;cn.hutool.core.util.StrUtil&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.dromara.hutool.core.text.StrUtil&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Convert;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;cn.hutool.core.convert.Convert&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.dromara.hutool.core.convert.ConvertUtil&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;Convert\\.&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;ConvertUtil.&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// IdUtil;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;cn.hutool.core.util.IdUtil&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.dromara.hutool.core.data.id.IdUtil&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// DateUtil;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;cn.hutool.core.date.DateUtil&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.dromara.hutool.core.date.DateUtil&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ReUtil</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;cn.hutool.core.util.ReUtil&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.dromara.hutool.core.regex.ReUtil&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Spring CollectionUtils;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.util.CollectionUtils&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.dromara.hutool.core.collection.CollUtil&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;CollectionUtils&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;CollUtil&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// CollectionUtil;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;cn.hutool.core.collection.CollectionUtil&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.dromara.hutool.core.collection.CollUtil&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;CollectionUtil&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;CollUtil&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// LocalDateTimeUtil</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;cn.hutool.core.date.LocalDateTimeUtil&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.dromara.hutool.core.date.TimeUtil&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;LocalDateTimeUtil&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;TimeUtil&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// FileUtil</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;cn.hutool.core.io.FileUtil&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.dromara.hutool.core.io.file.FileUtil&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// IoUtil</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;cn.hutool.core.io.IoUtil&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.dromara.hutool.core.io.IoUtil&quot;</span>));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">mappingSpringBoot</span><span class="params">(List&lt;Kv&gt; mappingList)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// annotation</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.web.bind.annotation\\.\\*&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.*&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Component</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.stereotype.Component&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Component&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Service</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.stereotype.Service&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Component&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@Service&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Component&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Autowired</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.beans.factory.annotation.Autowired&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Inject&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@Autowired&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Inject&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Controller</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.web.bind.annotation.RestController&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Controller&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@RestController&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Controller&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// RequestMapping</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.web.bind.annotation.RequestMapping&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Mapping&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@RequestMapping&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Mapping&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// MediaType;</span></span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;import org.springframework.http.MediaType;&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;, produces = MediaType.APPLICATION_JSON_UTF8_VALUE&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;import org.springframework.core.env.Environment;&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// PostMapping</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.web.bind.annotation.PostMapping&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Post&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@PostMapping&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Post\n@Mapping&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// GetMapping</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.web.bind.annotation.GetMapping&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Get&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@GetMapping&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Post\n@Mapping&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// PutMapping</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.web.bind.annotation.PutMapping&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Put&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@PutMapping&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Put\n@Mapping&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// DeleteMapping</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.web.bind.annotation.DeleteMapping&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Delete&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@DeleteMapping&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Delete\n@Mapping&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// @RequestBody</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.web.bind.annotation.RequestBody&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Body&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@RequestBody&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Body&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// @RequestParam</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.web.bind.annotation.RequestParam&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Param&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@RequestParam&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Param&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">//    RequestPart</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.web.bind.annotation.RequestPart&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Param&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@RequestPart&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Param&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Repository;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;import org.springframework.stereotype.Repository;&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@Repository&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Validated</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.validation.annotation.Validated&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.validation.annotation.Validated&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@Validated\n&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Configuration;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.context.annotation.Configuration&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Configuration&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// RefreshScope;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;import org.springframework.cloud.context.config.annotation.RefreshScope;&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@RefreshScope\n&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// EnableAsync;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;import org.springframework.scheduling.annotation.EnableAsync;&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@EnableAsync&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Bean;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.context.annotation.Bean&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Bean&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">//  ConfigurationProperties;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.boot.context.properties.ConfigurationProperties&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Inject&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@ConfigurationProperties&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Inject&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// CommandLineRunner</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;import org.springframework.boot.CommandLineRunner;&quot;</span>)</span><br><span class="line">            .set(</span><br><span class="line">                <span class="string">&quot;new&quot;</span>,</span><br><span class="line">                <span class="string">&quot;import org.noear.solon.core.event.AppLoadEndEvent;\nimport org.noear.solon.core.event.EventListener;&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;CommandLineRunner&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;EventListener&lt;AppLoadEndEvent&gt;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Resource;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;javax.annotation.Resource&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.annotation.Inject&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@Resource\\(name&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;@Inject\\(value&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Lazy;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;import org.springframework.context.annotation.Lazy;\n&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;@Lazy&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Valid</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;javax.validation.Valid&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.validation.annotation.Valid&quot;</span>));</span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;javax.validation.constraints.NotEmpty&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.validation.annotation.NotEmpty&quot;</span>));</span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;javax.validation.constraints.NotNull&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.validation.annotation.NotNull&quot;</span>));</span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> 补充更多</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// HttpServletResponse;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;javax.servlet.http.HttpServletResponse&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.core.handle.Context&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;HttpServletResponse&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;Context&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// MultipartFile;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;org.springframework.web.multipart.MultipartFile&quot;</span>)</span><br><span class="line">            .set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;org.noear.solon.core.handle.UploadedFile&quot;</span>));</span><br><span class="line">    mappingList.add(Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;MultipartFile&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;UploadedFile&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">//    consumes = &#123;MediaType.MULTIPART_FORM_DATA_VALUE&#125;</span></span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;,\n\\s+consumes = \\&#123;MediaType.MULTIPART_FORM_DATA_VALUE\\&#125;&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line">    mappingList.add(</span><br><span class="line">        Kv.by(<span class="string">&quot;old&quot;</span>, <span class="string">&quot;, consumes = \\&#123;MediaType.MULTIPART_FORM_DATA_VALUE\\&#125;&quot;</span>).set(<span class="string">&quot;new&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Collection&lt;File&gt; <span class="title">listFiles</span><span class="params">(String projectBaseDir)</span> </span>&#123;</span><br><span class="line">    Collection&lt;File&gt; files = FileUtil.loopFiles(<span class="keyword">new</span> File(projectBaseDir));</span><br><span class="line">    <span class="comment">// 移除 IDEA、Git 自身的文件、Node 编译出来的文件</span></span><br><span class="line">    files =</span><br><span class="line">        files.stream()</span><br><span class="line">            .filter(</span><br><span class="line">                file -&gt;</span><br><span class="line">                    !file.getPath().contains(separator + <span class="string">&quot;target&quot;</span> + separator)</span><br><span class="line">                        &amp;&amp; !file.getPath().contains(separator + <span class="string">&quot;node_modules&quot;</span> + separator)</span><br><span class="line">                        &amp;&amp; !file.getPath().contains(separator + <span class="string">&quot;.idea&quot;</span> + separator)</span><br><span class="line">                        &amp;&amp; !file.getPath().contains(separator + <span class="string">&quot;.git&quot;</span> + separator)</span><br><span class="line">                        &amp;&amp; !file.getPath().contains(separator + <span class="string">&quot;dist&quot;</span> + separator)</span><br><span class="line">                        &amp;&amp; !file.getPath().contains(separator + <span class="string">&quot;build&quot;</span> + separator)</span><br><span class="line">                        &amp;&amp; !file.getPath().contains(separator + <span class="string">&quot;out&quot;</span> + separator)</span><br><span class="line">                        &amp;&amp; !file.getPath().contains(<span class="string">&quot;.iml&quot;</span>)</span><br><span class="line">                        &amp;&amp; !file.getPath().contains(<span class="string">&quot;.html.gz&quot;</span>)</span><br><span class="line">                        &amp;&amp; !file.getPath().contains(<span class="string">&quot;build.gradle&quot;</span>)</span><br><span class="line">                        &amp;&amp; !file.getPath().contains(<span class="string">&quot;pom.xml&quot;</span>))</span><br><span class="line">            .collect(Collectors.toList());</span><br><span class="line">    <span class="keyword">return</span> files;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">replaceFileContent</span><span class="params">(File file, List&lt;Kv&gt; mappingList)</span> </span>&#123;</span><br><span class="line">    String content = FileUtil.readString(file, StandardCharsets.UTF_8);</span><br><span class="line">    <span class="comment">// 如果是白名单的文件类型，不进行重写</span></span><br><span class="line">    String fileType = FileTypeUtil.getType(file);</span><br><span class="line">    <span class="keyword">if</span> (WHITE_FILE_TYPES.contains(fileType)) &#123;</span><br><span class="line">      <span class="keyword">return</span> content;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (Kv kv : mappingList) &#123;</span><br><span class="line">      content = content.replaceAll(kv.getStr(<span class="string">&quot;old&quot;</span>), kv.getStr(<span class="string">&quot;new&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> content;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writeFile</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">      File file,</span></span></span><br><span class="line"><span class="params"><span class="function">      String fileContent,</span></span></span><br><span class="line"><span class="params"><span class="function">      String oldProjectDir,</span></span></span><br><span class="line"><span class="params"><span class="function">      String oldPageName,</span></span></span><br><span class="line"><span class="params"><span class="function">      String newProjectDir,</span></span></span><br><span class="line"><span class="params"><span class="function">      String newPackageName)</span> </span>&#123;</span><br><span class="line">    String newPath =</span><br><span class="line">        buildNewFilePath(file, oldProjectDir, oldPageName, newProjectDir, newPackageName);</span><br><span class="line">    FileUtil.writeUtf8String(fileContent, newPath);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">copyFile</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">      File file,</span></span></span><br><span class="line"><span class="params"><span class="function">      String oldProjectDir,</span></span></span><br><span class="line"><span class="params"><span class="function">      String oldPackageName,</span></span></span><br><span class="line"><span class="params"><span class="function">      String newProjectDir,</span></span></span><br><span class="line"><span class="params"><span class="function">      String newPackageName)</span> </span>&#123;</span><br><span class="line">    String newPath =</span><br><span class="line">        buildNewFilePath(file, oldProjectDir, oldPackageName, newProjectDir, newPackageName);</span><br><span class="line">    FileUtil.copy(file, <span class="keyword">new</span> File(newPath), <span class="keyword">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">buildNewFilePath</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">      File file,</span></span></span><br><span class="line"><span class="params"><span class="function">      String oldProjectDir,</span></span></span><br><span class="line"><span class="params"><span class="function">      String oldPackageName,</span></span></span><br><span class="line"><span class="params"><span class="function">      String newProjectDir,</span></span></span><br><span class="line"><span class="params"><span class="function">      String newPackageName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> file.getPath()</span><br><span class="line">        .replace(oldProjectDir, newProjectDir)</span><br><span class="line">        .replace(</span><br><span class="line">            oldPackageName.replaceAll(<span class="string">&quot;\\.&quot;</span>, Matcher.quoteReplacement(separator)),</span><br><span class="line">            newPackageName.replaceAll(<span class="string">&quot;\\.&quot;</span>, Matcher.quoteReplacement(separator)));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>再次提醒这个工具不是无缝迁移的，也就是说不能说迁移完就可以直接启动的，这个工具只是减少工作量。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/03/05/course100/035/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="L4qiang">
+      <meta itemprop="description" content="记录点滴，注重积累。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyAirhead">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/03/05/course100/035/" class="post-title-link" itemprop="url">Solon AI —— RAG</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-03-05 22:39:05 / 修改时间：22:40:28" itemprop="dateCreated datePublished" datetime="2025-03-05T22:39:05+08:00">2025-03-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>当前大模型与外部打交道的方式有两种，一种是 Prompt，一种是 Fuction Call。在 Prompt 方面，应用系统可以通过 Prompt 模版和补充上下文的方式，调整用户输入的提示语，使得大模型生成的回答更加准确。</p>
+<h3 id="RAG"><a href="#RAG" class="headerlink" title="RAG"></a>RAG</h3><p>RAG （Retrieval-Augmented Generation 检索增强生成）是一种结合了信息检索和大模型生成的技术框架，是通过相似度等算法从外部知识库中检索相关的信息，并将其作为 Prompt 输入大模型，以增强大模型处理知识密集型任务的能力。</p>
+<p>系统是传统 RAG 和 智能体 RAG 的一个架构图（图片来源网络）。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OWJkNDYwYjhkNjVkOTk1ZTQwZGM3N2IyYTIxODJiMjBfUFVQS2VqZ2dpZ2xIMkdlR2FFYWpzRWZmb3llTklFWktfVG9rZW46QWR0Z2IzUFZMb1BKY2l4WTEyaGNRYzBzbkNmXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
+<h3 id="知识库"><a href="#知识库" class="headerlink" title="知识库"></a>知识库</h3><p>FastGPT 的《知识库基础原理的介绍》说明挺好的，<a target="_blank" rel="noopener" href="https://doc.fastgpt.cn/docs/guide/knowledge_base/rag/">https://doc.fastgpt.cn/docs/guide/knowledge_base/rag/</a> 。</p>
+<p>相对于大模型，我们的系统称为应用。对于应用来说，主要做的是检索工作，就是从知识库（提供文档索检服务的对象）中找到相应的知识（文档）。</p>
+<p>为了存储和读取文档，需要用到文档加载器和文档分割器。</p>
+<ul>
+<li>文档加载器，比如，纯文本，PDF，Word， Markdown， html， excel 等格式的处理与加载。</li>
+<li>文档分割器，当文档太大时，可以按文档的字数，段落，章节，主题等来分块。因此也就有了 JSON 格式拆分，正则表达式拆分，大小分割，拆分流水线等等。</li>
+</ul>
+<p>为了查询相关文档，就需要检索算法的加持。主要分为向量检索和传统检索。在实际的应用是可以多种方式结合的，只要能检索到尽可能相关的数据即可。</p>
+<ul>
+<li>向量检索：如 BERT向量等，它通过将文档和查询转化为向量空间中的表示，并使用相似度计算来进行匹配。向量检索的优势在于能够更好地捕捉语义相似性，而不仅仅是依赖于词汇匹配。</li>
+<li>传统检索：如BM25，主要基于词频和逆文档频率（TF-IDF）的加权搜索模型来对文档进行排序和检索。BM25适用于处理较为简单的匹配任务，尤其是当查询和文档中的关键词有直接匹配时。</li>
+</ul>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>这里我们继续使用 demo-ai02 中诊断的例子，尝试模拟一次简单的诊断，相对于demo-ai02，增加了获取病人的历史病人和病人自述相关的知识，用于演示知识库增加的例子。注意这里只是示例，并非真正的诊断流程。</p>
+<h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><h4 id="build-gradle"><a href="#build-gradle" class="headerlink" title="build.gradle"></a>build.gradle</h4><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation platform(project(<span class="string">&quot;:demo-parent&quot;</span>))</span><br><span class="line"></span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-view-enjoy&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-ai&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-ai-repo-redis&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-logging-logback&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-openapi2-knife4j&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web-rx&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-web-sse&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.noear:solon-flow&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;org.dromara.hutool:hutool-all&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    testImplementation(<span class="string">&quot;org.noear:solon-test&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h4><p>这里需要用的redis的向量查询，需要安装 redis-stack 版本。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name redis-stack -p <span class="number">6379</span>:<span class="number">6379</span> -p <span class="number">8001</span>:<span class="number">8001</span> swr.cn-north-<span class="number">4.</span>myhuaweicloud.com/ddn-k8s/docker.io/redis/redis-stack:latest</span><br></pre></td></tr></table></figure>
+
+<h4 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h4><p>这里需要向量化，需要增加嵌入模型，这些选了<code>nomic-embed-text</code>，自己根据实际情况选项，<code>deepseek-r1:32b</code>，也是一样的，根据需要调整。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ollama run deepseek-r1:32b</span><br><span class="line">ollama run qwen2<span class="number">.5</span>:7b</span><br><span class="line">ollama run nomic-embed-text</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="app-yml"><a href="#app-yml" class="headerlink" title="app.yml"></a>app.yml</h4><p>增加嵌入模型和 reids 知识库的配置，其他的模型配置在流程编排中获取。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">solon.flow:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;classpath:flow/*&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">demo.llm:</span></span><br><span class="line">  <span class="attr">embed:</span></span><br><span class="line">    <span class="attr">apiUrl:</span> <span class="string">&quot;http://127.0.0.1:11434/api/embed&quot;</span> <span class="comment"># 使用完整地址（而不是 api_base）</span></span><br><span class="line">    <span class="attr">provider:</span> <span class="string">&quot;ollama&quot;</span> <span class="comment"># 使用 ollama 服务时，需要配置 provider</span></span><br><span class="line">    <span class="attr">model:</span> <span class="string">&quot;nomic-embed-text&quot;</span></span><br><span class="line">  <span class="attr">repo:</span></span><br><span class="line">    <span class="attr">redis:</span></span><br><span class="line">      <span class="attr">server:</span> <span class="string">&quot;127.0.0.1:16379&quot;</span>  <span class="comment"># 改为你的 Redis  地址</span></span><br><span class="line">      <span class="attr">db:</span> <span class="number">0</span></span><br><span class="line">      <span class="attr">maxTotal:</span> <span class="number">200</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="LlmConfig"><a href="#LlmConfig" class="headerlink" title="LlmConfig"></a>LlmConfig</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.noear.redisx.RedisClient;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.embedding.EmbeddingConfig;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.embedding.EmbeddingModel;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.rag.repository.RedisRepository;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LlmConfig</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="keyword">public</span> EmbeddingModel <span class="function"><span class="title">embeddingModel</span>(<span class="params"><span class="meta">@Inject</span>(<span class="string">&quot;$&#123;demo.llm.embed&#125;&quot;</span>) EmbeddingConfig config</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> EmbeddingModel.of(config).build();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="keyword">public</span> RedisRepository <span class="function"><span class="title">repository</span>(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="function">      EmbeddingModel embeddingModel, <span class="meta">@Inject</span>(<span class="string">&quot;$&#123;solon.llm.repo.redis&#125;&quot;</span>) RedisClient client</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RedisRepository(embeddingModel, client.openSession().jedis());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span>: <span class="string">&quot;ai-flow-01&quot;</span></span><br><span class="line">layout:</span><br><span class="line">  - <span class="built_in">id</span>: <span class="string">&quot;开始&quot;</span></span><br><span class="line">    <span class="built_in">type</span>: <span class="string">&quot;start&quot;</span></span><br><span class="line">  - <span class="built_in">id</span>: <span class="string">&quot;病史&quot;</span></span><br><span class="line">    <span class="built_in">type</span>: <span class="string">&quot;execute&quot;</span></span><br><span class="line">    task: <span class="string">&quot;@searchTask&quot;</span></span><br><span class="line">  - <span class="built_in">id</span>: <span class="string">&quot;诊断&quot;</span></span><br><span class="line">    <span class="built_in">type</span>: <span class="string">&quot;execute&quot;</span></span><br><span class="line">    meta.model: <span class="string">&quot;deepseek-r1:32b&quot;</span></span><br><span class="line">    meta.apiUrl: <span class="string">&quot;http://127.0.0.1:11434/api/chat&quot;</span></span><br><span class="line">    meta.provider: <span class="string">&quot;ollama&quot;</span></span><br><span class="line">    meta.<span class="built_in">input</span>: <span class="string">&quot;prompt&quot;</span></span><br><span class="line">    meta.output: <span class="string">&quot;intention&quot;</span></span><br><span class="line">    meta.systemTpl: <span class="string">&quot;## 上下文\n\n#(ctx)\n\n## 任务\n\n根据用户的描述，判断用户最可能的三个健康问题，只要诊断名称，不需要其他解释，用 Markdown 的列表格式返回。\n\n&quot;</span></span><br><span class="line">    meta.userTpl: <span class="string">&quot;## 病人自述\n\n#(prompt)\n\n## 历史病情\n\n#(history)\n\n&quot;</span></span><br><span class="line">    task: <span class="string">&quot;@intentionTask&quot;</span></span><br><span class="line">  - <span class="built_in">id</span>: <span class="string">&quot;治疗建议&quot;</span></span><br><span class="line">    <span class="built_in">type</span>: <span class="string">&quot;execute&quot;</span></span><br><span class="line">    meta.model: <span class="string">&quot;qwen2.5:7b&quot;</span></span><br><span class="line">    meta.apiUrl: <span class="string">&quot;http://127.0.0.1:11434/api/chat&quot;</span></span><br><span class="line">    meta.provider: <span class="string">&quot;ollama&quot;</span></span><br><span class="line">    meta.<span class="built_in">input</span>: <span class="string">&quot;intention&quot;</span></span><br><span class="line">    meta.output: <span class="string">&quot;suggestion&quot;</span></span><br><span class="line">    meta.system: <span class="string">&quot;## 角色\n\n你是一个经验丰富的医生\n\n## 任务\n根据用户提供的诊断信息，提供治疗建议&quot;</span></span><br><span class="line">    task: <span class="string">&quot;@suggestionTask&quot;</span></span><br><span class="line">  - <span class="built_in">type</span>: <span class="string">&quot;end&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="知识库管理"><a href="#知识库管理" class="headerlink" title="知识库管理"></a>知识库管理</h3><h4 id="RepositoryController"><a href="#RepositoryController" class="headerlink" title="RepositoryController"></a>RepositoryController</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.ai.llm.service.RepositoryService;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping</span>(<span class="string">&quot;/repository&quot;</span>)</span><br><span class="line"><span class="meta">@Api</span>(<span class="string">&quot;知识库&quot;</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RepositoryController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> RepositoryService service;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation</span>(<span class="string">&quot;addDoc&quot;</span>)</span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping</span>(<span class="string">&quot;addDoc&quot;</span>)</span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">Boolean</span> <span class="function"><span class="title">addDoc</span>(<span class="params"><span class="built_in">String</span> content</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> service.addDoc(content);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation</span>(<span class="string">&quot;search&quot;</span>)</span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping</span>(<span class="string">&quot;search&quot;</span>)</span><br><span class="line">  <span class="keyword">public</span> List&lt;<span class="built_in">String</span>&gt; <span class="function"><span class="title">search</span>(<span class="params"><span class="built_in">String</span> query</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> service.search(query);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RepositoryService"><a href="#RepositoryService" class="headerlink" title="RepositoryService"></a>RepositoryService</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.Collections;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.rag.Document;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.ai.rag.repository.RedisRepository;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RepositoryService</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> RedisRepository repository;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">Boolean</span> <span class="function"><span class="title">addDoc</span>(<span class="params"><span class="built_in">String</span> content</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      Document <span class="built_in">document</span> = <span class="keyword">new</span> Document(content);</span><br><span class="line">      repository.insert(Collections.singletonList(<span class="built_in">document</span>));</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> List&lt;<span class="built_in">String</span>&gt; <span class="function"><span class="title">search</span>(<span class="params"><span class="built_in">String</span> query</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      List&lt;Document&gt; list = repository.search(query);</span><br><span class="line">      <span class="keyword">return</span> list.stream().map(Document::getContent).toList();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">String</span> <span class="function"><span class="title">history</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;无其他慢性病&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="诊断"><a href="#诊断" class="headerlink" title="诊断"></a>诊断</h3><h4 id="LlmDiagController"><a href="#LlmDiagController" class="headerlink" title="LlmDiagController"></a>LlmDiagController</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.ai.llm.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.ai.llm.service.LlmService;</span><br><span class="line"><span class="keyword">import</span> com.jfinal.kit.Kv;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.Api;</span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author <span class="variable">airhead</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@Mapping</span>(<span class="string">&quot;/llm&quot;</span>)</span><br><span class="line"><span class="meta">@Api</span>(<span class="string">&quot;聊天&quot;</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LlmDiagController</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> LlmService service;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ApiOperation</span>(<span class="string">&quot;diag&quot;</span>)</span><br><span class="line">  <span class="meta">@Post</span></span><br><span class="line">  <span class="meta">@Mapping</span>(<span class="string">&quot;diag&quot;</span>)</span><br><span class="line">  <span class="keyword">public</span> Kv <span class="function"><span class="title">diag</span>(<span class="params"><span class="built_in">String</span> prompt</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> service.diag(prompt);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="LlmDiagService"><a href="#LlmDiagService" class="headerlink" title="LlmDiagService"></a>LlmDiagService</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.ai.llm.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.jfinal.kit.Kv;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Component;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.annotation.Inject;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.flow.ChainContext;</span><br><span class="line"><span class="keyword">import</span> org.noear.solon.flow.FlowEngine;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> airhead</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LlmDiagService</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Inject</span> <span class="keyword">private</span> FlowEngine flowEngine;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Kv <span class="title">diag</span><span class="params">(String prompt)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      ChainContext chainContext = <span class="keyword">new</span> ChainContext();</span><br><span class="line">      chainContext.put(<span class="string">&quot;prompt&quot;</span>, prompt);</span><br><span class="line">      Kv kv = Kv.create();</span><br><span class="line">      chainContext.put(<span class="string">&quot;result&quot;</span>, kv);</span><br><span class="line">      flowEngine.eval(<span class="string">&quot;ai-flow-01&quot;</span>, chainContext);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> kv;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><h4 id="知识管理"><a href="#知识管理" class="headerlink" title="知识管理"></a>知识管理</h4><p>通过接口写入一些文档，这里是一些睡眠的方法。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZWU4NTc4M2NhYjVjMjUyZDAzYWE5NWM5NTU2ZmRlOGNfZFJ2UGV2TUxkZ2JtbzFuMjlDWmF3emV2UVI4SURtaE1fVG9rZW46SmhsZmJROUM4b2ZSdUh4anIwTWN4MVJVbm1lXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
+<h4 id="知识查询"><a href="#知识查询" class="headerlink" title="知识查询"></a>知识查询</h4><p>通过查询水名</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=OWFmYmQzNzgwOGFjMTMwZTMwNjcxYTcwY2E1YzIyODZfc0t5c2xjcHRZN3NjZmE2VVBkcmVvWFJMTWdCNWNWTWZfVG9rZW46T0Vnc2JDeEpib1dFVFZ4OWc2UGNvcDV4bmFjXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
+<h4 id="诊断服务"><a href="#诊断服务" class="headerlink" title="诊断服务"></a>诊断服务</h4><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=MDUyYWYwNjdmMGRkZWYzNTE1Y2U5YjdkMDljOTM1ZWRfaTRPdmVmblNVN1A0WUttelJ3eXZoNUhWV2VsZDlkejNfVG9rZW46UmVWd2I4clE5b0cwYkJ4Zk90ZmNvMzlSbmdnXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
+<p>中间的调试信息，我们可以看到我们添加的知识库的信息被追加到提示信息中，提交给大模型。</p>
+<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YzhjOGQ2MWMzY2Q5YzkzMWRlOWZjMjk4OWI5OTFhMWRfVVF5NlZjOTNIQjdYUHhzb2FjYVhhQldFOVpDN3JDRFVfVG9rZW46QUhvbmJrVU9Vb0dOQkx4dk1BZWNTU0YyblRjXzE3NDExODU2MTg6MTc0MTE4OTIxOF9WNA" alt="img"></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>示例中没有对文档的拆分和文档不同文档类型的加载，但我们可以看到 Solon-ai 结合 solon-flow 已经能完整的支持 RAG 的知识库的开发了。当然如果要做一个完整的知识库系统还需要很多工作要做。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/03/03/course100/034/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1485,448 +1739,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/19/course100/026/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/02/19/course100/026/" class="post-title-link" itemprop="url">Solon —— 容器</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-02-19 22:46:49 / 修改时间：22:48:20" itemprop="dateCreated datePublished" datetime="2025-02-19T22:46:49+08:00">2025-02-19</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>Solon 的核心概念有 IoC、AOP 和本地事件总线。有人常常有误解以为 IoC 和 AOP 是 Spring 提出的，其实这两种思想在Spring 之前就已经有了，但 Spring 把这两个思想在技术上落地和推广做得很好，让 Ioc 和 AOP 广为人知。</p>
-<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><h3 id="IoC"><a href="#IoC" class="headerlink" title="IoC"></a>IoC</h3><p>Ioc 的全称是 Inversion of Control，是控制反转或者反转控制的意思。它是一种思想，主要解决的是对象创建和管理的问题，用于解耦依赖。Ioc有时也被称为 DI （Dependency Injection），依赖注入。在使用 IoC 的过程中，我们是通过容器来创建和管理对象的，我们也是从容器中获取对象，所以，有时我们会听到 IoC 就是容器的说法，可能只是简化的一种说法。</p>
-<h3 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h3><p>AOP， 全称 Aspect Oriented Programming，是面向切面编程。AOP 的目的是将横切关注点（如日志记录、事务管理、权限控制、接口限流、接口幂等等）从核心业务逻辑中分离出来，通过动态代理、字节码操作等技术，实现代码的复用和解耦，提高代码的可维护性和可扩展性。其中涉及的核心有代理，切点，切面。</p>
-<h3 id="本地事件总线"><a href="#本地事件总线" class="headerlink" title="本地事件总线"></a>本地事件总线</h3><p>本地事件总线是 Solon 在应用生命周期提供的扩展机制，应用可以根据需要的事件时机点，订阅响应的事件。本地事件总线支持自定义的事件。</p>
-<p>注意：</p>
-<ol>
-<li>本地事件总线是基于应用生命周期的（应用的启停，插件的启停，bean 创建等），而不是基于业务，如果是涉及业务，可以使用使用作者的另一个作品 DamiBus。</li>
-<li>要在事件发生前订阅事件，否则会错过时机，无法接收到事件消息。</li>
-</ol>
-<h2 id="应用生命周期"><a href="#应用生命周期" class="headerlink" title="应用生命周期"></a>应用生命周期</h2><p>应用生命周期，是应用程序从 启动到最后停止的整个过程。应用生命周期当中存在一些关键点，可称为时机点。</p>
-<p>SolonApp 的应用生命周期如下图所示，其中时机点包括有：一个初始化函数时机点 + 六个应用事件时机点 + 三个插件生命时机点 + 两个容器生命时机点。</p>
-<p>作者的这张图画的很细致，一步步的把这个图走完，能加深对 Solon 的理解。</p>
-<p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=YzEwOWMxN2RlZjZhZDdhNjEyYTU4YjBmNGM0MjBlNzZfS2xQRTJaWEZZbGlNaVU5Q3VNM0lwakpncUs0R0dUMDZfVG9rZW46SjBNRmJrc3I4b05KbGp4ZGUzZ2NsS01qblRjXzE3Mzk5NzY0NDk6MTczOTk4MDA0OV9WNA" alt="img"></p>
-<h3 id="一个初始化函数时机点"><a href="#一个初始化函数时机点" class="headerlink" title="一个初始化函数时机点"></a>一个初始化函数时机点</h3><p>应用开发时可扩展的时机。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SolonMain</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Solon.start(App.class, args, (app) -&gt; &#123;</span><br><span class="line">            <span class="comment">//应用初始化时机点</span></span><br><span class="line">        &#125;);</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="六个应用事件时机点"><a href="#六个应用事件时机点" class="headerlink" title="六个应用事件时机点"></a>六个应用事件时机点</h3><p>应用开发时可扩展的时机。</p>
-<table>
-<thead>
-<tr>
-<th>事件</th>
-<th>说明</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>6.AppInitEndEvent</td>
-<td>应用初始化完成事件</td>
-<td>只支持手动订阅</td>
-</tr>
-<tr>
-<td>8.AppPluginLoadEndEvent</td>
-<td>应用插件加载完成事件</td>
-<td>只支持手动订阅</td>
-</tr>
-<tr>
-<td>b.AppBeanLoadEndEvent</td>
-<td>应用Bean加载完成事件（即扫描完成）</td>
-<td></td>
-</tr>
-<tr>
-<td>e.AppLoadEndEvent</td>
-<td>应用加载完成事件（即启动完成）</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>::运行</td>
-<td></td>
-</tr>
-<tr>
-<td>g.AppPrestopEndEvent</td>
-<td>应用预停止事件</td>
-<td></td>
-</tr>
-<tr>
-<td>j.AppStopEndEvent</td>
-<td>应用停止事件</td>
-<td></td>
-</tr>
-</tbody></table>
-<h3 id="三个插件生命时机点"><a href="#三个插件生命时机点" class="headerlink" title="三个插件生命时机点"></a>三个插件生命时机点</h3><p>插件开发时可扩展的时机。</p>
-<table>
-<thead>
-<tr>
-<th>接口</th>
-<th>执行时机</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>7.start</td>
-<td>在应用初始化完成后执行</td>
-<td>启动</td>
-</tr>
-<tr>
-<td>f.prestop</td>
-<td>在 ::stop 前执行</td>
-<td>预停止</td>
-</tr>
-<tr>
-<td>h.stop</td>
-<td>在 Solon::stop 时执行</td>
-<td>停止（启用安全停止时，prestop 后等几秒再执行 stop）</td>
-</tr>
-</tbody></table>
-<h3 id="两个容器生命时机点"><a href="#两个容器生命时机点" class="headerlink" title="两个容器生命时机点"></a>两个容器生命时机点</h3><p>Solon 内部的时机点，应用开发不可扩展。</p>
-<table>
-<thead>
-<tr>
-<th>接口</th>
-<th>执行时机</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>d.start</td>
-<td>在扫描完成之后执行</td>
-<td>启动</td>
-</tr>
-<tr>
-<td>i.stop</td>
-<td>在 Solon::stop 时执行，在插件（h.stop）后执行</td>
-<td>停止</td>
-</tr>
-</tbody></table>
-<h2 id="Bean-生命周期"><a href="#Bean-生命周期" class="headerlink" title="Bean 生命周期"></a>Bean 生命周期</h2><p><img src="https://otwu9ovpkn.feishu.cn/space/api/box/stream/download/asynccode/?code=ZDk4YjliYzk4OGEzMzkxZjM3MjlhMDdhMjIwM2Y3YjJfTzZzdEFmc0wyRVc3d1JRaGNqNWVydFlVNnA2MkdDMjdfVG9rZW46VTlRV2JpTkREb011Rlp4UjZKR2NhdHJlbmloXzE3Mzk5NzY0NDk6MTczOTk4MDA0OV9WNA" alt="img"></p>
-<p>被容器托管的 Bean，它的生命周期只限定在容器内部。</p>
-<h4 id="new"><a href="#new" class="headerlink" title="::new()"></a>::new()</h4><p>就是调用构造函数，是在 Bean 被扫描时，且符合条件才会执行。</p>
-<p>注意，这个时候，Bean 还注册到容器中，还不能使用注入的字段（还未注入）。如果要初始化，推荐使用<code>@Init</code> 函数。</p>
-<h4 id="Inject"><a href="#Inject" class="headerlink" title="@Inject"></a>@Inject</h4><p>开始执行注入。之后就会注册到容器，并通知订阅者。</p>
-<h4 id="start-或-Init"><a href="#start-或-Init" class="headerlink" title="start() 或 @Init"></a>start() 或 @Init</h4><p>执行初始化动作，在 AppContext::start() 开始处被执行。如果使用 start() 需要实现 LifecycleBean 接口。此时 Bean 扫描已完成，理论上所有的 Bean 都已进入容器（某些特殊的 Bean 是在 AppContext.start() 时才生产的），并且所有 Bean 的字段都已完成注入。</p>
-<h4 id="postStart"><a href="#postStart" class="headerlink" title="postStart()"></a>postStart()</h4><p>开始之后，AppContext::start() 结束处被执行，一般用于启动一些任务。如果使用 postStart() 需要实现 LifecycleBean 接口。</p>
-<h4 id="preStop"><a href="#preStop" class="headerlink" title="preStop()"></a>preStop()</h4><p>预停止，AppContext::preStop() 时被执行。一般用来做分布式服务注销之类。如果使用 preStop() 需要实现 LifecycleBean 接口。</p>
-<h4 id="stop-或-Destroy"><a href="#stop-或-Destroy" class="headerlink" title="stop() 或 @Destroy"></a>stop() 或 @Destroy</h4><p>停止，AppContext::stop() 时被执行。一般用来做安全停止。如果使用 stop() 需要实现 LifecycleBean 接口。</p>
-<h2 id="容器应用"><a href="#容器应用" class="headerlink" title="容器应用"></a>容器应用</h2><p>在 Solon 中，我们可以自由的选择用注解的方式，还是手动的方式来实现想要的功能。但在这里我们主要讲解注解的使用方式。</p>
-<h3 id="扫描"><a href="#扫描" class="headerlink" title="扫描"></a>扫描</h3><p>扫描一般是深度遍历指定“包名”下的 <code>.class</code> 文件获取类名，再通过类名从类加载器里获取元信息。</p>
-<p>默认情况下，主类所在包名新的类都会扫描。如果需要修改导入的范围可以使用 @Import 注解，增加扫描的包名，或者导入需要的类名。</p>
-<h3 id="构建-注入"><a href="#构建-注入" class="headerlink" title="构建 / 注入"></a>构建 / 注入</h3><p>在 Solon 中，我们通过Singleton，Configuration，Bean，Component，Controller，Remoting等方式产生Bean，在Bean 对象中，我们可以 @Inject 注解注入字段。在构建和注入中需要注意的可能是条件构建和依赖注入的部分了。</p>
-<table>
-<thead>
-<tr>
-<th>注解</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>@Inject *</td>
-<td>注入托管对象（by type）</td>
-</tr>
-<tr>
-<td>@Inject(“name”)</td>
-<td>注入托管对象（by name）</td>
-</tr>
-<tr>
-<td>@Inject(“${name}”)</td>
-<td>注入配置（可由基础类型或结构体接收）</td>
-</tr>
-<tr>
-<td>@Singleton</td>
-<td>单例申明（Solon 默认是单例）</td>
-</tr>
-<tr>
-<td>@Singleton(false)</td>
-<td>非单例</td>
-</tr>
-<tr>
-<td>@Configuration</td>
-<td>托管配置组件类（与 @Inject, @Bean 共同完成初始化配置、构建托管对象等）</td>
-</tr>
-<tr>
-<td>@Bean</td>
-<td>配置托管对象（作用在 @Configuration 类的函数上，才有效）</td>
-</tr>
-<tr>
-<td>@Component</td>
-<td>托管组件（支持自动代理，v2.5.2 开始支持自动代理）</td>
-</tr>
-<tr>
-<td>@Controller</td>
-<td>控制器组件类（支持函数拦截）</td>
-</tr>
-<tr>
-<td>@Remoting</td>
-<td>远程控制器类（有类代理；即RPC服务端）</td>
-</tr>
-</tbody></table>
-<h4 id="条件构建"><a href="#条件构建" class="headerlink" title="条件构建"></a>条件构建</h4><p>条件构建的意思是满足了指定条件才会构建。通过使用 @Condition 来实现，它包含如下的属性：</p>
-<table>
-<thead>
-<tr>
-<th>属性</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>onClass</td>
-<td>有类（只能一个；其实没必要多个）</td>
-</tr>
-<tr>
-<td>onClassName</td>
-<td>有类名</td>
-</tr>
-<tr>
-<td>onProperty</td>
-<td>有属性</td>
-</tr>
-<tr>
-<td>onMissingBean</td>
-<td>没有 Bean</td>
-</tr>
-<tr>
-<td>onMissingBeanName</td>
-<td>没有 Bean Name</td>
-</tr>
-<tr>
-<td>onBean</td>
-<td>有 Bean</td>
-</tr>
-<tr>
-<td>onBeanName</td>
-<td>有 Bean Name</td>
-</tr>
-</tbody></table>
-<p>更多细节，查看官网 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/434">https://solon.noear.org/article/434</a> 。</p>
-<h4 id="依赖注入"><a href="#依赖注入" class="headerlink" title="依赖注入"></a>依赖注入</h4><p>依赖注入的意思是，在构建时需要使用到其他 Bean 对象。依赖注入通常使用@Configuration，配合@Bean 来实现，其中 @Bean 的函数通过参数注入的方式来获取需要的 Bean 对象。另外就是使用手动模式通过异步订阅的方式获取依赖的 Bean 对象。</p>
-<p>以下注入的例子来自官网，更多细节，查看官网 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/587">https://solon.noear.org/article/587</a> 。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean(name=&quot;db1&quot;, typed=true)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> DataSource <span class="title">db1</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;demo.db1&#125;&quot;)</span> DataSource ds)</span></span>&#123; </span><br><span class="line">        <span class="keyword">return</span> ds;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">db1Test</span><span class="params">(<span class="meta">@Db(&quot;db1&quot;)</span> UserMapper mapper)</span> </span>&#123; <span class="comment">//这个注入，依赖“db1”的数据源</span></span><br><span class="line">        <span class="keyword">return</span> mapper.initUsers();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://l4qiang.me/2025/02/18/course100/025/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="L4qiang">
-      <meta itemprop="description" content="记录点滴，注重积累。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyAirhead">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/02/18/course100/025/" class="post-title-link" itemprop="url">Solon —— 配置</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-02-18 19:54:02 / 修改时间：19:59:06" itemprop="dateCreated datePublished" datetime="2025-02-18T19:54:02+08:00">2025-02-18</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/" itemprop="url" rel="index"><span itemprop="name">教程100</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/" itemprop="url" rel="index"><span itemprop="name">Solon</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%99%E7%A8%8B100/%E5%86%99%E4%BD%9C/Solon/Solon-%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Solon 实用教程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>Spring Boot 流行起来的一个原因是简化了配置，其中约定优于配置减少了开发者的配置负担，无需配置或者少量的配置就可以启动项目；自动化配置根据项目依赖自动配置应用程序，简化了开发流程。Solon 作为后起之秀也是采用了约定优于配置和自动配置的方式来简化配置。</p>
-<h2 id="约定"><a href="#约定" class="headerlink" title="约定"></a>约定</h2><h3 id="配置分类"><a href="#配置分类" class="headerlink" title="配置分类"></a>配置分类</h3><h4 id="启动参数"><a href="#启动参数" class="headerlink" title="启动参数"></a>启动参数</h4><p>启动参数，在应用启动后会被静态化，也就是不能再修改。在Java 启动时指定，通过<code>--key=value</code>的形式指定。</p>
-<h4 id="系统属性"><a href="#系统属性" class="headerlink" title="系统属性"></a>系统属性</h4><p>系统属性，在应用启动后会被静态化，也就是不能再修改。在Java 启动时指定，通过<code>-Dkey=value</code>的形式指定。</p>
-<h4 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h4><p>操作系统的环境变量。”solon” 开头的环境变量，会被框架同步到系统属性（System::getProperties）与应用属性（Solon::cfg）。</p>
-<h4 id="应用配置"><a href="#应用配置" class="headerlink" title="应用配置"></a>应用配置</h4><p>应用通过配置文件加载进来的配置。</p>
-<h3 id="主配置文件"><a href="#主配置文件" class="headerlink" title="主配置文件"></a>主配置文件</h3><p>应用配置文件为 <code>resources/app.yml</code> 或者 <code>app.properties</code>，文件名不能修改也不能配置。</p>
-<h3 id="配置加载规则"><a href="#配置加载规则" class="headerlink" title="配置加载规则"></a>配置加载规则</h3><p>应用配置的加载主要分了六个层级，其加载规则为：</p>
-<ul>
-<li>越静态的越前面</li>
-<li>越动态的越后面</li>
-</ul>
-<p>因为配置是以“键”为单位，且后面加载的会盖掉前面加载的，所以最终效果就是配置以最后加载为准。</p>
-<p>加载顺序为：</p>
-<ol>
-<li>主配置文件，先是主配置文件（app.yml），之后是带环境的主配置（app-{env}.yml）,这里不特别区分（yml或者properties）。</li>
-<li>内部配置文件，通过 <code>solon.config.load</code>加载的 <code>classpath</code> 目录下的配置文件。</li>
-<li>外部配置文件，通过 <code>solon.config.add</code> 加载的配置文件。</li>
-<li>动态配置，启动应用时的配置，先是启动参数（–key=value），之后是系统属性（-Dkey=value），最后是环境变量（系统环境设置，或者docker -e 等方式指定）</li>
-<li>启动时加载，通过 <code>app.cfg().loadAdd</code> 或者 <code>app.cfg().loadEnv</code>加载。</li>
-<li>云端配置，通过分布式配置获取，如nacos。</li>
-</ol>
-<h3 id="配置引用规则"><a href="#配置引用规则" class="headerlink" title="配置引用规则"></a>配置引用规则</h3><p>配置文件（或配置块）解析时，Solon.cfg() 已经存在的变量（或者配置块内的变量），可以被引用。属性之间的引用，使用 <code>$&#123;...&#125;</code>：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">test.demo1:</span> <span class="string">&quot;$&#123;db1.url&#125;&quot;</span>                          <span class="comment">#引用应用属性</span></span><br><span class="line"><span class="attr">test.demo2:</span> <span class="string">&quot;jdbc:mysql:$&#123;db1.server&#125;&quot;</span>            <span class="comment">#引用应用属性并组合</span></span><br><span class="line"><span class="attr">test.demo3:</span> <span class="string">&quot;jdbc:mysql:$&#123;db1.server&#125;/$&#123;db1.db&#125;&quot;</span>  <span class="comment">#引用多个应用属性并组合</span></span><br><span class="line"><span class="attr">test.demo4:</span> <span class="string">&quot;$&#123;JAVA_HOME&#125;&quot;</span>                        <span class="comment">#引用环境变量test.demo5: &quot;$&#123;.demo4&#125;&quot;                           #引用本级其它变量（v2.9.0 后支持）</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="常用配置"><a href="#常用配置" class="headerlink" title="常用配置"></a>常用配置</h3><p>配置可能变更，所以直接看官网 <a target="_blank" rel="noopener" href="https://solon.noear.org/article/174">https://solon.noear.org/article/174</a> 。</p>
-<h2 id="注入配置"><a href="#注入配置" class="headerlink" title="注入配置"></a>注入配置</h2><p>配置注入使用 <code>$&#123;...&#125;</code>的表达式，支持如下具体的配置：</p>
-<ul>
-<li><code>$&#123;xxx&#125;</code> 注入字段。</li>
-<li><code>$&#123;xxx:def&#125;</code> 注入字段，如果没有则提供 def 默认值，此时只支持单值接收，不支持集合或实体。</li>
-<li><code>$&#123;classpath:xxx.yml&#125;</code> 注入资源目录下的配置文件 xxx.xml</li>
-</ul>
-<h3 id="注入字段"><a href="#注入字段" class="headerlink" title="注入字段"></a>注入字段</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoService</span></span>&#123;</span><br><span class="line">    <span class="comment">//注入值（带默认值：demoApi），并开启自动更新（注意：如果不是单例，请不要开启自动刷新）</span></span><br><span class="line">    <span class="meta">@Inject(value=&quot;$&#123;track.name:demoApi&#125;&quot;, autoRefreshed=true)</span></span><br><span class="line">    <span class="keyword">static</span> String trackName; <span class="comment">//v3.0 后支持静态字段注入//注入值（没有时，不覆盖字段初始值）</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Inject(&quot;$&#123;track.url&#125;&quot;)</span></span><br><span class="line">    String trackUrl = <span class="string">&quot;http://x.x.x/track&quot;</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//注入配置集合</span></span><br><span class="line">    <span class="meta">@Inject(&quot;$&#123;track.db1&#125;&quot;)</span></span><br><span class="line">    Properties trackDbCfg;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//注入Bean（根据对应的配置集合自动生成并注入）</span></span><br><span class="line">    <span class="meta">@Inject(&quot;$&#123;track.db1&#125;&quot;)</span></span><br><span class="line">    HikariDataSource trackDs;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="注入类"><a href="#注入类" class="headerlink" title="注入类"></a>注入类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Inject(&quot;$&#123;user.config&#125;&quot;)</span>  </span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserProperties</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">    <span class="keyword">public</span> List&lt;String&gt; tags;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@BindProps(prefix=&quot;user.config&quot;)</span>  <span class="comment">//或者用绑定属性注解。v3.0.7 后支持</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserProperties</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">    <span class="keyword">public</span> List&lt;String&gt; tags;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span> </span>&#123;</span><br><span class="line">    <span class="meta">@BindProps(prefix=&quot;user.config&quot;)</span> <span class="comment">//或者用绑定属性注解。v3.0.7 后支持</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> UserProperties <span class="title">userProperties</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> UserProperties();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="注入参数"><a href="#注入参数" class="headerlink" title="注入参数"></a>注入参数</h3><p>当注入到参数的时候，不支持自动刷新。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configurationpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoConfig</span></span>&#123;</span><br><span class="line">    <span class="comment">//提示：@Bean 只能与 @Configuration 配合@Bean </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> DataSource <span class="title">db1</span><span class="params">(<span class="meta">@Inject(&quot;$&#123;track.db1&#125;&quot;)</span> HikariDataSource ds)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ds;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Beanpublic</span> <span class="function">DataSourceWrap <span class="title">db1w</span><span class="params">(<span class="meta">@Inject</span> DataSource ds, <span class="meta">@Inject(&quot;$&#123;wrap&#125;&quot;)</span> WrapConfig wc)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DataSourceWrap(ds, wc);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//也可以带条件处理@Bean@Condition(onProperty=&quot;$&#123;cache.enable&#125; = true&quot;) //有 &quot;cache.enable&quot; 属性值，且等于truepublic CacheService cache(@Inject(&quot;$&#123;cache.config&#125;&quot;) CacheServiceSupplier supper)&#123;</span></span><br><span class="line">       <span class="keyword">return</span> supper.get();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="自动更新"><a href="#自动更新" class="headerlink" title="自动更新"></a>自动更新</h3><p>自动刷新只适合于字段注入，以及单例的类。注意：<strong>如果不是单例，请不要开启自动刷新</strong>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Componentpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoService</span></span>&#123;</span><br><span class="line">    <span class="comment">//注入值（带默认值：demoApi），并开启自动更新</span></span><br><span class="line">    <span class="meta">@Inject(value=&quot;$&#123;track.name:demoApi&#125;&quot;, autoRefreshed=true)</span></span><br><span class="line">    String trackName;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//通过函数时时获取最新的（静态或动态，按需设定）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">trackName2</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Solon.cfg().get(<span class="string">&quot;track.name:demoApi&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="手动配置"><a href="#手动配置" class="headerlink" title="手动配置"></a>手动配置</h2><p>通过 Solon.cfg() 获取 SolonProps 后进行操作。这里不做过多的描述，如果需要可以参看官网文档。</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://solon.noear.org/article/31%EF%BC%8C%E6%89%8B%E5%8A%A8%E8%8E%B7%E5%8F%96%E9%85%8D%E7%BD%AE%E5%8F%8A%E8%AE%A2%E9%98%85%E5%8F%98%E6%9B%B4%E7%9A%84%E5%86%85%E5%AE%B9%E3%80%82">https://solon.noear.org/article/31，手动获取配置及订阅变更的内容。</a></li>
-<li><a target="_blank" rel="noopener" href="https://solon.noear.org/article/910%EF%BC%8CSolonProps">https://solon.noear.org/article/910，SolonProps</a> 接口参看</li>
-</ul>
-<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>配置本身相关简单，记住对应的配置加载规则和注入的方法，基本不会有什么太多的问题。这里不对示例做过多说明，更多需要参看，参看具体的代码 demo-solon01 。</p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要主要介绍了 Solon 的配置配置规则和自动化配置的方法。在理解了 Solon 的配置后，就可以更动态的做部署的配置。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1996,20 +1808,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">312</span>
+          <span class="site-state-item-count">314</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">133</span>
+        <span class="site-state-item-count">137</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">128</span>
+        <span class="site-state-item-count">132</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -2067,12 +1879,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">866k</span>
+    <span title="站点总字数">873k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:07</span>
+    <span title="站点阅读时长">13:14</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -2182,6 +1994,19 @@ window.addEventListener('pjax:success', () => {
 
 
 
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
 
 
     <div id="pjax">
