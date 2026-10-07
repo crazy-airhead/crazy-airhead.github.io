@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>使用 AI 代码工具的一次升级 | CrazyAirhead</title>
+    <meta name="description" content="疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!">
+    <meta name="generator" content="VitePress v1.6.4">
+    <link rel="preload stylesheet" href="/assets/style.DpHAit0a.css" as="style">
+    <link rel="preload stylesheet" href="/vp-icons.css" as="style">
+    
+    <script type="module" src="/assets/app.ltbGjiHK.js"></script>
+    <link rel="preload" href="/assets/inter-roman-latin.Di8DUHzh.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="modulepreload" href="/assets/chunks/theme.CJ4khqEF.js">
+    <link rel="modulepreload" href="/assets/chunks/framework.DzJZdBQK.js">
+    <link rel="modulepreload" href="/assets/posts_course100_045.md.DsaEq0RU.lean.js">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+    <meta name="author" content="L4qiang">
+    <script id="check-dark-mode">(()=>{const e=localStorage.getItem("vitepress-theme-appearance")||"auto",a=window.matchMedia("(prefers-color-scheme: dark)").matches;(!e||e==="auto"?a:e==="dark")&&document.documentElement.classList.add("dark")})();</script>
+    <script id="check-mac-os">document.documentElement.classList.toggle("mac",/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
+  </head>
+  <body>
+    <div id="app"><div class="site"><header class="site-header"><div class="site-header-inner"><a class="site-brand" href="/"><img class="brand-logo" src="/images/logo.png" alt="logo"> CrazyAirhead </a><nav class="site-nav"><!--[--><a class="" href="/">首页</a><a class="" href="/tags/">标签</a><a class="" href="/categories/">分类</a><a class="" href="/archives/">归档</a><!--]--></nav><button class="dark-toggle" title="切换明暗"><svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-14a1 1 0 0 1-1-1V1a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zm0 20a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1zM5 12a1 1 0 0 1-1 1H2a1 1 0 1 1 0-2h2a1 1 0 0 1 1 1zm18 0a1 1 0 0 1-1 1h-2a1 1 0 1 1 0-2h2a1 1 0 0 1 1 1zM6.8 6.8a1 1 0 0 1-1.4 0L4 5.4a1 1 0 0 1 1.4-1.4l1.4 1.4a1 1 0 0 1 0 1.4zm12.8 12.8a1 1 0 0 1-1.4 0l-1.4-1.4a1 1 0 0 1 1.4-1.4l1.4 1.4a1 1 0 0 1 0 1.4zM6.8 17.2a1 1 0 0 1 0 1.4l-1.4 1.4A1 1 0 0 1 4 18.6l1.4-1.4a1 1 0 0 1 1.4 0zM19.6 4a1 1 0 0 1 0 1.4l-1.4 1.4a1 1 0 1 1-1.4-1.4L18.2 4a1 1 0 0 1 1.4 0z"></path></svg></button></div></header><div class="site-body"><main class="site-main"><article class="nex-card post-block"><header class="post-header"><h1 class="post-title">使用 AI 代码工具的一次升级</h1><div class="post-meta"><span class="meta-item"><svg class="meta-icon" viewBox="0 0 1024 1024" width="14" height="14"><path fill="currentColor" d="M512 896a384 384 0 1 0 0-768 384 384 0 0 0 0 768zm0 64a448 448 0 1 1 0-896 448 448 0 0 1 0 896z"></path><path fill="currentColor" d="M480 256a32 32 0 0 1 32 32v256a32 32 0 0 1-64 0V288a32 32 0 0 1 32-32z"></path><path fill="currentColor" d="M480 512h256a32 32 0 1 1 0 64H480a32 32 0 0 1 0-64z"></path></svg> 发表于 2025-09-18</span><span class="meta-item"><svg class="meta-icon" viewBox="0 0 1024 1024" width="14" height="14"><path fill="currentColor" d="M928 160H96c-17.7 0-32 14.3-32 32v640c0 17.7 14.3 32 32 32h832c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32zm-40 208H136c-4.4 0-8-3.6-8-8v-88c0-4.4 3.6-8 8-8h752c4.4 0 8 3.6 8 8v88c0 4.4-3.6 8-8 8z"></path></svg> 教程100 · 写作 · Solon · Solon 实用教程</span><span class="meta-item">约 4 分钟</span><span class="meta-item">1084 字</span></div></header><div class="markdown-body"><div style="position:relative;"><div><p>最近找同事学习了些 AI 代码生成工具的使用，算是我的一次升级。先看下我生成代码的效果，从点击 「AI生成」开始的界面都是由 AI 生成的。如果觉得效果还可以的话，可以继续往下看。</p><blockquote><p>演示视频未随博客发布。</p></blockquote><p>作为一个普通开发人员，在使用先进的 AI 模型的时候，还是需要跨过几个门槛，比如网络，比如支付，比如封号等问题。我自己就是好不容易搞定支付之后，刚想用用 OpenAI 就被封号了。于是有一段时间虽然看到一些比较好的代码生成效果，自己也没有特别实践，导致自己使用 AI 变成工具非常原始。这次和同事聊天，他说到，自己写一个功能，自己就没写过代码。于是非常好奇他的工作流是怎么样的，然后过去学习了下，自己也验证了一番之后，果然有效。</p><p>我之前的使用方式是这样的，使用VS Code，然后 ROO CODE 插件，配置的是 DeepSeek。在使用时，直接在 Prompt 里面说要什么功能，然后等大模型生成，然后除了接受就是接受，最终完成的东西很大程度都没办法完成，需要自己继续修改。于是最终主体代码都是自己写，然后就是让ROO CODE 帮忙完成一些小功能，或者修复直接的报错的问题。</p><p>同事说，之前他也这么用，但是发现效果不好，后面就是让 AI 先整理自己的需求，然后提供方案，而不是直接提供代码。可以对方案提供质疑，然后进一步完善方案，方案完成后才让 AI 写代码。</p><p>在看了同事的直接操作之后，于是回家开始使用 Claud Code 插件，如果没有注册 Claude Code，可以使用下面的两种方式替代：</p><ol><li>使用 Claude 镜像站，<a href="https://www.aigocode.com/%EF%BC%8C%E5%90%8C%E4%BA%8B%E7%94%A8%E7%9A%84%E6%98%AF%E8%BF%99%E4%B8%AA%E6%96%B9%E5%BC%8F%E3%80%82" target="_blank" rel="noreferrer">https://www.aigocode.com/，同事用的是这个方式。</a></li><li>使用 Kimi 替代，我自己用的是这种方式。</li></ol><p>大家可以根据实际的情况自己选择，我这里简单描述下使用 Kimi 替代的操作。</p><ol><li>注册好 <a href="https://platform.moonshot.cn/" target="_blank" rel="noreferrer">https://platform.moonshot.cn/</a> 账号，充值解除限速，并配置好 <code>API Key</code></li><li>安装好 Node.js</li><li>安装 Claude</li></ol><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>npm install -g @anthropic-ai/claude</span></span></code></pre></div><ol start="3"><li>配置环境变量，导出 <code>ANTHROPIC_BASE_URL</code> 和 <code>ANTHROPIC_AUTH_TOKEN</code></li></ol><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># 如果是其他操作系统，自己用对应的方式修改。</span></span>
+<span class="line"><span>vi .zshrc</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>export ANTHROPIC_BASE_URL=https://api.moonshot.cn/anthropic</span></span>
+<span class="line"><span>export ANTHROPIC_AUTH_TOKEN=sk-xxxxxxxxx</span></span></code></pre></div><ol start="4"><li>安装 VS Code 的 <code>Claude Code for VS Code</code> 插件</li><li>打开项目，通过/init 进行初始化。</li><li>接着可以通过对话的方式进行代码编写了。</li></ol><p>以下是演示的生成界面的主体过程（中间有关闭窗口，没有完整的记录），这个界面首先来自，<a href="https://mp.weixin.qq.com/s/tafopd82apfEtCk2DXU0sg%EF%BC%8C%E6%88%91%E6%9C%9F%E6%9C%9B%E7%9A%84%E6%98%AF%E9%80%9A%E8%BF%87" target="_blank" rel="noreferrer">https://mp.weixin.qq.com/s/tafopd82apfEtCk2DXU0sg，我期望的是通过</a> AI 生成配置之后生成 CMS 站点的模版。这里主要就是生成配置页面的功能。</p><p>我的需求文档整理如下：</p><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>我现在想做为内容管理模块增加 AI 生成站点模板的功能。</span></span>
+<span class="line"><span>通过模板管理的，[AI 模板] 进入对应的功能页面。</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>整个页面的核心就是两个部分一个是调整样式，一个是修改提示词，生成站点模板。</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>首先可以在页面左侧对网页样式进行调整，比如主题色、辅助色、字体、大小、字间距、按钮样式等。为了简化网页样式的调整，需要有兜底方案，首先你可以选择预设的各种风格模板，另外的话可以点击「随机生成」按钮，点完所有的元素都会变化，用户可以多点几次挑选自己喜欢的配置。</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>可以在右侧预览，预览需要做了三个页面首页、产品、博客，方便在不同的页面内容上预览，通过 Tab 进行切换。另外预览的部分还支持手机、电脑、平板不同页面宽度的预览，需要支持夜间模式。</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>最后用户可以设置补充默认的提示词内容，点击生成，把设置好的 JSON 和提示词调用 AI 接口生成对应的模板页面。</span></span></code></pre></div><p>可以让 Claude 之间生成到 doc 目录下，初步返回的内容如下。</p><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>1. 功能模块划分</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  核心模块：</span></span>
+<span class="line"><span>  - 样式配置器（左侧）</span></span>
+<span class="line"><span>  - 实时预览器（右侧）</span></span>
+<span class="line"><span>  - AI生成引擎</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2. 样式配置器设计</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  预设风格模板：</span></span>
+<span class="line"><span>  - 现代简约（Linear风格）</span></span>
+<span class="line"><span>  - 商务专业</span></span>
+<span class="line"><span>  - 创意艺术</span></span>
+<span class="line"><span>  - 科技感</span></span>
+<span class="line"><span>  - 温暖亲和</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  样式配置维度：</span></span>
+<span class="line"><span>  interface StyleConfig {</span></span>
+<span class="line"><span>    theme: {</span></span>
+<span class="line"><span>      primaryColor: string;</span></span>
+<span class="line"><span>      secondaryColor: string;</span></span>
+<span class="line"><span>      accentColor: string;</span></span>
+<span class="line"><span>      backgroundColor: string;</span></span>
+<span class="line"><span>      surfaceColor: string;</span></span>
+<span class="line"><span>    };</span></span>
+<span class="line"><span>    typography: {</span></span>
+<span class="line"><span>      fontFamily: string;</span></span>
+<span class="line"><span>      baseFontSize: number;</span></span>
+<span class="line"><span>      headingScale: number;</span></span>
+<span class="line"><span>      lineHeight: number;</span></span>
+<span class="line"><span>      letterSpacing: number;</span></span>
+<span class="line"><span>    };</span></span>
+<span class="line"><span>    layout: {</span></span>
+<span class="line"><span>      borderRadius: number;</span></span>
+<span class="line"><span>      spacing: number;</span></span>
+<span class="line"><span>      maxWidth: number;</span></span>
+<span class="line"><span>      gridGap: number;</span></span>
+<span class="line"><span>    };</span></span>
+<span class="line"><span>    components: {</span></span>
+<span class="line"><span>      buttonStyle: &#39;filled&#39; | &#39;outlined&#39; | &#39;ghost&#39;;</span></span>
+<span class="line"><span>      cardElevation: number;</span></span>
+<span class="line"><span>      inputStyle: &#39;underline&#39; | &#39;outline&#39; | &#39;filled&#39;;</span></span>
+<span class="line"><span>    };</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>3. 预览器设计</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  多页面预览：</span></span>
+<span class="line"><span>  - 首页（Landing Page）</span></span>
+<span class="line"><span>  - 产品页（Product Showcase）</span></span>
+<span class="line"><span>  - 博客页（Blog Layout）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  响应式预览：</span></span>
+<span class="line"><span>  - 手机（375px）</span></span>
+<span class="line"><span>  - 平板（768px）</span></span>
+<span class="line"><span>  - 桌面（1440px）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  主题切换：</span></span>
+<span class="line"><span>  - 浅色模式</span></span>
+<span class="line"><span>  - 深色模式</span></span>
+<span class="line"><span>  - 自动跟随系统</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>4. AI生成引擎优化</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  提示词结构：</span></span>
+<span class="line"><span>  interface AIPrompt {</span></span>
+<span class="line"><span>    basePrompt: string; // 来自bootstrap-prompt.txt</span></span>
+<span class="line"><span>    styleConfig: StyleConfig;</span></span>
+<span class="line"><span>    contentType: &#39;landing&#39; | &#39;product&#39; | &#39;blog&#39;;</span></span>
+<span class="line"><span>    additionalRequirements: string[];</span></span>
+<span class="line"><span>    authorInfo: {</span></span>
+<span class="line"><span>      name: string;</span></span>
+<span class="line"><span>      socialLinks: string[];</span></span>
+<span class="line"><span>    };</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  生成流程：</span></span>
+<span class="line"><span>  1. 用户配置样式参数</span></span>
+<span class="line"><span>  2. 系统生成标准化JSON配置</span></span>
+<span class="line"><span>  3. 结合提示词调用AI接口</span></span>
+<span class="line"><span>  4. 生成完整HTML模板</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>5. 用户界面设计</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  左侧配置面板：</span></span>
+<span class="line"><span>  ┌─────────────────────────────────────┐</span></span>
+<span class="line"><span>  │ 预设模板选择器                      │</span></span>
+<span class="line"><span>  ├─────────────────────────────────────┤</span></span>
+<span class="line"><span>  │ 主题色彩配置                        │</span></span>
+<span class="line"><span>  │ ├── 主色调  ■ #3B82F6               │</span></span>
+<span class="line"><span>  │ ├── 辅助色  ■ #10B981               │</span></span>
+<span class="line"><span>  │ └── 背景色  ■ #FFFFFF               │</span></span>
+<span class="line"><span>  ├─────────────────────────────────────┤</span></span>
+<span class="line"><span>  │ 字体排版设置                        │</span></span>
+<span class="line"><span>  │ ├── 字体族  [Inter] ▼              │</span></span>
+<span class="line"><span>  │ ├── 基础字号  16px [-][+]          │</span></span>
+<span class="line"><span>  │ └── 行高     1.5 [-][+]            │</span></span>
+<span class="line"><span>  ├─────────────────────────────────────┤</span></span>
+<span class="line"><span>  │ 组件样式                            │</span></span>
+<span class="line"><span>  │ ├── 按钮样式 [填充] ▼               │</span></span>
+<span class="line"><span>  │ └── 圆角半径  8px [-][+]           │</span></span>
+<span class="line"><span>  ├─────────────────────────────────────┤</span></span>
+<span class="line"><span>  │ [🎲 随机生成] [💾 保存配置]         │</span></span>
+<span class="line"><span>  └─────────────────────────────────────┘</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  右侧预览面板：</span></span>
+<span class="line"><span>  ┌─────────────────────────────────────┐</span></span>
+<span class="line"><span>  │ [首页] [产品] [博客] | 📱 💻 🖥️ 🌓 │</span></span>
+<span class="line"><span>  ├─────────────────────────────────────┤</span></span>
+<span class="line"><span>  │                                     │</span></span>
+<span class="line"><span>  │         实时预览区域                 │</span></span>
+<span class="line"><span>  │                                     │</span></span>
+<span class="line"><span>  │    ╔═══════════════════════╗       │</span></span>
+<span class="line"><span>  │    ║                       ║       │</span></span>
+<span class="line"><span>  │    ║   模板预览内容         ║       │</span></span>
+<span class="line"><span>  │    ║                       ║       │</span></span>
+<span class="line"><span>  │    ╚═══════════════════════╝       │</span></span>
+<span class="line"><span>  │                                     │</span></span>
+<span class="line"><span>  └─────────────────────────────────────┘</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>6. 技术实现方案</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  前端架构：</span></span>
+<span class="line"><span>  - Vue 3 Composition API</span></span>
+<span class="line"><span>  - Naive UI组件库</span></span>
+<span class="line"><span>  - UnoCSS样式框架</span></span>
+<span class="line"><span>  - Pinia状态管理</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  配置持久化：</span></span>
+<span class="line"><span>  - LocalStorage保存用户配置</span></span>
+<span class="line"><span>  - 支持导出/导入JSON配置</span></span>
+<span class="line"><span>  - 版本管理支持</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  AI集成：</span></span>
+<span class="line"><span>  - 封装通用AI调用接口</span></span>
+<span class="line"><span>  - 支持多种AI服务提供商</span></span>
+<span class="line"><span>  - 缓存机制优化性能</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>7. 交互优化</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  用户体验增强：</span></span>
+<span class="line"><span>  - 配置变更实时预览</span></span>
+<span class="line"><span>  - 撤销/重做功能</span></span>
+<span class="line"><span>  - 键盘快捷键支持</span></span>
+<span class="line"><span>  - 拖拽调整参数</span></span>
+<span class="line"><span>  - 批量应用样式</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  性能优化：</span></span>
+<span class="line"><span>  - 虚拟滚动长列表</span></span>
+<span class="line"><span>  - 防抖处理频繁操作</span></span>
+<span class="line"><span>  - 懒加载预览内容</span></span>
+<span class="line"><span>  - 压缩传输数据</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>8. 扩展功能</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  高级功能：</span></span>
+<span class="line"><span>  - 自定义CSS注入</span></span>
+<span class="line"><span>  - JavaScript交互增强</span></span>
+<span class="line"><span>  - SEO优化配置</span></span>
+<span class="line"><span>  - 性能指标监控</span></span>
+<span class="line"><span>  - A/B测试支持</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>这个设计方案充分考虑了用户友好性、技术可行性和扩展性，能够满足内容管理系统中AI生成站点模板的核心需求。</span></span></code></pre></div><p>当时感觉已经和细化了，特别是有同事提到的 ascii 的 ui，于是让 Claude 继续生成。</p><p><em>（此处配图缺失）</em></p><p>一开始生成的页面是这样的，配置在左侧，Prompt在下面，不是太好的利用页面，于是让大模型把配置和提示词配置都放到右侧，用Tab 进行切换。</p><p>接下来发现一些交互的问题，直接发给Claude 进行修改。</p><p><img src="/assets/image-20250918230352310.BSLIKaf3.png" alt="image-20250918230352310"></p><p>在这个过程中当中，注意即使提交 Git，以保留修改的成果，毕竟 AI 生成的也还是有些随机。另外一个就是因为项目是由 lint check的，如果 Claude 自己不能修改的情况，可以用 ROO CODE。一个模型发现不了的问题，另一个模型能发现。</p><p>整个环境验证下拉自己基本没有写代码，都是交给了 Claude Code 插件来处理的。</p><p>下面是完成这个功能，修改其中的BUG，产生的消费记录。</p><p><img src="/assets/image-20250918230945685.BneVlxae.png" alt="image-20250918230945685"></p><p>通过这次AI 代码生成工具使用方法的调整，让我实现了一些我之前肯定做不出来的效果，而且我也基本上没有写代码，更重要的省钱省时间。</p></div></div></div></article></main><aside class="site-sidebar"><div class="nex-card profile-card"><img class="profile-avatar" src="/images/logo.png" alt="avatar"><h2 class="profile-name"><a href="/">CrazyAirhead</a></h2><p class="profile-desc">疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!</p><div class="profile-stats"><a href="/archives/"><strong>314</strong><span>文章</span></a><a href="/categories/"><strong>115</strong><span>分类</span></a><a href="/tags/"><strong>132</strong><span>标签</span></a></div><div class="profile-links"><a href="https://github.com/crazy-airhead" target="_blank" rel="noopener" title="GitHub"><svg viewBox="0 0 16 16" width="18" height="18"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg></a></div></div><!----></aside></div><footer class="site-footer"><p>© 2019 - 2026 CrazyAirhead</p><p><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · Powered by <a href="https://vitepress.dev" target="_blank" rel="noopener">VitePress</a></p></footer></div></div>
+    <script>window.__VP_HASH_MAP__=JSON.parse("{\"archives.md\":\"Dd6peagV\",\"categories.md\":\"eqBvOp9Z\",\"index.md\":\"kOwa1icX\",\"page_10.md\":\"BdjBGZ36\",\"page_11.md\":\"BEHikI00\",\"page_12.md\":\"DdHRYvJ8\",\"page_13.md\":\"CSLErpTU\",\"page_14.md\":\"CyFqd24t\",\"page_15.md\":\"CSvahFhg\",\"page_16.md\":\"3TYunrjd\",\"page_17.md\":\"Duog26fw\",\"page_18.md\":\"CkbbhtJn\",\"page_19.md\":\"lDGKvFrY\",\"page_2.md\":\"D7ypdLNX\",\"page_20.md\":\"wUkuTyAs\",\"page_21.md\":\"uSAz5HLv\",\"page_22.md\":\"JYmgGkIR\",\"page_23.md\":\"BqKHm7_F\",\"page_24.md\":\"BYmL4VzC\",\"page_25.md\":\"47AtSpSm\",\"page_26.md\":\"BsD3_wu9\",\"page_27.md\":\"tWitb2yE\",\"page_28.md\":\"zJKxN6cr\",\"page_29.md\":\"ofDB-tcW\",\"page_3.md\":\"C0M0mWeo\",\"page_30.md\":\"Cxz7aLoN\",\"page_31.md\":\"CnhnyOgF\",\"page_32.md\":\"DP4CDKR2\",\"page_4.md\":\"aUkbswDU\",\"page_5.md\":\"D8j2Q3lQ\",\"page_6.md\":\"CynCu6wR\",\"page_7.md\":\"DULPFpSX\",\"page_8.md\":\"iO_elkev\",\"page_9.md\":\"BvMmO-7p\",\"posts_achievement_001.md\":\"D9rZhUDQ\",\"posts_android_android-0.md\":\"Db3D3d3G\",\"posts_android_android-1.md\":\"kuCMG2En\",\"posts_android_android-2.md\":\"WBAZriCN\",\"posts_android_android-3.md\":\"5yu8UzZl\",\"posts_bigdata_dss_install.md\":\"CW-w0IDQ\",\"posts_bigdata_es_olap-1.md\":\"DsBpZULi\",\"posts_bigdata_es_olap-2.md\":\"B-zDNryo\",\"posts_bigdata_es_sniff.md\":\"z8GU7oai\",\"posts_bigdata_hadoop_hadoop.md\":\"C5DvYkXD\",\"posts_bigdata_hbase-indexer_batch-indexing.md\":\"9GkI_Pzl\",\"posts_bigdata_hbase-indexer_cli-tool.md\":\"PzRSGeG5\",\"posts_bigdata_hbase-indexer_getting-start-demo.md\":\"C3A3-57n\",\"posts_bigdata_hbase-indexer_getting-start-install.md\":\"DSRX5Ktc\",\"posts_bigdata_hbase-indexer_getting-start-tutorial.md\":\"DyhIrpkq\",\"posts_bigdata_hbase-indexer_getting-start.md\":\"DpZCUp2H\",\"posts_bigdata_hbase-indexer_home.md\":\"CeAP9FiZ\",\"posts_bigdata_hbase-indexer_indexer-configuration.md\":\"WBYVWrWP\",\"posts_bigdata_hbase-indexer_loss-data.md\":\"2LcqiHZL\",\"posts_bigdata_hbase-indexer_metrics.md\":\"0hFeGSwb\",\"posts_bigdata_hbase-indexer_requirements.md\":\"DqIbAH4B\",\"posts_bigdata_hive_install.md\":\"CUPxXVDr\",\"posts_bigdata_spark_install.md\":\"DMAzhKnA\",\"posts_bigdata_tdengine_tdengine-1.md\":\"7nJVV8R6\",\"posts_bigdata_tdengine_tdengine-2.md\":\"B5dnLcwf\",\"posts_course100_001.md\":\"DyWpgQGI\",\"posts_course100_002.md\":\"CTmpesWP\",\"posts_course100_003.md\":\"nx05szCj\",\"posts_course100_004.md\":\"C-lIxWcW\",\"posts_course100_005.md\":\"BqOW8eM6\",\"posts_course100_006.md\":\"BgqWaihe\",\"posts_course100_007.md\":\"y-RWJYi4\",\"posts_course100_008.md\":\"P2OxjExP\",\"posts_course100_009.md\":\"CESvFVll\",\"posts_course100_010.md\":\"BaX3NJEI\",\"posts_course100_011.md\":\"BgraVujJ\",\"posts_course100_012.md\":\"CJBxZtM_\",\"posts_course100_013.md\":\"C39wp1ay\",\"posts_course100_014.md\":\"BUGI6_m7\",\"posts_course100_015.md\":\"CRXgXgx2\",\"posts_course100_016.md\":\"pPPlLdSV\",\"posts_course100_017.md\":\"d6-aEeQ1\",\"posts_course100_018.md\":\"Czciludu\",\"posts_course100_019.md\":\"DnQTBaRa\",\"posts_course100_020.md\":\"DbZi561E\",\"posts_course100_021.md\":\"IGa1AO1D\",\"posts_course100_022.md\":\"DP1HV-Sw\",\"posts_course100_023.md\":\"Dhztv__s\",\"posts_course100_024.md\":\"DyyUqX9E\",\"posts_course100_025.md\":\"CsQBBi3l\",\"posts_course100_026.md\":\"Cc9zgYlk\",\"posts_course100_027.md\":\"Cw2PeczF\",\"posts_course100_028.md\":\"rwEqxZ4M\",\"posts_course100_029.md\":\"CakTyb-D\",\"posts_course100_030.md\":\"CL1G7dpy\",\"posts_course100_031.md\":\"Df0OLmdT\",\"posts_course100_032.md\":\"CL1fqZq5\",\"posts_course100_033.md\":\"CNhneKlF\",\"posts_course100_034.md\":\"D2JrhqC8\",\"posts_course100_035.md\":\"kIm67K3s\",\"posts_course100_036.md\":\"DKuOXkT_\",\"posts_course100_037.md\":\"Jn5QXEKi\",\"posts_course100_038.md\":\"sVQdJ80Y\",\"posts_course100_039.md\":\"DVbJV5ei\",\"posts_course100_040.md\":\"C3nTcOV7\",\"posts_course100_041.md\":\"ByMRZYjT\",\"posts_course100_042.md\":\"ySLP-Nqh\",\"posts_course100_043.md\":\"BzVN95DX\",\"posts_course100_044.md\":\"C9dmlfIn\",\"posts_course100_045.md\":\"DsaEq0RU\",\"posts_course100_046.md\":\"DLZNYc1f\",\"posts_course100_047.md\":\"BvEPsqKN\",\"posts_course100_048.md\":\"1PUY-sjA\",\"posts_course100_049.md\":\"DeCwOhYT\",\"posts_course100_050.md\":\"papdrRyc\",\"posts_course100_051.md\":\"CgLh4t2q\",\"posts_course100_052.md\":\"aOEoa2qG\",\"posts_course100_053.md\":\"DgBqe66-\",\"posts_course100_054.md\":\"CS65XyrN\",\"posts_course100_055.md\":\"BNUuNZpI\",\"posts_course100_056.md\":\"BfxYBfDw\",\"posts_course100_057.md\":\"6yWCrTmK\",\"posts_course100_058.md\":\"SgcIUX9Z\",\"posts_course100_059.md\":\"Cky1GBN5\",\"posts_course100_060.md\":\"3Y0Vo1r_\",\"posts_course100_061.md\":\"BGv7SsiE\",\"posts_course100_062.md\":\"DT-Tzg5K\",\"posts_course100_063.md\":\"4fQkhhG5\",\"posts_course100_064.md\":\"CUWF-4-k\",\"posts_course100_065.md\":\"BHYxCUad\",\"posts_course100_066.md\":\"MhBL-15h\",\"posts_finance_box-001.md\":\"C8g5x51G\",\"posts_finance_box-course.md\":\"BbrYeyGe\",\"posts_finance_box-make.md\":\"awYIx3ng\",\"posts_finance_box-seller.md\":\"9UaPylgO\",\"posts_finance_innovate.md\":\"Btdu16IU\",\"posts_finance_loan.md\":\"CvC3wrW6\",\"posts_finance_mm-theory.md\":\"OkoFRD5D\",\"posts_frontend_news_news-1.md\":\"DmKCX8Ds\",\"posts_frontend_nodejs_nvm.md\":\"CiExY4dl\",\"posts_frontend_nodejs_yarn.md\":\"DoIXkL-p\",\"posts_frontend_security_cors.md\":\"J5srCn_Y\",\"posts_frontend_vue_vue-error-1.md\":\"DymFU8iY\",\"posts_frontend_vue_vue-error-2.md\":\"B2y4EIgX\",\"posts_frontend_vue_vue-error-3.md\":\"04O_BddE\",\"posts_geektime_chendong_search.md\":\"C9keSetl\",\"posts_geektime_xufei_hana.md\":\"Doiwx4h8\",\"posts_git_git-1.md\":\"DtzufrNn\",\"posts_git_git-2.md\":\"BqubtzwZ\",\"posts_git_git-3.md\":\"BH2K8QMP\",\"posts_go_go-little-book_about.md\":\"CveQatBA\",\"posts_go_go-little-book_chapter-1.md\":\"BaTtkjoJ\",\"posts_go_go-little-book_chapter-2.md\":\"Bwd0UVO8\",\"posts_go_go-little-book_chapter-3.md\":\"ICaNKFaM\",\"posts_go_go-little-book_chapter-4.md\":\"ZZtPONX5\",\"posts_go_go-little-book_chapter-5.md\":\"CAajl_7U\",\"posts_go_go-little-book_chapter-6.md\":\"CfhYZteo\",\"posts_go_go-little-book_getting-start.md\":\"gWPYLQeF\",\"posts_go_go-little-book_introduction.md\":\"B2g8wZ19\",\"posts_go_go-plugin.md\":\"C5av2PX4\",\"posts_go_gsyslog.md\":\"D118bMZl\",\"posts_homework_000.md\":\"C_QBxWSj\",\"posts_homework_001.md\":\"B-QtyeFC\",\"posts_homework_002.md\":\"DD11CUu-\",\"posts_homework_003.md\":\"DesC8q4D\",\"posts_homework_004.md\":\"Dl04W_NR\",\"posts_homework_005.md\":\"B_zonkbW\",\"posts_homework_006.md\":\"DgdJcmek\",\"posts_homework_007.md\":\"CwdMwmn1\",\"posts_homework_008.md\":\"B1at7E6e\",\"posts_homework_009.md\":\"BP9GuYwG\",\"posts_homework_010.md\":\"B21gPTgE\",\"posts_homework_011.md\":\"DZVqKYYz\",\"posts_homework_012.md\":\"BSJ66YnH\",\"posts_homework_013.md\":\"BgFyMMiA\",\"posts_homework_014.md\":\"CW52tNzV\",\"posts_homework_015.md\":\"CIFhyo_F\",\"posts_homework_016.md\":\"CHMPEz66\",\"posts_homework_017.md\":\"6rRWSrDY\",\"posts_homework_018.md\":\"oD1bo112\",\"posts_homework_019.md\":\"BPDC1lFf\",\"posts_homework_020.md\":\"14cZBywm\",\"posts_homework_021.md\":\"B_TtYEUH\",\"posts_homework_022.md\":\"CL6K9nZG\",\"posts_homework_023.md\":\"CwbAW0Kl\",\"posts_homework_024.md\":\"CtAYK0NP\",\"posts_homework_025.md\":\"Dz7WJCVU\",\"posts_homework_026.md\":\"w7iT7CMY\",\"posts_homework_027.md\":\"DROkdS_x\",\"posts_homework_028.md\":\"gIgNC-5-\",\"posts_homework_029.md\":\"DFXaNOCc\",\"posts_homework_030.md\":\"BjDoQegu\",\"posts_homework_031.md\":\"DESsP36g\",\"posts_homework_032.md\":\"DOk4UHee\",\"posts_homework_033.md\":\"CRuPHbvO\",\"posts_homework_034.md\":\"C4wg7EEv\",\"posts_homework_035.md\":\"BU5c59pa\",\"posts_homework_036.md\":\"Tfq4lL3r\",\"posts_homework_037.md\":\"CN1IPCKH\",\"posts_homework_038.md\":\"DC1wGs7D\",\"posts_homework_039.md\":\"CqBBPGrw\",\"posts_homework_040.md\":\"CCLc6WxZ\",\"posts_homework_041.md\":\"DSsfy8ti\",\"posts_homework_042.md\":\"CE7TWz0o\",\"posts_homework_043.md\":\"91GAzufL\",\"posts_homework_044.md\":\"DWUXuSfK\",\"posts_homework_045.md\":\"BrCnipo6\",\"posts_homework_046.md\":\"DCbc_1CB\",\"posts_homework_047.md\":\"BN9kiEQr\",\"posts_homework_048.md\":\"Ca7pm7qk\",\"posts_homework_049.md\":\"DcoruliN\",\"posts_homework_050.md\":\"lc53kkW5\",\"posts_homework_051.md\":\"DQZJhlP5\",\"posts_homework_052.md\":\"DyAN2Aog\",\"posts_homework_053.md\":\"CW_kFHRN\",\"posts_homework_054.md\":\"h1fID7wK\",\"posts_homework_055.md\":\"D_Dl0wTk\",\"posts_homework_056.md\":\"Dh7tQQ3U\",\"posts_homework_057.md\":\"DJ80jNqq\",\"posts_homework_058.md\":\"CcfwwC93\",\"posts_homework_059.md\":\"CJtJ5h8y\",\"posts_homework_060.md\":\"C21QWWLK\",\"posts_homework_061.md\":\"D3kivO3e\",\"posts_homework_062.md\":\"DGe7LOaW\",\"posts_homework_063.md\":\"CKeeZXvu\",\"posts_homework_064.md\":\"Dh0Zx1uZ\",\"posts_homework_065.md\":\"DkMhJhNx\",\"posts_homework_066.md\":\"DSwVROPJ\",\"posts_homework_067.md\":\"BG2hrl3g\",\"posts_homework_068.md\":\"DF8qEiEN\",\"posts_homework_069.md\":\"DeDZWt18\",\"posts_homework_070.md\":\"HTOr5ZON\",\"posts_homework_071.md\":\"DTlr-IP8\",\"posts_homework_072.md\":\"e6BuaA-4\",\"posts_homework_073.md\":\"D8i_3JPg\",\"posts_homework_074.md\":\"Bals5ZLp\",\"posts_homework_075.md\":\"DVlvIYaC\",\"posts_homework_076.md\":\"DvX2c3vh\",\"posts_homework_077.md\":\"DLrH1xUk\",\"posts_homework_078.md\":\"BzzeAOkc\",\"posts_homework_079.md\":\"s-Nwvhvq\",\"posts_homework_080.md\":\"Dhndyzxs\",\"posts_homework_081.md\":\"DFe3laWs\",\"posts_homework_082.md\":\"C8GlqTAd\",\"posts_homework_083.md\":\"LCRSHi7-\",\"posts_homework_084.md\":\"B7hT_p-N\",\"posts_homework_085.md\":\"BGutCBhH\",\"posts_homework_086.md\":\"Dcj4x8Jy\",\"posts_homework_087.md\":\"QO80ruQp\",\"posts_homework_088.md\":\"C2DwX9Zx\",\"posts_homework_089.md\":\"DFbe_yj2\",\"posts_homework_090.md\":\"DRU2svuJ\",\"posts_homework_091.md\":\"Cxonl7vZ\",\"posts_homework_092.md\":\"BXCldx15\",\"posts_homework_093.md\":\"ttLFeUZj\",\"posts_homework_094.md\":\"B2Kiu5Ia\",\"posts_homework_095.md\":\"kTYZQwgQ\",\"posts_homework_096.md\":\"itxvQIYf\",\"posts_homework_097.md\":\"xewk2DKb\",\"posts_homework_098.md\":\"Bp-KnAW7\",\"posts_homework_099.md\":\"Ip9vjsLP\",\"posts_homework_100.md\":\"BauBW_-v\",\"posts_homework_101.md\":\"Jx7X1xjh\",\"posts_homework_102.md\":\"ByItVIw-\",\"posts_homework_103.md\":\"D3WNNf9V\",\"posts_homework_104.md\":\"DdieYpRR\",\"posts_homework_105.md\":\"CymACxkz\",\"posts_homework_106.md\":\"OGvfL3m1\",\"posts_homework_107.md\":\"DH_QOvwM\",\"posts_homework_108.md\":\"D3k_G3Ia\",\"posts_homework_109.md\":\"DCF3dE3d\",\"posts_homework_110.md\":\"DEAi4fEk\",\"posts_homework_111.md\":\"Do0Fv19e\",\"posts_homework_112.md\":\"h9HbsxLU\",\"posts_homework_113.md\":\"CVxSXwUn\",\"posts_homework_114.md\":\"BKA0VgHo\",\"posts_homework_115.md\":\"CxyrXNMh\",\"posts_homework_116.md\":\"VyT3eI2q\",\"posts_homework_117.md\":\"qK87WDUv\",\"posts_homework_118.md\":\"D_8D6nh_\",\"posts_homework_119.md\":\"LhHit2sY\",\"posts_homework_120.md\":\"DUEzHYnC\",\"posts_homework_121.md\":\"MRrVwG3w\",\"posts_homework_122.md\":\"DTf8RvIu\",\"posts_homework_123.md\":\"Bt5leB2G\",\"posts_homework_124.md\":\"zLpH6IPb\",\"posts_homework_125.md\":\"BGKCP63M\",\"posts_homework_126.md\":\"DKlNTfOP\",\"posts_homework_127.md\":\"MZAFyuRk\",\"posts_homework_128.md\":\"BnJe_rE7\",\"posts_homework_129.md\":\"FyBmfXN_\",\"posts_ide_idea.md\":\"BXiFljcx\",\"posts_ipfs_ipfs-1.md\":\"o76vfxdl\",\"posts_ipfs_ipfs-white-paper.md\":\"C3mq93Vs\",\"posts_java_auth.md\":\"BEjaIBLr\",\"posts_java_cors.md\":\"CcPhDQKJ\",\"posts_java_ehcache.md\":\"OAZwQ_Jq\",\"posts_java_fastjson.md\":\"BUphZXsj\",\"posts_java_frontend.md\":\"Cg7BAsGl\",\"posts_java_gradle-001.md\":\"CsGhqIh-\",\"posts_java_gradle-002.md\":\"BJeswuCz\",\"posts_java_gradle-003.md\":\"Bdopy5fi\",\"posts_java_gradle-004.md\":\"92g_0l1p\",\"posts_java_gradle-005.md\":\"C-qD2V2T\",\"posts_java_gradle.md\":\"D13rexpN\",\"posts_java_illegal-reflective-access.md\":\"C_f5ORm7\",\"posts_java_jdk8-apline.md\":\"mjTfRQdw\",\"posts_java_list.md\":\"DW-BeNNy\",\"posts_java_quicksql-001.md\":\"BHvORTQp\",\"posts_java_quicksql-002.md\":\"J4xBYInT\",\"posts_java_replacing-class.md\":\"Bkp6LYG9\",\"posts_kotlin_spring-boot.md\":\"CFmLofWB\",\"posts_misc_appleid.md\":\"D3X2-OFh\",\"posts_misc_chopsticks.md\":\"D5_-eidJ\",\"posts_misc_cmd.md\":\"Cu3ySuFt\",\"posts_misc_error-encoding.md\":\"YYAfbpqh\",\"posts_misc_exponential.md\":\"BFDbGoRe\",\"posts_misc_handwriting.md\":\"CfkE1gtt\",\"posts_misc_hexo.md\":\"BTaQtfFF\",\"posts_misc_homebrew-01.md\":\"DsyOhSxm\",\"posts_misc_homebrew.md\":\"BDm7j93k\",\"posts_misc_keywords.md\":\"DzAfULmk\",\"posts_misc_navicat.md\":\"B9uo4gTR\",\"posts_misc_notepad-plus.md\":\"Cu0DoBp_\",\"posts_misc_rubikscube.md\":\"DWPkQ0-x\",\"posts_misc_shell-problem.md\":\"Bf23k2YR\",\"posts_misc_three-factors-of-manage.md\":\"D9GrPZFE\",\"posts_misc_tunnel.md\":\"LBszcx8q\",\"posts_mixin_mixin-1.md\":\"DYZU1fA5\",\"posts_mysql_jsontype.md\":\"6rCT87Ox\",\"posts_mysql_upgrade.md\":\"Cjp1R_Fv\",\"posts_nginx_docker-deploy.md\":\"BZ_SklLa\",\"posts_php_env.md\":\"CWHcqXa3\",\"posts_solon_solon-1.md\":\"BFJmFSOx\",\"posts_solon_solon-2.md\":\"_EcAHLuN\",\"posts_solr_writelock.md\":\"xUFLsvDi\",\"posts_spring_saas-2.md\":\"BRXkW0Dn\",\"posts_spring_saas.md\":\"BhjWX9Lg\",\"posts_spring_shutdownspringboot.md\":\"DIknmeWI\",\"posts_spring_springboot-0.md\":\"CeLSJbkN\",\"posts_spring_springboot-1.md\":\"Nvb3vVoz\",\"posts_spring_springboot-2.md\":\"Cl2_yXbp\",\"posts_spring_springboot-3.md\":\"Bhzwc9Zg\",\"posts_spring_springboot-4.md\":\"BdCLZBlw\",\"posts_spring_springwardeply.md\":\"JdE3xB4w\",\"posts_spring_start-error.md\":\"DaONqQDV\",\"posts_virtualization_ovirt-1.md\":\"D-tzcEc5\",\"posts_virtualization_ovirt.md\":\"B66p0KiL\",\"posts_zeronet_zeronet-0.md\":\"cV3cZQJa\",\"posts_zeronet_zeronet-1.md\":\"DUX5Jcbg\",\"posts_zeronet_zeronet-2.md\":\"BApZqz-1\",\"posts_zeronet_zeronet-3.md\":\"xRQfeiX6\",\"posts_zeronet_zeronet-4.md\":\"CaI1Nnle\",\"posts_zeronet_zeronet-5.md\":\"DknU8a23\",\"tags.md\":\"DZKVg3ud\"}");window.__VP_SITE_DATA__=JSON.parse("{\"lang\":\"zh-CN\",\"dir\":\"ltr\",\"title\":\"CrazyAirhead\",\"description\":\"疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!\",\"base\":\"/\",\"head\":[],\"router\":{\"prefetchLinks\":true},\"appearance\":true,\"themeConfig\":{},\"locales\":{},\"scrollOffset\":134,\"cleanUrls\":false}");</script>
+    
+  </body>
+</html>
