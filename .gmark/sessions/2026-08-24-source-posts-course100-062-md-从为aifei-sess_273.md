@@ -4,7 +4,7 @@ title: '@source/_posts/course100/062.md，从为aifei-…'
 engine: claude
 model: claude-code|1|glm-5.2[1m]
 created: "2026-08-24T21:11:55+08:00"
-updated: "2026-10-05T12:10:34+08:00"
+updated: "2026-10-07T21:55:14+08:00"
 summary: '@source/_posts/course100/062.md，从为aifei-go创建文档站的角度出发，https://crazy-airhead.githu…'
 ---
 

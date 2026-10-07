@@ -6,6 +6,7 @@ import TopNav from './components/TopNav.vue'
 import ProfileCard from './components/ProfileCard.vue'
 import TocCard from './components/TocCard.vue'
 import PostMeta from './components/PostMeta.vue'
+import Comments from './components/Comments.vue'
 import { data as posts } from '../loaders/posts.data'
 
 const { frontmatter, page } = useData()
@@ -34,6 +35,9 @@ const currentPost = computed(() => {
             <Content />
           </div>
         </article>
+
+        <!-- 评论：仅文章页，Gitalk 按映射表找回旧 issue -->
+        <Comments v-if="isPost" />
 
         <!-- 列表类页面（首页/分页/归档/标签/分类）由各 md 页面自行组织卡片 -->
         <div v-else class="markdown-body">

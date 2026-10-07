@@ -4,7 +4,7 @@ title: '@/Users/airhead/WorkSpace/l4qiang/source…'
 engine: claude
 model: claude-code|1|glm-5.2[1m]
 created: "2026-08-08T11:06:21+08:00"
-updated: "2026-10-05T12:10:34+08:00"
+updated: "2026-10-07T21:55:14+08:00"
 summary: '@/Users/airhead/WorkSpace/l4qiang/source/_posts/course100/060.md 为我重写一个版本。'
 ---
 

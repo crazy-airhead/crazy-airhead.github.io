@@ -707,6 +707,20 @@ html.dark .markdown-body .shiki span {
   white-space: pre-wrap;
 }
 
+/* ---------- 评论 ---------- */
+.gitalk-container {
+  min-height: 120px;
+}
+
+.gitalk-container .gt-container .gt-header-textarea,
+.gitalk-container .gt-container .gt-comment-content {
+  background: var(--nex-inline-code-bg);
+}
+
+.gitalk-container .gt-container .gt-comment-content:hover {
+  box-shadow: none;
+}
+
 /* ---------- 响应式（窄屏隐藏侧栏，对齐 NexT 移动端行为） ---------- */
 @media (max-width: 1023px) {
   .site-sidebar {
