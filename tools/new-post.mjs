@@ -24,6 +24,10 @@ function usage() {
 const args = process.argv.slice(2)
 const name = args.find(a => !a.startsWith('-'))
 if (!name) usage()
+if (path.isAbsolute(name) || name.split('/').includes('..')) {
+  console.error('标题不能是绝对路径或包含 ..')
+  process.exit(1)
+}
 
 function opt(flag) {
   const i = args.indexOf(flag)
@@ -45,9 +49,10 @@ const d = new Date()
 const pad = n => String(n).padStart(2, '0')
 const date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
 
-fs.mkdirSync(dir, { recursive: true })
+// 标题可带子目录（如 course100/067），父目录按需创建
+fs.mkdirSync(path.dirname(file), { recursive: true })
 fs.writeFileSync(file, `---
-title: ${name}
+title: ${path.basename(name)}
 date: '${date}'
 categories:
 ${category ? `  - ${category}\n` : ''}tags:
@@ -56,7 +61,8 @@ ${tags.map(t => `  - ${t}`).join('\n')}
 `)
 
 // 同名资源文件夹（Hexo post_asset_folder 的等价物）
-fs.mkdirSync(path.join(dir, name), { recursive: true })
+const assetDir = path.join(dir, name)
+fs.mkdirSync(assetDir, { recursive: true })
 
 console.log(`已创建: ${path.relative(ROOT, file)}`)
-console.log(`资源目录: docs/posts/${category ? category + '/' : ''}${name}/`)
+console.log(`资源目录: ${path.relative(ROOT, assetDir)}/`)
