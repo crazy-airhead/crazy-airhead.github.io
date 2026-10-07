@@ -30,9 +30,12 @@ pnpm preview     # 本地预览构建产物
 
 ## 写作
 
-- 新建 `docs/posts/<分类>/<标题>.md`，frontmatter 写 `title`、`date`、`categories`、`tags`
-- 图片等资源放在同名资源文件夹（如 `docs/posts/misc/foo/`），正文用 `./foo/xxx.png` 引用
-- `​```mermaid` 围栏自动渲染成图表
+```bash
+pnpm new <标题>                  # 创建 docs/posts/<标题>.md
+pnpm new <标题> -c misc -t go,笔记  # 指定分类与标签
+```
+
+同时会创建同名资源文件夹（对齐旧 Hexo 的 post_asset_folder），图片放里面，正文用 `./<标题>/xxx.png` 引用。frontmatter 写 `title`、`date`、`categories`、`tags`；` ```mermaid ` 围栏自动渲染成图表。
 
 ## 发布
 

@@ -8,6 +8,7 @@
     "dev": "vitepress dev docs",
     "build": "vitepress build docs",
     "preview": "vitepress preview docs",
+    "new": "node tools/new-post.mjs",
     "migrate": "node tools/migrate-posts.mjs"
   },
   "dependencies": {
