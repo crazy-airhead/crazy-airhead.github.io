@@ -51,14 +51,24 @@ const date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${
 
 // 标题可带子目录（如 course100/067），父目录按需创建
 fs.mkdirSync(path.dirname(file), { recursive: true })
-fs.writeFileSync(file, `---
-title: ${path.basename(name)}
-date: '${date}'
+
+// 模板：优先用 scaffolds/post.md（对齐 Hexo，可自行加字段），缺失时用内置模板
+const scaffold = path.join(ROOT, 'scaffolds/post.md')
+const template = fs.existsSync(scaffold)
+  ? fs.readFileSync(scaffold, 'utf8')
+  : `---
+title: {{ title }}
+date: {{ date }}
 categories:
-${category ? `  - ${category}\n` : ''}tags:
-${tags.map(t => `  - ${t}`).join('\n')}
+tags:
 ---
-`)
+`
+
+let content = template.replaceAll('{{ title }}', path.basename(name)).replaceAll('{{ date }}', date)
+// -c/-t 注入模板中的空 categories/tags 字段
+if (category) content = content.replace(/^categories:\s*$/m, `categories:\n  - ${category}`)
+if (tags.length) content = content.replace(/^tags:\s*$/m, `tags:\n${tags.map(t => `  - ${t}`).join('\n')}`)
+fs.writeFileSync(file, content)
 
 // 同名资源文件夹（Hexo post_asset_folder 的等价物）
 const assetDir = path.join(dir, name)
