@@ -26,7 +26,10 @@ function toggleDark() {
 <template>
   <header class="site-header">
     <div class="site-header-inner">
-      <a class="site-brand" :href="withBase('/')">CrazyAirhead</a>
+      <a class="site-brand" :href="withBase('/')">
+        <img class="brand-logo" src="/images/logo.png" alt="logo" />
+        CrazyAirhead
+      </a>
       <nav class="site-nav">
         <a
           v-for="m in menus"

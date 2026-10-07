@@ -11,6 +11,7 @@ const tagCount = new Set(posts.flatMap(p => p.tags)).size
 
 <template>
   <div class="nex-card profile-card">
+    <img class="profile-avatar" src="/images/logo.png" alt="avatar" />
     <h2 class="profile-name">
       <a href="/">{{ site.title }}</a>
     </h2>
