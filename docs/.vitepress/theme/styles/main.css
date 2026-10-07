@@ -302,10 +302,12 @@ video {
 }
 
 .profile-avatar {
+  display: block;
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  margin-bottom: 10px;
+  /* 默认主题把 img 重置为 block，auto 边距负责水平居中 */
+  margin: 0 auto 10px;
 }
 
 .dark .profile-avatar {
