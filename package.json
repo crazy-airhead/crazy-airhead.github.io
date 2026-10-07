@@ -9,6 +9,7 @@
     "build": "vitepress build docs",
     "preview": "vitepress preview docs",
     "new": "node tools/new-post.mjs",
+    "pub": "node tools/publish.mjs",
     "migrate": "node tools/migrate-posts.mjs"
   },
   "dependencies": {

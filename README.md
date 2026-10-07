@@ -26,6 +26,8 @@ pnpm install     # 安装依赖(需要 Node 22+ 与 pnpm 11+)
 pnpm dev         # 本地写作预览
 pnpm build       # 构建(产物在 docs/.vitepress/dist)
 pnpm preview     # 本地预览构建产物
+pnpm pub         # 发布:提交所有改动并推送(CI 自动部署)
+pnpm pub "docs: add 067"  # 指定提交信息,不传则按改动自动生成
 ```
 
 ## 写作
