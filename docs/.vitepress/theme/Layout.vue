@@ -23,11 +23,6 @@ const currentPost = computed(() => {
     <TopNav />
 
     <div class="site-body">
-      <aside class="site-sidebar">
-        <ProfileCard />
-        <TocCard v-if="isPost" :headers="page.headers ?? []" />
-      </aside>
-
       <main class="site-main">
         <!-- 文章页：标题与元信息渲染在正文卡片顶部，对齐 NexT 的 post-block -->
         <article v-if="isPost" class="nex-card post-block">
@@ -45,6 +40,11 @@ const currentPost = computed(() => {
           <Content />
         </div>
       </main>
+
+      <aside class="site-sidebar">
+        <ProfileCard />
+        <TocCard v-if="isPost" :headers="page.headers ?? []" />
+      </aside>
     </div>
 
     <footer class="site-footer">
