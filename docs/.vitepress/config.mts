@@ -6,9 +6,9 @@ export default defineConfig({
   title: 'CrazyAirhead',
   description: '疯狂的傻瓜，傻瓜也疯狂——傻方能执著，疯狂才专注!',
   head: [
-    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/images/favicon-32x32-next.png' }],
-    ['link', { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/images/favicon-16x16-next.png' }],
-    ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: '/images/apple-touch-icon-next.png' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/images/favicon-32x32.png' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/images/favicon-16x16.png' }],
+    ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: '/images/apple-touch-icon.png' }],
     ['meta', { name: 'author', content: 'L4qiang' }],
   ],
   sitemap: { hostname: 'https://l4qiang.goldsyear.com' },
