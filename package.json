@@ -5,9 +5,9 @@
   "type": "module",
   "packageManager": "pnpm@11.24.0",
   "scripts": {
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs",
     "migrate": "node tools/migrate-posts.mjs"
   },
   "dependencies": {

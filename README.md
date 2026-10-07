@@ -22,10 +22,10 @@ docs/
 ## 常用命令
 
 ```bash
-pnpm install           # 安装依赖(需要 Node 22+ 与 pnpm 11+)
-pnpm docs:dev          # 本地写作预览
-pnpm docs:build        # 构建(产物在 docs/.vitepress/dist)
-pnpm docs:preview      # 本地预览构建产物
+pnpm install     # 安装依赖(需要 Node 22+ 与 pnpm 11+)
+pnpm dev         # 本地写作预览
+pnpm build       # 构建(产物在 docs/.vitepress/dist)
+pnpm preview     # 本地预览构建产物
 ```
 
 ## 写作

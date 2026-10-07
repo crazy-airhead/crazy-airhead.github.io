@@ -32,7 +32,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm run docs:build
+        run: pnpm build
 
       # 构建产物推送到 gh-pages 分支，GitHub Pages 设置为从该分支发布
       - name: Deploy to gh-pages
