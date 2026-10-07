@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
@@ -11,6 +12,56 @@ export default defineConfig({
     ['meta', { name: 'author', content: 'L4qiang' }],
   ],
   sitemap: { hostname: 'https://l4qiang.goldsyear.com' },
+  themeConfig: {
+    search: {
+      provider: 'local',
+      options: {
+        translations: {
+          button: { buttonText: '搜索文章', buttonAriaLabel: '搜索文章' },
+          modal: {
+            displayDetails: '显示详细列表',
+            resetButton: { title: '清除查询' },
+            noResultsText: '未找到相关结果',
+            footer: { selectText: '选中', navigateKeys: '切换', closeText: '关闭' },
+          },
+        },
+        miniSearch: {
+          // 无小节标题的文章（107 篇）会被默认切节逻辑整篇丢弃，
+          // 兜底：切不出节时把整页作为一节。
+          // 构建侧 add 时写死 title = titles.at(-1)，忽略 section.title，
+          // 所以标题必须放进 titles 数组才能被存储与展示。
+          // 注意层级：这个钩子挂在 options.miniSearch 上，不是 miniSearch.options 里
+          _splitIntoSections: (file: string, html: string) => {
+            const headingRe = /<h(\d*).*?>(.*?<a.*? href="#.*?".*?>.*?<\/a>)<\/h\1>/gi
+            const parts = html.split(headingRe)
+            if (parts.length > 1) return undefined // 有锚点标题，走默认切节
+            const stripped = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+            if (!stripped) return []
+            const fm = fs.readFileSync(file, 'utf8').match(/^---[\s\S]*?^title:\s*(.+)$/m)
+            const title = (fm?.[1] ?? '').trim().replace(/^['"]|['"]$/g, '')
+            return [{ anchor: '', titles: title ? [title] : [], text: stripped }]
+          },
+          options: {
+            // MiniSearch 默认按空格分词，中文会整句成一个词；
+            // 改为西文按单词、CJK 按单字切分（配置函数会随 themeConfig 序列化到客户端）
+            tokenize: (text: string) =>
+              String(text).toLowerCase().match(/[a-z0-9_]+|[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/g) ?? [],
+            // 单字 token 粒度细，关掉模糊匹配减少噪音，保留前缀匹配
+            searchOptions: {
+              fuzzy: false,
+              prefix: true,
+              boost: { title: 4, titles: 2, text: 1 },
+            },
+          },
+          searchOptions: {
+            fuzzy: false,
+            prefix: true,
+            boost: { title: 4, titles: 2, text: 1 },
+          },
+        },
+      },
+    },
+  },
   // 忽略死链检查：
   // - 旧文里的飞书 blob 死图
   // - 文章中指向本地调试服务的示例链接（http://localhost:8080/...）

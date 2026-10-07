@@ -150,6 +150,41 @@ video {
   background: var(--nex-inline-code-bg);
 }
 
+/* ---------- 全局搜索（复用默认主题 VPNavBarSearch，外观对齐 NexT 顶栏） ---------- */
+.site-search .DocSearch-Button {
+  --docsearch-text-color: var(--nex-text-secondary);
+  --docsearch-muted-color: var(--nex-text-secondary);
+  --docsearch-searchbox-shadow: none;
+  --docsearch-key-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--nex-border);
+  background: transparent;
+  border-radius: var(--nex-radius);
+  height: 34px;
+  padding: 0 10px;
+  font-size: 13px;
+  gap: 8px;
+  min-width: 0;
+}
+
+.site-search .DocSearch-Button:hover,
+.site-search .DocSearch-Button:focus {
+  border-color: var(--nex-link);
+  background: transparent;
+  box-shadow: none;
+}
+
+.site-search .DocSearch-Button-Placeholder {
+  font-size: 13px;
+}
+
+@media (max-width: 639px) {
+  /* 窄屏只留搜索图标 */
+  .site-search .DocSearch-Button-Placeholder,
+  .site-search .DocSearch-Button-Keys {
+    display: none;
+  }
+}
+
 /* ---------- 主体布局 ---------- */
 .site-body {
   max-width: 1160px;
